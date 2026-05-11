@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "AzurLaneDex (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "AzurLaneDex (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

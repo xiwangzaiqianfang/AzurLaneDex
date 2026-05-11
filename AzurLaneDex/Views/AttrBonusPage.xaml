@@ -1,0 +1,53 @@
+<Page x:Class="AzurLaneDex.Views.AttrBonusPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:controls="using:Microsoft.UI.Xaml.Controls">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- 顶部标题栏 -->
+        <StackPanel Grid.Row="0" Margin="20,20,20,12" Spacing="8">
+            <TextBlock Text="属性加成" FontSize="24" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+            <TextBlock Text="全舰队属性加成汇总（可选择舰种筛选）" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+
+            <!-- 舰种筛选下拉框，左对齐 -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,12,0,0">
+                <TextBlock Text="筛选舰种:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                <ComboBox x:Name="ShipClassFilter" 
+                          MinWidth="160" 
+                          SelectionChanged="ShipClassFilter_SelectionChanged"/>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- 卡片网格区域 -->
+        <ScrollViewer Grid.Row="1">
+            <controls:ItemsRepeater x:Name="AttrRepeater" Margin="20,0,20,20">
+                <controls:ItemsRepeater.Layout>
+                    <controls:UniformGridLayout MinItemWidth="140" 
+                                                MinRowSpacing="15" 
+                                                MinColumnSpacing="15"/>
+                </controls:ItemsRepeater.Layout>
+                <controls:ItemsRepeater.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="{ThemeResource CardBackgroundFillColorDefault}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1" CornerRadius="8" Padding="12"
+                                MinWidth="140" MinHeight="90">
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="{Binding AttrName}" FontSize="14" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                <TextBlock Text="{Binding Value}" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,8,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </controls:ItemsRepeater.ItemTemplate>
+            </controls:ItemsRepeater>
+        </ScrollViewer>
+
+        <!-- 导出按钮 -->
+        <Button Grid.Row="0" Content="导出为图片" Click="ExportToImage" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,20"/>
+    </Grid>
+</Page>

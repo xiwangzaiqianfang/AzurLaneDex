@@ -1,0 +1,60 @@
+<Page x:Class="AzurLaneDex.Views.CampTechPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:controls="using:Microsoft.UI.Xaml.Controls">
+
+    <ScrollViewer>
+        <StackPanel Margin="20">
+            <TextBlock Text="阵营科技点" FontSize="24" FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+            <TextBlock Text="各阵营科技点总和（获得 + 满破 + 120级）" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+
+            <!-- 总体进度条 -->
+            <StackPanel Margin="0,0,0,16">
+                <TextBlock x:Name="TechProgressText" HorizontalAlignment="Center"/>
+                <ProgressBar x:Name="TechProgressBar" Height="4" Margin="0,8,0,0"/>
+            </StackPanel>
+
+            <!-- 使用 ItemsRepeater 实现响应式网格布局（每行3列） -->
+            <controls:ItemsRepeater x:Name="CardsRepeater">
+                <controls:ItemsRepeater.Layout>
+                    <controls:UniformGridLayout MinItemWidth="220" 
+                                                MinRowSpacing="15" 
+                                                MinColumnSpacing="15"/>
+                </controls:ItemsRepeater.Layout>
+                <controls:ItemsRepeater.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="{ThemeResource CardBackgroundFillColorDefault}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1" CornerRadius="8" Padding="16">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Name}" FontSize="18" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                <Grid Margin="0,12,0,0" ColumnSpacing="8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="获得" FontSize="14" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding Obtain}" FontSize="16" HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="满破" FontSize="14" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding Max}" FontSize="16" HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2">
+                                        <TextBlock Text="120级" FontSize="14" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding Level120}" FontSize="16" HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Grid>
+                                <TextBlock Text="{Binding Total}" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,12,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </controls:ItemsRepeater.ItemTemplate>
+            </controls:ItemsRepeater>
+
+            <Button Content="导出为图片" Click="ExportToImage" HorizontalAlignment="Center" Margin="0,20,0,0"/>
+        </StackPanel>
+    </ScrollViewer>
+</Page>
