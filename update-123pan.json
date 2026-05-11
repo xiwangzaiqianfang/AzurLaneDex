@@ -1,6 +1,0 @@
-{
-  "version": "0.9.20.0",
-  "changelog": "feat 0.9.20.0 for WinUI 3 Preview\n功能修改\n新增 使用C#重写应用程序，UI迁移至WinUI 3\n新增 支持舰船头像显示，当舰船头像未收录时将显示默认头像。\n新增 舰船收藏功能，可以在收藏页直接查看收藏的舰船状态、信息。\n新增 属性加成页面支持通过舰种筛选显示。\n新增 你的账户页面，可以更直观管理应用内帐户数据。\n新增 帐户备份页面，支持导出、导入帐户数据，创建备份点一键恢复。\n新增 数据迁移功能，将Python版舰船数据迁移至新版本并自动转换为新格式。\n新增 更新页，支持通过Github（raw）、Github（CDN）以及自定义源、代理等方式检查舰船数据更新；支持通过Github、蓝奏云、123云盘检查应用版本并更新。\n新增 帮助页，为用户提供部分常见问题的解答。\n优化改进\n优化 应用整体性能\n优化 应用UI界面显示效果\n问题修复\n修复 无法显示舰船立绘的问题\n修复 部分情况下辅助图标显示异常的问题\n修复 闪屏页面显示异常的问题\n修复 部分界面显示异常的问题\n修复 更新源为Github时国内用户无法顺利更新的问题\n提示\n因为迁移至WinUI 3，应用程序的安装路径与数据存放位置将发生改变以遵循微软视窗系统应用开发规范。您的用户数据和舰船数据需要进行手动导入，新版本的用户数据保存在“%LOCALAPPDATA%/Packages/fmlg.AzurLaneDex_n8a9v6zgjkkmw/LocalCache/Local/AzurLaneDex”下，应用默认安装位置为“%PROGRAMFILES%/WindowsApps/fmlg.AzurLaneDex_n8a9v6zgjkkmw/”目录下，您可以在 Windows 设置中将应用迁移至其他硬盘。",
-  "url": "https://your-domain.com/download/app.msix",
-  "fileSize": 10485760
-}
