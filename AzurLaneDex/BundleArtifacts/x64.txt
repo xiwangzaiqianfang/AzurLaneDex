@@ -1,0 +1,5 @@
+MainPackage=C:\Users\徐昕沛\Desktop\AzurLaneDexWinUI\AzurLaneDex\AzurLaneDex\bin\x64\Debug\net8.0-windows10.0.19041.0\win-x64\AzurLaneDex_0.9.20.0_x64_Debug.msix
+ResourcePack=C:\Users\徐昕沛\Desktop\AzurLaneDexWinUI\AzurLaneDex\AzurLaneDex\bin\x64\Debug\net8.0-windows10.0.19041.0\win-x64\AzurLaneDex_0.9.20.0_scale-100.msix
+ResourcePack=C:\Users\徐昕沛\Desktop\AzurLaneDexWinUI\AzurLaneDex\AzurLaneDex\bin\x64\Debug\net8.0-windows10.0.19041.0\win-x64\AzurLaneDex_0.9.20.0_scale-125.msix
+ResourcePack=C:\Users\徐昕沛\Desktop\AzurLaneDexWinUI\AzurLaneDex\AzurLaneDex\bin\x64\Debug\net8.0-windows10.0.19041.0\win-x64\AzurLaneDex_0.9.20.0_scale-150.msix
+ResourcePack=C:\Users\徐昕沛\Desktop\AzurLaneDexWinUI\AzurLaneDex\AzurLaneDex\bin\x64\Debug\net8.0-windows10.0.19041.0\win-x64\AzurLaneDex_0.9.20.0_scale-400.msix
