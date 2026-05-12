@@ -1,11 +1,13 @@
-﻿using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 
 namespace AzurLaneDex.Views
 {
-    public sealed partial class Helppage : Page
+    public sealed partial class HelpPage : Page
     {
-        public Helppage()
+        public HelpPage()
         {
+            this.InitializeComponent();
         }
     }
 }

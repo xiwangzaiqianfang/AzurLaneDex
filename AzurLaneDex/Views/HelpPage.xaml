@@ -1,7 +1,133 @@
 <Page x:Class="AzurLaneDex.Views.HelpPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:controls="using:Microsoft.UI.Xaml.Controls">
+
+    <Page.Resources>
+        <Style x:Key="SettingsCardStyle" TargetType="Border">
+            <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefault}"/>
+            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="16"/>
+            <Setter Property="Margin" Value="0,0,0,0"/>
+        </Style>
+        <Style x:Key="CardButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefault}"/>
+            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="16"/>
+            <Setter Property="Margin" Value="0,0,0,0"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+        </Style>
+    </Page.Resources>
+
     <Grid>
-        <TextBlock Text="帮助页面（开发中）" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- 标题 -->
+        <TextBlock Text="帮助与支持" FontSize="28" FontWeight="SemiBold" Margin="20,20,20,12"/>
+
+        <ScrollViewer Grid.Row="1">
+            <StackPanel Margin="20" Spacing="16">
+
+                <!-- 数据存储位置卡片 -->
+                <Border Style="{StaticResource SettingsCardStyle}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <FontIcon Grid.Column="0" Glyph="&#xE8B7;" FontFamily="Segoe Fluent Icons" FontSize="22" Margin="0,0,14,0" VerticalAlignment="Top"/>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="用户数据存储位置" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                            <TextBlock Text="你所有的收集进度、账户信息、设置等数据均保存在本地，路径为：" FontSize="13" TextWrapping="Wrap"/>
+                            <TextBox IsReadOnly="True" Text="%LOCALAPPDATA%\Packages\fmlg.AzurLaneDex_n8a9v6zgjkkmw\LocalCache\Local\AzurLaneDex" 
+                                     Margin="0,8,0,4" FontFamily="Consolas" FontSize="12" BorderThickness="0" Background="Transparent"/>
+                            <TextBlock Text="你可以备份该文件夹下的所有内容，以便迁移或恢复数据。" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- 应用安装位置卡片 -->
+                <Border Style="{StaticResource SettingsCardStyle}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <FontIcon Grid.Column="0" Glyph="&#xE8A7;" FontFamily="Segoe Fluent Icons" FontSize="22" Margin="0,0,14,0" VerticalAlignment="Top"/>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="应用安装位置" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                            <TextBlock Text="应用通过 MSIX 包安装，默认路径为：" FontSize="13" TextWrapping="Wrap"/>
+                            <TextBox IsReadOnly="True" Text="%PROGRAMFILES%\WindowsApps" 
+                                     Margin="0,8,0,4" FontFamily="Consolas" FontSize="12" BorderThickness="0" Background="Transparent"/>
+                            <TextBlock Text="此为系统文件夹，一般情况下无需手动访问。若要查看或修改内容，请谨慎操作。" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- 常见问题卡片 -->
+                <Border Style="{StaticResource SettingsCardStyle}">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                            <FontIcon Glyph="&#xE930;" FontFamily="Segoe Fluent Icons" FontSize="22" Margin="0,0,14,0"/>
+                            <TextBlock Text="常见问题" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <!-- 问题1 -->
+                        <Expander Header="如何备份我的数据？" IsExpanded="False" Margin="0,4,0,0">
+                            <TextBlock Text="将上述「用户数据存储位置」中的整个“AzurLaneDex”文件夹复制到安全位置即可。恢复时只需覆盖原位置。" 
+                                       TextWrapping="Wrap" Margin="0,8,0,0" FontSize="13"/>
+                        </Expander>
+
+                        <!-- 问题2 -->
+                        <Expander Header="多台电脑如何同步数据？" IsExpanded="False" Margin="0,8,0,0">
+                            <TextBlock Text="目前不支持云同步。你可以手动备份数据文件夹，在新电脑上安装应用后将数据覆盖到相同位置。" 
+                                       TextWrapping="Wrap" Margin="0,8,0,0" FontSize="13"/>
+                        </Expander>
+
+                        <!-- 问题3 -->
+                        <Expander Header="忘记账户密码怎么办？" IsExpanded="False" Margin="0,8,0,0">
+                            <TextBlock Text="若设置了密保问题，可在登录界面点击「忘记密码？」通过密保重置密码。若未设置，请联系开发者或重新创建账户（数据会丢失）。"
+                                       TextWrapping="Wrap" Margin="0,8,0,0" FontSize="13"/>
+                        </Expander>
+
+                        <!-- 问题4 -->
+                        <Expander Header="如何获得管理员权限？" IsExpanded="False" Margin="0,8,0,0">
+                            <TextBlock Text="进入「帐户」→「管理员权限」，输入系统管理员密码（默认 developer 的密码）即可将当前账户提升为管理员，解锁新建/编辑舰船功能。"
+                                       TextWrapping="Wrap" Margin="0,8,0,0" FontSize="13"/>
+                        </Expander>
+
+                        <!-- 问题5 -->
+                        <Expander Header="如何报告Bug或提建议？" IsExpanded="False" Margin="0,8,0,0">
+                            <StackPanel>
+                                <TextBlock Text="欢迎访问项目主页提交 Issue。" TextWrapping="Wrap" Margin="0,8,0,0" FontSize="13"/>
+                                <HyperlinkButton Content="GitHub Issues" NavigateUri="https://github.com/xiwangzaiqianfang/AzurLaneDex/issues" Margin="0,8,0,0"/>
+                            </StackPanel>
+                        </Expander>
+                    </StackPanel>
+                </Border>
+
+                <!-- 版本与反馈卡片 -->
+                <Border Style="{StaticResource SettingsCardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="关于项目" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                        <TextBlock Text="碧蓝航线图鉴 (AzurLane Dex) 是一个为《碧蓝航线》玩家设计的舰船收集管理工具。" TextWrapping="Wrap" FontSize="13"/>
+                        <TextBlock Text="作者: 菲梦林光" Margin="0,8,0,0" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock Text="开源协议: CC BY-NC-SA 4.0" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <HyperlinkButton Content="项目主页" NavigateUri="https://github.com/xiwangzaiqianfang/AzurLaneDex" Margin="0,8,0,0"/>
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Page>

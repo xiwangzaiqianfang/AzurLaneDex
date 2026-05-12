@@ -189,7 +189,7 @@
                             <TextBlock x:Name="VersionTextBlock" TextWrapping="Wrap"/>
                             <TextBlock Text="作者: 菲梦林光"/>
                             <TextBlock Text="开源协议: CC BY-NC-SA 4.0"/>
-                            <HyperlinkButton Content="项目主页" NavigateUri="https://github.com/xiwangzaiqianfang/AzurLane-Dex"/>
+                            <HyperlinkButton Content="项目主页" NavigateUri="https://github.com/xiwangzaiqianfang/AzurLaneDex"/>
                             <HyperlinkButton Content="Wiki主页" NavigateUri="https://wiki.biligame.com/blhx/首页"/>
                         </StackPanel>
                     </Expander>

@@ -24,7 +24,7 @@ namespace AzurLaneDex.Views
         private LanzouService? _lanzouService;
 
         // GitHub Pages MSIX 地址
-        private const string GitHubPagesMsixUrl = "https://xiwangzaiqianfang.github.io/AzurLaneDex/Release/AzurLaneDex.msix";
+        private const string GitHubPagesMsixUrl = "https://xiwangzaiqianfang.github.io/AzurLaneDex/Release/AzurLaneDex.msixbundle";
         
         // version.json 地址
         private const string AppVersionJsonRawUrl = "https://raw.githubusercontent.com/xiwangzaiqianfang/AzurLaneDex/main/version.json";
@@ -169,7 +169,7 @@ namespace AzurLaneDex.Views
                 // 蓝奏云下载的是 .zip，重命名为 .msix
                 if (AppDataSourceCombo.SelectedIndex == 1 && downloadPath.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
                 {
-                    string finalPath = Path.ChangeExtension(downloadPath, ".msix");
+                    string finalPath = Path.ChangeExtension(downloadPath, ".msixbundle");
                     File.Move(downloadPath, finalPath);
                     downloadPath = finalPath;
                 }
