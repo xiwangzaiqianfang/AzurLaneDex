@@ -19,6 +19,9 @@ public class ShipManager
     private readonly string _staticPath;
     private string _userStatePath;
     public string GetUserStatePath() => _userStatePath;
+    // ShipManager.cs
+    public event Action? DataStructureChanged;   // 增、删、改静态数据时触发
+    public event Action? StateChanged;           // 用户状态（收集进度）变化时触发
     private List<ShipStatic> _staticShips = new();
     private Dictionary<int, ShipState> _userStates = new();
 
@@ -47,6 +50,8 @@ public class ShipManager
             Directory.CreateDirectory(staticDir);
             _staticPath = Path.Combine(staticDir, "ships_static.json");
 
+            EnsureBuiltinStaticExists();
+
             // 配置文件路径
             _configPath = Path.Combine(App.DataRoot, "config.json");
             LoadConfig();
@@ -59,6 +64,45 @@ public class ShipManager
             System.Diagnostics.Debug.WriteLine($"ShipManager constructor error: {ex}");
             throw;
         }
+    }
+
+    private void EnsureBuiltinStaticExists()
+    {
+        if (File.Exists(_staticPath))
+            return;
+
+        string builtinPath = null;
+
+        // 开发环境（未打包）
+        string devPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "ships_static.json");
+        if (File.Exists(devPath))
+            builtinPath = devPath;
+        else
+        {
+            // 打包环境（MSIX）
+            try
+            {
+                var installedPath = Windows.ApplicationModel.Package.Current.InstalledLocation.Path;
+                string packagedPath = Path.Combine(installedPath, "Assets", "ships_static.json");
+                if (File.Exists(packagedPath))
+                    builtinPath = packagedPath;
+            }
+            catch { }
+        }
+
+        if (builtinPath != null)
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(_staticPath)!);
+            File.Copy(builtinPath, _staticPath);
+            System.Diagnostics.Debug.WriteLine($"已从内置资源复制舰船数据: {builtinPath} -> {_staticPath}");
+            return;
+        }
+
+        // 最后手段：创建空文件
+        var empty = new StaticData { Version = "0.0", Ships = new List<ShipStatic>() };
+        var json = JsonSerializer.Serialize(empty, new JsonSerializerOptions { WriteIndented = true });
+        File.WriteAllText(_staticPath, json);
+        System.Diagnostics.Debug.WriteLine("未找到内置舰船数据，已创建空文件");
     }
 
     private void LoadConfig()
@@ -136,6 +180,26 @@ public class ShipManager
         File.WriteAllText(_configPath, json);
         System.Diagnostics.Debug.WriteLine($"File exists after save: {File.Exists(_configPath)}");
         System.Diagnostics.Debug.WriteLine($"Saved config to {_configPath}");
+    }
+    private void CopyBuiltinStaticIfNeeded()
+    {
+        if (File.Exists(_staticPath))
+            return;
+
+        // 尝试从应用包内的 BuiltinData 文件夹复制
+        string builtinPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "BuiltinData", "ships_static.json");
+        if (File.Exists(builtinPath))
+        {
+            File.Copy(builtinPath, _staticPath);
+            System.Diagnostics.Debug.WriteLine($"已从内置资源复制默认静态数据到 {_staticPath}");
+            return;
+        }
+
+        // 如果内置文件也不存在（例如开发环境未包含），则创建空模板
+        var emptyData = new StaticData { Version = "0.0", Ships = new List<ShipStatic>() };
+        var json = JsonSerializer.Serialize(emptyData, new JsonSerializerOptions { WriteIndented = true });
+        File.WriteAllText(_staticPath, json);
+        System.Diagnostics.Debug.WriteLine($"未找到内置文件，创建空静态文件: {_staticPath}");
     }
 
     private void EnsureStaticFileExists()
@@ -224,6 +288,13 @@ public class ShipManager
                 }
                 catch { }
             }
+            foreach (var ship in Ships)
+            {
+                if (ship.Name == "泛用型布里" || ship.Name == "试作型布里MKII" || ship.Name == "特装型布里MKIII")
+                {
+                    ship.Breakthrough = 3;
+                }
+            }
         }
 
         // 3. 生成 ViewModel
@@ -233,6 +304,13 @@ public class ShipManager
             if (!_userStates.TryGetValue(staticShip.Id, out var state))
                 state = new ShipState { Id = staticShip.Id };
             Ships.Add(new ShipViewModel(staticShip, state));
+        }
+        // 检查版本格式是否符合新标准，不符合则刷新一次版本号
+        if (ParseRevision(Version) < 0 || !Version.StartsWith("1.0."))
+        {
+            // 修订次数从0开始，避免误增
+            Version = BuildVersion(_staticShips.Count, 0);
+            SaveStatic();
         }
     }
 
@@ -259,7 +337,7 @@ public class ShipManager
         File.WriteAllText(_staticPath, newJson);
     }
 
-    private ShipStatic MigrateSingleShip(JsonElement old)
+    public static ShipStatic MigrateSingleShip(JsonElement old)
     {
         var attrMap = new (string Display, string Base)[]
         {
@@ -353,7 +431,7 @@ public class ShipManager
         };
         var json = JsonSerializer.Serialize(stateList, new JsonSerializerOptions { WriteIndented = true });
         File.WriteAllText(_userStatePath, json);
-        data_changed?.Invoke();
+        StateChanged?.Invoke();
     }
 
     public void SwitchAccount(string accountName)
@@ -531,12 +609,13 @@ public class ShipManager
 
         // 7. 保存用户状态
         Save();
-
+        DataStructureChanged?.Invoke();
         return true;
     }
 
     private void SaveStatic()
     {
+        UpdateVersionBeforeSave();
         var data = new StaticData { Version = Version, Ships = _staticShips };
         var json = JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
         File.WriteAllText(_staticPath, json);
@@ -594,7 +673,7 @@ public class ShipManager
         }
 
         Save();
-        data_changed?.Invoke();
+        DataStructureChanged?.Invoke();
     }
     public void DeleteShip(int shipId)
     {
@@ -615,10 +694,42 @@ public class ShipManager
         if (vm != null) Ships.Remove(vm);
 
         Save();
+        DataStructureChanged?.Invoke();
     }
     public void NotifyDataChanged()
     {
         data_changed?.Invoke();
+    }
+    // 舰船静态数据版本号
+    // 生成新版本字符串
+    private string BuildVersion(int shipCount, int revision)
+    {
+        string date = DateTime.Now.ToString("yyyyMMdd");
+        return $"1.0.{shipCount}.{revision}.{date}";
+    }
+
+    // 从当前版本号尝试提取修订次数，若失败返回 -1
+    private int ParseRevision(string version)
+    {
+        try
+        {
+            var parts = version.Split('.');
+            if (parts.Length == 5 && int.TryParse(parts[2], out _) && int.TryParse(parts[3], out int rev))
+                return rev;
+        }
+        catch { }
+        return -1;
+    }
+
+    // 更新版本号（在保存静态数据前调用）
+    private void UpdateVersionBeforeSave()
+    {
+        int shipCount = _staticShips.Count;
+        int revision = ParseRevision(Version);
+        if (revision < 0) revision = 0;   // 无法解析则从0开始
+        else revision++;
+
+        Version = BuildVersion(shipCount, revision);
     }
     // 获取程序版本号
     public string GetCurrentAppVersion()
@@ -656,7 +767,7 @@ public class ShipManager
             File.Copy(_staticPath, _staticPath + ".bak", true);
         File.WriteAllText(_staticPath, json);
         Load();
-        data_changed?.Invoke();
+        DataStructureChanged?.Invoke();
         return true;
     }
     public async Task<string> GetLatestAppVersionAsync(string proxy = "")

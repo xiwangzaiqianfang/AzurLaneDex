@@ -4,9 +4,12 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace AzurLaneDex.Views
 {
@@ -14,8 +17,26 @@ namespace AzurLaneDex.Views
     {
         private ShipManager _shipManager;
         private string _currentAppVersion;
-        private AppUpdateInfo _latestAppInfo;   // 应用更新信息（自定义源）
-        private string _remoteDataVersion;
+        private string? _latestAppVersion;
+        private string? _latestAppDownloadUrl;
+        private string? _latestDataUrl;
+        private string? _remoteDataVersion;
+        private LanzouService? _lanzouService;
+
+        // GitHub Pages MSIX 地址
+        private const string GitHubPagesMsixUrl = "https://xiwangzaiqianfang.github.io/AzurLaneDex/Release/AzurLaneDex.msix";
+        
+        // version.json 地址
+        private const string AppVersionJsonRawUrl = "https://raw.githubusercontent.com/xiwangzaiqianfang/AzurLaneDex/main/version.json";
+        private const string AppVersionJsonCdnUrl = "https://cdn.jsdelivr.net/gh/xiwangzaiqianfang/AzurLaneDex@main/version.json";
+
+        // 蓝奏云文件夹链接与密码（硬编码）
+        private const string LanzouFolderUrl = "https://wwaqf.lanzout.com/b0066z4gcb";
+        private const string LanzouFolderPwd = "gzjf";
+
+        // 舰船数据硬编码地址
+        private const string DataGitHubRawUrl = "https://raw.githubusercontent.com/xiwangzaiqianfang/AzurLaneDex/main/AzurLaneDex/Assets/ships_static.json";
+        private const string DataGitHubCdnUrl = "https://cdn.jsdelivr.net/gh/xiwangzaiqianfang/AzurLaneDex@main/AzurLaneDex/Assets/ships_static.json";
 
         public UpdatePage()
         {
@@ -30,94 +51,84 @@ namespace AzurLaneDex.Views
             _currentAppVersion = _shipManager.GetCurrentAppVersion();
             CurrentVersionText.Text = _currentAppVersion;
 
-            // 应用更新源切换事件
-            AppDataSourceCombo.SelectionChanged += AppDataSourceCombo_SelectionChanged;
-            // 数据更新源切换事件
-            DataDataSourceCombo.SelectionChanged += DataDataSourceCombo_SelectionChanged;
+            // 从配置恢复自定义数据 URL（如果用户设过）
+            var config = _shipManager.Config;
+            if (config != null)
+            {
+                if (config.TryGetValue("data_custom_url", out var dc) && dc is string dUrl)
+                    DataCustomUrlBox.Text = dUrl;
+            }
 
-            // 初始隐藏按钮
             DownloadAppButton.Visibility = Visibility.Collapsed;
         }
 
-        // 应用更新源：显示/隐藏自定义URL输入框
+        // 应用更新源选择变化（无需要操作的控件，但清空状态）
         private void AppDataSourceCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            AppCustomUrlBox.Visibility = AppDataSourceCombo.SelectedIndex == 1 ? Visibility.Visible : Visibility.Collapsed;
+            if (AppDataSourceCombo == null) return;
+            _latestAppVersion = null;
+            _latestAppDownloadUrl = null;
+            DownloadAppButton.Visibility = Visibility.Collapsed;
         }
-
-        // 数据更新源：显示/隐藏自定义URL输入框
-        private void DataDataSourceCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            DataCustomUrlBox.Visibility = DataDataSourceCombo.SelectedIndex == 2 ? Visibility.Visible : Visibility.Collapsed;
-        }
-
-        // 获取应用更新使用的URL（根据选择）
-        private string GetAppUpdateUrl()
-        {
-            if (AppDataSourceCombo.SelectedIndex == 0) // GitHub API
-                return "https://api.github.com/repos/xiwangzaiqianfang/AzurLane-Dex/releases/latest";
-            else
-                return AppCustomUrlBox.Text.Trim();
-        }
-
-        // 获取代理地址（数据更新和自定义应用源均可共用）
-        private string GetProxy() => ProxyBox.Text.Trim();
 
         // 检查应用更新
         private async void CheckAppUpdate_Click(object sender, RoutedEventArgs e)
         {
             StatusText.Text = "正在检查应用更新...";
             DownloadAppButton.Visibility = Visibility.Collapsed;
-            _latestAppInfo = null;
+            _latestAppVersion = null;
+            _latestAppDownloadUrl = null;
 
             try
             {
-                int selectedSource = AppDataSourceCombo.SelectedIndex;
-                if (selectedSource == 0) // GitHub API
+                if (AppDataSourceCombo.SelectedIndex == 0) // GitHub Pages
                 {
-                    string latestVersion = await _shipManager.GetLatestAppVersionAsync(GetProxy());
-                    if (string.IsNullOrEmpty(latestVersion))
-                        throw new Exception("无法获取最新版本信息");
+                    string versionUrl = DataDataSourceCombo.SelectedIndex == 1
+                        ? AppVersionJsonCdnUrl
+                        : AppVersionJsonRawUrl;
 
-                    if (CompareVersion(latestVersion, _currentAppVersion) > 0)
+                    using var client = CreateHttpClient(ProxyBox.Text.Trim());
+                    string json = await client.GetStringAsync(versionUrl);
+                    using var doc = JsonDocument.Parse(json);
+                    string? remoteVersion = doc.RootElement.GetProperty("version").GetString();
+
+                    if (string.IsNullOrEmpty(remoteVersion))
                     {
-                        StatusText.Text = $"发现新版本 {latestVersion}，请点击下载按钮跳转到 GitHub 获取安装包。";
-                        // 构造一个伪信息，用于下载按钮打开浏览器
-                        _latestAppInfo = new AppUpdateInfo
-                        {
-                            Version = latestVersion,
-                            IsGitHubRelease = true,
-                            DownloadUrl = null
-                        };
-                        DownloadAppButton.Visibility = Visibility.Visible;
-                    }
-                    else
-                    {
-                        StatusText.Text = "当前已是最新版本。";
-                    }
-                }
-                else // 自定义 update.json
-                {
-                    string url = GetAppUpdateUrl();
-                    if (string.IsNullOrEmpty(url))
-                    {
-                        StatusText.Text = "请填写自定义更新源 URL。";
+                        StatusText.Text = "version.json 格式错误";
                         return;
                     }
 
-                    string json = await _shipManager.DownloadStringAsync(url, GetProxy());
-                    var info = JsonSerializer.Deserialize<AppUpdateInfo>(json);
-                    if (info == null || string.IsNullOrEmpty(info.Version))
-                        throw new Exception("自定义源返回的数据格式无效");
+                    _latestAppVersion = remoteVersion;
+                    _latestAppDownloadUrl = GitHubPagesMsixUrl;
+                }
+                else // 蓝奏云（硬编码）
+                {
+                    _lanzouService = new LanzouService(ProxyBox.Text.Trim());
+                    var files = await _lanzouService.GetFileListAsync(LanzouFolderUrl, LanzouFolderPwd);
 
-                    _latestAppInfo = info;
-                    if (CompareVersion(info.Version, _currentAppVersion) > 0)
+                    var zipFiles = files
+                        .Where(f => f.Name.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
+                        .OrderByDescending(f => f.Name)
+                        .ToList();
+
+                    if (zipFiles.Count == 0)
                     {
-                        string changelog = string.IsNullOrEmpty(info.Changelog) ? "" : $"\n更新内容：{info.Changelog}";
-                        StatusText.Text = $"发现新版本 {info.Version}{changelog}";
-                        DownloadAppButton.Visibility = string.IsNullOrEmpty(info.DownloadUrl) && !info.IsGitHubRelease
-                            ? Visibility.Collapsed
-                            : Visibility.Visible;
+                        StatusText.Text = "未找到安装包（.zip）文件";
+                        return;
+                    }
+
+                    var latestFile = zipFiles.First();
+                    _latestAppVersion = ExtractVersionFromFileName(latestFile.Name) ?? latestFile.Time;
+                    string fileUrl = "https://www.lanzouo.com/" + latestFile.Id;
+                    _latestAppDownloadUrl = await _lanzouService.GetDirectLinkAsync(fileUrl, latestFile.Id);
+                }
+
+                if (!string.IsNullOrEmpty(_latestAppVersion) && !string.IsNullOrEmpty(_latestAppDownloadUrl))
+                {
+                    if (CompareVersion(_latestAppVersion, _currentAppVersion) > 0)
+                    {
+                        StatusText.Text = $"发现新版本 {_latestAppVersion}，点击「下载并安装」更新。";
+                        DownloadAppButton.Visibility = Visibility.Visible;
                     }
                     else
                     {
@@ -131,44 +142,36 @@ namespace AzurLaneDex.Views
             }
         }
 
-        // 下载/安装应用更新
+        // 下载并安装应用更新
         private async void DownloadApp_Click(object sender, RoutedEventArgs e)
         {
-            if (_latestAppInfo == null)
+            if (string.IsNullOrEmpty(_latestAppDownloadUrl))
             {
-                StatusText.Text = "未找到更新信息，请先检查更新。";
-                return;
-            }
-
-            // GitHub Release 跳转浏览器
-            if (_latestAppInfo.IsGitHubRelease)
-            {
-                var uri = new Uri("https://github.com/xiwangzaiqianfang/AzurLane-Dex/releases/latest");
-                await Windows.System.Launcher.LaunchUriAsync(uri);
-                StatusText.Text = "已打开浏览器，请手动下载安装包。";
-                return;
-            }
-
-            // 自定义源：尝试下载 MSIX
-            string downloadUrl = _latestAppInfo.DownloadUrl;
-            if (string.IsNullOrEmpty(downloadUrl))
-            {
-                StatusText.Text = "下载链接无效，请检查 update.json 中的 DownloadUrl 字段。";
+                StatusText.Text = "下载链接无效";
                 return;
             }
 
             StatusText.Text = "正在下载更新包...";
             try
             {
-                string downloadPath = Path.Combine(Path.GetTempPath(), "AzurLaneDex_Update.msix");
-                using var client = _shipManager.CreateHttpClient(GetProxy());
-                using (var response = await client.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead))
+                string tempDir = Path.GetTempPath();
+                string fileName = Path.GetFileName(new Uri(_latestAppDownloadUrl).AbsolutePath);
+                string downloadPath = Path.Combine(tempDir, fileName);
+
+                using var client = CreateHttpClient(ProxyBox.Text.Trim());
+                var response = await client.GetAsync(_latestAppDownloadUrl);
+                response.EnsureSuccessStatusCode();
+                using (var fs = new FileStream(downloadPath, FileMode.Create, FileAccess.Write, FileShare.None))
                 {
-                    response.EnsureSuccessStatusCode();
-                    using (var fs = new FileStream(downloadPath, FileMode.Create, FileAccess.Write, FileShare.None))
-                    {
-                        await response.Content.CopyToAsync(fs);
-                    }
+                    await response.Content.CopyToAsync(fs);
+                }
+
+                // 蓝奏云下载的是 .zip，重命名为 .msix
+                if (AppDataSourceCombo.SelectedIndex == 1 && downloadPath.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
+                {
+                    string finalPath = Path.ChangeExtension(downloadPath, ".msix");
+                    File.Move(downloadPath, finalPath);
+                    downloadPath = finalPath;
                 }
 
                 StatusText.Text = "下载完成，正在启动安装...";
@@ -178,8 +181,8 @@ namespace AzurLaneDex.Views
                     UseShellExecute = true
                 };
                 Process.Start(psi);
-                // 可选延迟退出，让安装程序有机会启动
-                await Task.Delay(1000);
+
+                await Task.Delay(2000);
                 Application.Current.Exit();
             }
             catch (Exception ex)
@@ -188,39 +191,38 @@ namespace AzurLaneDex.Views
             }
         }
 
-        // 获取数据更新 URL
-        private string GetDataUrl()
+        // 数据更新源切换
+        private void DataDataSourceCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            return DataDataSourceCombo.SelectedIndex switch
-            {
-                0 => "https://raw.githubusercontent.com/xiwangzaiqianfang/AzurLane-Dex/main/data/static/ships_static.json",
-                1 => "https://cdn.jsdelivr.net/gh/xiwangzaiqianfang/AzurLane-Dex@main/data/static/ships_static.json",
-                2 => DataCustomUrlBox.Text.Trim(),
-                _ => ""
-            };
+            if (DataCustomUrlBox == null) return;
+            DataCustomUrlBox.Visibility = DataDataSourceCombo.SelectedIndex == 2 ? Visibility.Visible : Visibility.Collapsed;
         }
 
         // 检查数据更新
         private async void CheckDataUpdate_Click(object sender, RoutedEventArgs e)
         {
-            string url = GetDataUrl();
-            if (string.IsNullOrEmpty(url))
-            {
-                StatusText.Text = "请填写有效的数据源 URL。";
-                return;
-            }
-
             StatusText.Text = "正在检查数据版本...";
             try
             {
-                _remoteDataVersion = await _shipManager.GetRemoteDataVersionAsync(url, GetProxy());
-                if (string.IsNullOrEmpty(_remoteDataVersion))
-                    throw new Exception("无法获取远程数据版本");
-
-                string currentVersion = _shipManager.Version;
-                if (CompareVersion(_remoteDataVersion, currentVersion) > 0)
+                string url = GetDataUrl();
+                if (string.IsNullOrEmpty(url))
                 {
-                    StatusText.Text = $"发现新数据版本 {_remoteDataVersion}，当前版本 {currentVersion}。点击「下载并安装」更新。";
+                    StatusText.Text = "请填写有效的自定义 URL";
+                    return;
+                }
+
+                _remoteDataVersion = await _shipManager.GetRemoteDataVersionAsync(url, ProxyBox.Text.Trim());
+                _latestDataUrl = url;
+
+                if (string.IsNullOrEmpty(_remoteDataVersion))
+                {
+                    StatusText.Text = "无法获取远程数据版本";
+                    return;
+                }
+
+                if (CompareVersion(_remoteDataVersion, _shipManager.Version) > 0)
+                {
+                    StatusText.Text = $"发现新数据版本 {_remoteDataVersion}，点击「下载并安装」更新。";
                 }
                 else
                 {
@@ -236,31 +238,20 @@ namespace AzurLaneDex.Views
         // 下载数据更新
         private async void DownloadData_Click(object sender, RoutedEventArgs e)
         {
-            string url = GetDataUrl();
-            if (string.IsNullOrEmpty(url))
+            if (string.IsNullOrEmpty(_latestDataUrl))
             {
-                StatusText.Text = "请填写有效的数据源 URL。";
+                StatusText.Text = "请先检查更新";
                 return;
             }
 
             StatusText.Text = "正在下载数据...";
             try
             {
-                bool success = await _shipManager.UpdateDataFromUrlAsync(url, GetProxy());
+                bool success = await _shipManager.UpdateDataFromUrlAsync(_latestDataUrl, ProxyBox.Text.Trim());
                 if (success)
-                {
-                    StatusText.Text = "数据更新成功，请重启应用或切换页面以生效。";
-                    // 刷新显示当前数据版本
-                    var newVersion = _shipManager.Version;
-                    if (CompareVersion(_remoteDataVersion, newVersion) == 0)
-                        StatusText.Text = $"数据已更新至版本 {newVersion}。";
-                    else
-                        StatusText.Text = "数据更新完成，但版本号可能未同步。";
-                }
+                    StatusText.Text = $"数据已更新至版本 {_remoteDataVersion}。";
                 else
-                {
-                    StatusText.Text = "数据更新失败，请检查 URL 或网络。";
-                }
+                    StatusText.Text = "数据更新失败，请检查网络或 URL。";
             }
             catch (Exception ex)
             {
@@ -268,29 +259,46 @@ namespace AzurLaneDex.Views
             }
         }
 
-        // 返回按钮
+        private string GetDataUrl()
+        {
+            return DataDataSourceCombo.SelectedIndex switch
+            {
+                0 => DataGitHubRawUrl,
+                1 => DataGitHubCdnUrl,
+                2 => DataCustomUrlBox.Text.Trim(),
+                _ => ""
+            };
+        }
+
+        private string? ExtractVersionFromFileName(string fileName)
+        {
+            var match = Regex.Match(fileName, @"(\d+\.\d+\.\d+\.\d+)");
+            return match.Success ? match.Value : null;
+        }
+
+        private int CompareVersion(string versionA, string versionB)
+        {
+            if (Version.TryParse(versionA, out Version? vA) && Version.TryParse(versionB, out Version? vB))
+                return vA.CompareTo(vB);
+            return string.Compare(versionA, versionB, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private HttpClient CreateHttpClient(string proxy)
+        {
+            if (string.IsNullOrEmpty(proxy))
+                return new HttpClient();
+            var handler = new HttpClientHandler
+            {
+                Proxy = new System.Net.WebProxy(proxy),
+                UseProxy = true
+            };
+            return new HttpClient(handler);
+        }
+
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             if (Frame.CanGoBack)
                 Frame.GoBack();
         }
-
-        // 版本比较（支持 x.y.z 格式，忽略第四段）
-        private int CompareVersion(string versionA, string versionB)
-        {
-            if (Version.TryParse(versionA, out Version vA) && Version.TryParse(versionB, out Version vB))
-                return vA.CompareTo(vB);
-            // 降级为字符串比较
-            return string.Compare(versionA, versionB, StringComparison.OrdinalIgnoreCase);
-        }
-    }
-
-    // 自定义更新源的数据结构（用于应用更新）
-    public class AppUpdateInfo
-    {
-        public string Version { get; set; }
-        public string Changelog { get; set; }
-        public string DownloadUrl { get; set; }
-        public bool IsGitHubRelease { get; set; }
     }
 }

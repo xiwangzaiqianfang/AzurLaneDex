@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>碧蓝航线图鉴 | AzurLane Dex - WinUI 3 舰船管理工具</title>
+    <meta name="description" content="为《碧蓝航线》玩家设计的舰船收集管理工具。支持舰船图鉴、收集进度跟踪、阵营科技点、全局属性加成、多账户、数据备份与迁移。WinUI 3 重构版，提供 MSIX 安装包与自动更新。">
+    <meta name="keywords" content="碧蓝航线,AzurLane,舰船图鉴,WinUI3,收集进度,科技点,属性加成">
+    <meta name="author" content="xiwangzaiqianfang">
+    <meta property="og:title" content="碧蓝航线图鉴 | AzurLane Dex">
+    <meta property="og:description" content="现代、高效的碧蓝航线舰船收集管理工具，基于 WinUI 3 开发。">
+    <meta property="og:image" content="https://raw.githubusercontent.com/xiwangzaiqianfang/AzurLane-Dex/main/docs/screenshot-main.jpg">
+    <meta property="og:url" content="https://xiwangzaiqianfang.github.io/AzurLane-Dex/">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/xiwangzaiqianfang/AzurLane-Dex/main/Assets/Titles/App_Icon.ico">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #faf9f8;
+            color: #1e1e1e;
+            line-height: 1.5;
+            scroll-behavior: smooth;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        /* 头部区域 */
+        .hero {
+            text-align: center;
+            padding: 2rem 0 1.5rem;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #2b5797, #1e3c72);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .hero .tagline {
+            font-size: 1.2rem;
+            color: #4a4a4a;
+            margin-top: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .badge-group {
+            display: flex;
+            justify-content: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #e9ecef;
+            padding: 0.25rem 0.85rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            color: #2c3e66;
+            font-weight: 500;
+        }
+
+        /* 安装卡片区域 */
+        .install-card {
+            background: linear-gradient(145deg, #ffffff, #f3f3f3);
+            border-radius: 32px;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+            padding: 1.8rem 2rem;
+            margin: 2rem 0;
+            text-align: center;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .install-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .install-desc {
+            color: #5a5a5a;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-install {
+            background: #2b5797;
+            color: white;
+            border: none;
+            font-size: 1.2rem;
+            font-weight: 600;
+            padding: 0.9rem 2.2rem;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-install:hover {
+            background: #1f4172;
+            transform: translateY(-2px);
+        }
+
+        .manual-link {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .manual-link a {
+            color: #2b5797;
+            text-decoration: none;
+        }
+
+        /* 功能卡片网格 */
+        .section-title {
+            font-size: 2rem;
+            font-weight: 650;
+            margin: 2rem 0 1.5rem;
+            text-align: center;
+            letter-spacing: -0.3px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.8rem;
+            margin-bottom: 2rem;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+            border: 1px solid #edece9;
+            transition: all 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+            border-color: #d0d0d0;
+        }
+
+        .feature-icon {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card p {
+            color: #4a4a4a;
+            font-size: 0.95rem;
+        }
+
+        /* 技术栈 */
+        .tech-stack {
+            background: #edebe9;
+            border-radius: 28px;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .tech-badges {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .tech-badge {
+            background: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 100px;
+            font-weight: 500;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        /* 安装步骤 / 迁移说明 */
+        .steps {
+            background: #ffffffd9;
+            border-radius: 28px;
+            padding: 1.5rem 2rem;
+            margin: 1.5rem 0;
+            border: 1px solid #e3e1de;
+        }
+
+        .steps h3 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .steps ol, .steps ul {
+            padding-left: 1.8rem;
+            margin: 0.8rem 0;
+        }
+
+        .steps li {
+            margin: 0.5rem 0;
+        }
+
+        /* 页脚 */
+        .footer {
+            text-align: center;
+            margin-top: 3.5rem;
+            padding-top: 2rem;
+            border-top: 1px solid #dddcd9;
+            color: #6c6c6c;
+            font-size: 0.85rem;
+        }
+
+        .footer a {
+            color: #2b5797;
+            text-decoration: none;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 1rem;
+            }
+            .hero h1 {
+                font-size: 2rem;
+            }
+            .install-card {
+                padding: 1rem;
+            }
+            .btn-install {
+                font-size: 1rem;
+                padding: 0.7rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- 头部 -->
+    <div class="hero">
+        <h1>⚓ 碧蓝航线图鉴</h1>
+        <div class="tagline">AzurLane Dex · 为指挥官打造的舰船收集伴侣</div>
+        <div class="badge-group">
+            <span class="badge">WinUI 3</span>
+            <span class="badge">C# / .NET 6</span>
+            <span class="badge">MSIX 打包</span>
+            <span class="badge">多账户</span>
+            <span class="badge">自动更新</span>
+        </div>
+    </div>
+
+    <!-- 安装区块 -->
+    <div class="install-card" id="install">
+        <div class="install-title">✨ 立即安装 ✨</div>
+        <div class="install-desc">通过 Windows 应用安装程序一键升级</div>
+        <button class="btn-install" id="installBtn">
+            <span>⬇️</span> 安装 AzurLaneDex
+        </button>
+        <div class="manual-link">
+            📦 手动下载：<a href="https://github.com/xiwangzaiqianfang/AzurLaneDex/releases/latest" target="_blank">GitHub Releases · 最新 MSIX 包</a>
+        </div>
+        <p style="font-size:0.8rem; margin-top:1rem; color:#6b6b6b;">
+            💡 若未自动唤起安装程序，请检查系统是否开启旁加载模式（设置 → 应用 → 高级应用设置）
+        </p>
+    </div>
+
+    <!-- 主要功能 -->
+    <div class="section-title">📋 核心功能</div>
+    <div class="features-grid">
+        <div class="feature-card"><div class="feature-icon">📚</div><h3>完整图鉴</h3><p>编号、名称、阵营、稀有度、舰种、改造信息、特殊兵装等数据一览无余</p></div>
+        <div class="feature-card"><div class="feature-icon">✅</div><h3>进度跟踪</h3><p>标记已获得、突破次数、120级、誓约、改造、特殊兵装，实时统计收集率</p></div>
+        <div class="feature-card"><div class="feature-icon">⚙️</div><h3>批量操作</h3><p>一键标记多艘舰船的状态，支持全选/反选，大幅提升管理效率</p></div>
+        <div class="feature-card"><div class="feature-icon">🔍</div><h3>智能筛选 & 搜索</h3><p>按舰种、阵营、稀有度、属性加成筛选；支持船名/和谐名/活动名搜索</p></div>
+        <div class="feature-card"><div class="feature-icon">🏆</div><h3>阵营科技点</h3><p>自动计算每个阵营的科技点总和（获得+满破+120级），进度条一目了然</p></div>
+        <div class="feature-card"><div class="feature-icon">📊</div><h3>全局属性加成</h3><p>统计全舰队或指定舰种的耐久、炮击、雷击等加成总值</p></div>
+        <div class="feature-card"><div class="feature-icon">👥</div><h3>多账户系统</h3><p>支持多用户独立保存进度，可设置管理员账户，数据互不干扰</p></div>
+        <div class="feature-card"><div class="feature-icon">💾</div><h3>备份 & 迁移</h3><p>导出/导入账户数据，创建备份点，并支持从旧 Python 版数据自动转换</p></div>
+        <div class="feature-card"><div class="feature-icon">🔄</div><h3>自动更新</h3><p>集成 AppInstaller，启动后即可检查更新，下载安装更省心</p></div>
+    </div>
+
+    <!-- 技术栈 & 开发信息 -->
+    <div class="tech-stack">
+        <div style="font-size:1.5rem; font-weight:600;">🛠️ 技术栈</div>
+        <div class="tech-badges">
+            <span class="tech-badge">WinUI 3</span>
+            <span class="tech-badge">Windows App SDK 1.4+</span>
+            <span class="tech-badge">C# 10 / .NET 6</span>
+            <span class="tech-badge">MVVM</span>
+            <span class="tech-badge">JSON 本地存储</span>
+            <span class="tech-badge">MSIX 旁加载</span>
+        </div>
+    </div>
+
+    <!-- 安装 & 迁移说明 -->
+    <div class="steps">
+        <h3>📦 安装方式</h3>
+        <ol>
+            <li>点击上方【安装 AzurLaneDex】按钮，系统将自动唤起“应用安装程序”</li>
+            <li>若未自动唤起，请手动下载 <strong>.msix</strong> 文件并双击安装</li>
+            <li>首次运行会提示创建账户，按指引完成设置即可开始使用</li>
+        </ol>
+        <h3>🚀 从旧版（Python 版）迁移数据</h3>
+        <ul>
+            <li>打开新版应用 → 「设置」→「数据迁移」→ 选择旧的 <code>ships_static.json</code> 文件</li>
+            <li>程序将自动转换为新格式并覆盖静态数据，重启后生效</li>
+            <li>用户进度文件 <code>ships_state.json</code> 可直接放入对应账户目录（无需转换）</li>
+        </ul>
+        <h3>🧪 开发者编译</h3>
+        <p>环境：Visual Studio 2022 + Windows 应用开发工作负载。克隆仓库后打开 <code>AzurLaneDex.sln</code>，即可编译运行。</p>
+        <pre style="background:#f0f0f0; padding:10px; border-radius:12px; font-size:0.8rem;">git clone https://github.com/xiwangzaiqianfang/AzurLaneDex.git</pre>
+    </div>
+
+    <!-- 许可证 & 致谢 -->
+    <div class="footer">
+        <p>© 2025 碧蓝航线图鉴 · 开源协议 <a href="https://github.com/xiwangzaiqianfang/AzurLaneDex/blob/main/LICENSE" target="_blank">CC BY-NC-SA 4.0</a></p>
+        <p>数据参考：<a href="https://wiki.biligame.com/blhx/" target="_blank">碧蓝航线 WIKI</a> · 图标来自 Segoe Fluent Icons</p>
+        <p>
+            <a href="https://github.com/xiwangzaiqianfang/AzurLaneDex" target="_blank">GitHub 仓库</a> · 
+            <a href="https://github.com/xiwangzaiqianfang/AzurLaneDex/issues" target="_blank">反馈 Issues</a>
+        </p>
+        <p>⭐ 如果觉得好用，记得给项目一个 Star ~</p>
+    </div>
+</div>
+
+<script>
+    document.getElementById('installBtn').addEventListener('click', function() {
+        // 请将 .appinstaller 的最终 URL 换成你在 GitHub Pages 上实际托管的地址
+        // 示例格式：https://xiwangzaiqianfang.github.io/AzurLane-Dex/Release/AzurLaneDex.msix
+        const installerUrl = "https://xiwangzaiqianfang.github.io/AzurLaneDex/Release/AzurLaneDex.msix";
+        const zipUrl = "https://xiwangzaiqianfang.github.io/AzurLaneDex/Release/AzurLaneDex.zip";
+        // 尝试打开 MSIX 安装链接
+        window.open(zipUrl, '_blank');
+        // 备用：如果用户无法安装 MSIX，可以提供 ZIP 下载链接
+        window.open(installerUrl, '_blank');
+    });
+</script>
+</body>
+</html>

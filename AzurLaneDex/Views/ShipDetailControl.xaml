@@ -4,6 +4,16 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:Microsoft.UI.Xaml.Controls">
 
+    <UserControl.Resources>
+        <Storyboard x:Name="AvatarFadeInStoryboard">
+            <DoubleAnimation
+            Storyboard.TargetName="ShipAvatarImage"
+            Storyboard.TargetProperty="Opacity"
+            From="0.0" To="1.0" Duration="0:0:0.1"
+            EnableDependentAnimation="True" />
+        </Storyboard>
+    </UserControl.Resources>
+
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Spacing="12" Margin="12">
 
@@ -53,7 +63,7 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <Border Grid.Column="0" Width="40" Height="40" CornerRadius="6" Background="Transparent" Margin="0,0,12,0">
-                                <Image x:Name="ShipAvatarImage" Stretch="UniformToFill"/>
+                                <Image x:Name="ShipAvatarImage" Stretch="UniformToFill" Opacity="1"/>
                             </Border>
                             <TextBlock x:Name="ShipNameText" Grid.Column="1" FontSize="26" FontWeight="SemiBold" Margin="0,0,0,4"/>
                         </Grid>
@@ -98,7 +108,7 @@
                     <CheckBox x:Name="OathCheckBox" Content="已誓约" Margin="0,4,0,0" Checked="OnOathChanged" Unchecked="OnOathChanged"/>
                     <CheckBox x:Name="Level120CheckBox" Content="120级" Margin="0,4,0,0" Checked="OnLevel120Changed" Unchecked="OnLevel120Changed"/>
                     <CheckBox x:Name="RemodeledCheckBox" Content="已改造" Margin="0,4,0,0" Checked="OnRemodeledChanged" Unchecked="OnRemodeledChanged"/>
-                    <CheckBox x:Name="SpecialGearObtainedCheckBox" Content="已获得特殊兵装" Margin="0,4,0,0" 
+                    <CheckBox x:Name="SpecialGearObtainedCheckBox" Content="已获得专属兵装" Margin="0,4,0,0" Visibility="Collapsed"
                               Checked="OnSpecialGearObtainedChanged" Unchecked="OnSpecialGearObtainedChanged"/>
                 </StackPanel>
             </Border>
@@ -152,7 +162,7 @@
                 </StackPanel>
             </Border>
 
-            <!-- 特殊兵装卡片 -->
+            <!-- 专属兵装卡片 -->
             <Border x:Name="SpecialGearBorder"
                     Background="{ThemeResource CardBackgroundFillColorDefault}"
                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"

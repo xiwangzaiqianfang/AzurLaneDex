@@ -52,6 +52,22 @@
 						</Button>
 					</Grid>
 				</Border>
+                <Border Style="{StaticResource SettingsCardStyle}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                            <TextBlock Text="为当前帐户申请管理员权限" FontSize="14"/>
+                        </StackPanel>
+                        <Button Grid.Column="1" x:Name="RequestAdminButton" Click="RequestAdmin_Click" Style="{StaticResource AccentButtonStyle}">
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <TextBlock Text="申请权限" Margin="10,0,10,0"/>
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+                </Border>
                 <TextBlock Text="已添加的账户" FontSize="16" FontWeight="SemiBold"/>
                 <!-- 账户列表（使用 ItemsRepeater 或 ListView） -->
 				<controls:ItemsRepeater x:Name="AccountsRepeater">

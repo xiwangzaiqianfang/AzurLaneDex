@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,7 +21,7 @@ public class SuggestionItem
 public sealed partial class MainPage : Page
 {
     private ShipManager _shipManager;
-    private List<ShipViewModel> _currentShips = new();
+    private ObservableCollection<ShipViewModel> _currentShips = new();
     private FilterCriteria _currentFilterCriteria;
     private int _lastSelectedShipId = -1;
     private double _lastScrollOffset = 0;
@@ -51,13 +52,17 @@ public sealed partial class MainPage : Page
         }
 
         _shipManager = app.ShipManager;
+        ShipListView.ItemsSource = _currentShips;
         if (_shipManager != null)
         {
-            _shipManager.data_changed += OnDataChanged;
+            AddShipButton.Visibility = app.AccountManager.IsDeveloper()
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+            _shipManager.DataStructureChanged += () => DispatcherQueue.TryEnqueue(() => OnDataChanged());
+            _shipManager.StateChanged += () => DispatcherQueue.TryEnqueue(() => ApplyCurrentSort());
             // 其他初始化
         }
         System.Diagnostics.Debug.WriteLine($"Ships count: {_shipManager.Ships.Count}");
-        ShipListView.ItemsSource = _shipManager.Ships;
         BuildSuggestionSource();
         RefreshShipList();
     }
@@ -200,7 +205,7 @@ public sealed partial class MainPage : Page
             0 => s => s.Id,
             1 => s => s.GameOrder,
             2 => s => s.Name,
-            3 => s => s.Rarity,
+            3 => s => GetRaritySortValue(s),
             4 => s => s.Owned,
             5 => s => s.Oath,
             6 => s => s.Breakthrough,
@@ -214,15 +219,47 @@ public sealed partial class MainPage : Page
         else
             filtered = filtered.OrderByDescending(keySelector);
 
-        _currentShips = filtered.ToList();
-        ShipListView.ItemsSource = _currentShips;
-
-            
+        _currentShips.Clear();
+        foreach (var ship in filtered)
+            _currentShips.Add(ship);
 
         // 刷新后清除全选状态，并重置所有舰船的 IsSelected 为 false
         SelectAllCheckBox.IsChecked = false;
         foreach (var ship in _currentShips)
             ship.IsSelected = false;
+    }
+
+    // 原地排序（不改变 ItemsSource 实例）
+    private void ApplyCurrentSort()
+    {
+        if (_currentShips == null || _currentShips.Count == 0) return;
+        int sortIndex = SortCombo.SelectedIndex;
+        Func<ShipViewModel, IComparable> keySelector = sortIndex switch
+        {
+            0 => s => s.Id,
+            1 => s => s.GameOrder,
+            2 => s => s.Name,
+            3 => s => GetRaritySortValue(s),
+            4 => s => s.Owned,
+            5 => s => s.Oath,
+            6 => s => s.Breakthrough,
+            7 => s => s.Level120,
+            8 => s => s.Remodeled,
+            9 => s => s.SpecialGearObtained,
+            _ => s => s.Id
+        };
+
+        var sorted = _isAscending
+        ? _currentShips.OrderBy(keySelector).ToList()
+        : _currentShips.OrderByDescending(keySelector).ToList();
+
+
+        for (int i = 0; i < sorted.Count; i++)
+        {
+            int oldIndex = _currentShips.IndexOf(sorted[i]);
+            if (oldIndex != i)
+                _currentShips.Move(oldIndex, i);
+        }
     }
 
     private void OnShipDataChanged()
@@ -328,6 +365,22 @@ public sealed partial class MainPage : Page
             RefreshShipList();
         }
     }
+    private int GetRaritySortValue(ShipViewModel ship)
+    {
+        int baseValue = RarityOrderMap.GetValueOrDefault(ship.Rarity, 99);
+        // 已改造且可改造的舰船稀有度提升一级（若未达最高）
+        if (ship.Remodeled && ship.CanRemodel && baseValue < RarityOrderMap.Count - 1)
+            return baseValue + 1;
+        return baseValue;
+    }
+    private static readonly Dictionary<string, int> RarityOrderMap = new()
+    {
+        ["普通"] = 0,
+        ["稀有"] = 1,
+        ["精锐"] = 2,
+        ["超稀有"] = 3,
+        ["海上传奇"] = 4
+    };
     private void SortCombo_SelectionChanged(object sender, SelectionChangedEventArgs e) => RefreshShipList();
     private void RefreshButton_Click(object sender, RoutedEventArgs e) => RefreshShipList();
 

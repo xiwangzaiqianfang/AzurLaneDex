@@ -1,4 +1,5 @@
-﻿using AzurLaneDex.Models;
+﻿using System;
+using AzurLaneDex.Models;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -56,6 +57,7 @@ public class ShipViewModel : INotifyPropertyChanged
     public int TechPoints120 => _static.TechPoints120;
 
     // 动态属性（可写，触发 PropertyChanged）
+    private static readonly string[] RarityOrder = { "普通", "稀有", "精锐", "超稀有", "海上传奇" };
     public bool Owned
     {
         get => _state.Owned;
@@ -89,7 +91,16 @@ public class ShipViewModel : INotifyPropertyChanged
     public bool Remodeled
     {
         get => _state.Remodeled;
-        set { if (_state.Remodeled != value) { _state.Remodeled = value; OnPropertyChanged(); } }
+        set
+        {
+            if (_state.Remodeled != value)
+            {
+                _state.Remodeled = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(DisplayName));
+                OnPropertyChanged(nameof(EffectiveRarity));  // 新增
+            }
+        }
     }
 
     public bool Oath
@@ -127,7 +138,39 @@ public class ShipViewModel : INotifyPropertyChanged
     // 辅助属性
     public bool IsMaxBreakthrough => Breakthrough == 3;
     public string BreakthroughDisplay => Breakthrough == 3 ? "满破" : Breakthrough.ToString();
-    public string DisplayName => string.IsNullOrEmpty(AltName) ? Name : $"{Name}（{AltName}）";
+    public string DisplayName
+    {
+        get
+        {
+            string baseName = string.IsNullOrEmpty(AltName) ? Name : $"{Name}（{AltName}）";
+            if (Remodeled && CanRemodel)
+            {
+                if (string.IsNullOrEmpty(AltName))
+                {
+                    baseName = Name + "改";
+                }
+                else
+                {
+                    baseName = $"{Name}改 ({AltName}改)";
+                }
+            }
+            return baseName;
+        }
+    }
+
+    public string EffectiveRarity
+    {
+        get
+        {
+            if (Remodeled && CanRemodel)
+            {
+                var idx = Array.IndexOf(RarityOrder, Rarity);
+                if (idx >= 0 && idx < RarityOrder.Length - 1)
+                    return RarityOrder[idx + 1];
+            }
+            return Rarity;
+        }
+    }
 
     // 获取当前状态对象（用于保存）
     public ShipState GetState() => _state;

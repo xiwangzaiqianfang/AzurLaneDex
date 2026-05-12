@@ -150,6 +150,44 @@ namespace AzurLaneDex.Views
             finally
             {
                 _isUpdating = false;
+                LoadAccounts();
+            }
+        }
+        private async void RequestAdmin_Click(object sender, RoutedEventArgs e)
+        {
+            // 弹出密码输入框
+            var passwordBox = new PasswordBox { PlaceholderText = "请输入系统管理员密码" };
+            var panel = new StackPanel();
+            panel.Children.Add(passwordBox);
+
+            var dialog = new ContentDialog
+            {
+                Title = "提升权限",
+                Content = panel,
+                PrimaryButtonText = "确认",
+                CloseButtonText = "取消",
+                XamlRoot = this.XamlRoot,
+                DefaultButton = ContentDialogButton.Primary
+            };
+
+            if (await dialog.ShowAsync() == ContentDialogResult.Primary)
+            {
+                string password = passwordBox.Password;
+                if (_accountManager.VerifyPassword("developer", password))
+                {
+                    // 将当前账户设为管理员
+                    var current = _accountManager.Accounts.FirstOrDefault(a => a.Name == _accountManager.CurrentAccount);
+                    if (current != null)
+                    {
+                        current.IsDeveloper = true;
+                        _accountManager.Save();
+                        await ShowError("您已获得管理员权限，请重新打开相关页面以启用新建/编辑功能。");
+                    }
+                }
+                else
+                {
+                    await ShowError("密码错误，无法提升权限。");
+                }
             }
         }
     }

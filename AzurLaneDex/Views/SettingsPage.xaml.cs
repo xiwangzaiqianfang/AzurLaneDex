@@ -1,4 +1,5 @@
 ﻿using AzurLaneDex.Models;
+using AzurLaneDex.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -62,9 +63,38 @@ namespace AzurLaneDex.Views
 
         private async void MigrateOldData_Click(object sender, RoutedEventArgs e)
         {
-            // 调用之前实现的迁移逻辑
-            // 为了简洁，此处调用一个公共方法，您需要将之前写的迁移代码移入
-            await PerformDataMigration();
+            var picker = new FileOpenPicker();
+            var window = _app.GetMainWindow();
+            if (window == null) return;
+            InitializeWithWindow.Initialize(picker, WindowNative.GetWindowHandle(window));
+            picker.ViewMode = PickerViewMode.List;
+            picker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
+            picker.FileTypeFilter.Add(".json");
+            var file = await picker.PickSingleFileAsync();
+            if (file == null) return;
+
+            string oldJson = await FileIO.ReadTextAsync(file);
+            try
+            {
+                var newStatic = MigrateOldStaticJson(oldJson);
+                if (newStatic == null)
+                {
+                    await ShowDialog("迁移失败", "文件格式不正确");
+                    return;
+                }
+                string targetPath = Path.Combine(App.DataRoot, "static", "ships_static.json");
+                using (var src = await file.OpenStreamForReadAsync())
+                using (var dest = File.OpenWrite(targetPath))
+                {
+                    await src.CopyToAsync(dest);
+                }
+                _app.ShipManager?.Load();
+                await ShowDialog("成功", "文件已替换并自动迁移。");
+            }
+            catch (Exception ex)
+            {
+                await ShowDialog("失败", ex.Message);
+            }
         }
 
         private async Task PerformDataMigration()
@@ -83,40 +113,64 @@ namespace AzurLaneDex.Views
             {
                 oldJson = await FileIO.ReadTextAsync(file);
             }
-            catch
+            catch (Exception ex)
             {
-                await ShowDialog("错误", "无法读取文件");
+                await ShowDialog("读取失败", ex.Message);
                 return;
             }
 
             // 迁移逻辑（请复用之前完整的 MigrateOldStaticJson 方法）
-            var newStatic = MigrateOldStaticJson(oldJson);
-            if (newStatic == null)
-            {
-                await ShowDialog("错误", "文件格式不正确");
-                return;
-            }
-
-            string targetPath = System.IO.Path.Combine(App.DataRoot, "static", "ships_static.json");
             try
             {
+                // 调用迁移函数（直接使用 ShipManager 的迁移逻辑）
+                var newStatic = MigrateOldStaticJson(oldJson);
+                if (newStatic == null) throw new InvalidOperationException("文件格式不正确");
+
+                string targetPath = Path.Combine(App.DataRoot, "static", "ships_static.json");
                 var newJson = JsonSerializer.Serialize(newStatic, new JsonSerializerOptions { WriteIndented = true });
                 File.WriteAllText(targetPath, newJson);
+
+                // 重新加载 ShipManager
                 _app.ShipManager?.Load();
-                await ShowDialog("成功", "旧数据已转换并覆盖。请重新启动应用或切换页面以查看变更。");
+                await ShowDialog("成功", "数据已迁移并覆盖，请返回主界面查看。");
             }
             catch (Exception ex)
             {
-                await ShowDialog("失败", ex.Message);
+                await ShowDialog("迁移失败", ex.Message);
             }
         }
 
         private StaticData MigrateOldStaticJson(string oldJson)
         {
-            // 请复制之前写的完整迁移方法，此处略（避免重复）
-            // 在实际项目中，您可以从之前的代码中复制 MigrateOldStaticJson 和 MigrateSingleShip 方法
-            // 为了编译通过，暂时返回 null
-            return null;
+            using var doc = JsonDocument.Parse(oldJson);
+            var root = doc.RootElement;
+
+            if (root.TryGetProperty("ships", out var shipsArray) && shipsArray.ValueKind == JsonValueKind.Array)
+            {
+                var version = root.TryGetProperty("version", out var v) ? v.GetString() ?? "0.0" : "0.0";
+                var newShips = MigrateShipArray(shipsArray);
+                return new StaticData { Version = version, Ships = newShips };
+            }
+            else if (root.ValueKind == JsonValueKind.Array)
+            {
+                var newShips = MigrateShipArray(root);
+                return new StaticData { Version = "0.0", Ships = newShips };
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private List<ShipStatic> MigrateShipArray(JsonElement array)
+        {
+            var list = new List<ShipStatic>();
+            foreach (var old in array.EnumerateArray())
+            {
+                var newShip = ShipManager.MigrateSingleShip(old);
+                list.Add(newShip);
+            }
+            return list;
         }
 
         private async void ResetWindowClick(object sender, RoutedEventArgs e)

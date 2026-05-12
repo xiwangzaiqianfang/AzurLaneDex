@@ -63,11 +63,11 @@
                         <StackPanel Grid.Column="1">
                             <TextBlock Text="应用更新源" FontSize="14" FontWeight="SemiBold"/>
                             <TextBlock Text="选择检查应用更新的方式" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Margin="0,4,0,0"/>
-                            <ComboBox x:Name="AppDataSourceCombo" Margin="0,8,0,0" SelectedIndex="0">
-                                <ComboBoxItem>GitHub (最新Release)</ComboBoxItem>
-                                <ComboBoxItem>自定义URL (update.json)</ComboBoxItem>
+                            <ComboBox x:Name="AppDataSourceCombo" Margin="0,8,0,0" SelectedIndex="0"
+                                      SelectionChanged="AppDataSourceCombo_SelectionChanged">
+                                <ComboBoxItem>GitHub Pages</ComboBoxItem>
+                                <ComboBoxItem>蓝奏云</ComboBoxItem>
                             </ComboBox>
-                            <TextBox x:Name="AppCustomUrlBox" PlaceholderText="自定义 update.json 文件 URL" Margin="0,8,0,0" Visibility="Collapsed"/>
                         </StackPanel>
                     </Grid>
                 </Border>
@@ -103,12 +103,14 @@
                         <StackPanel Grid.Column="1">
                             <TextBlock Text="数据更新源" FontSize="14" FontWeight="SemiBold"/>
                             <TextBlock Text="选择数据文件的来源及代理（可选）" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Margin="0,4,0,0"/>
-                            <ComboBox x:Name="DataDataSourceCombo" Margin="0,8,0,0" SelectedIndex="0">
+                            <ComboBox x:Name="DataDataSourceCombo" Margin="0,8,0,0" SelectedIndex="0"
+                                      SelectionChanged="DataDataSourceCombo_SelectionChanged">
                                 <ComboBoxItem>GitHub (raw)</ComboBoxItem>
                                 <ComboBoxItem>GitHub (CDN)</ComboBoxItem>
                                 <ComboBoxItem>自定义URL</ComboBoxItem>
                             </ComboBox>
-                            <TextBox x:Name="DataCustomUrlBox" PlaceholderText="自定义 ships_static.json 文件 URL" Margin="0,8,0,0" Visibility="Collapsed"/>
+                            <TextBox x:Name="DataCustomUrlBox" PlaceholderText="自定义 ships_static.json 文件 URL" Margin="0,8,0,0"
+                                     Visibility="Collapsed"/>
                             <TextBox x:Name="ProxyBox" PlaceholderText="代理地址（例如 http://127.0.0.1:7890）" Margin="0,8,0,0"/>
                         </StackPanel>
                     </Grid>
