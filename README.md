@@ -27,7 +27,7 @@
 ## 📦 安装与更新
 
 ### 直接安装 MSIX 包
-1. 前往 [Releases](https://github.com/xiwangzaiqianfang/AzurLane-Dex-WinUI/releases/latest) 下载最新的 `.msix` 文件。
+1. 前往 [Releases](https://github.com/xiwangzaiqianfang/AzurLaneDex/releases/latest) 下载最新的 `.msix` 文件。
 2. 双击安装，需要系统开启**旁加载模式**（开发者设置中允许安装外部应用）。
 3. 首次运行时会提示创建初始账户。
 
