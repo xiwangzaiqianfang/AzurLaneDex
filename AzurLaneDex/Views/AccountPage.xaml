@@ -79,9 +79,11 @@
 		</Grid.RowDefinitions>
 
 		<!-- 标题 -->
-		<TextBlock Text="账户" FontSize="28" FontWeight="SemiBold" Margin="20,20,20,12"/>
-        
-		<ScrollViewer Grid.Row="1">
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="20,20,20,12" Spacing="12">
+            <TextBlock Text="帐户" FontSize="28" FontWeight="SemiBold" Margin="10,10,0,0" VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="1">
 			<StackPanel Margin="20,20,20,20" Spacing="12">
                 <Border>
                     <Grid>

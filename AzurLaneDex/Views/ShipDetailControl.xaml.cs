@@ -1,5 +1,6 @@
-﻿using AzurLaneDex.ViewModels;
+﻿using ABI.System;
 using AzurLaneDex.Services;
+using AzurLaneDex.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -9,6 +10,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.Storage;
+using Windows.Storage.Streams;
+
+using Uri = System.Uri;
+using Exception = System.Exception;
 
 namespace AzurLaneDex.Views;
 
@@ -17,6 +23,7 @@ public sealed partial class ShipDetailControl : UserControl
     private bool _isUpdating = false;
     private ShipViewModel? _currentShip;
     private int _avatarLoadToken = 0;
+    private int _gearLoadToken = 0;
     public ShipDetailControl()
     {
         this.InitializeComponent();
@@ -42,9 +49,28 @@ public sealed partial class ShipDetailControl : UserControl
             Level120CheckBox.IsChecked = ship.Level120;
             RemodeledCheckBox.IsEnabled = ship.CanRemodel && ship.Owned;
             RemodeledCheckBox.IsChecked = ship.Remodeled;
-            SpecialGearObtainedCheckBox.IsChecked = ship.SpecialGearObtained;
             SpecialGearBorder.Visibility = ship.CanSpecialGear ? Visibility.Visible : Visibility.Collapsed;
-            SpecialGearObtainedCheckBox.Visibility = ship.CanSpecialGear ? Visibility.Visible : Visibility.Collapsed;
+            if (ship.CanSpecialGear)
+            {
+                SpecialGearNameText.Text = ship.SpecialGearName;
+                SpecialGearDateText.Text = string.IsNullOrEmpty(ship.SpecialGearDate) ? "未设定" : ship.SpecialGearDate;
+                SpecialGearAcquireText.Text = string.IsNullOrEmpty(ship.SpecialGearAcquire) ? "暂无获取方式" : ship.SpecialGearAcquire;
+                SetDefaultGearIcon();
+                StartGearFadeIn();
+                // 异步加载自定义图标（使用新的 token）
+                _gearLoadToken++;
+                int token = _gearLoadToken;
+                LoadCustomGearIcon(ship.SpecialGearName, token);
+            }
+            else
+            {
+                SpecialGearNameText.Text = "";
+                SpecialGearDateText.Text = "";
+                SpecialGearAcquireText.Text = "";
+                SpecialGearImage.Opacity = 0;
+                SpecialGearImage.Source = null;
+                GearFadeInStoryboard.Stop();
+            }
             if (remodelChanged)
             {
                 string avatarName0 = ship.Remodeled && ship.CanRemodel ? ship.Name + "改" : ship.Name;
@@ -62,6 +88,7 @@ public sealed partial class ShipDetailControl : UserControl
             return;
         }
         int currentToken = ++_avatarLoadToken;
+        int currentToken1 = ++_gearLoadToken;
 
         // 基本信息
         ShipNameText.Text = ship.DisplayName;
@@ -123,7 +150,26 @@ public sealed partial class ShipDetailControl : UserControl
 
         // 特殊兵装
         SpecialGearBorder.Visibility = ship.CanSpecialGear ? Visibility.Visible : Visibility.Collapsed;
-        SpecialGearObtainedCheckBox.Visibility = ship.CanSpecialGear ? Visibility.Visible : Visibility.Collapsed;
+        if (ship.CanSpecialGear)
+        {
+            SpecialGearNameText.Text = ship.SpecialGearName;
+            SpecialGearDateText.Text = string.IsNullOrEmpty(ship.SpecialGearDate) ? "未设定" : ship.SpecialGearDate;
+            SpecialGearAcquireText.Text = string.IsNullOrEmpty(ship.SpecialGearAcquire) ? "暂无获取方式" : ship.SpecialGearAcquire;
+            SetDefaultGearIcon();
+            StartGearFadeIn();
+            // 加载兵装图标
+            _gearLoadToken++;
+            int token = _gearLoadToken;
+            LoadCustomGearIcon(ship.SpecialGearName, token);
+        }
+        else
+        {
+            SpecialGearNameText.Text = "";
+            SpecialGearDateText.Text = "";
+            SpecialGearAcquireText.Text = "";
+            SpecialGearImage.Opacity = 0;
+            SpecialGearImage.Source = null;
+        }
         var app = Application.Current as App;
         bool isDev = app?.AccountManager?.IsDeveloper() ?? false;
         EditShipButton.Visibility = isDev ? Visibility.Visible : Visibility.Collapsed;
@@ -176,7 +222,6 @@ public sealed partial class ShipDetailControl : UserControl
     // 实际加载头像资源并淡入
     private async void LoadAndFadeInAvatar(string shipName, string fallbackName, int token)
     {
-        // 再次检查是否仍是当前期望的舰船（可能快速切换）
         if (token != _avatarLoadToken) return;
         // 重置头像为透明（准备淡入）
         ShipAvatarImage.Opacity = 0;
@@ -223,10 +268,170 @@ public sealed partial class ShipDetailControl : UserControl
         ShipAvatarImage.Opacity = 0;        // 从完全透明开始淡入
         AvatarFadeInStoryboard.Begin();
     }
+    private async void LoadCustomGearIcon(string gearName, int token)
+    {
+        if (string.IsNullOrEmpty(gearName) || token != _gearLoadToken) return;
+        string[] extensions = { ".jpg", ".png" };
+        foreach (var ext in extensions)
+        {
+            string relativePath = $"Assets/Gear/{gearName}{ext}";
+            try
+            {
+                var uri = new Uri($"ms-appx:///{relativePath}");
+                var file = await StorageFile.GetFileFromApplicationUriAsync(uri);
+                using (var stream = await file.OpenReadAsync())
+                {
+                    var bitmap = new BitmapImage();
+                    await bitmap.SetSourceAsync(stream);
+                    if (token == _gearLoadToken)
+                    {
+                        SpecialGearImage.Source = bitmap;
+                        StartGearFadeIn(); // 替换默认图标后重新淡入
+                    }
+                    return; // 成功，退出循环
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to load {relativePath}: {ex.Message}");
+            }
+        }
+    }
+    /*
+    private void TryLoadCustomGearIcon(string uriString, string gearName, int token)
+    {
+        System.Diagnostics.Debug.WriteLine($"TryLoadCustomGearIcon: {uriString}, token={token}, current={_gearLoadToken}");
+        try
+        {
+            var uri = new Uri(uriString);
+            var bitmap = new BitmapImage();
+            bitmap.ImageOpened += (s, e) =>
+            {
+                System.Diagnostics.Debug.WriteLine($"ImageOpened success: {uriString}");
+                if (token == _gearLoadToken)
+                {
+                    SpecialGearImage.Source = bitmap;
+                    StartGearFadeIn();   // 重新淡入，替换默认图标
+                }
+            };
+            bitmap.ImageFailed += (s, e) =>
+            {
+                System.Diagnostics.Debug.WriteLine($"ImageFailed: {uriString}, error: {e.ErrorMessage}");
+                if (token != _gearLoadToken) return;
+                // 尝试另一种扩展名
+                string alternative = uriString.EndsWith(".jpg")
+                    ? uriString.Replace(".jpg", ".png")
+                    : uriString.Replace(".png", ".jpg");
+                if (alternative != uriString)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Retry with alternative: {alternative}");
+                    TryLoadCustomGearIcon(alternative, gearName, token);
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"No alternative, keep default icon");
+                }
+                // 否则保持默认图标
+            };
+            bitmap.UriSource = uri;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Exception: {ex.Message}");
+        }
+    }
+    
+    private void TryLoadIcon(string uriString, int token, Action<bool> callback)
+    {
+        try
+        {
+            var uri = new Uri(uriString);
+            var bitmap = new BitmapImage();
+            // 监听加载失败事件
+            bitmap.ImageFailed += (s, e) =>
+            {
+                System.Diagnostics.Debug.WriteLine($"TryLoadIcon: ImageFailed for {uriString}");
+                if (token == _gearLoadToken)
+                    callback?.Invoke(false);
+            };
+            bitmap.ImageOpened += (s, e) =>
+            {
+                System.Diagnostics.Debug.WriteLine($"TryLoadIcon: ImageOpened for {uriString}");
+                if (token == _gearLoadToken)
+                    callback?.Invoke(true);
+            };
+            bitmap.UriSource = uri;
+            SpecialGearImage.Source = bitmap;
+        }
+        catch
+        {
+            if (token == _gearLoadToken)
+                callback?.Invoke(false);
+        }
+    }
+    */
+    private void SetDefaultGearIcon()
+    {
+        var defaultUri = new Uri("ms-appx:///Assets/Gear/default.png");
+        SpecialGearImage.Source = new BitmapImage(defaultUri);
+    }
+
+    /*
+    private async void LoadAndFadeInGear(string gearName, string fallbackName, int token)
+    {
+        System.Diagnostics.Debug.WriteLine($"LoadAndFadeInGear: gearName={gearName}, fallback={fallbackName}, token={token}, current _gearLoadToken={_gearLoadToken}");
+        if (token != _gearLoadToken) return;
+        // 重置头像为透明（准备淡入）
+        SpecialGearImage.Opacity = 0;
+
+        // 尝试加载 png/jpg
+        string jpgUri = $"ms-appx:///Assets/Gear/{gearName}.jpg";
+        TryLoadIcon(jpgUri, token, success =>
+        {
+            // 再次检查 pending 是否已变化
+            if (token != _gearLoadToken) return;
+            if (success)
+            {
+                StartGearFadeIn();
+            }
+            else
+            {
+                string pngUri = $"ms-appx:///Assets/Gear/{gearName}.png";
+                TryLoadIcon(pngUri, token, success2 =>
+                {
+                    if (token != _gearLoadToken) return;
+                    if (success2)
+                    {
+                        StartGearFadeIn();
+                    }
+                    else
+                    {
+                        if (gearName != fallbackName)
+                        {
+                            LoadAndFadeInGear(fallbackName, fallbackName, token);
+                        }
+                        else
+                        {
+                            SetDefaultGearIcon();
+                            StartGearFadeIn();
+                        }
+                    }
+                });
+            }
+        });
+    }
+    */
+    private void StartGearFadeIn()
+    {
+        GearFadeInStoryboard.Stop();      // 停止可能正在播放的动画
+        SpecialGearImage.Opacity = 0;        // 从完全透明开始淡入
+        GearFadeInStoryboard.Begin();
+    }
 
     private void ClearDisplay()
     {
         ++_avatarLoadToken;
+        ++_gearLoadToken;
         _currentShip = null;
         ShipNameText.Text = "";
         ShipIdText.Text = "";
@@ -261,6 +466,7 @@ public sealed partial class ShipDetailControl : UserControl
         NotesText.Text = "";
         SpecialGearBorder.Visibility = Visibility.Collapsed;
         SpecialGearObtainedCheckBox.Visibility = Visibility.Collapsed;
+        SpecialGearImage.Source = null;
         SetDefaultAvatar();
         AvatarFadeInStoryboard.Stop();
         ShipAvatarImage.Opacity = 1;

@@ -12,6 +12,12 @@
             From="0.0" To="1.0" Duration="0:0:0.1"
             EnableDependentAnimation="True" />
         </Storyboard>
+        <Storyboard x:Name="GearFadeInStoryboard">
+            <DoubleAnimation Storyboard.TargetName="SpecialGearImage"
+                         Storyboard.TargetProperty="Opacity"
+                         From="0.0" To="1.0" Duration="0:0:0.1"
+                         EnableDependentAnimation="True" />
+        </Storyboard>
     </UserControl.Resources>
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -175,12 +181,32 @@
                         <FontIcon Glyph="&#xF54C;" FontFamily="Segoe Fluent Icons" FontSize="18" Margin="0,-4,8,0" VerticalAlignment="Center"/>
                         <TextBlock Text="专属兵装" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,6"/>
                     </StackPanel>
-                    <TextBlock Text="兵装名称:" Grid.Row="0" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                    <TextBlock x:Name="SpecialGearNameText" TextWrapping="Wrap" Margin="0,4,0,0"/>
-                    <TextBlock Text="实装日期:" Grid.Row="0" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                    <TextBlock x:Name="SpecialGearDateText" TextWrapping="Wrap" Margin="0,4,0,0"/>
-                    <TextBlock Text="获取方式:" Grid.Row="0" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                    <TextBlock x:Name="SpecialGearAcquireText" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid Grid.Row="0" Grid.ColumnSpan="2" Margin="0,4,0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Column="0" Width="35" Height="35" CornerRadius="6" Background="Transparent" Margin="0,0,12,0">
+                                <Image x:Name="SpecialGearImage" Stretch="UniformToFill"/>
+                            </Border>
+                            <TextBlock x:Name="SpecialGearNameText" Grid.Column="1" FontSize="20" TextWrapping="Wrap" Margin="0,2,0,0"/>
+                        </Grid>
+                        <TextBlock Text="实装日期：" Grid.Row="2" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="SpecialGearDateText" Grid.Row="2" Grid.Column="1" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                        <TextBlock Text="获取方式：" Grid.Row="3" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="SpecialGearAcquireText" Grid.Row="3" Grid.Column="1" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                    </Grid>
                 </StackPanel>
             </Border>
             

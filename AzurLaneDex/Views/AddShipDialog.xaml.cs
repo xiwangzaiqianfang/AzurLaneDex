@@ -36,18 +36,16 @@ namespace AzurLaneDex.Views
             SpecialGearDatePicker.Date = DateTimeOffset.Now;
 
             // 监听特殊兵装复选框，启用/禁用相关控件
-            CanSpecialGearCheckBox.Checked += (s, args) =>
-            {
-                SpecialGearNameBox.IsEnabled = true;
-                SpecialGearDatePicker.IsEnabled = true;
-                SpecialGearAcquireBox.IsEnabled = true;
-            };
-            CanSpecialGearCheckBox.Unchecked += (s, args) =>
-            {
-                SpecialGearNameBox.IsEnabled = false;
-                SpecialGearDatePicker.IsEnabled = false;
-                SpecialGearAcquireBox.IsEnabled = false;
-            };
+            CanSpecialGearCheckBox.Checked += (s, args) => UpdateSpecialGearControlsEnabled();
+            CanSpecialGearCheckBox.Unchecked += (s, args) => UpdateSpecialGearControlsEnabled();
+        }
+
+        private void UpdateSpecialGearControlsEnabled()
+        {
+            bool enabled = CanSpecialGearCheckBox.IsChecked ?? false;
+            SpecialGearNameBox.IsEnabled = enabled;
+            SpecialGearDatePicker.IsEnabled = enabled;
+            SpecialGearAcquireBox.IsEnabled = enabled;
         }
 
         private void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -299,6 +297,7 @@ namespace AzurLaneDex.Views
             finally
             {
                 _isLoadingShipData = false;
+                UpdateSpecialGearControlsEnabled();
             }
         }
 

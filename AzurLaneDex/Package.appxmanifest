@@ -12,7 +12,7 @@
   <Identity
     Name="fmlg.AzurLaneDex"
     Publisher="CN=菲梦林光"
-    Version="0.9.20.0" />
+    Version="0.9.21.0" />
 
   <mp:PhoneIdentity PhoneProductId="8ec55f9b-0291-40ae-8467-f4d363f609d9" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 

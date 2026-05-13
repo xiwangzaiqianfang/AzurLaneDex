@@ -7,16 +7,16 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- 顶部标题栏 -->
-        <StackPanel Grid.Row="0" Margin="20,20,20,12" Spacing="8">
-            <TextBlock Text="属性加成" FontSize="24" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-            <TextBlock Text="全舰队属性加成汇总（可选择舰种筛选）" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+        <StackPanel Grid.Row="0" Margin="20,20,20,12" Spacing="12">
+            <TextBlock Text="属性加成" FontSize="24" FontWeight="SemiBold" Margin="10,10,0,0" VerticalAlignment="Center"/>
 
             <!-- 舰种筛选下拉框，左对齐 -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,12,0,0">
-                <TextBlock Text="筛选舰种:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                <TextBlock Text="筛选舰种:" VerticalAlignment="Center" Margin="0,0,0,0"/>
                 <ComboBox x:Name="ShipClassFilter" 
                           MinWidth="160" 
                           SelectionChanged="ShipClassFilter_SelectionChanged"/>
@@ -48,6 +48,6 @@
         </ScrollViewer>
 
         <!-- 导出按钮 -->
-        <Button Grid.Row="0" Content="导出为图片" Click="ExportToImage" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,20"/>
+        <Button Grid.Row="2" Content="导出为图片" Click="ExportToImage" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,20"/>
     </Grid>
 </Page>

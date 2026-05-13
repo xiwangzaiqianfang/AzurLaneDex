@@ -3,17 +3,23 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:controls="using:Microsoft.UI.Xaml.Controls">
 
-    <ScrollViewer>
-        <StackPanel Margin="20">
-            <TextBlock Text="阵营科技点" FontSize="24" FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,0,0,8"/>
-            <TextBlock Text="各阵营科技点总和（获得 + 满破 + 120级）" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
-            <!-- 总体进度条 -->
+        <StackPanel Grid.Row="0" Margin="20,20,20,12" Spacing="12">
+            <TextBlock Text="阵营科技点" FontSize="24" FontWeight="SemiBold" Margin="10,10,0,0" VerticalAlignment="Center"/>
             <StackPanel Margin="0,0,0,16">
-                <TextBlock x:Name="TechProgressText" HorizontalAlignment="Center"/>
+                <TextBlock x:Name="TechProgressText" VerticalAlignment="Center" Margin="10,10,0,10"/>
                 <ProgressBar x:Name="TechProgressBar" Height="4" Margin="0,8,0,0"/>
             </StackPanel>
+        </StackPanel>
 
+
+        <ScrollViewer Grid.Row="1" Margin="20,0,0,0">
             <!-- 使用 ItemsRepeater 实现响应式网格布局（每行3列） -->
             <controls:ItemsRepeater x:Name="CardsRepeater">
                 <controls:ItemsRepeater.Layout>
@@ -53,8 +59,7 @@
                     </DataTemplate>
                 </controls:ItemsRepeater.ItemTemplate>
             </controls:ItemsRepeater>
-
-            <Button Content="导出为图片" Click="ExportToImage" HorizontalAlignment="Center" Margin="0,20,0,0"/>
-        </StackPanel>
-    </ScrollViewer>
+        </ScrollViewer>
+      <Button Grid.Row="2" Content="导出为图片" Click="ExportToImage" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+    </Grid>
 </Page>

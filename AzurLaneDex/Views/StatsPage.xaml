@@ -3,19 +3,24 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:controls="using:Microsoft.UI.Xaml.Controls">
 
-    <ScrollViewer>
-        <StackPanel Margin="20" Spacing="16">
-
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <StackPanel Grid.Row="0" Margin="20,20,20,12" Spacing="12">
             <!-- 标题 -->
-            <TextBlock Text="统计概览" FontSize="24" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-            <TextBlock Text="收集进度一览 · 数据实时更新" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+            <TextBlock Text="统计概览" FontSize="24" FontWeight="SemiBold" Margin="10,10,0,0" VerticalAlignment="Center"/>
 
             <!-- 收集进度条 -->
-            <StackPanel>
-                <TextBlock x:Name="CollectionProgressText" HorizontalAlignment="Center"/>
+            <StackPanel Margin="0,0,0,16">
+                <TextBlock x:Name="CollectionProgressText" VerticalAlignment="Center" Margin="10,10,0,5"/>
                 <ProgressBar x:Name="CollectionProgressBar" Height="6" Margin="0,8,0,0"/>
             </StackPanel>
-
+        </StackPanel>
+        <ScrollViewer Grid.Row="1" Margin="20,0,0,0">
             <!-- 统计卡片网格 -->
             <controls:ItemsRepeater x:Name="StatsRepeater">
                 <controls:ItemsRepeater.Layout>
@@ -37,10 +42,7 @@
                     </DataTemplate>
                 </controls:ItemsRepeater.ItemTemplate>
             </controls:ItemsRepeater>
-
-            <!-- 导出按钮 -->
-            <Button Content="导出为图片" Click="ExportToImage" HorizontalAlignment="Center" Margin="0,20,0,0"/>
-
-        </StackPanel>
-    </ScrollViewer>
+        </ScrollViewer>
+        <Button Content="导出为图片" Grid.Row="2" Click="ExportToImage" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+    </Grid>
 </Page>
