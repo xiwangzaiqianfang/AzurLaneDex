@@ -272,7 +272,7 @@
     <!-- 安装区块 -->
     <div class="install-card" id="install">
         <div class="install-title">✨ 立即安装 ✨</div>
-        <div class="install-desc">通过 Windows 应用安装程序一键升级</div>
+        <div class="install-desc">通过 Windows 应用安装程序一键安装</div>
         <button class="btn-install" id="installBtn">
             <span>⬇️</span> 安装 AzurLaneDex
         </button>
@@ -280,7 +280,7 @@
             📦 手动下载：<a href="https://github.com/xiwangzaiqianfang/AzurLaneDex/releases/latest" target="_blank">GitHub Releases · 最新 MSIX 包</a>
         </div>
         <p style="font-size:0.8rem; margin-top:1rem; color:#6b6b6b;">
-            💡 若未自动唤起安装程序，请检查系统是否开启旁加载模式（设置 → 应用 → 高级应用设置）
+            💡 若未能成功安装程序，请检查系统是否开启旁加载模式（设置 → 应用 → 高级应用设置）
         </p>
     </div>
 
@@ -315,8 +315,7 @@
     <div class="steps">
         <h3>📦 安装方式</h3>
         <ol>
-            <li>点击上方【安装 AzurLaneDex】按钮，系统将自动唤起“应用安装程序”</li>
-            <li>若未自动唤起，请手动下载 <strong>.msix</strong> 文件并双击安装</li>
+            <li>点击上方【安装 AzurLaneDex】按钮，系统将自动下载 <strong>.zip</strong> 文件，解压按照 <strong>Readme.txt</strong> 安装</li>
             <li>首次运行会提示创建账户，按指引完成设置即可开始使用</li>
         </ol>
         <h3>🚀 从旧版（Python 版）迁移数据</h3>
@@ -332,7 +331,7 @@
 
     <!-- 许可证 & 致谢 -->
     <div class="footer">
-        <p>© 2025 碧蓝航线图鉴 · 开源协议 <a href="https://github.com/xiwangzaiqianfang/AzurLaneDex/blob/main/LICENSE" target="_blank">CC BY-NC-SA 4.0</a></p>
+        <p>碧蓝航线图鉴 · 开源协议 <a href="https://github.com/xiwangzaiqianfang/AzurLaneDex/blob/main/LICENSE" target="_blank">CC BY-NC-SA 4.0</a></p>
         <p>数据参考：<a href="https://wiki.biligame.com/blhx/" target="_blank">碧蓝航线 WIKI</a> · 图标来自 Segoe Fluent Icons</p>
         <p>
             <a href="https://github.com/xiwangzaiqianfang/AzurLaneDex" target="_blank">GitHub 仓库</a> · 
@@ -346,7 +345,7 @@
     document.getElementById('installBtn').addEventListener('click', function() {
         // 请将 .appinstaller 的最终 URL 换成你在 GitHub Pages 上实际托管的地址
         // 示例格式：https://xiwangzaiqianfang.github.io/AzurLane-Dex/Release/AzurLaneDex.msix
-        const installerUrl = "https://xiwangzaiqianfang.github.io/AzurLaneDex/Release/AzurLaneDex.msix";
+        const installerUrl = "https://xiwangzaiqianfang.github.io/AzurLaneDex/Release/AzurLaneDex.msixbundle";
         const zipUrl = "https://xiwangzaiqianfang.github.io/AzurLaneDex/Release/AzurLaneDex.zip";
         // 尝试打开 MSIX 安装链接
         window.open(zipUrl, '_blank');
