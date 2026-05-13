@@ -9,7 +9,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Xml.Linq;
+using static System.Net.WebRequestMethods;
 
 namespace AzurLaneDex.Views
 {
@@ -21,22 +21,23 @@ namespace AzurLaneDex.Views
         private string? _latestAppDownloadUrl;
         private string? _latestDataUrl;
         private string? _remoteDataVersion;
-        private LanzouService? _lanzouService;
 
         // GitHub Pages MSIX 地址
         private const string GitHubPagesMsixUrl = "https://xiwangzaiqianfang.github.io/AzurLaneDex/Release/AzurLaneDex.msixbundle";
-        
-        // version.json 地址
+
+        // version.json 地址 (GitHub)
         private const string AppVersionJsonRawUrl = "https://raw.githubusercontent.com/xiwangzaiqianfang/AzurLaneDex/main/version.json";
         private const string AppVersionJsonCdnUrl = "https://cdn.jsdelivr.net/gh/xiwangzaiqianfang/AzurLaneDex@main/version.json";
 
-        // 蓝奏云文件夹链接与密码（硬编码）
-        private const string LanzouFolderUrl = "https://wwaqf.lanzout.com/b0066z4gcb";
-        private const string LanzouFolderPwd = "gzjf";
+        // Gitee Pages 配置（请替换为你的实际 Pages 地址和文件名）\
+        private const string GiteeRawBaseUrl = "https://gitee.com/fmlg/AzurLaneDex/raw/main/";
+        private const string GiteeVersionJsonUrl = "https://gitee.com/fmlg/AzurLaneDex/raw/main/version.json";
+        private const string GiteeInstallerBaseUrl = "https://gitee.com/fmlg/AzurLaneDex/releases/download/{version}/AzurLaneDex_{version}.msixbundle";
 
         // 舰船数据硬编码地址
         private const string DataGitHubRawUrl = "https://raw.githubusercontent.com/xiwangzaiqianfang/AzurLaneDex/main/AzurLaneDex/Assets/ships_static.json";
         private const string DataGitHubCdnUrl = "https://cdn.jsdelivr.net/gh/xiwangzaiqianfang/AzurLaneDex@main/AzurLaneDex/Assets/ships_static.json";
+        private const string DataGiteeRawUrl = "https://gitee.com/fmlg/AzurLaneDex/raw/main/AzurLaneDex/Assets/ships_static.json";
 
         public UpdatePage()
         {
@@ -51,27 +52,21 @@ namespace AzurLaneDex.Views
             _currentAppVersion = _shipManager.GetCurrentAppVersion();
             CurrentVersionText.Text = _currentAppVersion;
 
-            // 从配置恢复自定义数据 URL（如果用户设过）
+            // 从配置恢复自定义数据 URL
             var config = _shipManager.Config;
-            if (config != null)
-            {
-                if (config.TryGetValue("data_custom_url", out var dc) && dc is string dUrl)
-                    DataCustomUrlBox.Text = dUrl;
-            }
+            if (config != null && config.TryGetValue("data_custom_url", out var dc) && dc is string dUrl)
+                DataCustomUrlBox.Text = dUrl;
 
             DownloadAppButton.Visibility = Visibility.Collapsed;
         }
 
-        // 应用更新源选择变化（无需要操作的控件，但清空状态）
         private void AppDataSourceCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (AppDataSourceCombo == null) return;
             _latestAppVersion = null;
             _latestAppDownloadUrl = null;
             DownloadAppButton.Visibility = Visibility.Collapsed;
         }
 
-        // 检查应用更新
         private async void CheckAppUpdate_Click(object sender, RoutedEventArgs e)
         {
             StatusText.Text = "正在检查应用更新...";
@@ -101,28 +96,25 @@ namespace AzurLaneDex.Views
                     _latestAppVersion = remoteVersion;
                     _latestAppDownloadUrl = GitHubPagesMsixUrl;
                 }
-                else // 蓝奏云（硬编码）
+                else if (AppDataSourceCombo.SelectedIndex == 1) // Gitee (Raw + Releases)
                 {
-                    _lanzouService = new LanzouService(ProxyBox.Text.Trim());
-                    var files = await _lanzouService.GetFileListAsync(LanzouFolderUrl, LanzouFolderPwd);
+                    using var client = CreateHttpClient(ProxyBox.Text.Trim());
+                    string json = await client.GetStringAsync(GiteeVersionJsonUrl);
+                    using var doc = JsonDocument.Parse(json);
 
-                    var zipFiles = files
-                        .Where(f => f.Name.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
-                        .OrderByDescending(f => f.Name)
-                        .ToList();
-
-                    if (zipFiles.Count == 0)
+                    string? remoteVersion = doc.RootElement.GetProperty("version").GetString();
+                    if (string.IsNullOrEmpty(remoteVersion))
                     {
-                        StatusText.Text = "未找到安装包（.zip）文件";
+                        StatusText.Text = "Gitee version.json 格式错误：缺少 version 字段";
                         return;
                     }
 
-                    var latestFile = zipFiles.First();
-                    _latestAppVersion = ExtractVersionFromFileName(latestFile.Name) ?? latestFile.Time;
-                    string fileUrl = "https://www.lanzouo.com/" + latestFile.Id;
-                    _latestAppDownloadUrl = await _lanzouService.GetDirectLinkAsync(fileUrl, latestFile.Id);
+                    _latestAppVersion = remoteVersion;
+                    // 拼接下载链接，将 {version} 替换为实际版本号
+                    _latestAppDownloadUrl = GiteeInstallerBaseUrl.Replace("{version}", _latestAppVersion);
                 }
 
+                // 后续版本比较及显示逻辑（与 GitHub 共用，无需修改）
                 if (!string.IsNullOrEmpty(_latestAppVersion) && !string.IsNullOrEmpty(_latestAppDownloadUrl))
                 {
                     if (CompareVersion(_latestAppVersion, _currentAppVersion) > 0)
@@ -142,7 +134,6 @@ namespace AzurLaneDex.Views
             }
         }
 
-        // 下载并安装应用更新
         private async void DownloadApp_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(_latestAppDownloadUrl))
@@ -150,31 +141,43 @@ namespace AzurLaneDex.Views
                 StatusText.Text = "下载链接无效";
                 return;
             }
-
-            StatusText.Text = "正在下载更新包...";
+            DownloadProgressBar.Visibility = Visibility.Visible;
+            DownloadProgressBar.IsIndeterminate = false;
+            DownloadStatusText.Text = "正在下载...";
+            StatusText.Text = "";
             try
             {
                 string tempDir = Path.GetTempPath();
                 string fileName = Path.GetFileName(new Uri(_latestAppDownloadUrl).AbsolutePath);
                 string downloadPath = Path.Combine(tempDir, fileName);
 
-                using var client = CreateHttpClient(ProxyBox.Text.Trim());
-                var response = await client.GetAsync(_latestAppDownloadUrl);
-                response.EnsureSuccessStatusCode();
-                using (var fs = new FileStream(downloadPath, FileMode.Create, FileAccess.Write, FileShare.None))
+                var progress = new Progress<double>(percent =>
                 {
-                    await response.Content.CopyToAsync(fs);
-                }
+                    DispatcherQueue.TryEnqueue(() =>
+                    {
+                        if (percent >= 0)
+                        {
+                            DownloadProgressBar.Value = percent;
+                            DownloadStatusText.Text = $"下载进度: {percent:F1}%";
+                        }
+                        else
+                        {
+                            DownloadProgressBar.IsIndeterminate = true;
+                            DownloadStatusText.Text = "正在下载... (大小未知)";
+                        }
+                    });
+                });
 
-                // 蓝奏云下载的是 .zip，重命名为 .msix
-                if (AppDataSourceCombo.SelectedIndex == 1 && downloadPath.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
+                bool success = await DownloadWithProgressAsync(_latestAppDownloadUrl, downloadPath, ProxyBox.Text.Trim(), progress);
+                if (!success)
                 {
-                    string finalPath = Path.ChangeExtension(downloadPath, ".msixbundle");
-                    File.Move(downloadPath, finalPath);
-                    downloadPath = finalPath;
+                    StatusText.Text = "下载失败";
+                    return;
                 }
 
                 StatusText.Text = "下载完成，正在启动安装...";
+                DownloadStatusText.Text = "安装包已就绪，正在启动安装程序...";
+
                 var psi = new ProcessStartInfo
                 {
                     FileName = downloadPath,
@@ -188,17 +191,60 @@ namespace AzurLaneDex.Views
             catch (Exception ex)
             {
                 StatusText.Text = $"下载失败: {ex.Message}";
+                DownloadStatusText.Text = "";
+                DownloadProgressBar.Visibility = Visibility.Collapsed;
+            }
+            finally
+            {
+                _ = Task.Run(async () =>
+                {
+                    await Task.Delay(3000);
+                    DispatcherQueue.TryEnqueue(() =>
+                    {
+                        DownloadProgressBar.Visibility = Visibility.Collapsed;
+                        DownloadStatusText.Text = "";
+                    });
+                });
             }
         }
 
-        // 数据更新源切换
+        private async Task<bool> DownloadWithProgressAsync(string downloadUrl, string destinationPath, string proxy, IProgress<double> progress)
+        {
+            using var client = CreateHttpClient(proxy);
+            using var response = await client.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead);
+            response.EnsureSuccessStatusCode();
+
+            long? contentLength = response.Content.Headers.ContentLength;
+            using var stream = await response.Content.ReadAsStreamAsync();
+            using var fileStream = new FileStream(destinationPath, FileMode.Create, FileAccess.Write, FileShare.None);
+
+            var buffer = new byte[8192];
+            long totalBytesRead = 0;
+            int bytesRead;
+
+            while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+            {
+                await fileStream.WriteAsync(buffer, 0, bytesRead);
+                totalBytesRead += bytesRead;
+                if (contentLength.HasValue && contentLength.Value > 0)
+                {
+                    double percent = (double)totalBytesRead / contentLength.Value * 100;
+                    progress?.Report(percent);
+                }
+                else
+                {
+                    progress?.Report(-1);
+                }
+            }
+            return true;
+        }
+
         private void DataDataSourceCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (DataCustomUrlBox == null) return;
             DataCustomUrlBox.Visibility = DataDataSourceCombo.SelectedIndex == 2 ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        // 检查数据更新
         private async void CheckDataUpdate_Click(object sender, RoutedEventArgs e)
         {
             StatusText.Text = "正在检查数据版本...";
@@ -235,7 +281,6 @@ namespace AzurLaneDex.Views
             }
         }
 
-        // 下载数据更新
         private async void DownloadData_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(_latestDataUrl))
@@ -265,7 +310,8 @@ namespace AzurLaneDex.Views
             {
                 0 => DataGitHubRawUrl,
                 1 => DataGitHubCdnUrl,
-                2 => DataCustomUrlBox.Text.Trim(),
+                2 => DataGiteeRawUrl,
+                3 => DataCustomUrlBox.Text.Trim(),
                 _ => ""
             };
         }

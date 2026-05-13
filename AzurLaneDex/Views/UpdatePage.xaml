@@ -65,7 +65,7 @@
                             <ComboBox x:Name="AppDataSourceCombo" Margin="0,8,0,0" SelectedIndex="0"
                                       SelectionChanged="AppDataSourceCombo_SelectionChanged">
                                 <ComboBoxItem>GitHub Pages</ComboBoxItem>
-                                <ComboBoxItem>蓝奏云</ComboBoxItem>
+                                <ComboBoxItem>Gitee Releases</ComboBoxItem>
                             </ComboBox>
                         </StackPanel>
                     </Grid>
@@ -106,6 +106,7 @@
                                       SelectionChanged="DataDataSourceCombo_SelectionChanged">
                                 <ComboBoxItem>GitHub (raw)</ComboBoxItem>
                                 <ComboBoxItem>GitHub (CDN)</ComboBoxItem>
+                                <ComboBoxItem>Gitee (raw)</ComboBoxItem>
                                 <ComboBoxItem>自定义URL</ComboBoxItem>
                             </ComboBox>
                             <TextBox x:Name="DataCustomUrlBox" PlaceholderText="自定义 ships_static.json 文件 URL" Margin="0,8,0,0"
@@ -117,7 +118,8 @@
 
                 <!-- 状态信息 -->
                 <TextBlock x:Name="StatusText" Text="就绪" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
-
+                <ProgressBar x:Name="DownloadProgressBar" Height="4" Margin="0,8,0,0" Visibility="Collapsed"/>
+                <TextBlock x:Name="DownloadStatusText" Text="" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
             </StackPanel>
         </ScrollViewer>
     </Grid>
