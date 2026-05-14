@@ -92,7 +92,7 @@ public sealed partial class ShipDetailControl : UserControl
 
         // 基本信息
         ShipNameText.Text = ship.DisplayName;
-        ShipIdText.Text = $"#{ship.Id}";
+        ShipIdText.Text = ship.DisplayId;
         FactionText.Text = ship.Faction;
         ShipClassText.Text = ship.ShipClass;
         RarityText.Text = ship.EffectiveRarity;

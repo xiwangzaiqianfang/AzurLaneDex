@@ -29,6 +29,7 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="100"/>
@@ -37,8 +38,11 @@
                         <TextBlock Grid.Row="0" Grid.Column="0" Text="编号:" VerticalAlignment="Center"/>
                         <NumberBox x:Name="IdBox" Grid.Row="0" Grid.Column="1" Minimum="0" SpinButtonPlacementMode="Inline" Value="0" PlaceholderText="0 表示自动分配"/>
 
-                        <TextBlock Grid.Row="1" Grid.Column="0" Text="图鉴顺序:" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="GameOrderLabel" Grid.Row="1" Grid.Column="0" Text="图鉴顺序:" VerticalAlignment="Center"/>
                         <NumberBox x:Name="GameOrderBox" Grid.Row="1" Grid.Column="1" Minimum="0" SpinButtonPlacementMode="Inline" Value="0"/>
+
+                        <TextBlock x:Name="CategoryOrderLabel" Grid.Row="1" Grid.Column="0" Text="类别内顺序:" VerticalAlignment="Center" Visibility="Collapsed"/>
+                        <NumberBox x:Name="CategoryOrderBox" Grid.Row="1" Grid.Column="1" Minimum="0" Value="0" SpinButtonPlacementMode="Inline" Visibility="Collapsed"/>
 
                         <TextBlock Grid.Row="2" Grid.Column="0" Text="舰船名称:" VerticalAlignment="Center"/>
                         <TextBox x:Name="NameBox" Grid.Row="2" Grid.Column="1"/>
@@ -47,21 +51,7 @@
                         <TextBox x:Name="AltNameBox" Grid.Row="3" Grid.Column="1"/>
 
                         <TextBlock Grid.Row="4" Grid.Column="0" Text="阵营:" VerticalAlignment="Center"/>
-                        <ComboBox x:Name="FactionCombo" Grid.Row="4" Grid.Column="1">
-                            <ComboBoxItem>白鹰</ComboBoxItem>
-                            <ComboBoxItem>皇家</ComboBoxItem>
-                            <ComboBoxItem>重樱</ComboBoxItem>
-                            <ComboBoxItem>铁血</ComboBoxItem>
-                            <ComboBoxItem>东煌</ComboBoxItem>
-                            <ComboBoxItem>撒丁帝国</ComboBoxItem>
-                            <ComboBoxItem>北方联合</ComboBoxItem>
-                            <ComboBoxItem>自由鸢尾</ComboBoxItem>
-                            <ComboBoxItem>维希教廷</ComboBoxItem>
-                            <ComboBoxItem>郁金王国</ComboBoxItem>
-                            <ComboBoxItem>飓风</ComboBoxItem>
-                            <ComboBoxItem>META</ComboBoxItem>
-                            <ComboBoxItem>其他</ComboBoxItem>
-                        </ComboBox>
+                        <ComboBox x:Name="FactionCombo" Grid.Row="4" Grid.Column="1"/>
 
                         <TextBlock Grid.Row="5" Grid.Column="0" Text="舰种:" VerticalAlignment="Center"/>
                         <ComboBox x:Name="ShipClassCombo" SelectionChanged="ShipClassCombo_SelectionChanged" Grid.Row="5" Grid.Column="1">
@@ -90,11 +80,19 @@
                             <ComboBoxItem>海上传奇</ComboBoxItem>
                         </ComboBox>
 
-                        <TextBlock Grid.Row="7" Grid.Column="0" Text="可改造:" VerticalAlignment="Center"/>
-                        <CheckBox x:Name="CanRemodelCheckBox" Grid.Row="7" Grid.Column="1" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="7" Grid.Column="0" Text="舰船类别:" VerticalAlignment="Center"/>
+                        <ComboBox x:Name="CategoryCombo" Grid.Row="7" Grid.Column="1" SelectedIndex="0" SelectionChanged="CategoryCombo_SelectionChanged">
+                            <ComboBoxItem>角色</ComboBoxItem>
+                            <ComboBoxItem>联动</ComboBoxItem>
+                            <ComboBoxItem>科研</ComboBoxItem>
+                            <ComboBoxItem>META</ComboBoxItem>
+                        </ComboBox>
 
-                        <TextBlock Grid.Row="8" Grid.Column="0" Text="改造日期:" VerticalAlignment="Center"/>
-                        <DatePicker x:Name="RemodelDatePicker" Grid.Row="8" Grid.Column="1" IsEnabled="{Binding IsChecked, ElementName=CanRemodelCheckBox}"/>
+                        <TextBlock Grid.Row="8" Grid.Column="0" Text="可改造:" VerticalAlignment="Center"/>
+                        <CheckBox x:Name="CanRemodelCheckBox" Grid.Row="8" Grid.Column="1" VerticalAlignment="Center"/>
+
+                        <TextBlock Grid.Row="9" Grid.Column="0" Text="改造日期:" VerticalAlignment="Center"/>
+                        <DatePicker x:Name="RemodelDatePicker" Grid.Row="9" Grid.Column="1" IsEnabled="{Binding IsChecked, ElementName=CanRemodelCheckBox}"/>
 
                     </Grid>
                 </StackPanel>

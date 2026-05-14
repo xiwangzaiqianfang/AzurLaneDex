@@ -1,5 +1,6 @@
 ﻿using AzurLaneDex.Models;
 using AzurLaneDex.ViewModels;
+using Microsoft.UI.Xaml.Media.Animation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,10 +9,21 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
+using static AzurLaneDex.Models.ShipStatic;
 
 namespace AzurLaneDex.Services;
+
+public static class ShipIdRanges
+{
+    public const int NormalStart = 1;
+    public const int NormalEnd = 9999;
+    public const int MetaStart = 10001;
+    public const int CollabStart = 20001;
+    public const int ResearchStart = 30001;
+}
 
 public class ShipManager
 {
@@ -255,14 +267,43 @@ public class ShipManager
 
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         var staticData = JsonSerializer.Deserialize<StaticData>(rawJson, options);
+        if (staticData?.Ships != null)
+        {
+            var testShip = staticData.Ships.FirstOrDefault(s => s.Id == 20001);
+            if (testShip != null)
+            {
+                System.Diagnostics.Debug.WriteLine($"Test Ship: {testShip.Name}, Category = {testShip.Category}");
+            }
+        }
         _staticShips = staticData?.Ships ?? new List<ShipStatic>();
         Version = staticData?.Version ?? "0.0";
 
-        // 2. 读取用户状态
-        foreach (var staticShip in _staticShips)
+        // 检测是否需要填充 CategoryOrder（如果第一条船的 CategoryOrder == 0 且 Category == Normal，说明可能未迁移）
+        bool needCategoryMigration = false;
+        if (_staticShips.Count > 0)
         {
-            Ships.Add(new ShipViewModel(staticShip, new ShipState { Id = staticShip.Id }));
+            var first = _staticShips[0];
+            // 判断是否需要迁移：CategoryOrder 为 0 且 Category 为 Normal（普通船），或者任意船的 Category 为 Normal 但 GameOrder 可能与 CategoryOrder 不同
+            // 更简单的判断：如果存在任何船 CategoryOrder == 0 且 (Category == Normal 且 GameOrder != 0) 或 (Category != Normal)
+            needCategoryMigration = _staticShips.Any(s => s.CategoryOrder == 0) ||
+                                    _staticShips.Any(s => s.Category == ShipCategory.Normal && s.CategoryOrder == 0 && s.GameOrder != 0) ||
+                                    _staticShips.Any(s => s.Category != ShipCategory.Normal && s.CategoryOrder == 0);
         }
+
+        if (needCategoryMigration)
+        {
+            if (MigrateCategoriesAndOrders())
+            {
+                SaveStatic();  // 保存更新后的静态文件
+                               // 重新读取更新后的数据（确保 _staticShips 已更新）
+                var updatedJson = File.ReadAllText(_staticPath);
+                staticData = JsonSerializer.Deserialize<StaticData>(updatedJson, options);
+                _staticShips = staticData?.Ships ?? new List<ShipStatic>();
+                Version = staticData?.Version ?? "0.0";
+            }
+        }
+
+        // 2. 读取用户状态        
         if (_accountManager != null && !string.IsNullOrEmpty(_accountManager.CurrentAccount))
         {
             string dataRoot = App.DataRoot;
@@ -288,14 +329,10 @@ public class ShipManager
                 }
                 catch { }
             }
-            foreach (var ship in Ships)
-            {
-                if (ship.Name == "泛用型布里" || ship.Name == "试作型布里MKII" || ship.Name == "特装型布里MKIII")
-                {
-                    ship.Breakthrough = 3;
-                }
-            }
         }
+
+        // 添加 ID 迁移（一次性）
+        MigrateSpecialShipIds();
 
         // 3. 生成 ViewModel
         Ships.Clear();
@@ -304,6 +341,13 @@ public class ShipManager
             if (!_userStates.TryGetValue(staticShip.Id, out var state))
                 state = new ShipState { Id = staticShip.Id };
             Ships.Add(new ShipViewModel(staticShip, state));
+        }
+        foreach (var ship in Ships)
+        {
+            if (ship.Name == "泛用型布里" || ship.Name == "试作型布里MKII" || ship.Name == "特装型布里MKIII")
+            {
+                ship.Breakthrough = 3;
+            }
         }
         // 检查版本格式是否符合新标准，不符合则刷新一次版本号
         if (ParseRevision(Version) < 0 || !Version.StartsWith("1.0."))
@@ -421,6 +465,115 @@ public class ShipManager
         return ship;
     }
 
+    private void MigrateSpecialShipIds()
+    {
+        // 检查是否已经迁移过：如果存在任何特殊船的 ID 在对应范围内，则跳过
+        if (_staticShips.Any(s => s.Category == ShipCategory.META && s.Id >= ShipIdRanges.MetaStart && s.Id < ShipIdRanges.CollabStart))
+            return;
+        if (_staticShips.Any(s => s.Category == ShipCategory.Collab && s.Id >= ShipIdRanges.CollabStart && s.Id < ShipIdRanges.ResearchStart))
+            return;
+        if (_staticShips.Any(s => s.Category == ShipCategory.Research && s.Id >= ShipIdRanges.ResearchStart))
+            return;
+        // 记录每个类别的下一个可用 ID
+        int nextMetaId = ShipIdRanges.MetaStart;
+        int nextCollabId = ShipIdRanges.CollabStart;
+        int nextResearchId = ShipIdRanges.ResearchStart;
+
+        bool changed = false;
+        var idMapping = new Dictionary<int, int>(); // 旧ID -> 新ID
+
+        foreach (var ship in _staticShips)
+        {
+            int newId = ship.Id;
+            switch (ship.Category)
+            {
+                case ShipCategory.META:
+                    if (ship.Id < ShipIdRanges.MetaStart || ship.Id >= ShipIdRanges.CollabStart)
+                    {
+                        newId = nextMetaId++;
+                        idMapping[ship.Id] = newId;
+                        ship.Id = newId;
+                        changed = true;
+                    }
+                    else
+                    {
+                        nextMetaId = Math.Max(nextMetaId, ship.Id + 1);
+                    }
+                    break;
+                case ShipCategory.Collab:
+                    if (ship.Id < ShipIdRanges.CollabStart || ship.Id >= ShipIdRanges.ResearchStart)
+                    {
+                        newId = nextCollabId++;
+                        idMapping[ship.Id] = newId;
+                        ship.Id = newId;
+                        changed = true;
+                    }
+                    else
+                    {
+                        nextCollabId = Math.Max(nextCollabId, ship.Id + 1);
+                    }
+                    break;
+                case ShipCategory.Research:
+                    if (ship.Id < ShipIdRanges.ResearchStart)
+                    {
+                        newId = nextResearchId++;
+                        idMapping[ship.Id] = newId;
+                        ship.Id = newId;
+                        changed = true;
+                    }
+                    else
+                    {
+                        nextResearchId = Math.Max(nextResearchId, ship.Id + 1);
+                    }
+                    break;
+                default:
+                    // 普通船如果误入特殊段，也修正（可选）
+                    if (ship.Id >= ShipIdRanges.MetaStart)
+                    {
+                        // 重新分配一个普通段内的ID，简单处理：找最大普通ID+1
+                        int maxNormalId = _staticShips.Where(s => s.Category == ShipCategory.Normal).Max(s => s.Id);
+                        newId = maxNormalId + 1;
+                        idMapping[ship.Id] = newId;
+                        ship.Id = newId;
+                        changed = true;
+                    }
+                    break;
+            }
+        }
+
+        if (changed)
+        {
+            // 更新用户状态中的 ID
+            var newUserStates = new Dictionary<int, ShipState>();
+            foreach (var kv in _userStates)
+            {
+                if (idMapping.TryGetValue(kv.Key, out int newId))
+                    newUserStates[newId] = kv.Value;
+                else
+                    newUserStates[kv.Key] = kv.Value;
+            }
+            _userStates = newUserStates;
+
+            // 重新生成 Ships 集合中的 ViewModel（因为 ID 变了）
+            RebuildShips();
+
+            SaveStatic();
+            Save();
+            DataStructureChanged?.Invoke();
+        }
+    }
+    private void RebuildShips()
+    {
+        Ships.Clear();
+        foreach (var staticShip in _staticShips)
+        {
+            if (!_userStates.TryGetValue(staticShip.Id, out var state))
+                state = new ShipState { Id = staticShip.Id };
+            var vm = new ShipViewModel(staticShip, state);
+            Ships.Add(vm);
+        }
+    }
+
     public void Save()
     {
         if (string.IsNullOrEmpty(_userStatePath)) return;
@@ -496,19 +649,20 @@ public class ShipManager
 
     public StatsData stats()
     {
+        var shipsToCount = Ships.Where(s => s.Category != ShipCategory.Collab).ToList();
         var stats = new StatsData();
-        stats.Total = Ships.Count;
-        stats.Owned = Ships.Count(s => s.Owned);
+        stats.Total = shipsToCount.Count;
+        stats.Owned = shipsToCount.Count(s => s.Owned);
         stats.NotOwned = stats.Total - stats.Owned;
-        stats.MaxBreakthrough = Ships.Count(s => s.IsMaxBreakthrough);
-        stats.NotMaxBreakthrough = Ships.Count(s => s.Owned && !s.IsMaxBreakthrough);
-        stats.Oath = Ships.Count(s => s.Oath);
-        stats.Remodeled = Ships.Count(s => s.Remodeled);
-        stats.CanRemodelNot = Ships.Count(s => s.CanRemodel && !s.Remodeled);
-        stats.Level120 = Ships.Count(s => s.Level120);
-        stats.SpecialGearObtained = Ships.Count(s => s.SpecialGearObtained);
-        stats.SpecialGearNotObtained = Ships.Count(s => s.CanSpecialGear && !s.SpecialGearObtained);
-        stats.CanRemodelTotal = Ships.Count(s => s.CanRemodel);
+        stats.MaxBreakthrough = shipsToCount.Count(s => s.IsMaxBreakthrough);
+        stats.NotMaxBreakthrough = shipsToCount.Count(s => s.Owned && !s.IsMaxBreakthrough);
+        stats.Oath = shipsToCount.Count(s => s.Oath);
+        stats.Remodeled = shipsToCount.Count(s => s.Remodeled);
+        stats.CanRemodelNot = shipsToCount.Count(s => s.CanRemodel && !s.Remodeled);
+        stats.Level120 = shipsToCount.Count(s => s.Level120);
+        stats.SpecialGearObtained = shipsToCount.Count(s => s.SpecialGearObtained);
+        stats.SpecialGearNotObtained = shipsToCount.Count(s => s.CanSpecialGear && !s.SpecialGearObtained);
+        stats.CanRemodelTotal = shipsToCount.Count(s => s.CanRemodel);
         return stats;
     }
 
@@ -562,18 +716,22 @@ public class ShipManager
         // 2. 处理 ID
         if (newShip.Id == 0)
         {
-            int maxId = _staticShips.Max(s => s.Id);
-            newShip.Id = maxId + 1;
+            int newId = GetNextIdForCategory(newShip.Category);
+            newShip.Id = newId;
         }
         else
         {
-            if (_staticShips.Any(s => s.Id == newShip.Id))
+            if (!IsIdValidForCategory(newShip.Id, newShip.Category))
             {
                 // ID 冲突，自动重新分配
-                int maxId = _staticShips.Max(s => s.Id);
-                newShip.Id = maxId + 1;
+                newShip.Id = GetNextIdForCategory(newShip.Category);
                 // 可选：弹出提示告知用户 ID 被重新分配
             }
+            else if (_staticShips.Any(s => s.Id == newShip.Id))
+            {
+                newShip.Id = GetNextIdForCategory(newShip.Category);
+            }
+                
         }
 
         // 3. 处理 game_order 冲突
@@ -591,6 +749,28 @@ public class ShipManager
                     ship.GameOrder++;
                 // 重新排序
                 _staticShips = _staticShips.OrderBy(s => s.GameOrder).ToList();
+            }
+        }
+
+        // 处理 CategoryOrder 自动分配
+        if (newShip.CategoryOrder == 0)
+        {
+            // 获取当前类别下最大的 CategoryOrder
+            int maxOrder = _staticShips
+                .Where(s => s.Category == newShip.Category)
+                .Select(s => s.CategoryOrder)
+                .DefaultIfEmpty(0)
+                .Max();
+            newShip.CategoryOrder = maxOrder + 1;
+        }
+        else
+        {
+            // 如果指定的 order 已被占用，将该 order 及之后的船向后顺移（仅限同一类别）
+            var conflict = _staticShips.FirstOrDefault(s => s.Category == newShip.Category && s.CategoryOrder == newShip.CategoryOrder);
+            if (conflict != null)
+            {
+                foreach (var ship in _staticShips.Where(s => s.Category == newShip.Category && s.CategoryOrder >= newShip.CategoryOrder))
+                    ship.CategoryOrder++;
             }
         }
 
@@ -612,6 +792,47 @@ public class ShipManager
         DataStructureChanged?.Invoke();
         return true;
     }
+    private int GetNextIdForCategory(ShipCategory category)
+    {
+        int start, end;
+        switch (category)
+        {
+            case ShipCategory.META:
+                start = ShipIdRanges.MetaStart;
+                end = ShipIdRanges.CollabStart - 1;
+                break;
+            case ShipCategory.Collab:
+                start = ShipIdRanges.CollabStart;
+                end = ShipIdRanges.ResearchStart - 1;
+                break;
+            case ShipCategory.Research:
+                start = ShipIdRanges.ResearchStart;
+                end = int.MaxValue;
+                break;
+            default:
+                start = ShipIdRanges.NormalStart;
+                end = ShipIdRanges.NormalEnd;
+                break;
+        }
+        var existingIds = _staticShips.Where(s => s.Category == category).Select(s => s.Id).ToHashSet();
+        for (int id = start; id <= end; id++)
+        {
+            if (!existingIds.Contains(id))
+                return id;
+        }
+        throw new InvalidOperationException($"No available ID in range for category {category}");
+    }
+
+    private bool IsIdValidForCategory(int id, ShipCategory category)
+    {
+        return category switch
+        {
+            ShipCategory.META => id >= ShipIdRanges.MetaStart && id < ShipIdRanges.CollabStart,
+            ShipCategory.Collab => id >= ShipIdRanges.CollabStart && id < ShipIdRanges.ResearchStart,
+            ShipCategory.Research => id >= ShipIdRanges.ResearchStart,
+            _ => id >= ShipIdRanges.NormalStart && id <= ShipIdRanges.NormalEnd
+        };
+    }
 
     private void SaveStatic()
     {
@@ -628,32 +849,78 @@ public class ShipManager
         int index = _staticShips.FindIndex(s => s.Id == oldId);
         if (index == -1) return;
 
-        // 处理 ID 变更
+        var oldShip = _staticShips[index];
+
+        // 1. 处理 ID 变更
         if (newShip.Id != oldId && _staticShips.Any(s => s.Id == newShip.Id))
         {
-                // ID 冲突，自动分配新 ID
-                int maxId = _staticShips.Max(s => s.Id);
-                newShip.Id = maxId + 1;
+            // ID 冲突，自动分配新 ID
+            int maxId = _staticShips.Max(s => s.Id);
+            newShip.Id = maxId + 1;
         }
 
-        // 处理 game_order 冲突（如果更改）
-        if (newShip.GameOrder != _staticShips[index].GameOrder)
+        // 2. 处理 Category 和 CategoryOrder 变更
+        // 注意：如果类别或顺序发生变化，需要调整其他舰船的顺序
+        bool categoryChanged = oldShip.Category != newShip.Category;
+        bool orderChanged = oldShip.CategoryOrder != newShip.CategoryOrder;
+
+        if (categoryChanged || orderChanged)
         {
-            var conflict = _staticShips.FirstOrDefault(s => s.Id != oldId && s.GameOrder == newShip.GameOrder);
-            if (conflict != null)
+            // 2.1 先从旧类别中移除旧船的顺序（将大于旧顺序的船前移）
+            if (oldShip.CategoryOrder > 0)
             {
-                // 向后移动冲突及之后的舰船（排除自身）
-                foreach (var ship in _staticShips.Where(s => s.Id != oldId && s.GameOrder >= newShip.GameOrder))
-                    ship.GameOrder++;
+                foreach (var ship in _staticShips.Where(s => s.Category == oldShip.Category && s.CategoryOrder > oldShip.CategoryOrder))
+                {
+                    ship.CategoryOrder--;
+                }
+            }
+
+            // 2.2 处理新船的顺序值
+            if (newShip.CategoryOrder == 0)
+            {
+                // 自动分配：取当前类别中最大的 CategoryOrder + 1
+                int maxOrder = _staticShips
+                    .Where(s => s.Category == newShip.Category)
+                    .Select(s => s.CategoryOrder)
+                    .DefaultIfEmpty(0)
+                    .Max();
+                newShip.CategoryOrder = maxOrder + 1;
+            }
+            else
+            {
+                // 检查新顺序是否与同一类别下的其他船冲突（排除自身）
+                var conflict = _staticShips.FirstOrDefault(s => s.Id != oldId && s.Category == newShip.Category && s.CategoryOrder == newShip.CategoryOrder);
+                if (conflict != null)
+                {
+                    // 冲突：将该顺序及之后的船向后顺移
+                    foreach (var ship in _staticShips.Where(s => s.Id != oldId && s.Category == newShip.Category && s.CategoryOrder >= newShip.CategoryOrder))
+                    {
+                        ship.CategoryOrder++;
+                    }
+                }
+            }
+        }
+        else
+        {
+            // 类别和顺序都没变，但仍需确保 CategoryOrder 不为 0（如果是普通船且 GameOrder 可能为 0，此处可保留）
+            if (newShip.CategoryOrder == 0 && newShip.Category == ShipCategory.Normal)
+            {
+                newShip.CategoryOrder = newShip.GameOrder;
             }
         }
 
-        // 替换并重新排序
+        // 3. 替换原数据
         _staticShips[index] = newShip;
-        _staticShips = _staticShips.OrderBy(s => s.GameOrder).ToList();
+
+        // 4. 重新排序（按 GameOrder 和 CategoryOrder 混合排序？实际上内部顺序只需按 CategoryOrder 全局排序即可，因为不同类别不会混合）
+        // 但为了保持整体一致性，我们直接按 Id 重新排序（或者保留原有顺序）。这里只保存即可，不重新排序 List。
+        // 如果需要确保顺序正确，可以按 CategoryOrder 排序：
+        _staticShips = _staticShips.OrderBy(s => s.Category).ThenBy(s => s.CategoryOrder).ToList();
+
+        // 5. 保存静态文件
         SaveStatic();
 
-        // 更新用户状态映射（如果 ID 变化）
+        // 6. 更新用户状态映射（如果 ID 变化）
         if (newShip.Id != oldId)
         {
             if (_userStates.TryGetValue(oldId, out var state))
@@ -663,7 +930,7 @@ public class ShipManager
             }
         }
 
-        // 更新 Ships 集合中的 ViewModel
+        // 7. 更新 Ships 集合中的 ViewModel
         var oldVm = Ships.FirstOrDefault(vm => vm.Id == oldId);
         if (oldVm != null)
         {
@@ -672,8 +939,94 @@ public class ShipManager
             Ships[vmIndex] = newVm;
         }
 
+        // 8. 保存用户状态（确保 ID 映射正确）
         Save();
+
+        // 9. 触发数据变更事件
         DataStructureChanged?.Invoke();
+    }
+    private bool MigrateCategoriesAndOrders()
+    {
+        bool changed = false;
+        foreach (var ship in _staticShips)
+        {
+            // 跳过已经填充过的船（已有非零的 CategoryOrder 或者 Category 不为 Normal）
+            if (ship.Category != ShipCategory.Normal) continue;
+
+            ShipCategory? detectedCategory = null;
+            int order = 0;
+
+            // 1. 从 Name 或 AltName 中检测类别和编号
+            string nameToCheck = ship.Name ?? "";
+            string altNameToCheck = ship.AltName ?? "";
+
+            // 匹配 META: NO.METAxxx 或 META_xxx 或类似
+            var metaMatch = Regex.Match(nameToCheck, @"NO\.META(\d+)", RegexOptions.IgnoreCase);
+            if (!metaMatch.Success) metaMatch = Regex.Match(altNameToCheck, @"NO\.META(\d+)", RegexOptions.IgnoreCase);
+            if (metaMatch.Success)
+            {
+                detectedCategory = ShipCategory.META;
+                order = int.Parse(metaMatch.Groups[1].Value);
+            }
+
+            // 匹配科研: NO.Planxxx 或 科研-xxx 等
+            if (!detectedCategory.HasValue)
+            {
+                var planMatch = Regex.Match(nameToCheck, @"NO\.Plan(\d+)", RegexOptions.IgnoreCase);
+                if (!planMatch.Success) planMatch = Regex.Match(altNameToCheck, @"NO\.Plan(\d+)", RegexOptions.IgnoreCase);
+                if (planMatch.Success)
+                {
+                    detectedCategory = ShipCategory.Research;
+                    order = int.Parse(planMatch.Groups[1].Value);
+                }
+            }
+
+            // 匹配联动: NO.Collabxxx 或 联动_xxx
+            if (!detectedCategory.HasValue)
+            {
+                var collabMatch = Regex.Match(nameToCheck, @"NO\.Collab(\d+)", RegexOptions.IgnoreCase);
+                if (!collabMatch.Success) collabMatch = Regex.Match(altNameToCheck, @"NO\.Collab(\d+)", RegexOptions.IgnoreCase);
+                if (collabMatch.Success)
+                {
+                    detectedCategory = ShipCategory.Collab;
+                    order = int.Parse(collabMatch.Groups[1].Value);
+                }
+            }
+
+            // 若仍未检测到，根据阵营 Faction == "META" 判定为 META
+            if (!detectedCategory.HasValue && ship.Faction == "META")
+            {
+                detectedCategory = ShipCategory.META;
+                // 尝试从名称中提取数字，否则使用 Id 作为顺序（临时）
+                var anyNumber = Regex.Match(nameToCheck, @"\d+");
+                order = anyNumber.Success ? int.Parse(anyNumber.Value) : ship.Id;
+            }
+
+            // 剩余归类为普通
+            if (!detectedCategory.HasValue)
+            {
+                detectedCategory = ShipCategory.Normal;
+                order = ship.GameOrder;
+            }
+
+            // 赋值
+            if (ship.Category != detectedCategory.Value)
+            {
+                ship.Category = detectedCategory.Value;
+                changed = true;
+            }
+            if (ship.CategoryOrder != order)
+            {
+                ship.CategoryOrder = order;
+                changed = true;
+            }
+        }
+
+        // 特别处理：如果科研船有特定的顺序（例如按开发顺序），可以手动调整个别船的 order
+        // 例如手动维护一个字典，覆盖科研船的顺序（如果需要）
+        // 这里留作扩展点
+
+        return changed;
     }
     public void DeleteShip(int shipId)
     {

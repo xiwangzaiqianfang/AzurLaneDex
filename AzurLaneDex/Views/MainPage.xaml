@@ -13,44 +13,52 @@
 
 	<Grid>
 		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
 		</Grid.RowDefinitions>
 
 		<!-- 独立工具栏 -->
-		<StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="8" Margin="12">
-			<AutoSuggestBox x:Name="SearchBox"
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="8" Margin="12">
+            <SelectorBar x:Name="CategorySelector" Margin="0,0,0,0" SelectionChanged="CategorySelector_SelectionChanged">
+                <SelectorBarItem Text="角色" Tag="Normal" />
+                <SelectorBarItem Text="联动" Tag="Collab" />
+                <SelectorBarItem Text="科研" Tag="Research" />
+                <SelectorBarItem Text="META" Tag="META" />
+            </SelectorBar>
+            
+            <AutoSuggestBox x:Name="SearchBox"
                             PlaceholderText="搜索舰船名"
-                            Width="240"
+                            Width="150"
                             QueryIcon="Find"
                             TextChanged="SearchBox_TextChanged"
                             SuggestionChosen="SearchBox_SuggestionChosen"
-                            UpdateTextOnSelect="True">
-				<AutoSuggestBox.ItemTemplate>
-					<DataTemplate>
-						<TextBlock Text="{Binding DisplayText}" />
-					</DataTemplate>
-				</AutoSuggestBox.ItemTemplate>
-			</AutoSuggestBox>
-			<ComboBox x:Name="SortCombo" SelectedIndex="0" SelectionChanged="SortCombo_SelectionChanged">
-				<ComboBoxItem>按编号排序</ComboBoxItem>
-				<ComboBoxItem>按图鉴排序</ComboBoxItem>
-				<ComboBoxItem>按名称排序</ComboBoxItem>
-				<ComboBoxItem>按稀有度排序</ComboBoxItem>
-				<ComboBoxItem>按获得状态排序</ComboBoxItem>
-				<ComboBoxItem>按誓约排序</ComboBoxItem>
-				<ComboBoxItem>按突破排序</ComboBoxItem>
-				<ComboBoxItem>按120级排序</ComboBoxItem>
-				<ComboBoxItem>按改造排序</ComboBoxItem>
-				<ComboBoxItem>按专属兵装排序</ComboBoxItem>
-			</ComboBox>
-			<ToggleButton x:Name="SortOrderToggle" Width="40" Content="▼" Checked="SortOrderToggle_Checked" Unchecked="SortOrderToggle_Unchecked"/>
-			<Button Content="刷新" Click="RefreshButton_Click"/>
-			<Button x:Name="FilterButton" Content="筛选" Click="FilterButton_Click"/>
-			<Button Content="重置筛选" Click="ResetFilter_Click"/>
-			<Button x:Name="BatchOperationButton" Content="批量操作" Click="BatchOperation_Click"/>
+                            UpdateTextOnSelect="True" VerticalAlignment="Center">
+                <AutoSuggestBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding DisplayText}" />
+                    </DataTemplate>
+                </AutoSuggestBox.ItemTemplate>
+            </AutoSuggestBox>
+            <ComboBox x:Name="SortCombo" SelectedIndex="0" SelectionChanged="SortCombo_SelectionChanged" VerticalAlignment="Center">
+                <ComboBoxItem>按编号排序</ComboBoxItem>
+                <ComboBoxItem>按图鉴排序</ComboBoxItem>
+                <ComboBoxItem>按名称排序</ComboBoxItem>
+                <ComboBoxItem>按稀有度排序</ComboBoxItem>
+                <ComboBoxItem>按改造日期排序</ComboBoxItem>
+                <ComboBoxItem>按兵装日期排序</ComboBoxItem>
+                <ComboBoxItem>按获得状态排序</ComboBoxItem>
+                <ComboBoxItem>按改造状态排序</ComboBoxItem>
+                <ComboBoxItem>按突破状态排序</ComboBoxItem>
+                <ComboBoxItem>按誓约状态排序</ComboBoxItem>
+                <ComboBoxItem>按120级状态排序</ComboBoxItem>
+                <ComboBoxItem>按兵装获得状态排序</ComboBoxItem>
+            </ComboBox>
+            <ToggleButton x:Name="SortOrderToggle" Content="升序" Checked="SortOrderToggle_Checked" Unchecked="SortOrderToggle_Unchecked"/>
+            <Button x:Name="FilterButton" Content="筛选" Click="FilterButton_Click"/>
+            <Button Content="重置并刷新" Click="ResetAndRefresh_Click"/>
+            <Button x:Name="BatchOperationButton" Content="批量操作" Click="BatchOperation_Click"/>
             <Button x:Name="AddShipButton" Content="新建舰船" Click="AddShipButton_Click" Visibility="Collapsed"/>
-		</StackPanel>
+        </StackPanel>
 
         <!-- 主体区域：左右两列 -->
         <Grid Grid.Row="1">
@@ -74,8 +82,8 @@
                 <Grid Grid.Row="0" Height="32" Background="{ThemeResource CardBackgroundFillColorDefault}" Margin="12,0,12,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="60"/>
-                        <ColumnDefinition Width="50"/>
-                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="150"/>
                         <ColumnDefinition Width="40"/>
                         <ColumnDefinition Width="40"/>
                         <ColumnDefinition Width="40"/>
@@ -124,8 +132,8 @@
                                 </Grid.ContextFlyout>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="40"/>
-                                    <ColumnDefinition Width="50"/>
-                                    <ColumnDefinition Width="200"/>
+                                    <ColumnDefinition Width="100"/>
+                                    <ColumnDefinition Width="150"/>
                                     <ColumnDefinition Width="40"/>
                                     <ColumnDefinition Width="40"/>
                                     <ColumnDefinition Width="40"/>
@@ -134,7 +142,7 @@
                                     <ColumnDefinition Width="40"/>
                                 </Grid.ColumnDefinitions>
                                 <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected, Mode=TwoWay}"/>
-                                <TextBlock Grid.Column="1" Text="{Binding Id}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Text="{Binding DisplayId}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 <TextBlock Grid.Column="2" Text="{Binding DisplayName}" FontWeight="SemiBold" VerticalAlignment="Center"/>
                                 <TextBlock Grid.Column="3" Text="{Binding Owned, Converter={StaticResource BoolToCheckMark}}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 <TextBlock Grid.Column="4" Text="{Binding Oath, Converter={StaticResource BoolToHeart}}" HorizontalAlignment="Center" VerticalAlignment="Center"/>

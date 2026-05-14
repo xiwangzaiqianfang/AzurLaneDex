@@ -1,5 +1,8 @@
-﻿using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using System;
 using System.Collections.Generic;
+using static AzurLaneDex.Models.ShipStatic;
 
 namespace AzurLaneDex.Views
 {
@@ -13,6 +16,28 @@ namespace AzurLaneDex.Views
         /// <summary>
         /// 获取当前用户选择的筛选条件
         /// </summary>
+        public void SetCategory(ShipCategory category)
+        {
+            switch (category)
+            {
+                case ShipCategory.Normal:
+                case ShipCategory.Research:
+                    NormalFactionPanel.Visibility = Visibility.Visible;
+                    CollabFactionPanel.Visibility = Visibility.Collapsed;
+                    MetaFactionPanel.Visibility = Visibility.Collapsed;
+                    break;
+                case ShipCategory.Collab:
+                    NormalFactionPanel.Visibility = Visibility.Collapsed;
+                    CollabFactionPanel.Visibility = Visibility.Visible;
+                    MetaFactionPanel.Visibility = Visibility.Collapsed;
+                    break;
+                case ShipCategory.META:
+                    NormalFactionPanel.Visibility = Visibility.Collapsed;
+                    CollabFactionPanel.Visibility = Visibility.Collapsed;
+                    MetaFactionPanel.Visibility = Visibility.Visible;
+                    break;
+            }
+        }
         public FilterCriteria GetFilterCriteria()
         {
             var criteria = new FilterCriteria();
@@ -38,18 +63,48 @@ namespace AzurLaneDex.Views
 
             // 阵营
             var factions = new List<string>();
-            if (FactionEU.IsChecked == true) factions.Add("白鹰");
-            if (FactionRN.IsChecked == true) factions.Add("皇家");
-            if (FactionIJN.IsChecked == true) factions.Add("重樱");
-            if (FactionKMS.IsChecked == true) factions.Add("铁血");
-            if (FactionDragon.IsChecked == true) factions.Add("东煌");
-            if (FactionSN.IsChecked == true) factions.Add("北方联合");
-            if (FactionFFNF.IsChecked == true) factions.Add("自由鸢尾");
-            if (FactionMNF.IsChecked == true) factions.Add("维希教廷");
-            if (FactionSardegna.IsChecked == true) factions.Add("撒丁帝国");
-            if (FactionMETA.IsChecked == true) factions.Add("META");
-            if (FactionTempesta.IsChecked == true) factions.Add("飓风");
-            if (FactionOther.IsChecked == true) factions.Add("其他");
+            if (NormalFactionPanel.Visibility == Visibility.Visible)
+            {
+                FactionEU.IsChecked = criteria.Factions.Contains("白鹰");
+                FactionRN.IsChecked = criteria.Factions.Contains("皇家");
+                FactionIJN.IsChecked = criteria.Factions.Contains("重樱");
+                FactionKMS.IsChecked = criteria.Factions.Contains("铁血");
+                FactionDragon.IsChecked = criteria.Factions.Contains("东煌");
+                FactionSN.IsChecked = criteria.Factions.Contains("北方联合");
+                FactionFFNF.IsChecked = criteria.Factions.Contains("自由鸢尾");
+                FactionMNF.IsChecked = criteria.Factions.Contains("维希教廷");
+                FactionSardegna.IsChecked = criteria.Factions.Contains("撒丁帝国");
+                FactionMETA.IsChecked = criteria.Factions.Contains("META");
+                FactionTempesta.IsChecked = criteria.Factions.Contains("飓风");
+                FactionOther.IsChecked = criteria.Factions.Contains("其他");
+            }
+            else if (CollabFactionPanel.Visibility == Visibility.Visible)
+            {
+                FactionCollab_Nep.IsChecked = criteria.Factions.Contains("超次元游戏海王星");
+                FactionCollab_Bilibili.IsChecked = criteria.Factions.Contains("哔哩哔哩");
+                FactionCollab_Utawarerumono.IsChecked = criteria.Factions.Contains("传颂之物");
+                FactionCollab_KizunaAI.IsChecked = criteria.Factions.Contains("绊爱");
+                FactionCollab_Hololive.IsChecked = criteria.Factions.Contains("Hololive");
+                FactionCollab_DoAXVV.IsChecked = criteria.Factions.Contains("死或生沙滩排球");
+                FactionCollab_Idolmaster.IsChecked = criteria.Factions.Contains("偶像大师");
+                FactionCollab_SSSS.IsChecked = criteria.Factions.Contains("SSSS");
+                FactionCollab_Ryza.IsChecked = criteria.Factions.Contains("莱莎的炼金工房");
+                FactionCollab_Senran.IsChecked = criteria.Factions.Contains("闪乱神乐");
+                FactionCollab_Toloveru.IsChecked = criteria.Factions.Contains("出包王女");
+                FactionCollab_BRS.IsChecked = criteria.Factions.Contains("黑岩射手");
+                FactionCollab_Danmachi.IsChecked = criteria.Factions.Contains("地城邂逅");
+                FactionCollab_Yumia.IsChecked = criteria.Factions.Contains("优米雅的炼金工房");
+                FactionCollab_DAL.IsChecked = criteria.Factions.Contains("约会大作战V");
+
+            }
+            else if (MetaFactionPanel.Visibility == Visibility.Visible)
+            {
+                FactionMeta_Flame.IsChecked = criteria.Factions.Contains("破敌之炬");
+                FactionMeta_Core.IsChecked = criteria.Factions.Contains("湮烬之核");
+                FactionMeta_Reason.IsChecked = criteria.Factions.Contains("构造之理");
+                FactionMeta_Light.IsChecked = criteria.Factions.Contains("逐光之焰");
+                FactionMeta_Fire.IsChecked = criteria.Factions.Contains("摇曳之火");
+            }
             criteria.Factions = factions;
 
             // 稀有度
@@ -59,6 +114,8 @@ namespace AzurLaneDex.Views
             if (RarityElite.IsChecked == true) rarities.Add("精锐");
             if (RaritySuperRare.IsChecked == true) rarities.Add("超稀有");
             if (RarityLegendary.IsChecked == true) rarities.Add("海上传奇");
+            if (RarityDecisive.IsChecked == true) rarities.Add("最高方案");
+            if (RarityUltimate.IsChecked == true) rarities.Add("决战方案");
             criteria.Rarities = rarities;
 
             // 附加状态
@@ -110,18 +167,48 @@ namespace AzurLaneDex.Views
             ClassOther.IsChecked = criteria.ShipClasses.Contains("其他");
 
             // 阵营
-            FactionEU.IsChecked = criteria.Factions.Contains("白鹰");
-            FactionRN.IsChecked = criteria.Factions.Contains("皇家");
-            FactionIJN.IsChecked = criteria.Factions.Contains("重樱");
-            FactionKMS.IsChecked = criteria.Factions.Contains("铁血");
-            FactionDragon.IsChecked = criteria.Factions.Contains("东煌");
-            FactionSN.IsChecked = criteria.Factions.Contains("北方联合");
-            FactionFFNF.IsChecked = criteria.Factions.Contains("自由鸢尾");
-            FactionMNF.IsChecked = criteria.Factions.Contains("维希教廷");
-            FactionSardegna.IsChecked = criteria.Factions.Contains("撒丁帝国");
-            FactionMETA.IsChecked = criteria.Factions.Contains("META");
-            FactionTempesta.IsChecked = criteria.Factions.Contains("飓风");
-            FactionOther.IsChecked = criteria.Factions.Contains("其他");
+            if (NormalFactionPanel.Visibility == Visibility.Visible)
+            {
+                FactionEU.IsChecked = criteria.Factions.Contains("白鹰");
+                FactionRN.IsChecked = criteria.Factions.Contains("皇家");
+                FactionIJN.IsChecked = criteria.Factions.Contains("重樱");
+                FactionKMS.IsChecked = criteria.Factions.Contains("铁血");
+                FactionDragon.IsChecked = criteria.Factions.Contains("东煌");
+                FactionSN.IsChecked = criteria.Factions.Contains("北方联合");
+                FactionFFNF.IsChecked = criteria.Factions.Contains("自由鸢尾");
+                FactionMNF.IsChecked = criteria.Factions.Contains("维希教廷");
+                FactionSardegna.IsChecked = criteria.Factions.Contains("撒丁帝国");
+                FactionMETA.IsChecked = criteria.Factions.Contains("META");
+                FactionTempesta.IsChecked = criteria.Factions.Contains("飓风");
+                FactionOther.IsChecked = criteria.Factions.Contains("其他");
+            }
+            else if (CollabFactionPanel.Visibility == Visibility.Visible)
+            {
+                FactionCollab_Nep.IsChecked = criteria.Factions.Contains("超次元游戏海王星");
+                FactionCollab_Bilibili.IsChecked = criteria.Factions.Contains("哔哩哔哩");
+                FactionCollab_Utawarerumono.IsChecked = criteria.Factions.Contains("传颂之物");
+                FactionCollab_KizunaAI.IsChecked = criteria.Factions.Contains("绊爱");
+                FactionCollab_Hololive.IsChecked = criteria.Factions.Contains("Hololive");
+                FactionCollab_DoAXVV.IsChecked = criteria.Factions.Contains("死或生沙滩排球");
+                FactionCollab_Idolmaster.IsChecked = criteria.Factions.Contains("偶像大师");
+                FactionCollab_SSSS.IsChecked = criteria.Factions.Contains("SSSS");
+                FactionCollab_Ryza.IsChecked = criteria.Factions.Contains("莱莎的炼金工房");
+                FactionCollab_Senran.IsChecked = criteria.Factions.Contains("闪乱神乐");
+                FactionCollab_Toloveru.IsChecked = criteria.Factions.Contains("出包王女");
+                FactionCollab_BRS.IsChecked = criteria.Factions.Contains("黑岩射手");
+                FactionCollab_Danmachi.IsChecked = criteria.Factions.Contains("地城邂逅");
+                FactionCollab_Yumia.IsChecked = criteria.Factions.Contains("优米雅的炼金工房");
+                FactionCollab_DAL.IsChecked = criteria.Factions.Contains("约会大作战V");
+
+            }
+            else if (MetaFactionPanel.Visibility == Visibility.Visible)
+            {
+                FactionMeta_Flame.IsChecked = criteria.Factions.Contains("破敌之炬");
+                FactionMeta_Core.IsChecked = criteria.Factions.Contains("湮烬之核");
+                FactionMeta_Reason.IsChecked = criteria.Factions.Contains("构造之理");
+                FactionMeta_Light.IsChecked = criteria.Factions.Contains("逐光之焰");
+                FactionMeta_Fire.IsChecked = criteria.Factions.Contains("摇曳之火");
+            }
 
             // 稀有度
             RarityNormal.IsChecked = criteria.Rarities.Contains("普通");
@@ -129,6 +216,8 @@ namespace AzurLaneDex.Views
             RarityElite.IsChecked = criteria.Rarities.Contains("精锐");
             RaritySuperRare.IsChecked = criteria.Rarities.Contains("超稀有");
             RarityLegendary.IsChecked = criteria.Rarities.Contains("海上传奇");
+            RarityDecisive.IsChecked = criteria.Rarities.Contains("最高方案");
+            RarityUltimate.IsChecked = criteria.Rarities.Contains("决战方案");
 
             // 附加状态
             ExtraCanRemodel.IsChecked = criteria.CanRemodel;

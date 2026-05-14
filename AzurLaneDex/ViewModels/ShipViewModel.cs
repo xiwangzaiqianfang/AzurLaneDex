@@ -1,8 +1,9 @@
-﻿using System;
-using AzurLaneDex.Models;
+﻿using AzurLaneDex.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using static AzurLaneDex.Models.ShipStatic;
 
 namespace AzurLaneDex.ViewModels;
 
@@ -26,6 +27,8 @@ public class ShipViewModel : INotifyPropertyChanged
     public string ShipClass => _static.ShipClass;
     public string Rarity => _static.Rarity;
     public int GameOrder => _static.GameOrder;
+    public ShipCategory Category => _static.Category;
+    public int CategoryOrder => _static.CategoryOrder;
     public string AcquireMain => _static.AcquireMain;
     public string AcquireDetail => _static.AcquireDetail;
     public string BuildTime => _static.BuildTime;
@@ -138,6 +141,26 @@ public class ShipViewModel : INotifyPropertyChanged
     // 辅助属性
     public bool IsMaxBreakthrough => Breakthrough == 3;
     public string BreakthroughDisplay => Breakthrough == 3 ? "满破" : Breakthrough.ToString();
+    public string DisplayId
+    {
+        get
+        {
+            switch (Category)
+            {
+                case ShipCategory.META:
+                    int metaSeq = Id - ShipIdRanges.MetaStart + 1;
+                    return $"NO.META{metaSeq:D3}";
+                case ShipCategory.Collab:
+                    int collabSeq = Id - ShipIdRanges.CollabStart + 1;
+                    return $"NO.Collab{collabSeq:D3}";
+                case ShipCategory.Research:
+                    int researchSeq = Id - ShipIdRanges.ResearchStart + 1;
+                    return $"NO.Plan{researchSeq:D3}";
+                default:
+                    return $"NO.{Id:D3}";
+            }
+        }
+    }
     public string DisplayName
     {
         get
@@ -189,6 +212,8 @@ public class ShipViewModel : INotifyPropertyChanged
             ShipClass = _static.ShipClass,
             Rarity = _static.Rarity,
             GameOrder = _static.GameOrder,
+            Category = _static.Category,
+            CategoryOrder = _static.CategoryOrder,
             AcquireMain = _static.AcquireMain,
             AcquireDetail = _static.AcquireDetail,
             BuildTime = _static.BuildTime,

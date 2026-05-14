@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using static AzurLaneDex.Models.ShipStatic;
 
 namespace AzurLaneDex.Views
 {
@@ -13,6 +14,20 @@ namespace AzurLaneDex.Views
         private int _editingShipId = 0;
         public AddShipDialog(ShipStatic editShip = null)
         {
+             _factionMap = new Dictionary<ShipCategory, List<string>>
+            {
+                [ShipCategory.Normal] = _normalFactions,
+                [ShipCategory.Collab] = _collabFactions,
+                [ShipCategory.Research] = _normalFactions, // 科研使用常规阵营
+                [ShipCategory.META] = _metaFactions
+            };
+            _rarityMap = new Dictionary<ShipCategory, List<string>>
+            {
+                [ShipCategory.Normal] = _normalRarities,
+                [ShipCategory.Collab] = _normalRarities,
+                [ShipCategory.Research] = _researchRarities,
+                [ShipCategory.META] = _normalRarities
+            };
             this.InitializeComponent();
             if (editShip != null)
             {
@@ -31,9 +46,13 @@ namespace AzurLaneDex.Views
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            // 初始化日期选择器为今天
-            ReleaseDatePicker.Date = DateTimeOffset.Now;
-            SpecialGearDatePicker.Date = DateTimeOffset.Now;
+            if (_editingShipId == 0)
+            {
+                // 初始化日期选择器为今天
+                ReleaseDatePicker.Date = DateTimeOffset.Now;
+                SpecialGearDatePicker.Date = DateTimeOffset.Now;
+                RemodelDatePicker.Date = DateTimeOffset.Now;
+            }
 
             // 监听特殊兵装复选框，启用/禁用相关控件
             CanSpecialGearCheckBox.Checked += (s, args) => UpdateSpecialGearControlsEnabled();
@@ -82,6 +101,41 @@ namespace AzurLaneDex.Views
 
         private bool _isLoadingShipData = false; // 防止加载数据时触发事件
 
+        // 阵营列表定义
+        private readonly List<string> _normalFactions = new()
+        {
+            "白鹰", "皇家", "重樱", "铁血", "东煌", "撒丁帝国",
+            "北方联合", "自由鸢尾", "维希教廷", "郁金王国", "飓风", "其他"
+        };
+
+        private readonly List<string> _collabFactions = new()
+        {
+            "超次元游戏海王星", "哔哩哔哩", "传颂之物", "绊爱", "Hololive",
+            "死或生沙滩排球", "偶像大师", "SSSS", "莱莎的炼金工房", "闪乱神乐",
+            "出包王女", "黑岩射手", "地城邂逅", "优米雅的炼金工房", "约会大作战V"
+        };
+
+        private readonly List<string> _metaFactions = new()
+        {
+            "破敌之炬", "湮烬之核", "构造之理", "逐光之焰", "摇曳之火"
+        };
+
+        // 阵营映射：类别 -> 列表
+        private Dictionary<ShipCategory, List<string>> _factionMap;
+        // 常规稀有度列表
+        private readonly List<string> _normalRarities = new()
+        {
+            "普通", "稀有", "精锐", "超稀有", "海上传奇"
+        };
+
+                // 科研稀有度列表
+                private readonly List<string> _researchRarities = new()
+        {
+            "最高方案", "决战方案"
+        };
+
+        // 稀有度映射：类别 -> 列表
+        private Dictionary<ShipCategory, List<string>> _rarityMap;
         private void ShipClassCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (_isLoadingShipData) return;
@@ -154,14 +208,35 @@ namespace AzurLaneDex.Views
         }
         private void SetComboBoxSelectedItem(ComboBox combo, string value)
         {
-            foreach (ComboBoxItem item in combo.Items)
+            System.Diagnostics.Debug.WriteLine($"SetComboBoxSelectedItem: value='{value}', ItemsSource type={combo.ItemsSource?.GetType()}");
+            if (string.IsNullOrEmpty(value)) return;
+            // 如果 ItemsSource 是字符串列表
+            if (combo.ItemsSource is IList<string> stringList)
             {
-                if (item.Content?.ToString() == value)
+                for (int i = 0; i < stringList.Count; i++)
                 {
-                    combo.SelectedItem = item;
-                    break;
+                    System.Diagnostics.Debug.WriteLine($"  [{i}] = '{stringList[i]}'");
+                    if (stringList[i] == value)
+                    {
+                        combo.SelectedIndex = i;
+                        return;
+                    }
                 }
             }
+            // 否则视为 ComboBoxItem 集合（传统方式）
+            else
+            {
+                foreach (ComboBoxItem item in combo.Items)
+                {
+                    if (item.Content?.ToString() == value)
+                    {
+                        combo.SelectedItem = item;
+                        return;
+                    }
+                }
+            }
+            // 未找到，可设置 SelectedIndex = -1
+            combo.SelectedIndex = -1;
         }
 
         private string GetCheckboxSuffix(string shipClass)
@@ -203,6 +278,49 @@ namespace AzurLaneDex.Views
             var cb = FindName(name) as CheckBox;
             if (cb != null) cb.IsChecked = isChecked;
         }
+        private void CategoryCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            int selectedIndex = CategoryCombo.SelectedIndex;
+            bool isNormal = (selectedIndex == 0); // 0: 角色
+
+            // 切换可见性
+            GameOrderLabel.Visibility = isNormal ? Visibility.Visible : Visibility.Collapsed;
+            GameOrderBox.Visibility = isNormal ? Visibility.Visible : Visibility.Collapsed;
+            CategoryOrderLabel.Visibility = isNormal ? Visibility.Collapsed : Visibility.Visible;
+            CategoryOrderBox.Visibility = isNormal ? Visibility.Collapsed : Visibility.Visible;
+            
+            // 动态切换阵营列表
+            ShipCategory category = (ShipCategory)selectedIndex;
+            if (_factionMap.TryGetValue(category, out var factions))
+            {
+                string previousSelection = FactionCombo.SelectedItem as string;
+                FactionCombo.ItemsSource = factions;
+
+                if (!_isLoadingShipData)
+                {
+                    // 尝试恢复之前的选中项（如果在新列表中存在）
+                    if (!string.IsNullOrEmpty(previousSelection) && factions.Contains(previousSelection))
+                        FactionCombo.SelectedItem = previousSelection;
+                    else
+                        FactionCombo.SelectedIndex = 0; // 默认选中第一项
+                }
+            }
+
+            // 刷新稀有度列表（新增）
+            if (_rarityMap.TryGetValue(category, out var rarities))
+            {
+                string previousRarity = RarityCombo.SelectedItem?.ToString();
+                RarityCombo.ItemsSource = rarities;
+                if (!_isLoadingShipData)
+                {
+                    if (!string.IsNullOrEmpty(previousRarity) && rarities.Contains(previousRarity))
+                        RarityCombo.SelectedItem = previousRarity;
+                    else
+                        RarityCombo.SelectedIndex = 0;
+                }
+            }
+        }
+
         private async void ShowError(string message)
         {
             var dialog = new ContentDialog
@@ -214,24 +332,61 @@ namespace AzurLaneDex.Views
             };
             await dialog.ShowAsync();
         }
+        private void UpdateFactionItemsSourceByCategory(ShipCategory category)
+        {
+            if (_factionMap.TryGetValue(category, out var factions))
+            {
+                FactionCombo.ItemsSource = factions;
+            }
+        }
         private void LoadShipData(ShipStatic ship)
         {
             _isLoadingShipData = true;
             try
             {
+                System.Diagnostics.Debug.WriteLine($"加载舰船: {ship.Name}, Category = {ship.Category}, 索引 = {(int)ship.Category}");
                 // 基本信息
                 NameBox.Text = ship.Name;
                 AltNameBox.Text = ship.AltName;
-                SetComboBoxSelectedItem(FactionCombo, ship.Faction);
-                SetComboBoxSelectedItem(ShipClassCombo, ship.ShipClass);
-                SetComboBoxSelectedItem(RarityCombo, ship.Rarity);
                 IdBox.Value = ship.Id;
                 GameOrderBox.Value = ship.GameOrder;
                 CanRemodelCheckBox.IsChecked = ship.CanRemodel;
-                if (!string.IsNullOrEmpty(ship.RemodelDate) && DateTime.TryParseExact(ship.RemodelDate, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime remodelDate))
+
+                int categoryIndex = (int)ship.Category;
+                if (categoryIndex >= 0 && categoryIndex < CategoryCombo.Items.Count)
+                {
+                    CategoryCombo.SelectedItem = CategoryCombo.Items[categoryIndex];
+                    System.Diagnostics.Debug.WriteLine($"设置舰船类别为: {CategoryCombo.SelectedItem}");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"无效的类别索引: {categoryIndex}");
+                }
+
+                CategoryCombo.SelectedIndex = (int)ship.Category;
+                UpdateFactionItemsSourceByCategory(ship.Category);
+                CategoryCombo_SelectionChanged(CategoryCombo, null);
+
+                SetComboBoxSelectedItem(FactionCombo, ship.Faction);
+                SetComboBoxSelectedItem(ShipClassCombo, ship.ShipClass);
+                SetComboBoxSelectedItem(RarityCombo, ship.Rarity);
+
+                // 设置顺序值
+                if (ship.Category == ShipCategory.Normal)
+                {
+                    GameOrderBox.Value = ship.GameOrder;
+                }
+                else
+                {
+                    CategoryOrderBox.Value = ship.CategoryOrder;
+                }
+                // 改造日期
+                if (!string.IsNullOrEmpty(ship.RemodelDate) &&
+                DateTime.TryParseExact(ship.RemodelDate, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime remodelDate))
                 {
                     RemodelDatePicker.Date = remodelDate;
                 }
+
 
                 // 获取方式
                 AcquireMainBox.Text = ship.AcquireMain;
@@ -308,12 +463,25 @@ namespace AzurLaneDex.Views
         {
             // 基本信息
             int id = (int)IdBox.Value;
-            int gameOrder = (int)GameOrderBox.Value;
             string name = NameBox.Text.Trim();
             string altName = AltNameBox.Text.Trim();
-            string faction = (FactionCombo.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "";
-            string shipClass = (ShipClassCombo.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "";
-            string rarity = (RarityCombo.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "";
+            string faction = FactionCombo.SelectedItem?.ToString() ?? ""; string shipClass = (ShipClassCombo.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "";
+            string rarity = RarityCombo.SelectedItem?.ToString() ?? "";
+            ShipCategory category = (ShipCategory)CategoryCombo.SelectedIndex;
+            int gameOrder = 0;
+            int categoryOrder = 0;
+
+            if (category == ShipCategory.Normal)
+            {
+                gameOrder = (int)GameOrderBox.Value;
+                categoryOrder = gameOrder;   // 普通船的 CategoryOrder 等于 GameOrder
+            }
+            else
+            {
+                categoryOrder = (int)CategoryOrderBox.Value;
+                // 特殊船的 GameOrder 可设为 0 或保留原值（如果有），但建议设为 0 避免混淆
+                gameOrder = 0;
+            }
             bool canRemodel = CanRemodelCheckBox.IsChecked == true;
             string remodelDate = canRemodel == true ? RemodelDatePicker.Date.ToString("yyyy-MM-dd") : "";
 
@@ -391,6 +559,8 @@ namespace AzurLaneDex.Views
                 ShipClass = shipClass,
                 Rarity = rarity,
                 GameOrder = gameOrder,
+                Category = category,
+                CategoryOrder = categoryOrder,
                 CanRemodel = canRemodel,
                 RemodelDate = remodelDate,
                 AcquireMain = acquireMain,
@@ -423,9 +593,18 @@ namespace AzurLaneDex.Views
 
         private string GetSelectedComboBoxContent(ComboBox combo)
         {
+            if (combo.SelectedItem == null) return "";
+
+            // 如果 SelectedItem 是字符串，直接返回
+            if (combo.SelectedItem is string str)
+                return str;
+
+            // 如果 SelectedItem 是 ComboBoxItem，返回其 Content
             if (combo.SelectedItem is ComboBoxItem item)
                 return item.Content?.ToString() ?? "";
-            return "";
+
+            // 兜底：调用 ToString()
+            return combo.SelectedItem.ToString();
         }
     }
 }

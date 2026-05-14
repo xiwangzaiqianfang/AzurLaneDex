@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using static AzurLaneDex.Models.ShipStatic;
 
 namespace AzurLaneDex.Views;
 
@@ -28,6 +29,7 @@ public sealed partial class MainPage : Page
     private bool _isRefreshing = false;
     private List<SuggestionItem> _allSuggestions = new();   // 全量建议项（只初始化一次）
     private List<SuggestionItem> _currentSuggestions = new(); // 当前过滤后的建议项
+    private ShipCategory? _currentCategoryFilter = null;
 
     public MainPage()
     {
@@ -64,7 +66,27 @@ public sealed partial class MainPage : Page
         }
         System.Diagnostics.Debug.WriteLine($"Ships count: {_shipManager.Ships.Count}");
         BuildSuggestionSource();
+        if (CategorySelector.Items.Count > 0)
+            CategorySelector.SelectedItem = CategorySelector.Items[0];
+        _currentCategoryFilter = ShipCategory.Normal;
         RefreshShipList();
+    }
+
+    private void CategorySelector_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
+    {
+        if (sender.SelectedItem is SelectorBarItem selectedItem && selectedItem.Tag is string tag)
+        {
+            _currentCategoryFilter = tag switch
+            {
+                "Normal" => ShipCategory.Normal,
+                "Collab" => ShipCategory.Collab,
+                "Research" => ShipCategory.Research,
+                "META" => ShipCategory.META,
+                _ => null
+            };
+            _currentFilterCriteria = null;
+            RefreshShipList();
+        }
     }
 
     private void BuildSuggestionSource()
@@ -176,54 +198,91 @@ public sealed partial class MainPage : Page
     private void RefreshShipList()
     {
         if (_shipManager == null) return;
-        var source = _shipManager.Ships;
-        if (source == null) return;
-            
-        // 1. 筛选（搜索框 + 筛选面板条件）
-        var filtered = source.AsEnumerable();
+        var source = _shipManager.Ships.AsEnumerable();
+
+        // 1. 筛选（搜索框 + 筛选面板条件 + 分类筛选）
+        var filtered = source;
         string keyword = SearchBox.Text?.Trim();
         if (!string.IsNullOrEmpty(keyword))
         {
             filtered = filtered.Where(s =>
-                    s.Name.Contains(keyword, StringComparison.OrdinalIgnoreCase) ||
-                    (s.AltName?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                    (s.SpecialGearName?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                    (s.DebutEvent?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                    (s.AcquireMain?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                    (s.AcquireDetail?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false)
-                );
+                s.Name.Contains(keyword, StringComparison.OrdinalIgnoreCase) ||
+                (s.AltName?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (s.SpecialGearName?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (s.DebutEvent?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (s.AcquireMain?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (s.AcquireDetail?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false)
+            );
         }
-        // 应用筛选面板条件（如果有）
         if (_currentFilterCriteria != null)
         {
             filtered = ApplyFilterCriteria(filtered, _currentFilterCriteria);
         }
+        // ★★★ 关键：添加分类筛选 ★★★
+        if (_currentCategoryFilter.HasValue)
+        {
+            filtered = filtered.Where(s => s.Category == _currentCategoryFilter.Value);
+        }
+
         // 2. 排序
         int sortIndex = SortCombo.SelectedIndex;
-        Func<ShipViewModel, IComparable> keySelector = sortIndex switch
+        IEnumerable<ShipViewModel> sorted;
+        if (sortIndex == 4)
         {
-            0 => s => s.Id,
-            1 => s => s.GameOrder,
-            2 => s => s.Name,
-            3 => s => GetRaritySortValue(s),
-            4 => s => s.Owned,
-            5 => s => s.Oath,
-            6 => s => s.Breakthrough,
-            7 => s => s.Level120,
-            8 => s => s.Remodeled,
-            9 => s => s.SpecialGearObtained,
-            _ => s => s.Id
-        };
-        if (_isAscending)
-            filtered = filtered.OrderBy(keySelector);
+            sorted = _isAscending
+                ? filtered.OrderBy(s => !s.CanRemodel).ThenBy(s => s.RemodelDate)
+                : filtered.OrderBy(s => !s.CanRemodel).ThenByDescending(s => s.RemodelDate);
+        }
+        else if (sortIndex == 5)
+        {
+            sorted = _isAscending
+                ? filtered.OrderBy(s => !s.CanSpecialGear).ThenBy(s => s.SpecialGearDate)
+                : filtered.OrderBy(s => !s.CanSpecialGear).ThenByDescending(s => s.SpecialGearDate);
+        }
+        else if (sortIndex == 7)
+        {
+            if (_isAscending)
+                sorted = filtered.OrderBy(s => !s.Remodeled); // 已改造的 true → 0，未改造的 false → 1，升序时已改造在前
+            else
+                sorted = filtered.OrderByDescending(s => !s.Remodeled); // 降序时未改造在前
+        }
+        else if (sortIndex == 11)
+        {
+            if (_isAscending)
+                sorted = filtered.OrderBy(s => !s.SpecialGearObtained); // 已获得在前
+            else
+                sorted = filtered.OrderByDescending(s => !s.SpecialGearObtained);
+        }
         else
-            filtered = filtered.OrderByDescending(keySelector);
+        {
+            Func<ShipViewModel, IComparable> keySelector = sortIndex switch
+            {
+                0 => s => s.Id,  // 编号
+                1 => s => s.CategoryOrder,  // 图鉴
+                2 => s => s.Name,  // 名称
+                3 => s => GetRaritySortValue(s),  // 稀有度
+                4 => s => s.CanRemodel ? (s.RemodelDate ?? "9999-12-31") : "9999-12-31",  // 改造日期
+                5 => s => s.CanSpecialGear ? (s.SpecialGearDate ?? "9999-12-31") : "9999-12-31",  // 兵装日期
+                6 => s => s.Owned,  // 获得
+                7 => s => s.Remodeled,  // 改造
+                8 => s => s.Breakthrough,  // 突破
+                9 => s => s.Oath,  //誓约
+                10 => s => s.Level120, // 120级
+                11 => s => s.SpecialGearObtained, // 兵装
+                _ => s => s.Id  // 编号
+            };
 
+            if (_isAscending)
+                sorted = filtered.OrderBy(keySelector);
+            else
+                sorted = filtered.OrderByDescending(keySelector);
+        }
+        // 更新 UI
         _currentShips.Clear();
-        foreach (var ship in filtered)
+        foreach (var ship in sorted)
             _currentShips.Add(ship);
 
-        // 刷新后清除全选状态，并重置所有舰船的 IsSelected 为 false
+        // 刷新后清除全选状态
         SelectAllCheckBox.IsChecked = false;
         foreach (var ship in _currentShips)
             ship.IsSelected = false;
@@ -234,25 +293,78 @@ public sealed partial class MainPage : Page
     {
         if (_currentShips == null || _currentShips.Count == 0) return;
         int sortIndex = SortCombo.SelectedIndex;
-        Func<ShipViewModel, IComparable> keySelector = sortIndex switch
+        List<ShipViewModel> sorted;
+        if (sortIndex == 4) // 按改造日期排序
         {
-            0 => s => s.Id,
-            1 => s => s.GameOrder,
-            2 => s => s.Name,
-            3 => s => GetRaritySortValue(s),
-            4 => s => s.Owned,
-            5 => s => s.Oath,
-            6 => s => s.Breakthrough,
-            7 => s => s.Level120,
-            8 => s => s.Remodeled,
-            9 => s => s.SpecialGearObtained,
-            _ => s => s.Id
-        };
+            if (_isAscending)
+            {
+                sorted = _currentShips
+                    .OrderBy(s => !s.CanRemodel)
+                    .ThenBy(s => s.RemodelDate ?? "9999-12-31")
+                    .ToList();
+            }
+            else
+            {
+                sorted = _currentShips
+                    .OrderBy(s => !s.CanRemodel)
+                    .ThenByDescending(s => s.RemodelDate ?? "0000-01-01")
+                    .ToList();
+            }
+        }
+        else if (sortIndex == 5) // 按兵装日期排序
+        {
+            if (_isAscending)
+            {
+                sorted = _currentShips
+                    .OrderBy(s => !s.CanSpecialGear)
+                    .ThenBy(s => s.SpecialGearDate ?? "9999-12-31")
+                    .ToList();
+            }
+            else
+            {
+                sorted = _currentShips
+                    .OrderBy(s => !s.CanSpecialGear)
+                    .ThenByDescending(s => s.SpecialGearDate ?? "0000-01-01")
+                    .ToList();
+            }
+        }
+        else if (sortIndex == 7) // 按改造状态排序
+        {
+            if (_isAscending)
+                sorted = _currentShips.OrderBy(s => !s.Remodeled).ToList();
+            else
+                sorted = _currentShips.OrderByDescending(s => !s.Remodeled).ToList();
+        }
+        else if (sortIndex == 11) // 按兵装获得状态排序
+        {
+            if (_isAscending)
+                sorted = _currentShips.OrderBy(s => !s.SpecialGearObtained).ToList();
+            else
+                sorted = _currentShips.OrderByDescending(s => !s.SpecialGearObtained).ToList();
+        }
+        else
+        {
+                Func<ShipViewModel, IComparable> keySelector = sortIndex switch
+            {
+                0 => s => s.Id,  // 编号
+                1 => s => s.CategoryOrder,  // 图鉴
+                2 => s => s.Name,  // 名称
+                3 => s => GetRaritySortValue(s),  // 稀有度
+                4 => s => s.CanRemodel ? (s.RemodelDate ?? "9999-12-31") : "9999-12-31",  // 改造日期
+                5 => s => s.CanSpecialGear ? (s.SpecialGearDate ?? "9999-12-31") : "9999-12-31",  // 兵装日期
+                6 => s => s.Owned,  // 获得
+                7 => s => s.Remodeled,  // 改造
+                8 => s => s.Breakthrough,  // 突破
+                9 => s => s.Oath,  //誓约
+                10 => s => s.Level120, // 120级
+                11 => s => s.SpecialGearObtained, // 兵装
+                _ => s => s.Id  // 编号
+            };
 
-        var sorted = _isAscending
-        ? _currentShips.OrderBy(keySelector).ToList()
-        : _currentShips.OrderByDescending(keySelector).ToList();
-
+            sorted = _isAscending
+                ? _currentShips.OrderBy(keySelector).ToList()
+                : _currentShips.OrderByDescending(keySelector).ToList();
+        }
 
         for (int i = 0; i < sorted.Count; i++)
         {
@@ -379,10 +491,11 @@ public sealed partial class MainPage : Page
         ["稀有"] = 1,
         ["精锐"] = 2,
         ["超稀有"] = 3,
-        ["海上传奇"] = 4
+        ["海上传奇"] = 4,
+        ["最高方案"] = 5,
+        ["决战方案"] = 6
     };
     private void SortCombo_SelectionChanged(object sender, SelectionChangedEventArgs e) => RefreshShipList();
-    private void RefreshButton_Click(object sender, RoutedEventArgs e) => RefreshShipList();
 
     private async void BatchOperation_Click(object sender, RoutedEventArgs e)
     {
@@ -405,7 +518,15 @@ public sealed partial class MainPage : Page
         var operations = new (string text, Action<ShipViewModel> action)[]
         {
             ("标记为已获得", s => s.Owned = true),
-            ("标记为未获得", s => s.Owned = false),
+            ("标记为未获得并清除所有状态", s =>
+            {
+                s.Owned = false;
+                s.Breakthrough = 0;
+                s.Oath = false;
+                s.Level120 = false;
+                s.Remodeled = false;
+                s.SpecialGearObtained = false;
+            }),
             ("标记为已满破", s => s.Breakthrough = 3),
             ("标记为未满破", s => s.Breakthrough = 0),
             ("标记为已120级", s => s.Level120 = true),
@@ -420,8 +541,19 @@ public sealed partial class MainPage : Page
         foreach (var op in operations)
         {
             var item = new MenuFlyoutItem { Text = op.text };
-            item.Click += (s, args) =>
+            item.Click += async (s, args) =>
             {
+                // 二次确认
+                var dialog = new ContentDialog
+                {
+                    Title = "确认批量操作",
+                    Content = $"确定要对 {selectedShips.Count} 艘舰船执行“{op.text}”操作吗？",
+                    PrimaryButtonText = "确定",
+                    CloseButtonText = "取消",
+                    XamlRoot = this.XamlRoot
+                };
+                if (await dialog.ShowAsync() != ContentDialogResult.Primary)
+                    return;
                 foreach (var ship in selectedShips)
                     op.action(ship);
                 _shipManager.Save();
@@ -437,14 +569,14 @@ public sealed partial class MainPage : Page
     private void SortOrderToggle_Checked(object sender, RoutedEventArgs e)
     {
         _isAscending = false;
-        SortOrderToggle.Content = "▲";
+        SortOrderToggle.Content = "降序";
         RefreshShipList();
     }
 
     private void SortOrderToggle_Unchecked(object sender, RoutedEventArgs e)
     {
         _isAscending = true;
-        SortOrderToggle.Content = "▼";
+        SortOrderToggle.Content = "升序";
         RefreshShipList();
     }
 
@@ -455,6 +587,10 @@ public sealed partial class MainPage : Page
         {
             filterPanel.SetCriteria(_currentFilterCriteria);
         }
+        if (_currentCategoryFilter.HasValue)
+        {
+            filterPanel.SetCategory(_currentCategoryFilter.Value);
+        }
 
         var dialog = new ContentDialog
         {
@@ -464,8 +600,8 @@ public sealed partial class MainPage : Page
             CloseButtonText = "取消",
             DefaultButton = ContentDialogButton.Primary,
             XamlRoot = this.Content.XamlRoot,
-            MinWidth = 600
-        };
+            Width = 600
+         };
 
         dialog.PrimaryButtonClick += (s, args) =>
         {
@@ -516,16 +652,18 @@ public sealed partial class MainPage : Page
         }
         return source;
     }
-    private void ResetFilter_Click(object sender, RoutedEventArgs e)
+    private void ResetAndRefresh_Click(object sender, RoutedEventArgs e)
     {
+        // 重置筛选条件
         SearchBox.Text = string.Empty;
-        SortCombo.SelectedIndex = 0;
+        SortCombo.SelectedIndex = 0;          // 默认按编号排序
         if (SortOrderToggle.IsChecked == true)
-            SortOrderToggle.IsChecked = false;
+            SortOrderToggle.IsChecked = false; // 切换回升序（▼）
 
-        _currentFilterCriteria = null;
+        _currentFilterCriteria = null;        // 清除筛选面板条件
+
+        // 刷新列表
         RefreshShipList();
-
     }
     private async void AddShipButton_Click(object sender, RoutedEventArgs e)
     {

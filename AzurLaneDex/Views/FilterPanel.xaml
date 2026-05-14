@@ -14,152 +14,221 @@
         </Grid.RowDefinitions>
 
         <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="460">
-            <StackPanel Margin="12">
+            <StackPanel Margin="10">
                 <!-- 舰种 -->
-                <Expander Grid.Row="0" Header="舰种" HorizontalAlignment="Stretch" IsExpanded="True">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <StackPanel Grid.Row="0" Orientation="Horizontal">
-                            <CheckBox x:Name="ClassDD" Content="驱逐" Margin="8,4,6,4" Width="50"/>
-                            <CheckBox x:Name="ClassCL" Content="轻巡" Margin="8,4,6,4" Width="50"/>
-                            <CheckBox x:Name="ClassCA" Content="重巡" Margin="8,4,6,4" Width="50"/>
-                        </StackPanel>
-                        <StackPanel Grid.Row="1" Orientation="Horizontal">
-                            <CheckBox x:Name="ClassCB" Content="超巡" Margin="8,4,6,4" Width="50"/>
-                            <CheckBox x:Name="ClassBC" Content="战巡" Margin="8,4,6,4" Width="50"/>
-                            <CheckBox x:Name="ClassBB" Content="战列" Margin="8,4,6,4" Width="50"/>
-                        </StackPanel>
-                        <StackPanel Grid.Row="2" Orientation="Horizontal">
-                            <CheckBox x:Name="ClassBBV" Content="航战" Margin="8,4,6,4" Width="50"/>
-                            <CheckBox x:Name="ClassCV" Content="航母" Margin="8,4,6,4" Width="50"/>
-                            <CheckBox x:Name="ClassCVL" Content="轻航" Margin="8,4,6,4" Width="50"/>
-                        </StackPanel>
-                        <StackPanel Grid.Row="3" Orientation="Horizontal">
-                            <CheckBox x:Name="ClassAR" Content="维修" Margin="8,4,6,4" Width="50"/>
-                            <CheckBox x:Name="ClassSS" Content="潜艇" Margin="8,4,6,4" Width="50"/>
-                            <CheckBox x:Name="ClassSSV" Content="潜母" Margin="8,4,6,4" Width="50"/>
-                        </StackPanel>
-                        <StackPanel Grid.Row="4" Orientation="Horizontal">
-                            <CheckBox x:Name="ClassAE" Content="运输" Margin="8,4,6,4" Width="50"/>
-                            <CheckBox x:Name="ClassSail" Content="风帆" Margin="8,4,6,4" Width="50"/>
-                            <CheckBox x:Name="ClassOther" Content="其他" Margin="8,4,6,4" Width="50"/>
-                        </StackPanel>
-
-                    </Grid>
-                </Expander>
+                <StackPanel Background="{ThemeResource CardBackgroundFillColorDefault}"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" Width="477">
+                    <Expander Grid.Row="0" Header="舰种" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsExpanded="True" Margin="0,0,0,5">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <StackPanel Grid.Row="0" Orientation="Horizontal">
+                                <CheckBox x:Name="ClassDD" Content="驱逐" Margin="8,4,6,4" Width="50"/>
+                                <CheckBox x:Name="ClassCL" Content="轻巡" Margin="8,4,6,4" Width="50"/>
+                                <CheckBox x:Name="ClassCA" Content="重巡" Margin="8,4,6,4" Width="50"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="1" Orientation="Horizontal">
+                                <CheckBox x:Name="ClassCB" Content="超巡" Margin="8,4,6,4" Width="50"/>
+                                <CheckBox x:Name="ClassBC" Content="战巡" Margin="8,4,6,4" Width="50"/>
+                                <CheckBox x:Name="ClassBB" Content="战列" Margin="8,4,6,4" Width="50"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="2" Orientation="Horizontal">
+                                <CheckBox x:Name="ClassBBV" Content="航战" Margin="8,4,6,4" Width="50"/>
+                                <CheckBox x:Name="ClassCV" Content="航母" Margin="8,4,6,4" Width="50"/>
+                                <CheckBox x:Name="ClassCVL" Content="轻航" Margin="8,4,6,4" Width="50"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="3" Orientation="Horizontal">
+                                <CheckBox x:Name="ClassAR" Content="维修" Margin="8,4,6,4" Width="50"/>
+                                <CheckBox x:Name="ClassSS" Content="潜艇" Margin="8,4,6,4" Width="50"/>
+                                <CheckBox x:Name="ClassSSV" Content="潜母" Margin="8,4,6,4" Width="50"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="4" Orientation="Horizontal">
+                                <CheckBox x:Name="ClassAE" Content="运输" Margin="8,4,6,4" Width="50"/>
+                                <CheckBox x:Name="ClassSail" Content="风帆" Margin="8,4,6,4" Width="50"/>
+                                <CheckBox x:Name="ClassOther" Content="其他" Margin="8,4,6,4" Width="50"/>
+                            </StackPanel>
+                        </Grid>
+                    </Expander>
+                </StackPanel>
 
                 <!-- 阵营 -->
-                <Expander Grid.Row="1" Header="阵营" HorizontalAlignment="Stretch" IsExpanded="True">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <StackPanel Grid.Row="0" Orientation="Horizontal">
-                            <CheckBox x:Name="FactionEU" Content="白鹰" Margin="8,4,6,4" Width="80"/>
-                            <CheckBox x:Name="FactionRN" Content="皇家" Margin="8,4,6,4" Width="80"/>
-                            <CheckBox x:Name="FactionIJN" Content="重樱" Margin="8,4,6,4" Width="80"/>
-                        </StackPanel>
-                        <StackPanel Grid.Row="1" Orientation="Horizontal">
-                            <CheckBox x:Name="FactionKMS" Content="铁血" Margin="8,4,6,4" Width="80"/>
-                            <CheckBox x:Name="FactionDragon" Content="东煌" Margin="8,4,6,4" Width="80"/>
-                            <CheckBox x:Name="FactionSN" Content="北方联合" Margin="8,4,6,4" Width="80"/>
-                        </StackPanel>
-                        <StackPanel Grid.Row="2" Orientation="Horizontal">
-                            <CheckBox x:Name="FactionFFNF" Content="自由鸢尾" Margin="8,4,6,4" Width="80"/>
-                            <CheckBox x:Name="FactionMNF" Content="维希教廷" Margin="8,4,6,4" Width="80"/>
-                            <CheckBox x:Name="FactionSardegna" Content="撒丁帝国" Margin="8,4,6,4" Width="80"/>
-                        </StackPanel>
-                        <StackPanel Grid.Row="3" Orientation="Horizontal">
-                            <CheckBox x:Name="FactionMETA" Content="META" Margin="8,4,6,4" Width="80"/>
-                            <CheckBox x:Name="FactionTempesta" Content="飓风" Margin="8,4,6,4" Width="80"/>
-                            <CheckBox x:Name="FactionOther" Content="其他" Margin="8,4,6,4" Width="80"/>
-                        </StackPanel>
-                    </Grid>
-                </Expander>
+                <StackPanel Background="{ThemeResource CardBackgroundFillColorDefault}"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" Width="477">
+                    <Expander Grid.Row="1" Header="阵营" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsExpanded="True" Margin="0,5,0,5">
+                        <Grid>
+                            <Grid x:Name="NormalFactionPanel">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <StackPanel Grid.Row="0" Orientation="Horizontal">
+                                    <CheckBox x:Name="FactionEU" Content="白鹰" Margin="8,4,6,4" Width="80"/>
+                                    <CheckBox x:Name="FactionRN" Content="皇家" Margin="8,4,6,4" Width="80"/>
+                                    <CheckBox x:Name="FactionIJN" Content="重樱" Margin="8,4,6,4" Width="80"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                                    <CheckBox x:Name="FactionKMS" Content="铁血" Margin="8,4,6,4" Width="80"/>
+                                    <CheckBox x:Name="FactionDragon" Content="东煌" Margin="8,4,6,4" Width="80"/>
+                                    <CheckBox x:Name="FactionSN" Content="北方联合" Margin="8,4,6,4" Width="80"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="2" Orientation="Horizontal">
+                                    <CheckBox x:Name="FactionFFNF" Content="自由鸢尾" Margin="8,4,6,4" Width="80"/>
+                                    <CheckBox x:Name="FactionMNF" Content="维希教廷" Margin="8,4,6,4" Width="80"/>
+                                    <CheckBox x:Name="FactionSardegna" Content="撒丁帝国" Margin="8,4,6,4" Width="80"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="3" Orientation="Horizontal">
+                                    <CheckBox x:Name="FactionMETA" Content="META" Margin="8,4,6,4" Width="80"/>
+                                    <CheckBox x:Name="FactionTempesta" Content="飓风" Margin="8,4,6,4" Width="80"/>
+                                    <CheckBox x:Name="FactionOther" Content="其他" Margin="8,4,6,4" Width="80"/>
+                                </StackPanel>
+                            </Grid>
+                            <Grid x:Name="CollabFactionPanel" Visibility="Collapsed">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <StackPanel Grid.Row="0" Orientation="Horizontal">
+                                    <CheckBox x:Name="FactionCollab_Nep" Content="超次元游戏海王星" Margin="6,4,6,4"/>
+                                    <CheckBox x:Name="FactionCollab_Bilibili" Content="哔哩哔哩" Margin="6,4,6,4"/>
+                                    <CheckBox x:Name="FactionCollab_Utawarerumono" Content="传颂之物" Margin="26,4,6,4"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                                    <CheckBox x:Name="FactionCollab_KizunaAI" Content="绊爱" Margin="6,4,6,4"/>
+                                    <CheckBox x:Name="FactionCollab_Hololive" Content="Hololive" Margin="26,4,6,4"/>
+                                    <CheckBox x:Name="FactionCollab_DoAXVV" Content="死或生沙滩排球" Margin="26,4,6,4"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="2" Orientation="Horizontal">
+                                    <CheckBox x:Name="FactionCollab_Idolmaster" Content="偶像大师" Margin="6,4,6,4"/>
+                                    <CheckBox x:Name="FactionCollab_SSSS" Content="SSSS" Margin="26,4,6,4"/>
+                                    <CheckBox x:Name="FactionCollab_Ryza" Content="莱莎的炼金工房" Margin="26,4,6,4"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="3" Orientation="Horizontal">
+                                    <CheckBox x:Name="FactionCollab_Senran" Content="闪乱神乐" Margin="6,4,6,4"/>
+                                    <CheckBox x:Name="FactionCollab_Toloveru" Content="出包王女" Margin="26,4,6,4"/>
+                                    <CheckBox x:Name="FactionCollab_BRS" Content="黑岩射手" Margin="26,4,6,4"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="4" Orientation="Horizontal">
+                                    <CheckBox x:Name="FactionCollab_Danmachi" Content="地城邂逅" Margin="6,4,6,4"/>
+                                    <CheckBox x:Name="FactionCollab_Yumia" Content="优米雅的炼金工房" Margin="26,4,6,4"/>
+                                    <CheckBox x:Name="FactionCollab_DAL" Content="约会大作战V" Margin="6,4,6,4"/>
+                                </StackPanel>
+                            </Grid>
+                            <!-- META阵营面板（初始隐藏） -->
+                            <Grid x:Name="MetaFactionPanel" Visibility="Collapsed">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <StackPanel Grid.Row="0" Orientation="Horizontal">
+                                    <CheckBox x:Name="FactionMeta_Flame" Content="破敌之炬" Margin="8,4,6,4"/>
+                                    <CheckBox x:Name="FactionMeta_Core" Content="湮烬之核" Margin="8,4,6,4"/>
+                                    <CheckBox x:Name="FactionMeta_Reason" Content="构造之理" Margin="8,4,6,4"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                                    <CheckBox x:Name="FactionMeta_Light" Content="逐光之焰" Margin="8,4,6,4"/>
+                                    <CheckBox x:Name="FactionMeta_Fire" Content="摇曳之火" Margin="8,4,6,4"/>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+                    </Expander>
+                </StackPanel>
 
                 <!-- 稀有度 -->
-                <Expander Grid.Row="2" Header="稀有度" HorizontalAlignment="Stretch" IsExpanded="True">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <StackPanel Grid.Row="0" Orientation="Horizontal">
-                            <CheckBox x:Name="RarityNormal" Content="普通" Margin="8,4,6,4" Width="80"/>
-                            <CheckBox x:Name="RarityRare" Content="稀有" Margin="8,4,6,4" Width="80"/>
-                            <CheckBox x:Name="RarityElite" Content="精锐" Margin="8,4,6,4" Width="80"/>
-                        </StackPanel>
-                        <StackPanel Grid.Row="1" Orientation="Horizontal">
-                            <CheckBox x:Name="RaritySuperRare" Content="超稀有" Margin="8,4,6,4" Width="80"/>
-                            <CheckBox x:Name="RarityLegendary" Content="海上传奇" Margin="8,4,6,4" Width="90"/>
-                        </StackPanel>
-                    </Grid>
-                </Expander>
+                <StackPanel Background="{ThemeResource CardBackgroundFillColorDefault}"
+        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" Width="477">
+                    <Expander Grid.Row="2" Header="稀有度" HorizontalAlignment="Stretch" IsExpanded="True" Margin="0,5,0,5">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <StackPanel Grid.Row="0" Orientation="Horizontal">
+                                <CheckBox x:Name="RarityNormal" Content="普通" Margin="8,4,6,4" Width="80"/>
+                                <CheckBox x:Name="RarityRare" Content="稀有" Margin="8,4,6,4" Width="80"/>
+                                <CheckBox x:Name="RarityElite" Content="精锐" Margin="8,4,6,4" Width="80"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="1" Orientation="Horizontal">
+                                <CheckBox x:Name="RaritySuperRare" Content="超稀有" Margin="8,4,6,4" Width="80"/>
+                                <CheckBox x:Name="RarityLegendary" Content="海上传奇" Margin="8,4,6,4" Width="90"/>
+                                <CheckBox x:Name="RarityDecisive" Content="最高方案" Margin="8,4,6,4" Width="90"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="1" Orientation="Horizontal">
+                                <CheckBox x:Name="RarityUltimate" Content="决战方案" Margin="8,4,6,4" Width="90"/>
+                            </StackPanel>
+                        </Grid>
+                    </Expander>
+                </StackPanel>
 
                 <!-- 附加状态 -->
-                <Expander Grid.Row="3" Header="附加状态" HorizontalAlignment="Stretch" IsExpanded="True">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <StackPanel Grid.Row="0" Orientation="Horizontal">
-                            <CheckBox x:Name="ExtraCanRemodel" Content="可改造" Margin="8,4,6,4" Width="80"/>
-                            <CheckBox x:Name="ExtraRemodeled" Content="已改造" Margin="8,4,6,4" Width="80"/>
-                            <CheckBox x:Name="ExtraMaxBreak" Content="已满破" Margin="8,4,6,4" Width="80"/>
-                        </StackPanel>
-                        <StackPanel Grid.Row="1" Orientation="Horizontal">
-                            <CheckBox x:Name="ExtraNotMaxBreak" Content="未满破" Margin="8,4,6,4" Width="80"/>
-                            <CheckBox x:Name="ExtraLevel120" Content="已120级" Margin="8,4,6,4" Width="80"/>
-                            <CheckBox x:Name="ExtraNotLevel120" Content="未120级" Margin="8,4,6,4" Width="80"/>
-                        </StackPanel>
-                        <StackPanel Grid.Row="2" Orientation="Horizontal">
-                            <CheckBox x:Name="ExtraOath" Content="已誓约" Margin="8,4,6,4" Width="80"/>
-                            <CheckBox x:Name="ExtraNotOath" Content="未誓约" Margin="8,4,6,4" Width="80"/>
-                            <CheckBox x:Name="ExtraCanSpecial" Content="可拥有特殊兵装" Margin="8,4,6,4" Width="110"/>
-                        </StackPanel>
-                        <StackPanel Grid.Row="3" Orientation="Horizontal">
-                            <CheckBox x:Name="ExtraSpecialObtained" Content="已拥有特殊兵装" Margin="8,4,6,4" Width="110"/>
-                        </StackPanel>
-                    </Grid>
-                </Expander>
+                <StackPanel Background="{ThemeResource CardBackgroundFillColorDefault}"
+        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" Width="477">
+                    <Expander Grid.Row="3" Header="附加状态" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsExpanded="True" Margin="0,5,0,5">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <StackPanel Grid.Row="0" Orientation="Horizontal">
+                                <CheckBox x:Name="ExtraCanRemodel" Content="可改造" Margin="8,4,6,4" Width="80"/>
+                                <CheckBox x:Name="ExtraRemodeled" Content="已改造" Margin="8,4,6,4" Width="80"/>
+                                <CheckBox x:Name="ExtraMaxBreak" Content="已满破" Margin="8,4,6,4" Width="80"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="1" Orientation="Horizontal">
+                                <CheckBox x:Name="ExtraNotMaxBreak" Content="未满破" Margin="8,4,6,4" Width="80"/>
+                                <CheckBox x:Name="ExtraLevel120" Content="已120级" Margin="8,4,6,4" Width="80"/>
+                                <CheckBox x:Name="ExtraNotLevel120" Content="未120级" Margin="8,4,6,4" Width="80"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="2" Orientation="Horizontal">
+                                <CheckBox x:Name="ExtraOath" Content="已誓约" Margin="8,4,6,4" Width="80"/>
+                                <CheckBox x:Name="ExtraNotOath" Content="未誓约" Margin="8,4,6,4" Width="80"/>
+                                <CheckBox x:Name="ExtraCanSpecial" Content="可拥有特殊兵装" Margin="8,4,6,4" Width="110"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="3" Orientation="Horizontal">
+                                <CheckBox x:Name="ExtraSpecialObtained" Content="已拥有特殊兵装" Margin="8,4,6,4" Width="110"/>
+                            </StackPanel>
+                        </Grid>
+                    </Expander>
+                </StackPanel>
 
                 <!-- 属性加成 -->
-                <Expander Grid.Row="4" Header="属性加成" HorizontalAlignment="Stretch" IsExpanded="True">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <StackPanel Grid.Row="0" Orientation="Horizontal">
-                            <CheckBox x:Name="AttrFirepower" Content="炮击" Margin="8,4,6,4" Width="50"/>
-                            <CheckBox x:Name="AttrAviation" Content="航空" Margin="8,4,6,4" Width="50"/>
-                            <CheckBox x:Name="AttrMobility" Content="机动" Margin="8,4,6,4" Width="50"/>
-                        </StackPanel>
-                        <StackPanel Grid.Row="1" Orientation="Horizontal">
-                            <CheckBox x:Name="AttrAA" Content="防空" Margin="8,4,6,4" Width="50"/>
-                            <CheckBox x:Name="AttrTorpedo" Content="雷击" Margin="8,4,6,4" Width="50"/>
-                            <CheckBox x:Name="AttrReload" Content="装填" Margin="8,4,6,4" Width="50"/>
-                        </StackPanel>
-                        <StackPanel Grid.Row="2" Orientation="Horizontal">
-                            <CheckBox x:Name="AttrDurability" Content="耐久" Margin="8,4,6,4" Width="50"/>
-                            <CheckBox x:Name="AttrAntiSub" Content="反潜" Margin="8,4,6,4" Width="50"/>
-                        </StackPanel>
-                    </Grid>
-                </Expander>
+                <StackPanel Background="{ThemeResource CardBackgroundFillColorDefault}"
+        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" Width="477">
+                    <Expander Grid.Row="4" Header="属性加成" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsExpanded="True" Margin="0,5,0,5">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <StackPanel Grid.Row="0" Orientation="Horizontal">
+                                <CheckBox x:Name="AttrFirepower" Content="炮击" Margin="8,4,6,4" Width="50"/>
+                                <CheckBox x:Name="AttrAviation" Content="航空" Margin="8,4,6,4" Width="50"/>
+                                <CheckBox x:Name="AttrMobility" Content="机动" Margin="8,4,6,4" Width="50"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="1" Orientation="Horizontal">
+                                <CheckBox x:Name="AttrAA" Content="防空" Margin="8,4,6,4" Width="50"/>
+                                <CheckBox x:Name="AttrTorpedo" Content="雷击" Margin="8,4,6,4" Width="50"/>
+                                <CheckBox x:Name="AttrReload" Content="装填" Margin="8,4,6,4" Width="50"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="2" Orientation="Horizontal">
+                                <CheckBox x:Name="AttrDurability" Content="耐久" Margin="8,4,6,4" Width="50"/>
+                                <CheckBox x:Name="AttrAntiSub" Content="反潜" Margin="8,4,6,4" Width="50"/>
+                            </StackPanel>
+                        </Grid>
+                    </Expander>
+                </StackPanel>
             </StackPanel>
         </ScrollViewer>
     </Grid>

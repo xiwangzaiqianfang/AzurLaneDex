@@ -5,6 +5,15 @@ namespace AzurLaneDex.Models;
 
 public class ShipStatic
 {
+    public static class ShipIdRanges
+    {
+        public const int NormalStart = 1;
+        public const int NormalEnd = 9999;
+        public const int MetaStart = 10001;
+        public const int CollabStart = 20001;
+        public const int ResearchStart = 30001;
+    }
+
     [JsonPropertyName("id")]
     public int Id { get; set; }
 
@@ -25,6 +34,19 @@ public class ShipStatic
 
     [JsonPropertyName("game_order")]
     public int GameOrder { get; set; }
+    public enum ShipCategory
+    {
+        Normal = 0,
+        Collab = 1,
+        Research = 2,
+        META = 3
+    }
+
+    [JsonPropertyName("category")]
+    public ShipCategory Category { get; set; } = ShipCategory.Normal;
+
+    [JsonPropertyName("category_order")]
+    public int CategoryOrder { get; set; }
 
     // 获取方式
     [JsonPropertyName("acquire_main")]
