@@ -585,6 +585,7 @@ public class ShipManager
         var json = JsonSerializer.Serialize(stateList, new JsonSerializerOptions { WriteIndented = true });
         File.WriteAllText(_userStatePath, json);
         StateChanged?.Invoke();
+        LogService.Operation("用户状态变更", "数据存储");
     }
 
     public void SwitchAccount(string accountName)
@@ -592,6 +593,7 @@ public class ShipManager
         _accountManager.SetCurrentAccount(accountName); // 如果调用者已经设置了，此行可省
         _userStatePath = Path.Combine(App.DataRoot, "users", accountName, "ships_state.json");
         Load(); // 重新加载数据
+        LogService.Operation("用户登录", $"{accountName}");
         data_changed?.Invoke(); // 通知所有订阅者刷新
     }
 
@@ -790,6 +792,7 @@ public class ShipManager
         // 7. 保存用户状态
         Save();
         DataStructureChanged?.Invoke();
+        LogService.Operation("新增舰船", $"{newShip.Name} (ID: {newShip.Id})");
         return true;
     }
     private int GetNextIdForCategory(ShipCategory category)
@@ -941,6 +944,7 @@ public class ShipManager
 
         // 8. 保存用户状态（确保 ID 映射正确）
         Save();
+        LogService.Operation("编辑舰船", $"{newShip.Name} (ID: {newShip.Id})");
 
         // 9. 触发数据变更事件
         DataStructureChanged?.Invoke();
@@ -1048,6 +1052,7 @@ public class ShipManager
 
         Save();
         DataStructureChanged?.Invoke();
+        LogService.Operation("删除舰船", $"ID: {shipId}");
     }
     public void NotifyDataChanged()
     {
@@ -1121,6 +1126,7 @@ public class ShipManager
         File.WriteAllText(_staticPath, json);
         Load();
         DataStructureChanged?.Invoke();
+        LogService.Operation("数据更新", "结束");
         return true;
     }
     public async Task<string> GetLatestAppVersionAsync(string proxy = "")

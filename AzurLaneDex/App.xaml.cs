@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using WinUIEx;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -17,7 +18,7 @@ namespace AzurLaneDex
     public partial class App : Application
     {
         private Window? _window;
-
+        private SimpleSplashScreen? _simpleSplashScreen;
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -31,6 +32,10 @@ namespace AzurLaneDex
         public App()
         {
             InitializeComponent();
+            LogService.Info("应用程序已启动", "App");
+            // 显示系统默认启动画面（图片已在 Package.appxmanifest 中配置）
+            _simpleSplashScreen = SimpleSplashScreen.ShowDefaultSplashScreen();
+
             this.UnhandledException += (sender, e) =>
             {
                 var ex = e.Exception;
@@ -43,7 +48,6 @@ namespace AzurLaneDex
                     ex = ex.InnerException;
                 }
                 e.Handled = true; // 避免应用崩溃
-                                  // 可选：显示错误对话框
             };
         }
 
@@ -64,8 +68,20 @@ namespace AzurLaneDex
             {
                 // 降级：如果系统不支持 Mica，使用纯色背景
             }
+            _window.Activated += Window_Activated;
             _window.Activate();
         }
+        private void Window_Activated(object sender, WindowActivatedEventArgs args)
+        {
+            // 取消订阅，避免重复执行
+            ((Window)sender).Activated -= Window_Activated;
+
+            // ⭐ 关闭并销毁启动画面
+            _simpleSplashScreen?.Hide();
+            _simpleSplashScreen?.Dispose();
+            _simpleSplashScreen = null;
+        }
+
 
         private void InitializeDataDirectories()
         {

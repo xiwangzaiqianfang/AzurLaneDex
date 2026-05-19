@@ -5,7 +5,8 @@
                Title="初始化账户"
                PrimaryButtonText="创建"
                CloseButtonText="退出"
-               DefaultButton="Primary">
+               DefaultButton="Primary"
+               RequestedTheme="Default">
     <StackPanel Spacing="12">
         <TextBox x:Name="NameBox" PlaceholderText="账户名" />
         <PasswordBox x:Name="PasswordBox" PlaceholderText="密码（可选）" />

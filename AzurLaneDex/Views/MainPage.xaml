@@ -14,11 +14,37 @@
 	<Grid>
 		<Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
 		</Grid.RowDefinitions>
 
-		<!-- 独立工具栏 -->
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="8" Margin="12">
+        <!-- ===== InfoBar 容器 ===== -->
+        <StackPanel Grid.Row="0" Margin="12,12,12,0" Spacing="8">
+            <!-- 1. Beta 版提示 InfoBar -->
+            <InfoBar x:Name="BetaInfoBar"
+                 Title="测试版本"
+                 Message="当前为预览版，请留意潜在的 bug，并在发现问题时向我们反馈。"
+                 Severity="Warning"
+                 IsOpen="True"
+                 IsClosable="True">
+                <InfoBar.ActionButton>
+                    <HyperlinkButton Content="前往反馈" NavigateUri="https://github.com/xiwangzaiqianfang/AzurLaneDex/issues"/>
+                </InfoBar.ActionButton>
+            </InfoBar>
+
+            <!-- 2. 周年庆 InfoBar -->
+            <InfoBar x:Name="AnniversaryInfoBar"
+                 Title="🎉祝《碧蓝航线》九周年生日快乐！🎉"
+                 IsOpen="True"
+                 IsClosable="True">
+                <InfoBar.ActionButton>
+                    <HyperlinkButton Content="前往官方活动页面查看活动详情" NavigateUri="https://game.bilibili.com/blhx/2026-ninth-anniversary/h5/"/>
+                </InfoBar.ActionButton>
+            </InfoBar>
+        </StackPanel>
+
+        <!-- 独立工具栏 -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="8" Margin="12">
             <SelectorBar x:Name="CategorySelector" Margin="0,0,0,0" SelectionChanged="CategorySelector_SelectionChanged">
                 <SelectorBarItem Text="角色" Tag="Normal" />
                 <SelectorBarItem Text="联动" Tag="Collab" />
@@ -61,7 +87,7 @@
         </StackPanel>
 
         <!-- 主体区域：左右两列 -->
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="580"/>
                 <!-- 左侧列表区域宽度固定 -->

@@ -9,7 +9,7 @@
                PrimaryButtonClick="OnPrimaryButtonClick"
                Loaded="OnLoaded">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="600">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="550">
         <StackPanel Margin="12" Spacing="12">
 
             <!-- 基本信息卡片 -->

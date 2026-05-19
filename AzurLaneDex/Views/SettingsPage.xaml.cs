@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
-using WinUIEx;  // 如果未安装 WinUIEx，请注释并改用原生方法
+using WinUIEx;
 
 namespace AzurLaneDex.Views
 {
@@ -24,20 +24,7 @@ namespace AzurLaneDex.Views
         {
             this.InitializeComponent();
             _app = Application.Current as App;
-            LoadSettings();
-        }
-
-        private void LoadSettings()
-        {
-            // 加载日志记录设置
-            if (_app.ShipManager?.Config != null)
-            {
-                var logEdits = _app.ShipManager.Config.GetValueOrDefault("log_edits", true);
-                LogEditsCheckBox.IsChecked = logEdits is bool b ? b : true;
-            }
-
-            // 窗口大小显示
-            UpdateWindowSizeLabel();
+            this.Loaded += (s, e) => UpdateWindowSizeLabel();
         }
 
         private void UpdateWindowSizeLabel()
@@ -48,17 +35,6 @@ namespace AzurLaneDex.Views
                 var bounds = window.Bounds;
                 WindowSizeLabel.Text = $"当前窗口大小: {bounds.Width} x {bounds.Height}";
             }
-        }
-
-        private async void ChangePassword_Click(object sender, RoutedEventArgs e)
-        {
-            // 实现密码修改逻辑（可暂不实现，提示开发中）
-            await ShowDialog("编辑密码", "功能开发中");
-        }
-
-        private async void UpdateData_Click(object sender, RoutedEventArgs e)
-        {
-            await ShowDialog("网络更新", "功能开发中");
         }
 
         private async void MigrateOldData_Click(object sender, RoutedEventArgs e)
@@ -80,6 +56,7 @@ namespace AzurLaneDex.Views
                 if (newStatic == null)
                 {
                     await ShowDialog("迁移失败", "文件格式不正确");
+                    LogService.Operation("数据迁移操作", "文件格式错误");
                     return;
                 }
                 string targetPath = Path.Combine(App.DataRoot, "static", "ships_static.json");
@@ -90,10 +67,12 @@ namespace AzurLaneDex.Views
                 }
                 _app.ShipManager?.Load();
                 await ShowDialog("成功", "文件已替换并自动迁移。");
+                LogService.Operation("数据迁移操作", "迁移成功");
             }
             catch (Exception ex)
             {
                 await ShowDialog("失败", ex.Message);
+                LogService.Operation("数据迁移操作", $"迁移失败：{ex.Message}");
             }
         }
 
@@ -116,6 +95,7 @@ namespace AzurLaneDex.Views
             catch (Exception ex)
             {
                 await ShowDialog("读取失败", ex.Message);
+                LogService.Operation("数据迁移操作", $"迁移失败：{ex.Message}");
                 return;
             }
 
@@ -133,10 +113,12 @@ namespace AzurLaneDex.Views
                 // 重新加载 ShipManager
                 _app.ShipManager?.Load();
                 await ShowDialog("成功", "数据已迁移并覆盖，请返回主界面查看。");
+                LogService.Operation("数据迁移操作", "数据已成功迁移并覆盖");
             }
             catch (Exception ex)
             {
                 await ShowDialog("迁移失败", ex.Message);
+                LogService.Operation("数据迁移操作", $"迁移失败：{ex.Message}");
             }
         }
 
@@ -197,6 +179,11 @@ namespace AzurLaneDex.Views
             Frame.Navigate(typeof(UpdatePage));
         }
 
+        private void NavigateToLogPage(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(LogPage));
+        }
+
         private async Task ShowDialog(string title, string content)
         {
             var dialog = new ContentDialog
@@ -207,15 +194,6 @@ namespace AzurLaneDex.Views
                 XamlRoot = this.XamlRoot
             };
             await dialog.ShowAsync();
-        }
-
-        private void OnLogEditsToggled(object sender, RoutedEventArgs e)
-        {
-            if (_app.ShipManager?.Config != null)
-            {
-                _app.ShipManager.Config["log_edits"] = LogEditsCheckBox.IsChecked ?? true;
-                _app.ShipManager.SaveConfig();
-            }
         }
     }
 

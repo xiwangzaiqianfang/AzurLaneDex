@@ -50,6 +50,7 @@ namespace AzurLaneDex.Views
         {
             var dialog = new FirstRunDialog();
             dialog.XamlRoot = this.XamlRoot;
+            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
             if (await dialog.ShowAsync() == ContentDialogResult.Primary)
             {
                 var info = dialog.GetAccountInfo();
@@ -77,7 +78,8 @@ namespace AzurLaneDex.Views
                 Content = $"确定要删除账户“{account.Name}”吗？此操作不可恢复。",
                 PrimaryButtonText = "删除",
                 CloseButtonText = "取消",
-                XamlRoot = this.XamlRoot
+                XamlRoot = this.XamlRoot,
+                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
             };
             var result = await dialog.ShowAsync();
             if (result != ContentDialogResult.Primary) return;
@@ -94,6 +96,7 @@ namespace AzurLaneDex.Views
                     await ShowError("无法删除当前账户，因为没有其他可用账户。");
                     return;
                 }
+
             }
 
             _accountManager.DeleteAccount(account.Name);
@@ -109,7 +112,8 @@ namespace AzurLaneDex.Views
                 Title = "错误",
                 Content = message,
                 CloseButtonText = "确定",
-                XamlRoot = this.XamlRoot
+                XamlRoot = this.XamlRoot,
+                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
             };
             await dialog.ShowAsync();
         }
@@ -167,6 +171,7 @@ namespace AzurLaneDex.Views
                 PrimaryButtonText = "确认",
                 CloseButtonText = "取消",
                 XamlRoot = this.XamlRoot,
+                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
                 DefaultButton = ContentDialogButton.Primary
             };
 
@@ -189,6 +194,82 @@ namespace AzurLaneDex.Views
                     await ShowError("密码错误，无法提升权限。");
                 }
             }
+        }
+        private async void ChangePasswordButton_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var account = button?.Tag as Account;
+            if (account == null) return;
+
+            var app = (App)Application.Current;
+            var currentAccount = app.AccountManager.GetCurrentAccount();
+
+            // 权限检查：如果是修改自己的密码，需验证旧密码；如果是管理员修改他人密码，无需旧密码
+            bool isSelf = account.Name == app.AccountManager.CurrentAccount;
+            bool isAdmin = currentAccount?.IsDeveloper == true || currentAccount?.IsSystem == true;
+
+            if (!isSelf && !isAdmin)
+            {
+                await ShowError("只有管理员才能修改其他用户的密码。");
+                return;
+            }
+
+            var passwordBox = new PasswordBox { PlaceholderText = isSelf ? "旧密码" : "新密码（留空则不修改）" };
+            var newPasswordBox = new PasswordBox { PlaceholderText = "新密码" };
+            var confirmBox = new PasswordBox { PlaceholderText = "确认新密码" };
+
+            var panel = new StackPanel { Spacing = 12 };
+            if (isSelf)
+                panel.Children.Add(passwordBox);
+            panel.Children.Add(newPasswordBox);
+            panel.Children.Add(confirmBox);
+
+            var dialog = new ContentDialog
+            {
+                Title = $"修改密码 - {account.Name}",
+                Content = panel,
+                PrimaryButtonText = "确认",
+                CloseButtonText = "取消",
+                XamlRoot = this.XamlRoot,
+                DefaultButton = ContentDialogButton.Primary
+            };
+
+            if (await dialog.ShowAsync() != ContentDialogResult.Primary) return;
+
+            string newPwd = newPasswordBox.Password;
+            string confirmPwd = confirmBox.Password;
+
+            if (newPwd != confirmPwd)
+            {
+                await ShowError("两次输入的新密码不一致");
+                return;
+            }
+
+            bool success;
+            if (isSelf)
+            {
+                string oldPwd = passwordBox.Password;
+                success = app.AccountManager.ChangePassword(account.Name, oldPwd, newPwd);
+                if (!success)
+                {
+                    await ShowError("旧密码错误，修改失败");
+                    return;
+                }
+            }
+            else
+            {
+                // 管理员直接设置新密码（无需旧密码验证）
+                // 需要增加 AccountManager 中的方法，或者直接修改
+                success = app.AccountManager.AdminSetPassword(account.Name, newPwd);
+                if (!success)
+                {
+                    await ShowError("修改失败");
+                    return;
+                }
+            }
+
+            await ShowError("密码修改成功");
+            LogService.Info($"用户 {app.AccountManager.CurrentAccount} 修改了账户 {account.Name} 的密码");
         }
     }
     public static class UIHelper

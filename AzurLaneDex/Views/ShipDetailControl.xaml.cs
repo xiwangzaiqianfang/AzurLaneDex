@@ -503,6 +503,8 @@ public sealed partial class ShipDetailControl : UserControl
         {
             _isUpdating = false;
         }
+        if (!_isUpdating)
+            LogService.Operation("状态变更", $"舰船 {_currentShip.Name} (ID:{_currentShip.Id}) 获得状态改为 {_currentShip.Owned}");
     }
 
     private void OnBreakthroughChanged(object sender, RangeBaseValueChangedEventArgs e)
@@ -529,6 +531,8 @@ public sealed partial class ShipDetailControl : UserControl
         {
             _isUpdating = false;
         }
+        if (!_isUpdating)
+            LogService.Operation("状态变更", $"舰船 {_currentShip.Name} (ID:{_currentShip.Id}) 突破状态改为 {_currentShip.Breakthrough}");
     }
 
     private void OnOathChanged(object sender, RoutedEventArgs e)
@@ -547,6 +551,8 @@ public sealed partial class ShipDetailControl : UserControl
         {
             _isUpdating = false;
         }
+        if (!_isUpdating)
+            LogService.Operation("状态变更", $"舰船 {_currentShip.Name} (ID:{_currentShip.Id}) 誓约状态改为 {_currentShip.Oath}");
     }
 
     private void OnLevel120Changed(object sender, RoutedEventArgs e)
@@ -565,6 +571,8 @@ public sealed partial class ShipDetailControl : UserControl
         {
             _isUpdating = false;
         }
+        if (!_isUpdating)
+            LogService.Operation("状态变更", $"舰船 {_currentShip.Name} (ID:{_currentShip.Id}) 等级状态改为 {_currentShip.Level120}");
     }
 
     private void OnRemodeledChanged(object sender, RoutedEventArgs e)
@@ -591,6 +599,8 @@ public sealed partial class ShipDetailControl : UserControl
         {
             _isUpdating = false;
         }
+        if (!_isUpdating)
+            LogService.Operation("状态变更", $"舰船 {_currentShip.Name} (ID:{_currentShip.Id}) 改造状态改为 {_currentShip.Remodeled}");
     }
 
     private void RefreshNameAndRarityDisplay()
@@ -627,7 +637,8 @@ public sealed partial class ShipDetailControl : UserControl
         {
             _isUpdating = false;
         }
-
+        if (!_isUpdating)
+            LogService.Operation("状态变更", $"舰船 {_currentShip.Name} (ID:{_currentShip.Id}) 专属兵装状态改为 {_currentShip.SpecialGearObtained}");
     }
 
     private async void SaveShip()
@@ -648,7 +659,8 @@ public sealed partial class ShipDetailControl : UserControl
                 Title = "权限不足",
                 Content = "只有开发者账户才能编辑舰船",
                 CloseButtonText = "确定",
-                XamlRoot = this.XamlRoot
+                XamlRoot = this.XamlRoot,
+                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
             };
             await dialog.ShowAsync();
             return;
@@ -657,6 +669,7 @@ public sealed partial class ShipDetailControl : UserControl
         var shipStatic = _currentShip.GetStaticCopy(); // 需要实现此方法
         var editDialog = new AddShipDialog(shipStatic);
         editDialog.XamlRoot = this.XamlRoot;
+        editDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
         if (await editDialog.ShowAsync() == ContentDialogResult.Primary)
         {
             var updatedShip = editDialog.GetShip();

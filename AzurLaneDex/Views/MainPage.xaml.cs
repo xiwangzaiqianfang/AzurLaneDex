@@ -70,6 +70,38 @@ public sealed partial class MainPage : Page
             CategorySelector.SelectedItem = CategorySelector.Items[0];
         _currentCategoryFilter = ShipCategory.Normal;
         RefreshShipList();
+
+        // 周年庆信息栏相关模块
+        DateTime now = DateTime.Now;
+        DateTime activityStart = new DateTime(2026, 5, 19);
+        DateTime activityEnd = new DateTime(2026, 6, 12, 23, 59, 59);
+        bool isInActivity = now >= activityStart && now <= activityEnd;
+
+        if (!isInActivity)
+        {
+            AnniversaryInfoBar.IsOpen = false;
+        }
+        else
+        {
+            // 检查用户是否在当前活动周期内关闭过周年庆提示
+            bool userClosed = false;
+            if (app.ShipManager?.Config != null &&
+                app.ShipManager.Config.TryGetValue("anniversary_2026_closed", out var closedObj))
+            {
+                bool.TryParse(closedObj.ToString(), out userClosed);
+            }
+            AnniversaryInfoBar.IsOpen = !userClosed;
+
+            // 订阅关闭事件，记录关闭状态（仅记录一次，后续不再重复弹窗）
+            AnniversaryInfoBar.Closed += (s, args) =>
+            {
+                if (app.ShipManager?.Config != null)
+                {
+                    app.ShipManager.Config["anniversary_2026_closed"] = true;
+                    app.ShipManager.SaveConfig();
+                }
+            };
+        }
     }
 
     private void CategorySelector_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
@@ -507,7 +539,8 @@ public sealed partial class MainPage : Page
                 Title = "批量操作",
                 Content = "请先勾选要操作的舰船",
                 CloseButtonText = "确定",
-                XamlRoot = this.Content.XamlRoot
+                XamlRoot = this.Content.XamlRoot,
+                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
             };
             await dialog.ShowAsync();
             return;
@@ -550,7 +583,8 @@ public sealed partial class MainPage : Page
                     Content = $"确定要对 {selectedShips.Count} 艘舰船执行“{op.text}”操作吗？",
                     PrimaryButtonText = "确定",
                     CloseButtonText = "取消",
-                    XamlRoot = this.XamlRoot
+                    XamlRoot = this.XamlRoot,
+                    Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
                 };
                 if (await dialog.ShowAsync() != ContentDialogResult.Primary)
                     return;
@@ -600,8 +634,9 @@ public sealed partial class MainPage : Page
             CloseButtonText = "取消",
             DefaultButton = ContentDialogButton.Primary,
             XamlRoot = this.Content.XamlRoot,
-            Width = 600
-         };
+            Width = 600,
+            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
+        };
 
         dialog.PrimaryButtonClick += (s, args) =>
         {
@@ -669,6 +704,7 @@ public sealed partial class MainPage : Page
     {
         var dialog = new AddShipDialog();
         dialog.XamlRoot = this.XamlRoot;
+        dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
         if (await dialog.ShowAsync() == ContentDialogResult.Primary)
         {
             var newShip = dialog.GetShip();
@@ -809,7 +845,8 @@ public sealed partial class MainPage : Page
             Content = $"确定要删除舰船 {_contextShip.Name} 吗？此操作不可恢复。",
             PrimaryButtonText = "删除",
             CloseButtonText = "取消",
-            XamlRoot = this.XamlRoot
+            XamlRoot = this.XamlRoot,
+            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
         };
         var result = await dialog.ShowAsync();
         if (result == ContentDialogResult.Primary)

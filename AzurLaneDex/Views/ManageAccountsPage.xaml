@@ -97,16 +97,29 @@
 										</Grid>
 									</Expander.Header>
 									<StackPanel Margin="0,0,0,0" Spacing="12">
-										<TextBlock TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}">
-											<Run Text="最后登录时间: "/><Run Text="{Binding LastLogin, FallbackValue='从未'}"/>
-										</TextBlock>
-                                        <TextBlock Text="是否为管理员帐户"/>
-                                        <ToggleSwitch OffContent="否" OnContent="是" Margin="0,0,0,0"
-													  IsOn="{Binding IsDeveloper, Mode=OneWay}"
-													  Toggled="AdminToggle_Toggled" Tag="{Binding}"
-                                                      Visibility="{Binding IsAdminVisible, Converter={StaticResource BoolToVisibility}}"/>
-										<Button Content="删除此账户" Click="DeleteAccountButton_Click" Tag="{Binding}" Foreground="Red" HorizontalAlignment="Left"/>
-									</StackPanel>
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}">
+												<Run Text="最后登录时间: "/><Run Text="{Binding LastLogin, FallbackValue='从未'}"/>
+                                            </TextBlock>
+                                            <TextBlock Grid.Row="1" Text="是否为管理员帐户" VerticalAlignment="Center"/>
+                                            <ToggleSwitch Grid.Row="1" Grid.Column="1" OffContent="否" OnContent="是" Margin="0,0,0,0"
+															  IsOn="{Binding IsDeveloper, Mode=OneWay}" VerticalAlignment="Center"
+															  Toggled="AdminToggle_Toggled" Tag="{Binding}" FlowDirection="RightToLeft"
+															  Visibility="{Binding IsAdminVisible, Converter={StaticResource BoolToVisibility}}"/>
+                                            <Button Grid.Row="2" Content="修改密码" Click="ChangePasswordButton_Click" Tag="{Binding}" HorizontalAlignment="Left" Margin="0,8,0,0" VerticalAlignment="Center"/>
+                                            <Button Grid.Row="2" Content="删除此账户" Click="DeleteAccountButton_Click" Tag="{Binding}" Foreground="Red" HorizontalAlignment="Left" Margin="90,8,0,0" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </StackPanel>
 								</Expander>
 							</Border>
 						</DataTemplate>

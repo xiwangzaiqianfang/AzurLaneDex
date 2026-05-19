@@ -328,7 +328,8 @@ namespace AzurLaneDex.Views
                 Title = "输入不完整",
                 Content = message,
                 CloseButtonText = "确定",
-                XamlRoot = this.XamlRoot
+                XamlRoot = this.XamlRoot,
+                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
             };
             await dialog.ShowAsync();
         }

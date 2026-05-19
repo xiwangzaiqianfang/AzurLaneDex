@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
 
@@ -55,6 +56,7 @@ namespace AzurLaneDex.Views
                 if (!File.Exists(statePath))
                 {
                     await ShowError("没有找到用户状态文件");
+                    LogService.Operation("用户状态操作操作", "导出功能没有找到用户状态文件");
                     return;
                 }
 
@@ -65,10 +67,12 @@ namespace AzurLaneDex.Views
                 }
 
                 await ShowSuccess("导出成功", $"数据已保存至 {file.Path}");
+                LogService.Operation("用户状态操作", $"用户状态文件导出至 {file.Path}");
             }
             catch (Exception ex)
             {
                 await ShowError($"导出失败: {ex.Message}");
+                LogService.Operation("用户状态操作", $"导出失败：{ex.Message}");
             }
         }
 
@@ -92,7 +96,8 @@ namespace AzurLaneDex.Views
                     Content = "这将覆盖当前账户的所有收集进度，是否继续？",
                     PrimaryButtonText = "导入",
                     CloseButtonText = "取消",
-                    XamlRoot = this.XamlRoot
+                    XamlRoot = this.XamlRoot,
+                    Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
                 };
                 if (await confirm.ShowAsync() != ContentDialogResult.Primary) return;
 
@@ -108,10 +113,12 @@ namespace AzurLaneDex.Views
                 _shipManager.NotifyDataChanged();
 
                 await ShowSuccess("导入成功", "账户状态已恢复，请返回主界面查看。");
+                LogService.Operation("用户状态操作", "用户状态导入");
             }
             catch (Exception ex)
             {
                 await ShowError($"导入失败: {ex.Message}");
+                LogService.Operation("用户状态操作", $"导入失败，{ex.Message}");
             }
         }
 
@@ -129,14 +136,17 @@ namespace AzurLaneDex.Views
                 if (!File.Exists(statePath))
                 {
                     await ShowError("没有找到用户状态文件");
+                    LogService.Operation("用户状态操作", "备份功能没有找到用户状态文件");
                     return;
                 }
                 File.Copy(statePath, backupFile, true);
                 await ShowSuccess("备份成功", $"备份已保存到:\n{backupFile}");
+                LogService.Operation("用户状态操作", $"用户状态文件保存至：\n{backupFile}");
             }
             catch (Exception ex)
             {
                 await ShowError($"备份失败: {ex.Message}");
+                LogService.Operation("用户状态操作", $"备份失败：{ex.Message}");
             }
         }
 
@@ -147,7 +157,8 @@ namespace AzurLaneDex.Views
                 Title = "错误",
                 Content = message,
                 CloseButtonText = "确定",
-                XamlRoot = this.XamlRoot
+                XamlRoot = this.XamlRoot,
+                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
             };
             await dialog.ShowAsync();
         }
@@ -159,7 +170,8 @@ namespace AzurLaneDex.Views
                 Title = title,
                 Content = message,
                 CloseButtonText = "确定",
-                XamlRoot = this.XamlRoot
+                XamlRoot = this.XamlRoot,
+                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
             };
             await dialog.ShowAsync();
         }

@@ -140,7 +140,8 @@ namespace AzurLaneDex.Views
                         Title = "导出成功",
                         Content = $"图片已保存至 {file.Path}",
                         CloseButtonText = "确定",
-                        XamlRoot = this.XamlRoot
+                        XamlRoot = this.XamlRoot,
+                        Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
                     };
                     await dialog.ShowAsync();
                 }
@@ -152,7 +153,8 @@ namespace AzurLaneDex.Views
                     Title = "导出失败",
                     Content = ex.Message,
                     CloseButtonText = "确定",
-                    XamlRoot = this.XamlRoot
+                    XamlRoot = this.XamlRoot,
+                    Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
                 };
                 await errorDialog.ShowAsync();
             }
@@ -165,7 +167,8 @@ namespace AzurLaneDex.Views
                 Title = title,
                 Content = content,
                 CloseButtonText = "确定",
-                XamlRoot = this.XamlRoot
+                XamlRoot = this.XamlRoot,
+                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
             };
             await dialog.ShowAsync();
         }

@@ -65,9 +65,12 @@ public sealed partial class MainWindow : Window
         {
             var firstRunDialog = new FirstRunDialog();
             firstRunDialog.XamlRoot = this.Content.XamlRoot;
+            firstRunDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style; // 添加样式
+
             if (await firstRunDialog.ShowAsync() == ContentDialogResult.Primary)
             {
                 var info = firstRunDialog.GetAccountInfo();
+
                 if (app.AccountManager.AddAccount(info.Name, info.Password, info.Avatar, info.IsDeveloper))
                 {
                     app.AccountManager.SetSecurityQuestion(info.Name, info.SecurityQuestion, info.SecurityAnswer);
@@ -85,6 +88,7 @@ public sealed partial class MainWindow : Window
             {
                 var dialog = new AccountLoginDialog(app.AccountManager, requirePassword: false);
                 dialog.XamlRoot = this.Content.XamlRoot;
+                dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
                 if (await dialog.ShowAsync() != ContentDialogResult.Primary)
                 {
                     Application.Current.Exit();
@@ -95,6 +99,15 @@ public sealed partial class MainWindow : Window
 
         // === 2. 加载舰船数据 ===
         app.ShipManager = new ShipManager(app.AccountManager);
+
+        // 加载日志配置
+        if (app.ShipManager != null && app.ShipManager.Config.TryGetValue("log_enabled", out var enabledObj))
+        {
+            LogService.SetSettings(enabledObj is bool b ? b : true,
+                app.ShipManager.Config.TryGetValue("log_retention_days", out var daysObj) && daysObj is int days ? days : 30);
+        }
+        else
+            LogService.SetSettings(true, 30);
 
         // === 3. 读取“询问账号”配置 ===
         bool askAccount = false;
@@ -111,6 +124,7 @@ public sealed partial class MainWindow : Window
             System.Diagnostics.Debug.WriteLine("About to show account picker dialog");
             var loginDialog = new AccountLoginDialog(app.AccountManager);
             loginDialog.XamlRoot = this.Content.XamlRoot;
+            loginDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
             if (await loginDialog.ShowAsync() == ContentDialogResult.Primary)
             {
                 // AccountLoginDialog 内部已经调用了 SetCurrentAccount，无需额外处理

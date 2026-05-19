@@ -144,24 +144,22 @@
                 </Border>
             
                 <!-- 日志记录卡片 -->
-                <Border Style="{StaticResource SettingsCardStyle}">
-                    <StackPanel>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <FontIcon Grid.Column="0" Glyph="&#xE70B;" FontFamily="Segoe Fluent Icons" FontSize="22" Margin="0,0,14,0" VerticalAlignment="Center"/>
-                            <StackPanel Grid.Column="1">
-                                <TextBlock Text="日志记录" FontSize="14"/>
-                                <TextBlock Text="记录编辑操作日志" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                            </StackPanel>
-                            <CheckBox x:Name="LogEditsCheckBox" Content="记录编辑操作日志" Grid.Column="2"/>
-                        </Grid>
-                    </StackPanel>
-                </Border>
-
+                <Button Style="{StaticResource CardButtonStyle}" Click="NavigateToLogPage">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <FontIcon Grid.Column="0" Glyph="&#xE70B;" FontFamily="Segoe Fluent Icons" FontSize="22" Margin="0,0,14,0" VerticalAlignment="Center"/>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="日志记录" FontSize="14"/>
+                            <TextBlock Text="查看和管理操作日志" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        </StackPanel>
+                        <FontIcon Grid.Column="2" Glyph="&#xE974;" FontFamily="Segoe Fluent Icons" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
+                    </Grid>
+                </Button>
+                
                 <!-- 更新卡片 -->
                 <Button Style="{StaticResource CardButtonStyle}" Click="NavigateToUpdatePage">
                     <StackPanel>
@@ -186,13 +184,13 @@
                         BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                         BorderThickness="1" CornerRadius="8" Padding="0">
 
-                    <Expander x:Name="AboutExpander" Header="关于" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="0,12" MinHeight="64">
+                    <Expander x:Name="AboutExpander" Header="关于" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="0,0,0,12" MinHeight="64">
                         <StackPanel Padding="20,0,0,0">
                             <TextBlock x:Name="VersionTextBlock" TextWrapping="Wrap"/>
-                            <TextBlock Text="作者: 菲梦林光"/>
-                            <TextBlock Text="开源协议: CC BY-NC-SA 4.0"/>
-                            <HyperlinkButton Content="项目主页" NavigateUri="https://github.com/xiwangzaiqianfang/AzurLaneDex"/>
-                            <HyperlinkButton Content="Wiki主页" NavigateUri="https://wiki.biligame.com/blhx/首页"/>
+                            <TextBlock Text="开发者：菲梦林光" Margin="0,0,0,0"/>
+                            <TextBlock Text="开源协议：CC BY-NC-SA 4.0" Margin="0,0,0,0"/>
+                            <HyperlinkButton Margin="0,5,0,0" Content="项目主页" NavigateUri="https://github.com/xiwangzaiqianfang/AzurLaneDex"/>
+                            <HyperlinkButton Margin="0,5,0,0" Content="Wiki主页" NavigateUri="https://wiki.biligame.com/blhx/首页"/>
                         </StackPanel>
                     </Expander>
                 </Border>

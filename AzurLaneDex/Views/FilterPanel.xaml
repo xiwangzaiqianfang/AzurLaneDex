@@ -151,6 +151,7 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <StackPanel Grid.Row="0" Orientation="Horizontal">
                                 <CheckBox x:Name="RarityNormal" Content="普通" Margin="8,4,6,4" Width="80"/>
@@ -162,7 +163,7 @@
                                 <CheckBox x:Name="RarityLegendary" Content="海上传奇" Margin="8,4,6,4" Width="90"/>
                                 <CheckBox x:Name="RarityDecisive" Content="最高方案" Margin="8,4,6,4" Width="90"/>
                             </StackPanel>
-                            <StackPanel Grid.Row="1" Orientation="Horizontal">
+                            <StackPanel Grid.Row="2" Orientation="Horizontal">
                                 <CheckBox x:Name="RarityUltimate" Content="决战方案" Margin="8,4,6,4" Width="90"/>
                             </StackPanel>
                         </Grid>

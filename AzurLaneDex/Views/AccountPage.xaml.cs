@@ -148,7 +148,7 @@ namespace AzurLaneDex.Views
                 Content = content,
                 CloseButtonText = "确定",
                 XamlRoot = this.XamlRoot,
-                CornerRadius = new CornerRadius(8)
+                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
             };
             await dialog.ShowAsync();
         }

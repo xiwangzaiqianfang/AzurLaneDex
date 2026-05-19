@@ -98,6 +98,7 @@ namespace AzurLaneDex.Services
             };
             Accounts.Add(acc);
             Save();
+            LogService.Operation("账户操作", $"添加账户 {name}");
             return true;
         }
         public bool IsSystemAccount(string name) => Accounts.FirstOrDefault(a => a.Name == name)?.IsSystem ?? false;
@@ -115,6 +116,7 @@ namespace AzurLaneDex.Services
                 CurrentAccount = fallback?.Name ?? "";
             }
             Save();
+            LogService.Operation("账户操作", $"删除账户 {accountName}");
             return true;
         }
 
@@ -126,6 +128,7 @@ namespace AzurLaneDex.Services
             CurrentAccount = accountName;
             acc.LastLogin = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             Save();
+            LogService.Operation("账户操作", $"默认账户 {accountName}");
         }
         public bool IsDeveloper(string? name = null)
         {
@@ -191,6 +194,7 @@ namespace AzurLaneDex.Services
 
             acc.IsDeveloper = isDeveloper;
             Save();
+            LogService.Operation("账户操作", $"{accountName} 帐户权限变更");
             return true;
         }
         /// <summary>
@@ -223,6 +227,7 @@ namespace AzurLaneDex.Services
             // 设置新密码（如果新密码为空，则清空密码）
             account.PasswordHash = string.IsNullOrEmpty(newPassword) ? "" : HashHelper.Hash(newPassword);
             Save();
+            LogService.Operation("账户操作", $"账户 {accountName} 密码变更");
             return true;
         }
         public string GetSecurityQuestion(string accountName)
@@ -238,6 +243,7 @@ namespace AzurLaneDex.Services
             if (acc.SecurityAnswerHash != HashHelper.Hash(answer)) return false;
             acc.PasswordHash = HashHelper.Hash(newPassword);
             Save();
+            LogService.Operation("账户操作", $"账户 {accountName} 密码重置");
             return true;
         }
         public void SetSecurityQuestion(string accountName, string question, string answer)
@@ -247,6 +253,15 @@ namespace AzurLaneDex.Services
             acc.SecurityQuestion = question;
             acc.SecurityAnswerHash = HashHelper.Hash(answer);
             Save();
+            LogService.Operation("账户操作", $"账户 {accountName} 密码保护设置");
+        }
+        public bool AdminSetPassword(string accountName, string newPassword)
+        {
+            var acc = Accounts.FirstOrDefault(a => a.Name == accountName);
+            if (acc == null) return false;
+            acc.PasswordHash = string.IsNullOrEmpty(newPassword) ? "" : HashHelper.Hash(newPassword);
+            Save();
+            return true;
         }
     }
     public class AccountsData

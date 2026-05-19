@@ -15,6 +15,7 @@ namespace AzurLaneDex.Views
         public AccountLoginDialog(AccountManager accountManager, bool requirePassword = true)
         {
             this.InitializeComponent();
+            this.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
             _accountManager = accountManager;
             _requirePassword = requirePassword;
             LoadAccounts();
@@ -40,6 +41,8 @@ namespace AzurLaneDex.Views
         {
             this.Hide();
             var createDialog = new FirstRunDialog();
+            createDialog.XamlRoot = this.XamlRoot;
+            createDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
             if (await createDialog.ShowAsync() == ContentDialogResult.Primary)
             {
                 var (name, password, avatar, isDev, setDefault, securityQuestion, securityAnswer) = createDialog.GetAccountInfo();
@@ -60,7 +63,8 @@ namespace AzurLaneDex.Views
                         Title = "错误",
                         Content = "账户创建失败，可能已存在",
                         CloseButtonText = "确定",
-                        XamlRoot = this.XamlRoot
+                        XamlRoot = this.XamlRoot,
+                        Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
                     };
                     await errorDialog.ShowAsync();
                 }
@@ -123,7 +127,8 @@ namespace AzurLaneDex.Views
                 PrimaryButtonText = "重置",
                 CloseButtonText = "取消",
                 DefaultButton = ContentDialogButton.Primary,
-                XamlRoot = this.XamlRoot
+                XamlRoot = this.XamlRoot,
+                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
             };
 
             if (await dialog.ShowAsync() == ContentDialogResult.Primary)
@@ -162,7 +167,8 @@ namespace AzurLaneDex.Views
                 Title = "错误",
                 Content = message,
                 CloseButtonText = "确定",
-                XamlRoot = this.XamlRoot
+                XamlRoot = this.XamlRoot,
+                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
             };
             await dialog.ShowAsync();
         }
@@ -174,7 +180,8 @@ namespace AzurLaneDex.Views
                 Title = "成功",
                 Content = message,
                 CloseButtonText = "确定",
-                XamlRoot = this.XamlRoot
+                XamlRoot = this.XamlRoot,
+                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
             };
             await dialog.ShowAsync();
         }

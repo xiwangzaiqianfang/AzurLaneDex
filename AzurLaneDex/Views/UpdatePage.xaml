@@ -28,7 +28,7 @@
             <TextBlock Text="更新" FontSize="28" FontWeight="SemiBold" VerticalAlignment="Center"/>
         </StackPanel>
 
-        <ScrollViewer Grid.Row="1">
+        <ScrollViewer Grid.Row="2">
             <StackPanel Margin="20" Spacing="16">
 
                 <!-- 应用版本卡片 -->

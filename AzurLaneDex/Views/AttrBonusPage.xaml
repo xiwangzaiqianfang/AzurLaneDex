@@ -14,9 +14,9 @@
         <StackPanel Grid.Row="0" Margin="20,20,20,12" Spacing="12">
             <TextBlock Text="属性加成" FontSize="24" FontWeight="SemiBold" Margin="10,10,0,0" VerticalAlignment="Center"/>
 
-            <!-- 舰种筛选下拉框，左对齐 -->
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,12,0,0">
-                <TextBlock Text="筛选舰种:" VerticalAlignment="Center" Margin="0,0,0,0"/>
+            <!-- 舰种筛选下拉框 -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="10,12,0,0">
+                <TextBlock Text="筛选舰种:" VerticalAlignment="Center" Margin="0,0,10,0"/>
                 <ComboBox x:Name="ShipClassFilter" 
                           MinWidth="160" 
                           SelectionChanged="ShipClassFilter_SelectionChanged"/>

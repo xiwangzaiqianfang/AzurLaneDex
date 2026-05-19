@@ -24,6 +24,7 @@
     <None Remove="Views\FirstRunDialog.xaml" />
     <None Remove="Views\HelpPage.xaml" />
     <None Remove="Views\LoginOptionsPage.xaml" />
+    <None Remove="Views\LogPage.xaml" />
     <None Remove="Views\ManageAccountsPage.xaml" />
     <None Remove="Views\UpdatePage.xaml" />
     <Content Include="AzurLaneDex.pfx" />
@@ -94,6 +95,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </None>
+    <Page Update="Views\LogPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Views\UpdatePage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
