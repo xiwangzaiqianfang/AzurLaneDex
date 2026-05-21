@@ -6,30 +6,29 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <!-- 自定义 TitleBar -->
             <RowDefinition Height="*" />
-            <!-- 主内容区域 -->
         </Grid.RowDefinitions>
+
         <!-- 自定义标题栏 -->
         <TitleBar x:Name="AppTitleBar"
-                    Title="碧蓝航线图鉴"
-                    Subtitle="Preview for WinUI3"
-                    IsBackButtonVisible="True"
-                    IsBackButtonEnabled="{x:Bind ContentFrame.CanGoBack, Mode=OneWay}"
-                    BackRequested="TitleBar_BackRequested"
-                    IsPaneToggleButtonVisible="True"
-                    PaneToggleRequested="TitleBar_PaneToggleRequested">
+                  Title="碧蓝航线图鉴"
+                  Subtitle="Preview for WinUI3"
+                  IsBackButtonVisible="True"
+                  IsBackButtonEnabled="{x:Bind ContentFrame.CanGoBack, Mode=OneWay}"
+                  BackRequested="TitleBar_BackRequested"
+                  IsPaneToggleButtonVisible="True"
+                  PaneToggleRequested="TitleBar_PaneToggleRequested">
             <TitleBar.IconSource>
                 <ImageIconSource ImageSource="/Assets/Titles/App_Icon.ico" />
             </TitleBar.IconSource>
-
         </TitleBar>
-        <!-- 导航视图 -->
+
+        <!-- 导航视图：使用 LeftCompact 模式，窗口较窄时自动折叠为图标栏 -->
         <NavigationView x:Name="MainNavView" Grid.Row="1"
                         IsBackButtonVisible="Collapsed"
                         IsPaneToggleButtonVisible="False"
-                        IsPaneOpen="False"
-                        PaneDisplayMode="Left"
+                        PaneDisplayMode="LeftCompact"
+                        CompactPaneLength="48"
                         SelectionFollowsFocus="Enabled"
                         ItemInvoked="MainNavView_ItemInvoked"
                         IsTabStop="True">

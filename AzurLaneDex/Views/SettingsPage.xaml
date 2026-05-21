@@ -84,25 +84,6 @@
         <ScrollViewer Grid.Row="1">
             <StackPanel Margin="20" Spacing="12">
 
-                <!-- 编辑密码卡片 -->
-                <Border Style="{StaticResource SettingsCardStyle}">
-                    <StackPanel>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <FontIcon Grid.Column="0" Glyph="&#xE72E;" FontFamily="Segoe Fluent Icons" FontSize="22" Margin="0,0,14,0" VerticalAlignment="Center"/>
-                            <StackPanel Grid.Column="1">
-                                <TextBlock Text="编辑密码" FontSize="14"/>
-                                <TextBlock Text="点击修改编辑密码" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                            </StackPanel>
-                            <Button Grid.Column="2" x:Name="ChangePasswordButton" Content="修改编辑密码"/>
-                        </Grid>
-                    </StackPanel>
-                </Border>
-
                 <!-- 窗口设置卡片 -->
                 <Border Style="{StaticResource SettingsCardStyle}">
                     <StackPanel>
@@ -180,9 +161,7 @@
                 </Button>
 
                 <!-- 关于卡片（使用 Expander 可折叠） -->
-                <Border Background="{ThemeResource CardBackgroundFillColorDefault}"
-                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                        BorderThickness="1" CornerRadius="8" Padding="0">
+                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" CornerRadius="8" Padding="0">
 
                     <Expander x:Name="AboutExpander" Header="关于" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="0,0,0,12" MinHeight="64">
                         <StackPanel Padding="20,0,0,0">
