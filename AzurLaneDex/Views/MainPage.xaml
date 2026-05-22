@@ -176,14 +176,22 @@
                     </Grid.ColumnDefinitions>
                     <AutoSuggestBox x:Name="SearchBox"
                                     Grid.Column="0"
+                                    HorizontalAlignment="Stretch"
                                     PlaceholderText="搜索舰船名"
                                     QueryIcon="Find"
                                     TextChanged="SearchBox_TextChanged"
                                     SuggestionChosen="SearchBox_SuggestionChosen"
                                     UpdateTextOnSelect="True"
                                     VerticalAlignment="Center"
-                                    Margin="0,6,6,0"/>
-                    <ComboBox x:Name="SortCombo" Grid.Column="1" SelectedIndex="0" SelectionChanged="SortCombo_SelectionChanged" VerticalAlignment="Center" MinWidth="120" Margin="6,8,0,0">
+                                    Width="150"
+                                    Margin="6,7,0,0">
+                        <AutoSuggestBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding DisplayText}" TextTrimming="CharacterEllipsis" ToolTipService.ToolTip="{Binding DisplayText}"/>
+                            </DataTemplate>
+                        </AutoSuggestBox.ItemTemplate>
+                    </AutoSuggestBox>
+                    <ComboBox x:Name="SortCombo" Grid.Column="1" SelectedIndex="0" SelectionChanged="SortCombo_SelectionChanged" VerticalAlignment="Center" MinWidth="120" Margin="6,8,8,0">
                         <ComboBoxItem>按编号排序</ComboBoxItem>
                         <ComboBoxItem>按图鉴排序</ComboBoxItem>
                         <ComboBoxItem>按名称排序</ComboBoxItem>
@@ -197,8 +205,8 @@
                         <ComboBoxItem>按120级状态排序</ComboBoxItem>
                         <ComboBoxItem>按兵装获得状态排序</ComboBoxItem>
                     </ComboBox>
-                    <ToggleButton x:Name="SortOrderToggle" Grid.Column="2" Content="升序" Margin="8,8,0,0"
-                                  Checked="SortOrderToggle_Checked" Unchecked="SortOrderToggle_Unchecked" />
+                    <ToggleButton x:Name="SortOrderToggle" Grid.Column="2" Content="升序" Margin="0,8,8,0"
+                                  Checked="SortOrderToggle_Checked" Unchecked="SortOrderToggle_Unchecked" VerticalAlignment="Center"/>
                 </Grid>
             </CommandBar.Content>
 

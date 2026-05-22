@@ -65,45 +65,44 @@ namespace AzurLaneDex.Views
             var factions = new List<string>();
             if (NormalFactionPanel.Visibility == Visibility.Visible)
             {
-                FactionEU.IsChecked = criteria.Factions.Contains("白鹰");
-                FactionRN.IsChecked = criteria.Factions.Contains("皇家");
-                FactionIJN.IsChecked = criteria.Factions.Contains("重樱");
-                FactionKMS.IsChecked = criteria.Factions.Contains("铁血");
-                FactionDragon.IsChecked = criteria.Factions.Contains("东煌");
-                FactionSN.IsChecked = criteria.Factions.Contains("北方联合");
-                FactionFFNF.IsChecked = criteria.Factions.Contains("自由鸢尾");
-                FactionMNF.IsChecked = criteria.Factions.Contains("维希教廷");
-                FactionSardegna.IsChecked = criteria.Factions.Contains("撒丁帝国");
-                FactionMETA.IsChecked = criteria.Factions.Contains("META");
-                FactionTempesta.IsChecked = criteria.Factions.Contains("飓风");
-                FactionOther.IsChecked = criteria.Factions.Contains("其他");
+                if (FactionEU.IsChecked == true) factions.Add("白鹰");
+                if (FactionRN.IsChecked == true) factions.Add("皇家");
+                if (FactionIJN.IsChecked == true) factions.Add("重樱");
+                if (FactionKMS.IsChecked == true) factions.Add("铁血");
+                if (FactionDragon.IsChecked == true) factions.Add("东煌");
+                if (FactionSN.IsChecked == true) factions.Add("北方联合");
+                if (FactionFFNF.IsChecked == true) factions.Add("自由鸢尾");
+                if (FactionMNF.IsChecked == true) factions.Add("维希教廷");
+                if (FactionSardegna.IsChecked == true) factions.Add("撒丁帝国");
+                if (FactionMETA.IsChecked == true) factions.Add("META");
+                if (FactionTempesta.IsChecked == true) factions.Add("飓风");
+                if (FactionOther.IsChecked == true) factions.Add("其他");
             }
             else if (CollabFactionPanel.Visibility == Visibility.Visible)
             {
-                FactionCollab_Nep.IsChecked = criteria.Factions.Contains("超次元游戏海王星");
-                FactionCollab_Bilibili.IsChecked = criteria.Factions.Contains("哔哩哔哩");
-                FactionCollab_Utawarerumono.IsChecked = criteria.Factions.Contains("传颂之物");
-                FactionCollab_KizunaAI.IsChecked = criteria.Factions.Contains("绊爱");
-                FactionCollab_Hololive.IsChecked = criteria.Factions.Contains("Hololive");
-                FactionCollab_DoAXVV.IsChecked = criteria.Factions.Contains("死或生沙滩排球");
-                FactionCollab_Idolmaster.IsChecked = criteria.Factions.Contains("偶像大师");
-                FactionCollab_SSSS.IsChecked = criteria.Factions.Contains("SSSS");
-                FactionCollab_Ryza.IsChecked = criteria.Factions.Contains("莱莎的炼金工房");
-                FactionCollab_Senran.IsChecked = criteria.Factions.Contains("闪乱神乐");
-                FactionCollab_Toloveru.IsChecked = criteria.Factions.Contains("出包王女");
-                FactionCollab_BRS.IsChecked = criteria.Factions.Contains("黑岩射手");
-                FactionCollab_Danmachi.IsChecked = criteria.Factions.Contains("地城邂逅");
-                FactionCollab_Yumia.IsChecked = criteria.Factions.Contains("优米雅的炼金工房");
-                FactionCollab_DAL.IsChecked = criteria.Factions.Contains("约会大作战V");
-
+                if (FactionCollab_Nep.IsChecked == true) factions.Add("超次元游戏海王星");
+                if (FactionCollab_Bilibili.IsChecked == true) factions.Add("哔哩哔哩");
+                if (FactionCollab_Utawarerumono.IsChecked == true) factions.Add("传颂之物");
+                if (FactionCollab_KizunaAI.IsChecked == true) factions.Add("绊爱");
+                if (FactionCollab_Hololive.IsChecked == true) factions.Add("Hololive");
+                if (FactionCollab_DoAXVV.IsChecked == true) factions.Add("死或生沙滩排球");
+                if (FactionCollab_Idolmaster.IsChecked == true) factions.Add("偶像大师");
+                if (FactionCollab_SSSS.IsChecked == true) factions.Add("SSSS");
+                if (FactionCollab_Ryza.IsChecked == true) factions.Add("莱莎的炼金工房");
+                if (FactionCollab_Senran.IsChecked == true) factions.Add("闪乱神乐");
+                if (FactionCollab_Toloveru.IsChecked == true) factions.Add("出包王女");
+                if (FactionCollab_BRS.IsChecked == true) factions.Add("黑岩射手");
+                if (FactionCollab_Danmachi.IsChecked == true) factions.Add("地城邂逅");
+                if (FactionCollab_Yumia.IsChecked == true) factions.Add("优米雅的炼金工房");
+                if (FactionCollab_DAL.IsChecked == true) factions.Add("约会大作战V");
             }
             else if (MetaFactionPanel.Visibility == Visibility.Visible)
             {
-                FactionMeta_Flame.IsChecked = criteria.Factions.Contains("破敌之炬");
-                FactionMeta_Core.IsChecked = criteria.Factions.Contains("湮烬之核");
-                FactionMeta_Reason.IsChecked = criteria.Factions.Contains("构造之理");
-                FactionMeta_Light.IsChecked = criteria.Factions.Contains("逐光之焰");
-                FactionMeta_Fire.IsChecked = criteria.Factions.Contains("摇曳之火");
+                if (FactionMeta_Flame.IsChecked == true) factions.Add("破敌之炬");
+                if (FactionMeta_Core.IsChecked == true) factions.Add("湮烬之核");
+                if (FactionMeta_Reason.IsChecked == true) factions.Add("构造之理");
+                if (FactionMeta_Light.IsChecked == true) factions.Add("逐光之焰");
+                if (FactionMeta_Fire.IsChecked == true) factions.Add("摇曳之火");
             }
             criteria.Factions = factions;
 

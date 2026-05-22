@@ -222,26 +222,29 @@ public sealed partial class MainPage : Page
     private void BuildSuggestionSource()
     {
         _allSuggestions.Clear();
+
+        // 辅助函数：检查是否为有效文本（不含路径分隔符）
+        bool IsValidText(string text) => !string.IsNullOrEmpty(text) && !text.Contains('\\') && !text.Contains('/');
+
         foreach (var ship in _shipManager.Ships)
         {
-            _allSuggestions.Add(new SuggestionItem { DisplayText = ship.Name, SearchText = ship.Name });
+            if (IsValidText(ship.Name))
+                _allSuggestions.Add(new SuggestionItem { DisplayText = ship.Name, SearchText = ship.Name });
+            else
+                System.Diagnostics.Debug.WriteLine($"无效的舰船名称: {ship.Name}");
         }
         foreach (var ship in _shipManager.Ships)
         {
-            if (!string.IsNullOrEmpty(ship.AltName))
-            {
+            if (IsValidText(ship.AltName))
                 _allSuggestions.Add(new SuggestionItem { DisplayText = $"[和谐名称] {ship.AltName}", SearchText = ship.AltName });
-            }
         }
         foreach (var ship in _shipManager.Ships)
         {
-            if (!string.IsNullOrEmpty(ship.SpecialGearName))
-            {
+            if (IsValidText(ship.SpecialGearName))
                 _allSuggestions.Add(new SuggestionItem { DisplayText = $"[专属兵装] {ship.SpecialGearName}", SearchText = ship.SpecialGearName });
-            }
         }
         var eventNames = _shipManager.Ships
-            .Where(s => !string.IsNullOrEmpty(s.DebutEvent))
+            .Where(s => IsValidText(s.DebutEvent))
             .Select(s => s.DebutEvent)
             .Distinct();
         foreach (var evt in eventNames)
@@ -490,6 +493,7 @@ public sealed partial class MainPage : Page
                     .ToList();
                 sender.ItemsSource = _currentSuggestions;
             }
+            RefreshShipList();
         }
     }
 
@@ -604,10 +608,10 @@ public sealed partial class MainPage : Page
     private async void FilterButton_Click(object sender, RoutedEventArgs e)
     {
         var filterPanel = new FilterPanel();
-        if (_currentFilterCriteria != null)
-            filterPanel.SetCriteria(_currentFilterCriteria);
         if (_currentCategoryFilter.HasValue)
             filterPanel.SetCategory(_currentCategoryFilter.Value);
+        if (_currentFilterCriteria != null)
+            filterPanel.SetCriteria(_currentFilterCriteria);
 
         var dialog = new ContentDialog
         {

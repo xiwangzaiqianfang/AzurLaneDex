@@ -12,7 +12,7 @@
         <!-- 自定义标题栏 -->
         <TitleBar x:Name="AppTitleBar"
                   Title="碧蓝航线图鉴"
-                  Subtitle="Preview for WinUI3"
+                  Subtitle="Preview"
                   IsBackButtonVisible="True"
                   IsBackButtonEnabled="{x:Bind ContentFrame.CanGoBack, Mode=OneWay}"
                   BackRequested="TitleBar_BackRequested"
