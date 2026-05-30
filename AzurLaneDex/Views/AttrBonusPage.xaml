@@ -12,11 +12,11 @@
 
         <!-- 顶部标题栏 -->
         <StackPanel Grid.Row="0" Margin="20,20,20,12" Spacing="12">
-            <TextBlock Text="属性加成" FontSize="24" FontWeight="SemiBold" Margin="10,10,0,0" VerticalAlignment="Center"/>
+            <TextBlock x:Uid="AttrBonusPage.Title" Text="属性加成" FontSize="24" FontWeight="SemiBold" Margin="10,10,0,0" VerticalAlignment="Center"/>
 
             <!-- 舰种筛选下拉框 -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="10,12,0,0">
-                <TextBlock Text="筛选舰种:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <TextBlock x:Uid="AttrBonusPage.FilterLabel" Text="筛选舰种:" VerticalAlignment="Center" Margin="0,0,10,0"/>
                 <ComboBox x:Name="ShipClassFilter" 
                           MinWidth="160" 
                           SelectionChanged="ShipClassFilter_SelectionChanged"/>
@@ -48,6 +48,6 @@
         </ScrollViewer>
 
         <!-- 导出按钮 -->
-        <Button Grid.Row="2" Content="导出为图片" Click="ExportToImage" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,20"/>
+        <Button Grid.Row="2" x:Uid="ExportImageButton" Content="导出为图片" Click="ExportToImage" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,20"/>
     </Grid>
 </Page>

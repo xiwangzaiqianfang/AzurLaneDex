@@ -11,6 +11,7 @@
 
         <!-- 自定义标题栏 -->
         <TitleBar x:Name="AppTitleBar"
+                  x:Uid="AppTitle"
                   Title="碧蓝航线图鉴"
                   Subtitle="Preview"
                   IsBackButtonVisible="True"
@@ -33,20 +34,19 @@
                         ItemInvoked="MainNavView_ItemInvoked"
                         IsTabStop="True">
             <NavigationView.MenuItems>
-                <NavigationViewItem Icon="Library" Content="舰船图鉴" Tag="MainPage" />
-                <NavigationViewItem Icon="Calculator" Content="阵营科技" Tag="CampTechPage" />
-                <NavigationViewItem Icon="Manage" Content="属性加成" Tag="AttrBonusPage" />
-                <NavigationViewItem>
+                <NavigationViewItem Icon="Library" x:Uid="NavMain" Content="舰船图鉴" Tag="MainPage" />
+                <NavigationViewItem Icon="Calculator" x:Uid="NavCamp" Content="阵营科技" Tag="CampTechPage" />
+                <NavigationViewItem Icon="Manage" x:Uid="NavAttr" Content="属性加成" Tag="AttrBonusPage" />
+                <NavigationViewItem x:Uid="NavStats" Content="统计">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE780;" />
                     </NavigationViewItem.Icon>
-                    <NavigationViewItem.Content>统计</NavigationViewItem.Content>
                     <NavigationViewItem.Tag>StatsPage</NavigationViewItem.Tag>
                 </NavigationViewItem>
             </NavigationView.MenuItems>
             <NavigationView.FooterMenuItems>
-                <NavigationViewItem Content="帐户" Tag="AccountPage" Icon="Contact"/>
-                <NavigationViewItem Content="帮助" Tag="HelpPage" Icon="Help" />
+                <NavigationViewItem x:Uid="NavAccount" Tag="AccountPage" Content="帐户" Icon="Contact"/>
+                <NavigationViewItem x:Uid="NavHelp" Tag="HelpPage" Content="帮助" Icon="Help" />
             </NavigationView.FooterMenuItems>
             <Frame x:Name="ContentFrame"/>
         </NavigationView>

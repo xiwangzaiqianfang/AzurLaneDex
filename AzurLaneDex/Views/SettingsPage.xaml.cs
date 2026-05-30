@@ -11,6 +11,8 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.ApplicationModel.Core;
+using Windows.Globalization;
 using WinRT.Interop;
 using WinUIEx;
 
@@ -24,7 +26,13 @@ namespace AzurLaneDex.Views
         {
             this.InitializeComponent();
             _app = Application.Current as App;
-            this.Loaded += (s, e) => UpdateWindowSizeLabel();
+            this.Loaded += SettingsPage_Loaded;
+        }
+
+        private void SettingsPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            UpdateWindowSizeLabel();
+            LoadLanguageSetting();
         }
 
         private void UpdateWindowSizeLabel()
@@ -119,6 +127,62 @@ namespace AzurLaneDex.Views
             {
                 await ShowDialog("迁移失败", ex.Message);
                 LogService.Operation("数据迁移操作", $"迁移失败：{ex.Message}");
+            }
+        }
+
+        // 添加私有方法：加载已保存的语言设置
+        private void LoadLanguageSetting()
+        {
+            if (_app?.ShipManager?.Config == null) return;
+
+            LanguageComboBox.SelectionChanged -= LanguageComboBox_SelectionChanged;
+
+            string currentLang = _app.ShipManager.Config.GetValueOrDefault("app_language")?.ToString() ?? "zh-Hans";
+            foreach (ComboBoxItem item in LanguageComboBox.Items)
+            {
+                if (item.Tag?.ToString() == currentLang)
+                {
+                    LanguageComboBox.SelectedItem = item;
+                    break;
+                }
+            }
+            LanguageComboBox.SelectionChanged += LanguageComboBox_SelectionChanged;
+        }
+
+        // 添加语言切换事件处理
+        private async void LanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (LanguageComboBox.SelectedItem is ComboBoxItem selected)
+            {
+                string newLang = selected.Tag?.ToString();
+                if (string.IsNullOrEmpty(newLang)) return;
+
+                string currentLang = _app.ShipManager.Config.GetValueOrDefault("app_language")?.ToString();
+                if (newLang == currentLang) return;
+
+                // 保存语言设置
+                _app.ShipManager.Config["app_language"] = newLang;
+                _app.ShipManager.SaveConfig();
+
+                // 设置系统首选语言（下次启动生效）
+                ApplicationLanguages.PrimaryLanguageOverride = newLang;
+
+                // 询问用户是否立即重启
+                var dialog = new ContentDialog
+                {
+                    Title = "重启应用",
+                    Content = "语言已更改，需要重启应用才能完全生效。是否立即重启？",
+                    PrimaryButtonText = "立即重启",
+                    CloseButtonText = "以后",
+                    XamlRoot = this.XamlRoot,
+                    Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
+                };
+                var result = await dialog.ShowAsync();
+                if (result == ContentDialogResult.Primary)
+                {
+                    // 请求重启应用
+                    CoreApplication.RequestRestartAsync(string.Empty);
+                }
             }
         }
 

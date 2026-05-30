@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.UI.Core;
+using Windows.Globalization;
 
 namespace AzurLaneDex;
 
@@ -99,6 +100,15 @@ public sealed partial class MainWindow : Window
 
         // === 2. 加载舰船数据 ===
         app.ShipManager = new ShipManager(app.AccountManager);
+
+        if (app.ShipManager?.Config != null)
+        {
+            string savedLang = app.ShipManager.Config.GetValueOrDefault("app_language")?.ToString();
+            if (!string.IsNullOrEmpty(savedLang))
+            {
+                ApplicationLanguages.PrimaryLanguageOverride = savedLang;
+            }
+        }
 
         // 加载日志配置
         if (app.ShipManager != null && app.ShipManager.Config.TryGetValue("log_enabled", out var enabledObj))

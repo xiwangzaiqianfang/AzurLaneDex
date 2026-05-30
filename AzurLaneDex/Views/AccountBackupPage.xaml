@@ -81,9 +81,9 @@
 
 		<!-- 顶部导航栏 -->
 		<StackPanel Grid.Row="0" Orientation="Horizontal" Margin="20,20,20,12" Spacing="12">
-            <Button x:Name="BackButton" Click="BackButton_Click" Content="帐户" FontSize="28" FontWeight="SemiBold" Margin="0,2,0,0" Background="Transparent" BorderThickness="0" ToolTipService.ToolTip="返回" VerticalAlignment="Center"/>
+            <Button x:Uid="AccountPageTitle" x:Name="BackButton" Click="BackButton_Click" Content="帐户" FontSize="28" FontWeight="SemiBold" Margin="0,2,0,0" Background="Transparent" BorderThickness="0" ToolTipService.ToolTip="返回" VerticalAlignment="Center"/>
             <FontIcon Grid.Column="0" Glyph="&#xE974;" FontFamily="Segoe Fluent Icons" FontSize="22" Margin="-20,3,-10,0" VerticalAlignment="Center"/>
-            <TextBlock Text="帐户备份" FontSize="28" FontWeight="SemiBold" VerticalAlignment="Center"/>
+            <TextBlock x:Uid="AccountBackupPage" Text="帐户备份" FontSize="28" FontWeight="SemiBold" VerticalAlignment="Center"/>
 		</StackPanel>
 
 		<ScrollViewer Grid.Row="1">
@@ -98,10 +98,10 @@
 						</Grid.ColumnDefinitions>
 						<FontIcon Grid.Column="0" Glyph="&#xE78C;" FontFamily="Segoe Fluent Icons" FontSize="22" Margin="0,0,14,0" VerticalAlignment="Center"/>
 						<StackPanel Grid.Column="1">
-							<TextBlock Text="导出数据" FontSize="14"/>
-							<TextBlock Text="将当前账户的用户状态导出到文件" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock x:Uid="ExportCardTitle" Text="导出数据" FontSize="14"/>
+                            <TextBlock x:Uid="ExportCardDescription" Text="将当前账户的用户状态导出到文件" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
 						</StackPanel>
-						<Button Grid.Column="2" Content="导出" Click="ExportData_Click" Margin="12,0,0,0"/>
+                        <Button x:Uid="ExportCardButton" Grid.Column="2" Content="导出" Click="ExportData_Click" Margin="12,0,0,0"/>
 					</Grid>
 				</Border>
 
@@ -115,10 +115,10 @@
 						</Grid.ColumnDefinitions>
 						<FontIcon Grid.Column="0" Glyph="&#xE8E5;" FontFamily="Segoe Fluent Icons" FontSize="22" Margin="0,0,14,0" VerticalAlignment="Center"/>
 						<StackPanel Grid.Column="1">
-							<TextBlock Text="导入数据" FontSize="14"/>
-							<TextBlock Text="从备份文件恢复当前账户的用户状态" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock x:Uid="ImportCardTitle" FontSize="14"/>
+                            <TextBlock x:Uid="ImportCardDescription" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
 						</StackPanel>
-						<Button Grid.Column="2" Content="导入" Click="ImportData_Click" Margin="12,0,0,0"/>
+                        <Button x:Uid="ImportCardButton" Grid.Column="2" Click="ImportData_Click" Margin="12,0,0,0"/>
 					</Grid>
 				</Border>
 
@@ -132,14 +132,14 @@
 						</Grid.ColumnDefinitions>
 						<FontIcon Grid.Column="0" Glyph="&#xEBC4;" FontFamily="Segoe Fluent Icons" FontSize="22" Margin="0,0,14,0" VerticalAlignment="Center"/>
 						<StackPanel Grid.Column="1">
-							<TextBlock Text="创建备份点" FontSize="14"/>
-							<TextBlock Text="将当前状态保存到备份目录，以便日后恢复" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock x:Uid="CreateBackupCardTitle" Text="导入数据" FontSize="14"/>
+                            <TextBlock x:Uid="CreateBackupCardDescription" Text="从备份文件恢复当前账户的用户状态" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
 						</StackPanel>
-						<Button Grid.Column="2" Content="创建备份" Click="CreateBackup_Click" Margin="12,0,0,0"/>
+                        <Button x:Uid="CreateBackupCardButton" Content="导入" Grid.Column="2" Click="CreateBackup_Click" Margin="12,0,0,0"/>
 					</Grid>
 				</Border>
-				
-				<TextBlock Text="相关链接" FontSize="16" FontWeight="SemiBold"/>
+
+                <TextBlock x:Uid="RelatedLinksTitle" Text="相关链接" FontSize="16" FontWeight="SemiBold"/>
 				<Button Style="{StaticResource CardButtonStyle}" Click="NavigateToSettingsPage">
 					<Grid>
 						<Grid.ColumnDefinitions>
@@ -149,8 +149,8 @@
 						</Grid.ColumnDefinitions>
                         <FontIcon Grid.Column="0" Glyph="&#xE8DE;" FontFamily="Segoe Fluent Icons" FontSize="22" Margin="0,0,14,0" VerticalAlignment="Center"/>
 						<StackPanel Grid.Column="1">
-							<TextBlock Text="数据迁移" FontSize="14"/>
-							<TextBlock Text="从旧版本（Python版）的 ships_static.json 导入并自动转换为新格式" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock x:Uid="MigrateDataButtonTitle" Text="数据迁移" FontSize="14"/>
+                            <TextBlock x:Uid="MigrateDataButtonDescription" Text="从旧版本（Python版）的 ships_static.json 导入并自动转换为新格式" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
 						</StackPanel>
 						<FontIcon x:Name="AccountManageArrowIcon" Grid.Column="2" Glyph="&#xE974;" FontFamily="Segoe Fluent Icons" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
 					</Grid>

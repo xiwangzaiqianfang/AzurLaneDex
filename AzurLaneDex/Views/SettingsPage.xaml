@@ -78,7 +78,7 @@
 
         <!-- 标题 -->
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="20,20,20,12" Spacing="12">
-            <TextBlock Text="设置" FontSize="28" FontWeight="SemiBold" Margin="10,10,0,0" VerticalAlignment="Center"/>
+            <TextBlock x:Uid="SettingsPageTitle" Text="设置" FontSize="28" FontWeight="SemiBold" Margin="10,10,0,0" VerticalAlignment="Center"/>
         </StackPanel>
 
         <ScrollViewer Grid.Row="1">
@@ -95,12 +95,34 @@
                             </Grid.ColumnDefinitions>
                             <FontIcon Grid.Column="0" Glyph="&#xE7C4;" FontFamily="Segoe Fluent Icons" FontSize="22" Margin="0,0,14,0" VerticalAlignment="Center"/>
                             <StackPanel Grid.Column="1">
-                                <TextBlock Text="窗口设置" FontSize="14" VerticalAlignment="Center"/>
+                                <TextBlock x:Uid="Setting_Window_Title" Text="窗口设置" FontSize="14" VerticalAlignment="Center"/>
                                 <TextBlock x:Name="WindowSizeLabel" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                             </StackPanel>
-                            <Button Content="重置窗口大小" Click="ResetWindowClick" Grid.Column="2"/>
+                            <Button x:Uid="Setting_Window_Button" Content="重置窗口大小" Click="ResetWindowClick" Grid.Column="2"/>
                         </Grid>
                     </StackPanel>
+                </Border>
+
+                <!-- 语言设置卡片 -->
+                <Border Style="{StaticResource SettingsCardStyle}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <FontIcon Grid.Column="0" Glyph="&#xE7C4;" FontFamily="Segoe Fluent Icons" FontSize="22" Margin="0,0,14,0" VerticalAlignment="Center"/>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock x:Uid="Setting_Language_Title" Text="应用语言" FontSize="14"/>
+                            <TextBlock x:Uid="Settings_Language_Description" Text="更改界面语言，重启后生效" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        </StackPanel>
+                        <ComboBox x:Name="LanguageComboBox" Grid.Column="2" Width="150" VerticalAlignment="Center" SelectionChanged="LanguageComboBox_SelectionChanged">
+                            <ComboBoxItem x:Uid="Lang_ZH_Hans" Tag="zh-Hans">简体中文</ComboBoxItem>
+                            <ComboBoxItem x:Uid="Lang_ZH_Hant" Tag="zh-Hant">繁體中文</ComboBoxItem>
+                            <ComboBoxItem x:Uid="Lang_EN" Tag="en">English</ComboBoxItem>
+                            <ComboBoxItem x:Uid="Lang_JA" Tag="ja">日本語</ComboBoxItem>
+                        </ComboBox>
+                    </Grid>
                 </Border>
 
                 <!-- 数据迁移卡片 -->
@@ -114,12 +136,12 @@
                             </Grid.ColumnDefinitions>
                             <FontIcon Grid.Column="0" Glyph="&#xE8DE;" FontFamily="Segoe Fluent Icons" FontSize="22" Margin="0,0,14,0" VerticalAlignment="Center"/>
                             <StackPanel Grid.Column="1">
-                                <TextBlock Text="数据迁移" FontSize="14"/>
-                                <TextBlock Text="从旧版本（Python版）的 ships_static.json 导入并自动转换为新格式" 
+                                <TextBlock x:Uid="Setting_Data_Title" Text="数据迁移" FontSize="14"/>
+                                <TextBlock x:Uid="Setting_Data_Description" Text="从旧版本（Python版）的 ships_static.json 导入并自动转换为新格式" 
                                            FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                            TextWrapping="Wrap"/>
                             </StackPanel>
-                            <Button x:Name="MigrateOldDataButton" Content="导入旧版静态数据并转换" Click="MigrateOldData_Click" Grid.Column="2"/>
+                            <Button x:Uid="Setting_Data_Button" x:Name="MigrateOldDataButton" Content="导入旧版静态数据并转换" Click="MigrateOldData_Click" Grid.Column="2"/>
                         </Grid>
                     </StackPanel>
                 </Border>
@@ -134,8 +156,8 @@
                         </Grid.ColumnDefinitions>
                         <FontIcon Grid.Column="0" Glyph="&#xE70B;" FontFamily="Segoe Fluent Icons" FontSize="22" Margin="0,0,14,0" VerticalAlignment="Center"/>
                         <StackPanel Grid.Column="1">
-                            <TextBlock Text="日志记录" FontSize="14"/>
-                            <TextBlock Text="查看和管理操作日志" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock x:Uid="Setting_Log_Title" Text="日志记录" FontSize="14"/>
+                            <TextBlock x:Uid="Setting_Log_Description" Text="查看和管理操作日志" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         </StackPanel>
                         <FontIcon Grid.Column="2" Glyph="&#xE974;" FontFamily="Segoe Fluent Icons" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
                     </Grid>
@@ -152,8 +174,8 @@
                             </Grid.ColumnDefinitions>
                             <FontIcon Grid.Column="0" Glyph="&#xF0C5;" FontFamily="Segoe Fluent Icons" FontSize="22" Margin="0,0,14,0" VerticalAlignment="Center"/>
                             <StackPanel Grid.Column="1">
-                                <TextBlock Text="更新" FontSize="14"/>
-                                <TextBlock Text="调整应用更新配置与更新源" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                <TextBlock x:Uid="Setting_Update_Title" Text="更新" FontSize="14"/>
+                                <TextBlock x:Uid="Setting_Update_Description" Text="调整应用更新配置与更新源" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                             </StackPanel>
                             <FontIcon Grid.Column="2" Glyph="&#xE974;" FontFamily="Segoe Fluent Icons" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
                         </Grid>
@@ -163,13 +185,13 @@
                 <!-- 关于卡片（使用 Expander 可折叠） -->
                 <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" CornerRadius="8" Padding="0">
 
-                    <Expander x:Name="AboutExpander" Header="关于" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="0,0,0,12" MinHeight="64">
+                    <Expander x:Uid="Setting_About_Header" x:Name="AboutExpander" Header="关于" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="0,0,0,12" MinHeight="64">
                         <StackPanel Padding="20,0,0,0">
                             <TextBlock x:Name="VersionTextBlock" TextWrapping="Wrap"/>
-                            <TextBlock Text="开发者：菲梦林光" Margin="0,0,0,0"/>
-                            <TextBlock Text="开源协议：CC BY-NC-SA 4.0" Margin="0,0,0,0"/>
-                            <HyperlinkButton Margin="0,5,0,0" Content="项目主页" NavigateUri="https://github.com/xiwangzaiqianfang/AzurLaneDex"/>
-                            <HyperlinkButton Margin="0,5,0,0" Content="Wiki主页" NavigateUri="https://wiki.biligame.com/blhx/首页"/>
+                            <TextBlock x:Uid="Setting_About_1" Text="开发者：菲梦林光" Margin="0,0,0,0"/>
+                            <TextBlock x:Uid="Setting_About_2" Text="开源协议：CC BY-NC-SA 4.0" Margin="0,0,0,0"/>
+                            <HyperlinkButton x:Uid="Setting_About_3" Margin="0,5,0,0" Content="项目主页" NavigateUri="https://github.com/xiwangzaiqianfang/AzurLaneDex"/>
+                            <HyperlinkButton x:Uid="Setting_About_4" Margin="0,5,0,0" Content="Wiki主页" NavigateUri="https://wiki.biligame.com/blhx/首页"/>
                         </StackPanel>
                     </Expander>
                 </Border>

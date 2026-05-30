@@ -48,6 +48,7 @@ namespace AzurLaneDex.Views
             if (ClassCL.IsChecked == true) shipClasses.Add("轻巡");
             if (ClassCA.IsChecked == true) shipClasses.Add("重巡");
             if (ClassCB.IsChecked == true) shipClasses.Add("超巡");
+            if (ClassBM.IsChecked == true) shipClasses.Add("重炮");
             if (ClassBC.IsChecked == true) shipClasses.Add("战巡");
             if (ClassBB.IsChecked == true) shipClasses.Add("战列");
             if (ClassBBV.IsChecked == true) shipClasses.Add("航战");
@@ -58,7 +59,6 @@ namespace AzurLaneDex.Views
             if (ClassSSV.IsChecked == true) shipClasses.Add("潜母");
             if (ClassAE.IsChecked == true) shipClasses.Add("运输");
             if (ClassSail.IsChecked == true) shipClasses.Add("风帆");
-            if (ClassOther.IsChecked == true) shipClasses.Add("其他");
             criteria.ShipClasses = shipClasses;
 
             // 阵营
@@ -153,6 +153,7 @@ namespace AzurLaneDex.Views
             ClassCL.IsChecked = criteria.ShipClasses.Contains("轻巡");
             ClassCA.IsChecked = criteria.ShipClasses.Contains("重巡");
             ClassCB.IsChecked = criteria.ShipClasses.Contains("超巡");
+            ClassBM.IsChecked = criteria.ShipClasses.Contains("重炮");
             ClassBC.IsChecked = criteria.ShipClasses.Contains("战巡");
             ClassBB.IsChecked = criteria.ShipClasses.Contains("战列");
             ClassBBV.IsChecked = criteria.ShipClasses.Contains("航战");
@@ -163,8 +164,6 @@ namespace AzurLaneDex.Views
             ClassSSV.IsChecked = criteria.ShipClasses.Contains("潜母");
             ClassAE.IsChecked = criteria.ShipClasses.Contains("运输");
             ClassSail.IsChecked = criteria.ShipClasses.Contains("风帆");
-            ClassOther.IsChecked = criteria.ShipClasses.Contains("其他");
-
             // 阵营
             if (NormalFactionPanel.Visibility == Visibility.Visible)
             {

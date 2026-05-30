@@ -1,0 +1,882 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppTitle.Title" xml:space="preserve">
+    <value>Azur Lane Dex</value>
+  </data>
+  <data name="NavMain.Content" xml:space="preserve">
+    <value>Ship Gallery</value>
+  </data>
+  <data name="NavStats.Content" xml:space="preserve">
+    <value>Statistics</value>
+  </data>
+  <data name="NavHelp.Content" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="NavAccount.Content" xml:space="preserve">
+    <value>Account</value>
+  </data>
+  <data name="NavAttr.Content" xml:space="preserve">
+    <value>Attribute Bonus</value>
+  </data>
+  <data name="NavCamp.Content" xml:space="preserve">
+    <value>Camp Tech</value>
+  </data>
+  <data name="Common_Confirm" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="Common_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Common_Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="Common_Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Common_Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="Common_Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Common_Yes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="Common_No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="Common_Export" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="Common_Import" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="Common_Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="AccountBackupPage.Text" xml:space="preserve">
+    <value>Account Backup</value>
+  </data>
+  <data name="ExportCardTitle.Text" xml:space="preserve">
+    <value>Export Data</value>
+  </data>
+  <data name="ExportCardDescription.Text" xml:space="preserve">
+    <value>Export current account user state to file</value>
+  </data>
+  <data name="ExportCardButton.Content" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="ImportCardTitle.Text" xml:space="preserve">
+    <value>Import Data</value>
+  </data>
+  <data name="ImportCardDescription.Text" xml:space="preserve">
+    <value>Restore current account state from backup file</value>
+  </data>
+  <data name="ImportCardButton.Content" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="CreateBackupCardTitle.Text" xml:space="preserve">
+    <value>Create Backup Point</value>
+  </data>
+  <data name="CreateBackupCardDescription.Text" xml:space="preserve">
+    <value>Save current state to backup directory for later recovery</value>
+  </data>
+  <data name="CreateBackupCardButton.Content" xml:space="preserve">
+    <value>Create Backup</value>
+  </data>
+  <data name="RelatedLinksTitle.Text" xml:space="preserve">
+    <value>Related Links</value>
+  </data>
+  <data name="MigrateDataButtonTitle.Text" xml:space="preserve">
+    <value>Data Migration</value>
+  </data>
+  <data name="MigrateDataButtonDescription.Text" xml:space="preserve">
+    <value>Import from old Python version ships_static.json and auto-convert</value>
+  </data>
+  <data name="LoginDialog.Title" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="LoginDialog.PrimaryButtonText" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="LoginDialog.CloseButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="LoginDialogAccountComboPlaceholder.PlaceholderText" xml:space="preserve">
+    <value>Select account</value>
+  </data>
+  <data name="LoginDialogPasswordBoxPlaceholder" xml:space="preserve">
+    <value>Password (if set)</value>
+  </data>
+  <data name="LoginDialogForgotPassword.Content" xml:space="preserve">
+    <value>Forgot password?</value>
+  </data>
+  <data name="LoginDialogRememberMe.Content" xml:space="preserve">
+    <value>Remember this account</value>
+  </data>
+  <data name="PleaseSelectAccount_Message" xml:space="preserve">
+    <value>Please select an account first</value>
+  </data>
+  <data name="NoSecurityQuestion_Message" xml:space="preserve">
+    <value>This account has not set up security questions, so the password cannot be recovered. Please contact the administrator.</value>
+  </data>
+  <data name="SecurityAnswer_Placeholder" xml:space="preserve">
+    <value>Security Answer</value>
+  </data>
+  <data name="NewPassword_Placeholder" xml:space="preserve">
+    <value>New Password</value>
+  </data>
+  <data name="ConfirmPassword_Placeholder" xml:space="preserve">
+    <value>Confirm New Password</value>
+  </data>
+  <data name="SecurityQuestion_Label" xml:space="preserve">
+    <value>Security question:</value>
+  </data>
+  <data name="PasswordMismatch_Message" xml:space="preserve">
+    <value>The new passwords entered do not match</value>
+  </data>
+  <data name="PasswordEmpty_Message" xml:space="preserve">
+    <value>New password cannot be empty</value>
+  </data>
+  <data name="SecurityAnswerWrong_Message" xml:space="preserve">
+    <value>Incorrect security answer, cannot reset password</value>
+  </data>
+  <data name="LoginDialogInfo.Title" xml:space="preserve">
+    <value>Tip</value>
+  </data>
+  <data name="Dialog_Error_Title" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="Dialog_Success_Title" xml:space="preserve">
+    <value>Success</value>
+  </data>
+  <data name="LoginDialogCreateAccount.Content" xml:space="preserve">
+    <value>Create new account</value>
+  </data>
+  <data name="AccountCreated_Message" xml:space="preserve">
+    <value>Account created successfully</value>
+  </data>
+  <data name="AccountExists_Message" xml:space="preserve">
+    <value>Account creation failed. It may already exist.</value>
+  </data>
+  <data name="AccountCreateFailed_Message" xml:space="preserve">
+    <value>Account creation failed. Please try again later.</value>
+  </data>
+  <data name="AccountPage.Title.Text" xml:space="preserve">
+    <value>Account</value>
+  </data>
+  <data name="AccountPageTitle.Content" xml:space="preserve">
+    <value>Account</value>
+  </data>
+  <data name="AccountPageSwitchAccount.Content" xml:space="preserve">
+    <value>Switch Account</value>
+  </data>
+  <data name="AccountPageSettings.Text" xml:space="preserve">
+    <value>Account Settings</value>
+  </data>
+  <data name="AccountPage.PhotoCard.Title.Text" xml:space="preserve">
+    <value>Account Photo</value>
+  </data>
+  <data name="AccountPage.PhotoCard.Description.Text" xml:space="preserve">
+    <value>Click to change avatar</value>
+  </data>
+  <data name="AccountPage.AvatarButton.Content" xml:space="preserve">
+    <value>Change photo</value>
+  </data>
+  <data name="AccountPage.LoginOptions.Title.Text" xml:space="preserve">
+    <value>Login Options</value>
+  </data>
+  <data name="AccountPage.LoginOptions.Description.Text" xml:space="preserve">
+    <value>Set whether to ask for account at startup and default login</value>
+  </data>
+  <data name="AccountPage.ManageAccounts.Title.Text" xml:space="preserve">
+    <value>Your Accounts</value>
+  </data>
+  <data name="AccountPage.ManageAccounts.Description" xml:space="preserve">
+    <value>Add or manage accounts used in this app</value>
+  </data>
+  <data name="AccountBackup.Description.Text" xml:space="preserve">
+    <value>Export/Import account data, create backup points</value>
+  </data>
+  <data name="AddShipDialog.Title" xml:space="preserve">
+    <value>Add Ship</value>
+  </data>
+  <data name="AddShipButton.Label" xml:space="preserve">
+    <value>Add Ship</value>
+  </data>
+  <data name="AddShipDialog.PrimaryButtonText" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="AddShipDialog.CloseButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="BasicInfo.Header.Text" xml:space="preserve">
+    <value>Basic Info</value>
+  </data>
+  <data name="BasicInfo.Id.Text" xml:space="preserve">
+    <value>ID:</value>
+  </data>
+  <data name="BasicInfo.GameOrder.Text" xml:space="preserve">
+    <value>Gallery Order:</value>
+  </data>
+  <data name="BasicInfo.AutoIdHint.PlaceholderText" xml:space="preserve">
+    <value>0 means auto-assign</value>
+  </data>
+  <data name="BasicInfo.CategoryOrder.Text" xml:space="preserve">
+    <value>Order in Category:</value>
+  </data>
+  <data name="BasicInfo.Name.Text" xml:space="preserve">
+    <value>Ship Name:</value>
+  </data>
+  <data name="BasicInfo.AltName.Text" xml:space="preserve">
+    <value>Censored name (CN server):</value>
+  </data>
+  <data name="BasicInfo.Faction.Text" xml:space="preserve">
+    <value>Faction:</value>
+  </data>
+  <data name="BasicInfo.ShipClass.Text" xml:space="preserve">
+    <value>Ship Class:</value>
+  </data>
+  <data name="Class_DD.Content" xml:space="preserve">
+    <value>Destroyer</value>
+  </data>
+  <data name="ShipClass_DD.Content" xml:space="preserve">
+    <value>Destroyer</value>
+  </data>
+  <data name="Class_CL.Content" xml:space="preserve">
+    <value>Light Cruiser</value>
+  </data>
+  <data name="ShipClass_CL.Content" xml:space="preserve">
+    <value>Light Cruiser</value>
+  </data>
+  <data name="Class_CA.Content" xml:space="preserve">
+    <value>Heavy Cruiser</value>
+  </data>
+  <data name="Class_CB.Content" xml:space="preserve">
+    <value>Large Cruiser</value>
+  </data>
+  <data name="Class_BC.Content" xml:space="preserve">
+    <value>Battlecruiser</value>
+  </data>
+  <data name="Class_BB.Content" xml:space="preserve">
+    <value>Battleship</value>
+  </data>
+  <data name="ShipClass_BB.Content" xml:space="preserve">
+    <value>Battleship</value>
+  </data>
+  <data name="Class_BBV.Content" xml:space="preserve">
+    <value>Aviation Battleship</value>
+  </data>
+  <data name="ShipClass_BBV.Content" xml:space="preserve">
+    <value>Aviation Battleship</value>
+  </data>
+  <data name="Class_CV.Content" xml:space="preserve">
+    <value>Aircraft Carrier</value>
+  </data>
+  <data name="ShipClass_CV.Content" xml:space="preserve">
+    <value>Aircraft Carrier</value>
+  </data>
+  <data name="Class_CVL.Content" xml:space="preserve">
+    <value>Light Carrier</value>
+  </data>
+  <data name="ShipClass_CVL.Content" xml:space="preserve">
+    <value>Light Carrier</value>
+  </data>
+  <data name="Class_AR.Content" xml:space="preserve">
+    <value>Repair Ship</value>
+  </data>
+  <data name="ShipClass_AR.Content" xml:space="preserve">
+    <value>Repair Ship</value>
+  </data>
+  <data name="Class_SS.Content" xml:space="preserve">
+    <value>Submarine</value>
+  </data>
+  <data name="ShipClass_SS.Content" xml:space="preserve">
+    <value>Submarine</value>
+  </data>
+  <data name="Class_SSV.Content" xml:space="preserve">
+    <value>Submarine Carrier</value>
+  </data>
+  <data name="ShipClass_SSV.Content" xml:space="preserve">
+    <value>Submarine Carrier</value>
+  </data>
+  <data name="Class_AE.Content" xml:space="preserve">
+    <value>Transport</value>
+  </data>
+  <data name="ShipClass_AE.Content" xml:space="preserve">
+    <value>Transport</value>
+  </data>
+  <data name="Class_Sail.Content" xml:space="preserve">
+    <value>Sail</value>
+  </data>
+  <data name="ShipClass_Sail.Content" xml:space="preserve">
+    <value>Sail</value>
+  </data>
+  <data name="BasicInfo.Rarity.Text" xml:space="preserve">
+    <value>Rarity:</value>
+  </data>
+  <data name="Rarity_N.Content" xml:space="preserve">
+    <value>N</value>
+  </data>
+  <data name="Rarity_R.Content" xml:space="preserve">
+    <value>R</value>
+  </data>
+  <data name="Rarity_SR.Content" xml:space="preserve">
+    <value>SR</value>
+  </data>
+  <data name="Rarity_SSR.Content" xml:space="preserve">
+    <value>SSR</value>
+  </data>
+  <data name="Rarity_UR.Content" xml:space="preserve">
+    <value>UR</value>
+  </data>
+  <data name="Category_Normal.Content" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="CategoryTag_Normal.Text" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="CategoryTag_Collab.Text" xml:space="preserve">
+    <value>Collab</value>
+  </data>
+  <data name="Category_Collab.Content" xml:space="preserve">
+    <value>Collab</value>
+  </data>
+  <data name="Category_Research.Content" xml:space="preserve">
+    <value>Priority Ship</value>
+  </data>
+  <data name="CategoryTag_Research.Text" xml:space="preserve">
+    <value>Priority Ship</value>
+  </data>
+  <data name="Category_META.Content" xml:space="preserve">
+    <value>META</value>
+  </data>
+  <data name="CategoryTag_META.Text" xml:space="preserve">
+    <value>META</value>
+  </data>
+  <data name="BasicInfo.Category.Text" xml:space="preserve">
+    <value>Ship Category:</value>
+  </data>
+  <data name="BasicInfo.CanRemodel.Text" xml:space="preserve">
+    <value>Can Retrofit:</value>
+  </data>
+  <data name="BasicInfo.RemodelDate.Text" xml:space="preserve">
+    <value>Retrofit Date:</value>
+  </data>
+  <data name="Acquisition.Header.Text" xml:space="preserve">
+    <value>Acquisition</value>
+  </data>
+  <data name="Acquisition.Main.Text" xml:space="preserve">
+    <value>Main Acquisition:</value>
+  </data>
+  <data name="Acquisition.Detail.Text" xml:space="preserve">
+    <value>Details:</value>
+  </data>
+  <data name="Acquisition.BuildTime.Text" xml:space="preserve">
+    <value>Construction Time:</value>
+  </data>
+  <data name="Acquisition.DropLocations.Text" xml:space="preserve">
+    <value>Drop Locations:</value>
+  </data>
+  <data name="Acquisition.ShopExchange.Text" xml:space="preserve">
+    <value>Shop Exchange:</value>
+  </data>
+  <data name="Acquisition.IsPermanent.Text" xml:space="preserve">
+    <value>Permanent?</value>
+  </data>
+  <data name="DebutEvent.Header.Text" xml:space="preserve">
+    <value>Debut Event</value>
+  </data>
+  <data name="DebutEvent.Name.Text" xml:space="preserve">
+    <value>First Appearance Event:</value>
+  </data>
+  <data name="DebutEvent.Date.Text" xml:space="preserve">
+    <value>Release Date:</value>
+  </data>
+  <data name="DebutEvent.Notes.Text" xml:space="preserve">
+    <value>Notes:</value>
+  </data>
+  <data name="AttributeBonus.Header.Text" xml:space="preserve">
+    <value>Attribute Bonus</value>
+  </data>
+  <data name="AttributeBonus.Attr.Text" xml:space="preserve">
+    <value>Attribute</value>
+  </data>
+  <data name="AttributeBonus.Value.Text" xml:space="preserve">
+    <value>Value:</value>
+  </data>
+  <data name="AttributeBonus.AffectShips.Text" xml:space="preserve">
+    <value>Affected Classes:</value>
+  </data>
+  <data name="AttributeBonus.Level120.Text" xml:space="preserve">
+    <value>Level 120 Bonus:</value>
+  </data>
+  <data name="FleetTech.Header.Text" xml:space="preserve">
+    <value>Fleet Tech</value>
+  </data>
+  <data name="FleetTech.ObtainPoints.Text" xml:space="preserve">
+    <value>Obtain Points:</value>
+  </data>
+  <data name="FleetTech.MaxPoints.Text" xml:space="preserve">
+    <value>Max Breakthrough Points:</value>
+  </data>
+  <data name="FleetTech.Level120Points.Text" xml:space="preserve">
+    <value>Level 120 Points:</value>
+  </data>
+  <data name="SpecialGear.Header.Text" xml:space="preserve">
+    <value>Exclusive Equipment:</value>
+  </data>
+  <data name="SpecialGear.CanHave.Text" xml:space="preserve">
+    <value>Can have exclusive Equipment</value>
+  </data>
+  <data name="SpecialGear.Name.Text" xml:space="preserve">
+    <value>Equipment Name:</value>
+  </data>
+  <data name="SpecialGear.Date.Text" xml:space="preserve">
+    <value>Release Date:</value>
+  </data>
+  <data name="SpecialGear.Acquire.Text" xml:space="preserve">
+    <value>Acquisition:</value>
+  </data>
+  <data name="AttrBonusPage.Title.Text" xml:space="preserve">
+    <value>Attribute Bonus</value>
+  </data>
+  <data name="AttrBonusPage.FilterLabel.Text" xml:space="preserve">
+    <value>Filter by Class:</value>
+  </data>
+  <data name="ExportImageButton.Content" xml:space="preserve">
+    <value>Export as Image</value>
+  </data>
+  <data name="Faction_EagleUnion" xml:space="preserve">
+    <value>Eagle Union</value>
+  </data>
+  <data name="Faction_EU.Content" xml:space="preserve">
+    <value>Eagle Union</value>
+  </data>
+  <data name="Faction_RoyalNavy" xml:space="preserve">
+    <value>Royal Navy</value>
+  </data>
+  <data name="Faction_RN.Content" xml:space="preserve">
+    <value>Royal Navy</value>
+  </data>
+  <data name="Faction_SakuraEmpire" xml:space="preserve">
+    <value>Sakura Empire</value>
+  </data>
+  <data name="Faction_IJN.Content" xml:space="preserve">
+    <value>Sakura Empire</value>
+  </data>
+  <data name="Faction_IronBlood" xml:space="preserve">
+    <value>Iron Blood</value>
+  </data>
+  <data name="Faction_KMS.Content" xml:space="preserve">
+    <value>Iron Blood</value>
+  </data>
+  <data name="Faction_DragonEmpery" xml:space="preserve">
+    <value>Dragon Empery</value>
+  </data>
+  <data name="Faction_Dragon.Content" xml:space="preserve">
+    <value>Dragon Empery</value>
+  </data>
+  <data name="Faction_Sardegna" xml:space="preserve">
+    <value>Sardegna Empire</value>
+  </data>
+  <data name="Faction_Sardegna1.Content" xml:space="preserve">
+    <value>Sardegna Empire</value>
+  </data>
+  <data name="Faction_NorthernUnion" xml:space="preserve">
+    <value>Northern Union</value>
+  </data>
+  <data name="Faction_SN.Content" xml:space="preserve">
+    <value>Northern Union</value>
+  </data>
+  <data name="Faction_FreeFrench" xml:space="preserve">
+    <value>Free French</value>
+  </data>
+  <data name="Faction_FFNF.Content" xml:space="preserve">
+    <value>Free French</value>
+  </data>
+  <data name="Faction_Vichya" xml:space="preserve">
+    <value>Vichya Dominion</value>
+  </data>
+  <data name="Faction_MNF.Content" xml:space="preserve">
+    <value>Vichya Dominion</value>
+  </data>
+  <data name="Faction_Tulip" xml:space="preserve">
+    <value>Tulip Kingdom</value>
+  </data>
+  <data name="Faction_Tulip1.Content" xml:space="preserve">
+    <value>Tulip Kingdom</value>
+  </data>
+  <data name="Faction_Tempesta" xml:space="preserve">
+    <value>Tempesta</value>
+  </data>
+  <data name="Faction_Tempesta1.Content" xml:space="preserve">
+    <value>Tempesta</value>
+  </data>
+  <data name="Faction_Other" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="Faction_Other1.Content" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="Faction_Collab_Nep" xml:space="preserve">
+    <value>Hyperdimension Neptunia</value>
+  </data>
+  <data name="FactionCollab_Nep.Content" xml:space="preserve">
+    <value>Hyperdimension Neptunia</value>
+  </data>
+  <data name="Faction_Collab_Bilibili" xml:space="preserve">
+    <value>Bilibili</value>
+  </data>
+  <data name="FactionCollab_Bilibili.Content" xml:space="preserve">
+    <value>Bilibili</value>
+  </data>
+  <data name="Faction_Collab_Utawarerumono" xml:space="preserve">
+    <value>Utawarerumono</value>
+  </data>
+  <data name="FactionCollab_Utawarerumono.Content" xml:space="preserve">
+    <value>Utawarerumono</value>
+  </data>
+  <data name="Faction_Collab_KizunaAI" xml:space="preserve">
+    <value>Kizuna AI</value>
+  </data>
+  <data name="FactionCollab_KizunaAI.Content" xml:space="preserve">
+    <value>Kizuna AI</value>
+  </data>
+  <data name="Faction_Collab_Hololive" xml:space="preserve">
+    <value>Hololive</value>
+  </data>
+  <data name="FactionCollab_Hololive.Content" xml:space="preserve">
+    <value>Hololive</value>
+  </data>
+  <data name="Faction_Collab_DoAXVV" xml:space="preserve">
+    <value>Dead or Alive Xtreme Venus Vacation</value>
+  </data>
+  <data name="FactionCollab_DoAXVV.Content" xml:space="preserve">
+    <value>Dead or Alive Xtreme Venus Vacation</value>
+  </data>
+  <data name="Faction_Collab_Idolmaster" xml:space="preserve">
+    <value>THE iDOLM@STER</value>
+  </data>
+  <data name="FactionCollab_Idolmaster.Content" xml:space="preserve">
+    <value>THE iDOLM@STER</value>
+  </data>
+  <data name="Faction_Collab_SSSS" xml:space="preserve">
+    <value>SSSS</value>
+  </data>
+  <data name="FactionCollab_SSSS.Content" xml:space="preserve">
+    <value>SSSS</value>
+  </data>
+  <data name="Faction_Collab_Ryza" xml:space="preserve">
+    <value>Atelier Ryza</value>
+  </data>
+  <data name="FactionCollab_Ryza.Content" xml:space="preserve">
+    <value>Atelier Ryza</value>
+  </data>
+  <data name="Faction_Collab_Senran" xml:space="preserve">
+    <value>Senran Kagura</value>
+  </data>
+  <data name="FactionCollab_Senran.Content" xml:space="preserve">
+    <value>Senran Kagura</value>
+  </data>
+  <data name="Faction_Collab_Toloveru" xml:space="preserve">
+    <value>To LOVE-Ru</value>
+  </data>
+  <data name="FactionCollab_Toloveru.Content" xml:space="preserve">
+    <value>To LOVE-Ru</value>
+  </data>
+  <data name="Faction_Collab_BRS" xml:space="preserve">
+    <value>Black★Rock Shooter</value>
+  </data>
+  <data name="FactionCollab_BRS.Content" xml:space="preserve">
+    <value>Black★Rock Shooter</value>
+  </data>
+  <data name="Faction_Collab_Danmachi" xml:space="preserve">
+    <value>DanMachi</value>
+  </data>
+  <data name="FactionCollab_Danmachi.Content" xml:space="preserve">
+    <value>DanMachi</value>
+  </data>
+  <data name="Faction_Collab_Yumia" xml:space="preserve">
+    <value>Atelier Yumia</value>
+  </data>
+  <data name="FactionCollab_Yumia.Content" xml:space="preserve">
+    <value>Atelier Yumia</value>
+  </data>
+  <data name="Faction_Collab_DAL" xml:space="preserve">
+    <value>Date A Live V</value>
+  </data>
+  <data name="FactionCollab_DAL.Content" xml:space="preserve">
+    <value>Date A Live V</value>
+  </data>
+  <data name="Faction_Meta_Core" xml:space="preserve">
+    <value>META</value>
+  </data>
+  <data name="FactionMeta_Core.Content" xml:space="preserve">
+    <value>Ash Core</value>
+  </data>
+  <data name="Faction_Meta.Content" xml:space="preserve">
+    <value>Ash Core</value>
+  </data>
+  <data name="Faction_Meta_Reason" xml:space="preserve">
+    <value>Principle of Structure</value>
+  </data>
+  <data name="FactionMeta_Reason.Content" xml:space="preserve">
+    <value>Principle of Structure</value>
+  </data>
+  <data name="Faction_Meta_Light" xml:space="preserve">
+    <value>Flame of Pursuit</value>
+  </data>
+  <data name="FactionMeta_Light.Content" xml:space="preserve">
+    <value>Flame of Pursuit</value>
+  </data>
+  <data name="Faction_Meta_Fire" xml:space="preserve">
+    <value>Flickering Fire</value>
+  </data>
+  <data name="FactionMeta_Fire.Content" xml:space="preserve">
+    <value>Flickering Fire</value>
+  </data>
+  <data name="Faction_Meta_Flame" xml:space="preserve">
+    <value>Flame of Destruction</value>
+  </data>
+  <data name="FactionMeta_Flame.Content" xml:space="preserve">
+    <value>Flame of Destruction</value>
+  </data>
+  <data name="Class_BM.Content" xml:space="preserve">
+    <value>Monitor</value>
+  </data>
+  <data name="Rarity_Decisive.Content" xml:space="preserve">
+    <value>Decisive</value>
+  </data>
+  <data name="Rarity_Ultimate.Content" xml:space="preserve">
+    <value>Ultimate</value>
+  </data>
+  <data name="FilterTitle_Faction.Header" xml:space="preserve">
+    <value>Faction</value>
+  </data>
+  <data name="FilterTitle_Class.Header" xml:space="preserve">
+    <value>Ship Class</value>
+  </data>
+  <data name="ShipClass_BC.Content" xml:space="preserve">
+    <value>Battlecruiser</value>
+  </data>
+  <data name="ShipClass_BM.Content" xml:space="preserve">
+    <value>Monitor</value>
+  </data>
+  <data name="ShipClass_CB.Content" xml:space="preserve">
+    <value>Large Cruiser</value>
+  </data>
+  <data name="ShipClass_CA.Content" xml:space="preserve">
+    <value>Heavy Cruiser</value>
+  </data>
+  <data name="BatchOperationButton.Label" xml:space="preserve">
+    <value>Batch Operations</value>
+  </data>
+  <data name="FilterButton.Label" xml:space="preserve">
+    <value>Filter</value>
+  </data>
+  <data name="ResetAndRefreshButton.Label" xml:space="preserve">
+    <value>Reset &amp; Refresh</value>
+  </data>
+  <data name="SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Search ship name</value>
+  </data>
+  <data name="BetaInfoBar.Title" xml:space="preserve">
+    <value>Beta Version</value>
+  </data>
+  <data name="AnniversaryInfoBar.Title" xml:space="preserve">
+    <value>🎉 Happy 9th Anniversary to Azur Lane! 🎉</value>
+  </data>
+  <data name="AnniversaryInfoBarLink.Content" xml:space="preserve">
+    <value>Go to official event page for details</value>
+  </data>
+  <data name="BetaInfoBar.Message" xml:space="preserve">
+    <value>This is a preview version. Please be aware of potential bugs and report them to us.</value>
+  </data>
+  <data name="BetaInfoBarLink.Content" xml:space="preserve">
+    <value>Go to Feedback</value>
+  </data>
+  <data name="DeleteShipButton.Text" xml:space="preserve">
+    <value>Delete Ship</value>
+  </data>
+  <data name="SettingsPageTitle.Text" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Setting_Window_Title.Text" xml:space="preserve">
+    <value>Window Settings</value>
+  </data>
+  <data name="Setting_Window_Button.Content" xml:space="preserve">
+    <value>Reset window size</value>
+  </data>
+  <data name="Setting_Language_Title.Text" xml:space="preserve">
+    <value>App Language</value>
+  </data>
+  <data name="Settings_Language_Description.Text" xml:space="preserve">
+    <value>Changing the interface language will take effect after restart</value>
+  </data>
+  <data name="Lang_ZH_Hans.Content" xml:space="preserve">
+    <value>简体中文</value>
+  </data>
+  <data name="Lang_ZH_Hant.Content" xml:space="preserve">
+    <value>繁體中文</value>
+  </data>
+  <data name="Lang_EN.Content" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="Lang_JA.Content" xml:space="preserve">
+    <value>日本語</value>
+  </data>
+  <data name="Setting_Data_Title.Text" xml:space="preserve">
+    <value>Data Migration</value>
+  </data>
+  <data name="Setting_Data_Description.Text" xml:space="preserve">
+    <value>Import from old Python version ships_static.json and auto-convert</value>
+  </data>
+  <data name="Setting_Data_Button.Content" xml:space="preserve">
+    <value>Import old static data and convert</value>
+  </data>
+  <data name="Setting_Log_Title.Text" xml:space="preserve">
+    <value>Logs</value>
+  </data>
+  <data name="Setting_Log_Description.Text" xml:space="preserve">
+    <value>View and manage operation logs</value>
+  </data>
+  <data name="Setting_Update_Title.Text" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="Setting_Update_Description.Text" xml:space="preserve">
+    <value>Adjust app update settings and source</value>
+  </data>
+  <data name="Setting_About_Header.Header" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="Setting_About_1.Text" xml:space="preserve">
+    <value>Developer: 菲梦林光</value>
+  </data>
+  <data name="Setting_About_2.Text" xml:space="preserve">
+    <value>License: CC BY-NC-SA 4.0</value>
+  </data>
+  <data name="Setting_About_3.Content" xml:space="preserve">
+    <value>Project Homepage</value>
+  </data>
+  <data name="Setting_About_4.Content" xml:space="preserve">
+    <value>Wiki Homepage</value>
+  </data>
+</root>

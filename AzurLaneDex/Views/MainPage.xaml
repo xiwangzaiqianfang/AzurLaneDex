@@ -28,7 +28,7 @@
                         <MenuFlyoutItem x:Name="ContextMenuSpecialGear" Text="标记为已拥有特殊兵装" Click="ContextMenu_SpecialGear_Click"/>
                         <MenuFlyoutItem x:Name="ContextMenuNotSpecialGear" Text="标记为未拥有特殊兵装" Click="ContextMenu_NotSpecialGear_Click"/>
                         <MenuFlyoutSeparator x:Name="SeparatorDelete"/>
-                        <MenuFlyoutItem x:Name="ContextMenuDelete" Text="删除舰船" Click="ContextMenu_Delete_Click" Foreground="Red"/>
+                        <MenuFlyoutItem x:Uid="DeleteShipButton" x:Name="ContextMenuDelete" Text="删除舰船" Click="ContextMenu_Delete_Click" Foreground="Red"/>
                     </MenuFlyout>
                 </Grid.ContextFlyout>
                 <Grid.ColumnDefinitions>
@@ -72,7 +72,7 @@
                         <MenuFlyoutItem Text="标记为已拥有特殊兵装" Click="ContextMenu_SpecialGear_Click"/>
                         <MenuFlyoutItem Text="标记为未拥有特殊兵装" Click="ContextMenu_NotSpecialGear_Click"/>
                         <MenuFlyoutSeparator/>
-                        <MenuFlyoutItem Text="删除舰船" Click="ContextMenu_Delete_Click" Foreground="Red"/>
+                        <MenuFlyoutItem x:Uid="DeleteShipButton" Text="删除舰船" Click="ContextMenu_Delete_Click" Foreground="Red"/>
                     </MenuFlyout>
                 </Grid.ContextFlyout>
                 <Grid.ColumnDefinitions>
@@ -111,7 +111,7 @@
                         <MenuFlyoutItem Text="标记为已拥有特殊兵装" Click="ContextMenu_SpecialGear_Click"/>
                         <MenuFlyoutItem Text="标记为未拥有特殊兵装" Click="ContextMenu_NotSpecialGear_Click"/>
                         <MenuFlyoutSeparator/>
-                        <MenuFlyoutItem Text="删除舰船" Click="ContextMenu_Delete_Click" Foreground="Red"/>
+                        <MenuFlyoutItem x:Uid="DeleteShipButton" Text="删除舰船" Click="ContextMenu_Delete_Click" Foreground="Red"/>
                     </MenuFlyout>
                 </Grid.ContextFlyout>
                 <Grid.ColumnDefinitions>
@@ -137,21 +137,23 @@
         <!-- ===== InfoBar 容器 ===== -->
         <StackPanel Grid.Row="0" Margin="12,12,12,-6" Spacing="8">
             <InfoBar x:Name="BetaInfoBar"
+                     x:Uid="BetaInfoBar"
                      Title="测试版本"
                      Message="当前为预览版，请留意潜在的 bug，并在发现问题时向我们反馈。"
                      Severity="Warning"
                      IsOpen="True"
                      IsClosable="True">
                 <InfoBar.ActionButton>
-                    <HyperlinkButton Content="前往反馈" NavigateUri="https://github.com/xiwangzaiqianfang/AzurLaneDex/issues"/>
+                    <HyperlinkButton x:Uid="BetaInfoBarLink" Content="前往反馈" NavigateUri="https://github.com/xiwangzaiqianfang/AzurLaneDex/issues"/>
                 </InfoBar.ActionButton>
             </InfoBar>
             <InfoBar x:Name="AnniversaryInfoBar"
+                     x:Uid="AnniversaryInfoBar"
                      Title="🎉祝《碧蓝航线》九周年生日快乐！🎉"
                      IsOpen="True"
                      IsClosable="True">
                 <InfoBar.ActionButton>
-                    <HyperlinkButton Content="前往官方活动页面查看活动详情" NavigateUri="https://game.bilibili.com/blhx/2026-ninth-anniversary/h5/"/>
+                    <HyperlinkButton x:Uid="AnniversaryInfoBarLink" Content="前往官方活动页面查看活动详情" NavigateUri="https://game.bilibili.com/blhx/2026-ninth-anniversary/h5/"/>
                 </InfoBar.ActionButton>
             </InfoBar>
         </StackPanel>
@@ -159,10 +161,10 @@
         <!-- 分类选择器（SelectorBar）单独一行 -->
         <SelectorBar x:Name="CategorySelector" Grid.Row="1" Margin="12,-6,12,0"
                      SelectionChanged="CategorySelector_SelectionChanged">
-            <SelectorBarItem Text="角色" Tag="Normal" />
-            <SelectorBarItem Text="联动" Tag="Collab" />
-            <SelectorBarItem Text="科研" Tag="Research" />
-            <SelectorBarItem Text="META" Tag="META" />
+            <SelectorBarItem x:Uid="CategoryTag_Normal" Text="角色" Tag="Normal" />
+            <SelectorBarItem x:Uid="CategoryTag_Collab" Text="联动" Tag="Collab" />
+            <SelectorBarItem x:Uid="CategoryTag_Research" Text="方案舰" Tag="Research" />
+            <SelectorBarItem x:Uid="CategoryTag_META" Text="META" Tag="META" />
         </SelectorBar>
 
         <!-- CommandBar 功能区 -->
@@ -175,6 +177,7 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <AutoSuggestBox x:Name="SearchBox"
+                                    x:Uid="SearchBox"
                                     Grid.Column="0"
                                     HorizontalAlignment="Stretch"
                                     PlaceholderText="搜索舰船名"
@@ -211,13 +214,13 @@
             </CommandBar.Content>
 
             <!-- 主要命令 -->
-            <AppBarButton Icon="Filter" Label="筛选" Click="FilterButton_Click" VerticalAlignment="Center"/>
-            <AppBarButton x:Name="BatchOperationButton" Icon="SelectAll" Label="批量操作" Click="BatchOperation_Click" VerticalAlignment="Center"/>
-            <AppBarButton x:Name="AddShipButton" Icon="Add" Label="新建舰船" Click="AddShipButton_Click" Visibility="Collapsed" VerticalAlignment="Center"/>
+            <AppBarButton Icon="Filter" Label="筛选" x:Uid="FilterButton" Click="FilterButton_Click" VerticalAlignment="Center"/>
+            <AppBarButton x:Name="BatchOperationButton" x:Uid="BatchOperationButton" Icon="SelectAll" Label="批量操作" Click="BatchOperation_Click" VerticalAlignment="Center"/>
+            <AppBarButton x:Name="AddShipButton" Icon="Add" x:Uid="AddShipButton" Label="新建舰船" Click="AddShipButton_Click" Visibility="Collapsed" VerticalAlignment="Center"/>
 
             <!-- 辅助命令 -->
             <CommandBar.SecondaryCommands>
-                <AppBarButton Label="重置并刷新" Click="ResetAndRefresh_Click" />
+                <AppBarButton x:Uid="ResetAndRefreshButton" Label="重置并刷新" Click="ResetAndRefresh_Click" />
             </CommandBar.SecondaryCommands>
         </CommandBar>
 

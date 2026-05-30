@@ -1,6 +1,7 @@
 ﻿using AzurLaneDex.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,10 +23,7 @@ namespace AzurLaneDex.Views
 
             if (!requirePassword)
             {
-                // 隐藏密码框
                 PasswordBox.Visibility = Visibility.Collapsed;
-                // 可选：修改提示文字
-                // 也可以保留密码框但禁用验证，但更简洁是隐藏
             }
         }
 
@@ -37,6 +35,7 @@ namespace AzurLaneDex.Views
                 AccountCombo.SelectedIndex = 0;
         }
 
+        // 创建新账户（保持不变）
         private async void OnCreateAccountClick(object sender, RoutedEventArgs e)
         {
             this.Hide();
@@ -52,138 +51,138 @@ namespace AzurLaneDex.Views
                     if (setDefault)
                         _accountManager.SetDefaultAccount(name);
                     _accountManager.Save();
-                    // 重新加载账户列表
                     LoadAccounts();
                 }
                 else
                 {
-                    // 账户已存在等错误，显示提示
-                    var errorDialog = new ContentDialog
-                    {
-                        Title = "错误",
-                        Content = "账户创建失败，可能已存在",
-                        CloseButtonText = "确定",
-                        XamlRoot = this.XamlRoot,
-                        Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
-                    };
-                    await errorDialog.ShowAsync();
+                    ShowInlineError("AccountCreateFailed_Message");
                 }
             }
-            // 重新显示登录对话框
             await this.ShowAsync();
         }
 
+        // 登录按钮逻辑
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             var selected = AccountCombo.SelectedItem as string;
             if (string.IsNullOrEmpty(selected))
             {
                 args.Cancel = true;
+                ShowInlineError("PleaseSelectAccount_Message");
                 return;
             }
             if (!_accountManager.VerifyPassword(selected, PasswordBox.Password))
             {
                 args.Cancel = true;
-                // 显示错误（可以使用 Flyout 或 MessageDialog）
+                ShowInlineError("InvalidPassword_Message");
                 return;
             }
-            else
-            {
-                _accountManager.SetCurrentAccount(selected);
-                if (RememberCheckBox.IsChecked == true)
-                    _accountManager.Save();
-            }
+            _accountManager.SetCurrentAccount(selected);
+            if (RememberCheckBox.IsChecked == true)
+                _accountManager.Save();
         }
-        private async void ForgotPassword_Click(object sender, RoutedEventArgs e)
+
+        // 忘记密码：切换到重置密码面板
+        private void ForgotPasswordButton_Click(object sender, RoutedEventArgs e)
         {
             var selected = AccountCombo.SelectedItem as string;
             if (string.IsNullOrEmpty(selected))
             {
-                await ShowError("请先选择账户");
+                ShowInlineError("PleaseSelectAccount_Message");
                 return;
             }
 
             var question = _accountManager.GetSecurityQuestion(selected);
             if (string.IsNullOrEmpty(question))
             {
-                await ShowError("该账户未设置密保问题，无法找回密码。请联系管理员。");
+                ShowInlineError("NoSecurityQuestion_Message");
                 return;
             }
 
-            // 弹出输入答案和设置新密码的对话框
-            var answerBox = new PasswordBox { PlaceholderText = "密保答案" };
-            var newPasswordBox = new PasswordBox { PlaceholderText = "新密码" };
-            var confirmBox = new PasswordBox { PlaceholderText = "确认新密码" };
-            var panel = new StackPanel { Spacing = 12 };
-            panel.Children.Add(new TextBlock { Text = $"密保问题：{question}" });
-            panel.Children.Add(answerBox);
-            panel.Children.Add(newPasswordBox);
-            panel.Children.Add(confirmBox);
+            // 加载本地化文本
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
+            SecurityQuestionText.Text = $"{loader.GetString("SecurityQuestion_Label")}{question}";
+            ResetAnswerBox.Password = "";
+            ResetNewPasswordBox.Password = "";
+            ResetConfirmBox.Password = "";
+            ResetErrorText.Text = "";
 
-            var dialog = new ContentDialog
+            // 切换面板
+            LoginPanel.Visibility = Visibility.Collapsed;
+            ResetPasswordPanel.Visibility = Visibility.Visible;
+
+            // 修改对话框标题和按钮（可选）
+            this.Title = loader.GetString("ResetPasswordDialog_Title");
+            this.PrimaryButtonText = "";      // 隐藏默认主按钮
+            this.CloseButtonText = loader.GetString("Common_Close");
+        }
+
+        // 重置密码确认按钮
+        private async void ResetConfirmButton_Click(object sender, RoutedEventArgs e)
+        {
+            var selected = AccountCombo.SelectedItem as string;
+            if (string.IsNullOrEmpty(selected)) return;
+
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
+            string answer = ResetAnswerBox.Password;
+            string newPwd = ResetNewPasswordBox.Password;
+            string confirmPwd = ResetConfirmBox.Password;
+
+            if (newPwd != confirmPwd)
             {
-                Title = "重置密码",
-                Content = panel,
-                PrimaryButtonText = "重置",
-                CloseButtonText = "取消",
-                DefaultButton = ContentDialogButton.Primary,
-                XamlRoot = this.XamlRoot,
-                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
-            };
-
-            if (await dialog.ShowAsync() == ContentDialogResult.Primary)
+                ResetErrorText.Text = loader.GetString("PasswordMismatch_Message");
+                return;
+            }
+            if (string.IsNullOrEmpty(newPwd))
             {
-                string answer = answerBox.Password;
-                string newPwd = newPasswordBox.Password;
-                string confirmPwd = confirmBox.Password;
+                ResetErrorText.Text = loader.GetString("PasswordEmpty_Message");
+                return;
+            }
 
-                if (newPwd != confirmPwd)
-                {
-                    await ShowError("两次输入的新密码不一致");
-                    return;
-                }
-                if (string.IsNullOrEmpty(newPwd))
-                {
-                    await ShowError("新密码不能为空");
-                    return;
-                }
-
-                if (_accountManager.ResetPasswordBySecurity(selected, answer, newPwd))
-                {
-                    // 重置成功，可自动填写密码框或提示
-                    await ShowSuccess("密码已重置，请使用新密码登录。");
-                }
-                else
-                {
-                    await ShowError("密保答案错误，无法重置密码。");
-                }
+            if (_accountManager.ResetPasswordBySecurity(selected, answer, newPwd))
+            {
+                // 重置成功：切回登录面板并显示成功信息
+                SwitchToLoginPanel();
+                var successLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
+                ErrorInfoBar.Title = successLoader.GetString("Dialog_Success_Title");
+                ErrorInfoBar.Message = successLoader.GetString("PasswordResetSuccess_Message");
+                ErrorInfoBar.Severity = InfoBarSeverity.Success;
+                ErrorInfoBar.IsOpen = true;
+            }
+            else
+            {
+                ResetErrorText.Text = loader.GetString("SecurityAnswerWrong_Message");
             }
         }
 
-        private async Task ShowError(string message)
+        // 取消重置：切回登录面板
+        private void ResetCancelButton_Click(object sender, RoutedEventArgs e)
         {
-            var dialog = new ContentDialog
-            {
-                Title = "错误",
-                Content = message,
-                CloseButtonText = "确定",
-                XamlRoot = this.XamlRoot,
-                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
-            };
-            await dialog.ShowAsync();
+            SwitchToLoginPanel();
         }
 
-        private async Task ShowSuccess(string message)
+        // 切换回登录面板并重置对话框状态
+        private void SwitchToLoginPanel()
         {
-            var dialog = new ContentDialog
-            {
-                Title = "成功",
-                Content = message,
-                CloseButtonText = "确定",
-                XamlRoot = this.XamlRoot,
-                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
-            };
-            await dialog.ShowAsync();
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
+            LoginPanel.Visibility = Visibility.Visible;
+            ResetPasswordPanel.Visibility = Visibility.Collapsed;
+            this.Title = loader.GetString("LoginDialog_Title");
+            this.PrimaryButtonText = loader.GetString("LoginDialog_LoginButton");
+            this.CloseButtonText = loader.GetString("Common_Cancel");
+        }
+
+        private void ShowInlineError(string resourceKey)
+        {
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
+            ErrorInfoBar.Message = loader.GetString(resourceKey);
+            ErrorInfoBar.Severity = InfoBarSeverity.Error;
+            ErrorInfoBar.IsOpen = true;
+        }
+
+        private void ErrorInfoBar_CloseButtonClick(InfoBar sender, object args)
+        {
+            ErrorInfoBar.IsOpen = false;
         }
     }
 }
