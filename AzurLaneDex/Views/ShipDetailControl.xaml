@@ -39,7 +39,7 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel Orientation="Horizontal" Grid.Column="0">
                             <FontIcon Glyph="&#xE946;" FontFamily="Segoe Fluent Icons" FontSize="18" Margin="0,-4,8,0" VerticalAlignment="Center"/>
-                            <TextBlock Text="基本信息" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,6" VerticalAlignment="Center"/>
+                            <TextBlock x:Uid="BasicInfo_Header" Text="基本信息" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,6" VerticalAlignment="Center"/>
                         </StackPanel>
                         <Button x:Name="EditShipButton" Grid.Column="1"
                                     Background="Transparent" BorderBrush="{ThemeResource ButtonBorderBrush}"
@@ -73,17 +73,17 @@
                             </Border>
                             <TextBlock x:Name="ShipNameText" Grid.Column="1" FontSize="26" FontWeight="SemiBold" Margin="0,0,0,4"/>
                         </Grid>
-                        <TextBlock Text="编号:" Grid.Row="1" Grid.Column="0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Uid="BasicInfo_Id" Text="编号:" Grid.Row="1" Grid.Column="0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         <TextBlock x:Name="ShipIdText" Grid.Row="1" Grid.Column="1"/>
-                        <TextBlock Text="阵营:" Grid.Row="2" Grid.Column="0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Uid="BasicInfo_Faction" Text="阵营:" Grid.Row="2" Grid.Column="0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         <TextBlock x:Name="FactionText" Grid.Row="2" Grid.Column="1"/>
-                        <TextBlock Text="舰种:" Grid.Row="3" Grid.Column="0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Uid="BasicInfo_ShipClass" Text="舰种:" Grid.Row="3" Grid.Column="0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         <TextBlock x:Name="ShipClassText" Grid.Row="3" Grid.Column="1"/>
-                        <TextBlock Text="稀有度:" Grid.Row="4" Grid.Column="0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Uid="BasicInfo_Rarity" Text="稀有度:" Grid.Row="4" Grid.Column="0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         <TextBlock x:Name="RarityText" Grid.Row="4" Grid.Column="1"/>
-                        <TextBlock Text="能否改造:" Grid.Row="5" Grid.Column="0" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Uid="BasicInfo_CanRemodel_Text" Text="能否改造:" Grid.Row="5" Grid.Column="0" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         <TextBlock x:Name="CanRemodelText" Grid.Row="5" Grid.Column="1" Margin="8,0,0,0" VerticalAlignment="Center"/>
-                        <TextBlock Text="改造日期:" Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Uid="BasicInfo_RemodelDate" Text="改造日期:" Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         <TextBlock x:Name="RemodelDateText" Grid.Row="6" Grid.Column="1" Margin="8,0,0,0"/>
                     </Grid>
                 </StackPanel>
@@ -100,21 +100,21 @@
                 <StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
                         <FontIcon Glyph="&#xE835;" FontFamily="Segoe Fluent Icons" FontSize="18" Margin="0,-4,8,0" VerticalAlignment="Center"/>
-                        <TextBlock Text="状态" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                        <TextBlock x:Uid="Status_Header" Text="状态" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,6"/>
                     </StackPanel>
-                <CheckBox x:Name="OwnedCheckBox" Content="已获得" Checked="OnOwnedChanged" Unchecked="OnOwnedChanged"/>
+                    <CheckBox x:Uid="Status_Owned" x:Name="OwnedCheckBox" Content="已获得" Checked="OnOwnedChanged" Unchecked="OnOwnedChanged"/>
 
                     <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,4,0,0">
-                        <TextBlock Text="突破:" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Uid="Status_Breakthrough_Text" Text="突破:" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         <Slider x:Name="BreakthroughSlider" Minimum="0" Maximum="3" TickFrequency="1" TickPlacement="BottomRight" 
                                 Width="200" ValueChanged="OnBreakthroughChanged"/>
                         <TextBlock x:Name="BreakthroughValueText" VerticalAlignment="Center" Width="40"/>
                     </StackPanel>
 
-                    <CheckBox x:Name="OathCheckBox" Content="已誓约" Margin="0,4,0,0" Checked="OnOathChanged" Unchecked="OnOathChanged"/>
-                    <CheckBox x:Name="Level120CheckBox" Content="120级" Margin="0,4,0,0" Checked="OnLevel120Changed" Unchecked="OnLevel120Changed"/>
-                    <CheckBox x:Name="RemodeledCheckBox" Content="已改造" Margin="0,4,0,0" Checked="OnRemodeledChanged" Unchecked="OnRemodeledChanged"/>
-                    <CheckBox x:Name="SpecialGearObtainedCheckBox" Content="已获得专属兵装" Margin="0,4,0,0" Visibility="Collapsed"
+                    <CheckBox x:Uid="Status_Oath" x:Name="OathCheckBox" Content="已誓约" Margin="0,4,0,0" Checked="OnOathChanged" Unchecked="OnOathChanged"/>
+                    <CheckBox x:Uid="Status_Level120" x:Name="Level120CheckBox" Content="120级" Margin="0,4,0,0" Checked="OnLevel120Changed" Unchecked="OnLevel120Changed"/>
+                    <CheckBox x:Uid="Status_Remodeled" x:Name="RemodeledCheckBox" Content="已改造" Margin="0,4,0,0" Checked="OnRemodeledChanged" Unchecked="OnRemodeledChanged"/>
+                    <CheckBox x:Uid="Status_SpecialGearObtained" x:Name="SpecialGearObtainedCheckBox" Content="已获得专属兵装" Margin="0,4,0,0" Visibility="Collapsed"
                               Checked="OnSpecialGearObtainedChanged" Unchecked="OnSpecialGearObtainedChanged"/>
                 </StackPanel>
             </Border>
@@ -130,19 +130,19 @@
                 <StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
                         <FontIcon Glyph="&#xE82E;" FontFamily="Segoe Fluent Icons" FontSize="18" Margin="0,-4,8,0" VerticalAlignment="Center"/>
-                        <TextBlock Text="获取方式" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                        <TextBlock x:Uid="Acquisition_Header" Text="获取方式" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,6"/>
                     </StackPanel>
-                    <TextBlock Text="主要获取:" Grid.Row="0" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                    <TextBlock x:Uid="Acquisition_Main" Text="主要获取:" Grid.Row="0" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                     <TextBlock x:Name="AcquireMainText" Grid.Row="0" Grid.Column="1" TextWrapping="Wrap" Margin="0,4,0,0"/>
                     <TextBlock x:Name="AcquireDetailText" Grid.Row="1" Grid.Column="0" TextWrapping="Wrap" Margin="0,4,0,0" 
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontSize="12"/>
                     <TextBlock x:Name="DropLocationsText" Grid.Row="2" Grid.Column="0" TextWrapping="Wrap" Margin="0,4,0,0"/>
-                    <TextBlock Text="建造时间:" Grid.Row="3" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                    <TextBlock x:Uid="Acquisition_BuildTime" Text="建造时间:" Grid.Row="3" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                     <TextBlock x:Name="BuildTimeText" Grid.Row="3" Grid.Column="1" TextWrapping="Wrap" Margin="0,4,0,0"/>
-                    <TextBlock Text="商店兑换:" Grid.Row="4" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                    <TextBlock x:Uid="Acquisition_ShopExchange" Text="商店兑换:" Grid.Row="4" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                     <TextBlock x:Name="ShopExchangeText" Grid.Row="4" Grid.Column="1" TextWrapping="Wrap" Margin="0,4,0,0"/>
                     <TextBlock Text="常驻状态:" Grid.Row="5" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                    <TextBlock x:Name="IsPermanentText" Grid.Row="5" Grid.Column="1" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                    <TextBlock x:Uid="Acquisition_IsPermanent_Status" x:Name="IsPermanentText" Grid.Row="5" Grid.Column="1" TextWrapping="Wrap" Margin="0,4,0,0"/>
                 </StackPanel>
             </Border>
 
@@ -157,13 +157,13 @@
                 <StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
                         <FontIcon Glyph="&#xE7E7;" FontFamily="Segoe Fluent Icons" FontSize="18" Margin="0,-4,8,0" VerticalAlignment="Center"/>
-                        <TextBlock Text="实装活动" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                        <TextBlock x:Uid="DebutEvent_Header" Text="实装活动" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,6"/>
                     </StackPanel>
-                    <TextBlock Text="活动名称:" Grid.Row="0" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                    <TextBlock x:Uid="DebutEvent_Name_Text" Text="活动名称:" Grid.Row="0" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                     <TextBlock x:Name="DebutEventText" TextWrapping="Wrap" Margin="0,4,0,0"/>
-                    <TextBlock Text="实装日期:" Grid.Row="0" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                    <TextBlock x:Uid="DebutEvent_Date" Text="实装日期:" Grid.Row="0" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                     <TextBlock x:Name="ReleaseDateText" TextWrapping="Wrap" Margin="0,4,0,0"/>
-                    <TextBlock Text="备注:" Grid.Row="0" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                    <TextBlock x:Uid="DebutEvent_Notes" Text="备注:" Grid.Row="0" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                     <TextBlock x:Name="NotesText" TextWrapping="Wrap" Margin="0,4,0,0"/>
                 </StackPanel>
             </Border>
@@ -179,7 +179,7 @@
                 <StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
                         <FontIcon Glyph="&#xF54C;" FontFamily="Segoe Fluent Icons" FontSize="18" Margin="0,-4,8,0" VerticalAlignment="Center"/>
-                        <TextBlock Text="专属兵装" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                        <TextBlock x:Uid="SpecialGear_Header_Text" Text="专属兵装" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,6"/>
                     </StackPanel>
                     <Grid>
                         <Grid.RowDefinitions>
@@ -202,9 +202,9 @@
                             </Border>
                             <TextBlock x:Name="SpecialGearNameText" Grid.Column="1" FontSize="20" TextWrapping="Wrap" Margin="0,2,0,0"/>
                         </Grid>
-                        <TextBlock Text="实装日期：" Grid.Row="2" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Uid="SpecialGear_Date" Text="实装日期：" Grid.Row="2" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         <TextBlock x:Name="SpecialGearDateText" Grid.Row="2" Grid.Column="1" TextWrapping="Wrap" Margin="0,4,0,0"/>
-                        <TextBlock Text="获取方式：" Grid.Row="3" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Uid="SpecialGear_Acquire" Text="获取方式：" Grid.Row="3" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         <TextBlock x:Name="SpecialGearAcquireText" Grid.Row="3" Grid.Column="1" TextWrapping="Wrap" Margin="0,4,0,0"/>
                     </Grid>
                 </StackPanel>
@@ -221,19 +221,19 @@
                 <StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
                         <FontIcon Glyph="&#xEABC;" FontFamily="Segoe Fluent Icons" FontSize="18" Margin="0,-4,8,0" VerticalAlignment="Center"/>
-                        <TextBlock Text="属性加成" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <TextBlock x:Uid="AttrBonusPage_Title" Text="属性加成" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,5"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Spacing="20">
                         <StackPanel>
-                            <TextBlock Text="获得时" FontSize="17" FontWeight="Bold" Margin="0,4,0,0"/>
+                            <TextBlock x:Uid="AttributeBonus_Obtain_Text" Text="获得时" FontSize="17" FontWeight="Bold" Margin="0,4,0,0"/>
                             <TextBlock x:Name="ObtainBonusText" FontSize="16" Margin="0,4,0,0"/>
-                            <TextBlock Text="适用舰种:" Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontSize="12" Margin="0,4,0,0"/>
+                            <TextBlock x:Uid="AttributeBonus_AffectShips" Text="适用舰种:" Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontSize="12" Margin="0,4,0,0"/>
                             <TextBlock x:Name="ObtainAffectsText" FontSize="14" TextWrapping="Wrap" Margin="0,4,0,0"/>
                         </StackPanel>
                         <StackPanel>
-                            <TextBlock Text="120级" FontSize="17" FontWeight="Bold" Margin="0,4,0,0"/>
+                            <TextBlock x:Uid="AttributeBonus_Level120_Text" Text="120级" FontSize="17" FontWeight="Bold" Margin="0,4,0,0"/>
                             <TextBlock x:Name="Level120BonusText" FontSize="16" Margin="0,4,0,0"/>
-                            <TextBlock Text="适用舰种:" Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontSize="12" Margin="0,4,0,0"/>
+                            <TextBlock x:Uid="AttributeBonus_AffectShips" Text="适用舰种:" Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontSize="12" Margin="0,4,0,0"/>
                             <TextBlock x:Name="Level120AffectsText" FontSize="14" TextWrapping="Wrap" Margin="0,4,0,0"/>
                         </StackPanel>
                     </StackPanel>
@@ -251,7 +251,7 @@
                 <StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
                         <FontIcon Glyph="&#xE81E;" FontFamily="Segoe Fluent Icons" FontSize="18" Margin="0,-4,8,0" VerticalAlignment="Center"/>
-                        <TextBlock Text="舰队科技" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                        <TextBlock x:Uid="FleetTech_Header" Text="舰队科技" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,8"/>
                     </StackPanel>
                     <Grid ColumnSpacing="12" RowSpacing="6">
                         <Grid.ColumnDefinitions>
@@ -263,11 +263,11 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <TextBlock Text="获得:" Grid.Row="0" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Uid="FleetTech_Obtain" Text="获得:" Grid.Row="0" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         <TextBlock x:Name="TechPointsObtainText" Grid.Row="0" Grid.Column="1" Margin="0,4,0,0"/>
-                        <TextBlock Text="满破:" Grid.Row="1" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Uid="FleetTech_Max" Text="满破:" Grid.Row="1" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         <TextBlock x:Name="TechPointsMaxText" Grid.Row="1" Grid.Column="1" Margin="0,4,0,0"/>
-                        <TextBlock Text="120级:" Grid.Row="2" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Uid="FleetTech_Level120" Text="120级:" Grid.Row="2" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         <TextBlock x:Name="TechPoints120Text" Grid.Row="2" Grid.Column="1" Margin="0,4,0,0"/>
                     </Grid>
                 </StackPanel>

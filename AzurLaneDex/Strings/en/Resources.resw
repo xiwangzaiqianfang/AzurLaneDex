@@ -477,6 +477,9 @@
   <data name="BasicInfo_CanRemodel.Text" xml:space="preserve">
     <value>Can Retrofit:</value>
   </data>
+  <data name="BasicInfo_CanRemodel_Text.Text" xml:space="preserve">
+    <value>Retrofittable:</value>
+  </data>
   <data name="BasicInfo_RemodelDate.Text" xml:space="preserve">
     <value>Retrofit Date:</value>
   </data>
@@ -501,11 +504,17 @@
   <data name="Acquisition_IsPermanent.Text" xml:space="preserve">
     <value>Permanent?</value>
   </data>
+  <data name="Acquisition_IsPermanent_Status.Text" xml:space="preserve">
+    <value>Permanent Status:</value>
+  </data>
   <data name="DebutEvent_Header.Text" xml:space="preserve">
     <value>Debut Event</value>
   </data>
   <data name="DebutEvent_Name.Text" xml:space="preserve">
     <value>First Appearance Event:</value>
+  </data>
+  <data name="DebutEvent_Name_Text.Text" xml:space="preserve">
+    <value>Event Name:</value>
   </data>
   <data name="DebutEvent_Date.Text" xml:space="preserve">
     <value>Release Date:</value>
@@ -528,26 +537,38 @@
   <data name="AttributeBonus_Level120.Text" xml:space="preserve">
     <value>Level 120 Bonus</value>
   </data>
+  <data name="AttributeBonus_Level120_Text.Text" xml:space="preserve">
+    <value>Level 120</value>
+  </data>
   <data name="FleetTech_Header.Text" xml:space="preserve">
     <value>Fleet Tech</value>
   </data>
   <data name="FleetTech_ObtainPoints.Text" xml:space="preserve">
     <value>Obtain Points:</value>
   </data>
+  <data name="FleetTech_Obtain.Text" xml:space="preserve">
+    <value>Obtain:</value>
+  </data>
   <data name="FleetTech_MaxPoints.Text" xml:space="preserve">
     <value>Max Breakthrough Points:</value>
+  </data>
+  <data name="FleetTech_Max.Text" xml:space="preserve">
+    <value>Max Breakthrough:</value>
   </data>
   <data name="FleetTech_Level120Points.Text" xml:space="preserve">
     <value>Level 120 Points:</value>
   </data>
+  <data name="FleetTech_Level120.Text" xml:space="preserve">
+    <value>Level 120:</value>
+  </data>
   <data name="SpecialGear_Header.Text" xml:space="preserve">
-    <value>Exclusive Equipment:</value>
+    <value>Exclusive Gear:</value>
+  </data>
+  <data name="SpecialGear_Header_Text.Text" xml:space="preserve">
+    <value>Exclusive Gear</value>
   </data>
   <data name="SpecialGear_CanHave.Content" xml:space="preserve">
-    <value>Can have exclusive Equipment</value>
-  </data>
-  <data name="SpecialGear_Name.Text" xml:space="preserve">
-    <value>Equipment Name:</value>
+    <value>Can have Exclusive Gear</value>
   </data>
   <data name="SpecialGear_Date.Text" xml:space="preserve">
     <value>Release Date:</value>
@@ -972,6 +993,9 @@
   <data name="AttributeBonus_Obtain.Text" xml:space="preserve">
     <value>Acquisition Bonus</value>
   </data>
+  <data name="AttributeBonus_Obtain_Text.Text" xml:space="preserve">
+    <value>Acquisition</value>
+  </data>
   <data name="Acquisition_IsPermanentCheckBox.Content" xml:space="preserve">
     <value>Permanent</value>
   </data>
@@ -1097,5 +1121,167 @@
   </data>
   <data name="HelpPage_Title.Text" xml:space="preserve">
     <value>Help &amp; Support</value>
+  </data>
+  <data name="LogPage_Title.Text" xml:space="preserve">
+    <value>Logs</value>
+  </data>
+  <data name="LogPage_EnableLog_Title.Text" xml:space="preserve">
+    <value>Enable Logging</value>
+  </data>
+  <data name="LogPage_EnableLog_Description.Text" xml:space="preserve">
+    <value>Log all actions (add/edit/delete ships, state changes, account operations, etc.)</value>
+  </data>
+  <data name="LogPage_EnableLog_Toggle.OnContent" xml:space="preserve">
+    <value>On</value>
+  </data>
+  <data name="LogPage_EnableLog_Toggle.OffContent" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="LogPage_RetentionDays_Title.Text" xml:space="preserve">
+    <value>Log Retention Days</value>
+  </data>
+  <data name="LogPage_RetentionDays_Description.Text" xml:space="preserve">
+    <value>Log files older than this many days will be automatically deleted</value>
+  </data>
+  <data name="LogPage_RetentionDays_Days.Text" xml:space="preserve">
+    <value>days</value>
+  </data>
+  <data name="LogPage_Export_Title.Text" xml:space="preserve">
+    <value>Export Logs</value>
+  </data>
+  <data name="LogPage_Export_Description.Text" xml:space="preserve">
+    <value>Export all logs to a text file</value>
+  </data>
+  <data name="LogPage_Export_Button.Content" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="FilterTitle_Rarity.Header" xml:space="preserve">
+    <value>Rarity</value>
+  </data>
+  <data name="FilterTitle_Extra.Header" xml:space="preserve">
+    <value>Extra Status</value>
+  </data>
+  <data name="FilterTitle_AttributeBonus.Header" xml:space="preserve">
+    <value>Attribute Bonus</value>
+  </data>
+  <data name="Extra_CanRemodel.Content" xml:space="preserve">
+    <value>Can Retrofit</value>
+  </data>
+  <data name="Extra_Remodeled.Content" xml:space="preserve">
+    <value>Retrofitted</value>
+  </data>
+  <data name="Extra_MaxBreak.Content" xml:space="preserve">
+    <value>Max Breakthrough</value>
+  </data>
+  <data name="Extra_NotMaxBreak.Content" xml:space="preserve">
+    <value>Not Max Breakthrough</value>
+  </data>
+  <data name="Extra_Level120.Content" xml:space="preserve">
+    <value>Level 120</value>
+  </data>
+  <data name="Extra_NotLevel120.Content" xml:space="preserve">
+    <value>Not Level 120</value>
+  </data>
+  <data name="Extra_Oath.Content" xml:space="preserve">
+    <value>Oathed</value>
+  </data>
+  <data name="Extra_NotOath.Content" xml:space="preserve">
+    <value>Not Oathed</value>
+  </data>
+  <data name="Extra_CanSpecial.Content" xml:space="preserve">
+    <value>Can have exclusive gear</value>
+  </data>
+  <data name="Extra_SpecialObtained.Content" xml:space="preserve">
+    <value>Exclusive gear obtained</value>
+  </data>
+  <data name="MainPage_SortCombo_Item0.Content" xml:space="preserve">
+    <value>Sort by ID</value>
+  </data>
+  <data name="MainPage_SortCombo_Item1.Content" xml:space="preserve">
+    <value>Sort by Gallery Order</value>
+  </data>
+  <data name="MainPage_SortCombo_Item2.Content" xml:space="preserve">
+    <value>Sort by Name</value>
+  </data>
+  <data name="MainPage_SortCombo_Item3.Content" xml:space="preserve">
+    <value>Sort by Rarity</value>
+  </data>
+  <data name="MainPage_SortCombo_Item4.Content" xml:space="preserve">
+    <value>Sort by Retrofit Date</value>
+  </data>
+  <data name="MainPage_SortCombo_Item11.Content" xml:space="preserve">
+    <value>Sort by Exclusive Gear Obtained</value>
+  </data>
+  <data name="MainPage_SortCombo_Item10.Content" xml:space="preserve">
+    <value>Sort by Level 120</value>
+  </data>
+  <data name="MainPage_SortCombo_Item9.Content" xml:space="preserve">
+    <value>Sort by Oath</value>
+  </data>
+  <data name="MainPage_SortCombo_Item8.Content" xml:space="preserve">
+    <value>Sort by Breakthrough</value>
+  </data>
+  <data name="MainPage_SortCombo_Item7.Content" xml:space="preserve">
+    <value>Sort by Retrofit</value>
+  </data>
+  <data name="MainPage_SortCombo_Item6.Content" xml:space="preserve">
+    <value>Sort by Owned</value>
+  </data>
+  <data name="MainPage_SortCombo_Item5.Content" xml:space="preserve">
+    <value>Sort by Exclusive Gear Date</value>
+  </data>
+  <data name="MainPage_SortToggle.Content" xml:space="preserve">
+    <value>Ascending</value>
+  </data>
+  <data name="MainPage_Header_ID.Text" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="MainPage_Header_Name.Text" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="MainPage_Header_Owned.Text" xml:space="preserve">
+    <value>Get</value>
+  </data>
+  <data name="MainPage_Header_Oath.Text" xml:space="preserve">
+    <value>💍</value>
+  </data>
+  <data name="MainPage_Header_Breakthrough.Text" xml:space="preserve">
+    <value>BT</value>
+  </data>
+  <data name="MainPage_Header_Level120.Text" xml:space="preserve">
+    <value>Lv120</value>
+  </data>
+  <data name="MainPage_Header_Remodel.Text" xml:space="preserve">
+    <value>RT</value>
+  </data>
+  <data name="MainPage_Header_SpecialGear.Text" xml:space="preserve">
+    <value>EG</value>
+  </data>
+  <data name="Status_Header.Text" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="SpecialGear_Name.Text" xml:space="preserve">
+    <value>Exclusive Gear Name:</value>
+  </data>
+  <data name="Status_Breakthrough.Content" xml:space="preserve">
+    <value>Breakthrough:</value>
+  </data>
+  <data name="Status_Breakthrough_Text.Text" xml:space="preserve">
+    <value>Breakthrough:</value>
+  </data>
+  <data name="Status_Owned.Content" xml:space="preserve">
+    <value>Owned</value>
+  </data>
+  <data name="Status_Oath.Content" xml:space="preserve">
+    <value>Oathed</value>
+  </data>
+  <data name="Status_Level120.Content" xml:space="preserve">
+    <value>Level 120</value>
+  </data>
+  <data name="Status_Remodeled.Content" xml:space="preserve">
+    <value>Retrofitted</value>
+  </data>
+  <data name="Status_SpecialGearObtained.Content" xml:space="preserve">
+    <value>Exclusive gear obtained</value>
   </data>
 </root>

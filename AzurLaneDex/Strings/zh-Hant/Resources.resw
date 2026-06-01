@@ -477,6 +477,9 @@
   <data name="BasicInfo_CanRemodel.Text" xml:space="preserve">
     <value>可改造：</value>
   </data>
+  <data name="BasicInfo_CanRemodel_Text.Text" xml:space="preserve">
+    <value>能否改造：</value>
+  </data>
   <data name="BasicInfo_RemodelDate.Text" xml:space="preserve">
     <value>改造日期：</value>
   </data>
@@ -501,11 +504,17 @@
   <data name="Acquisition_IsPermanent.Text" xml:space="preserve">
     <value>是否常駐：</value>
   </data>
+  <data name="Acquisition_IsPermanent_Status.Text" xml:space="preserve">
+    <value>常駐狀態：</value>
+  </data>
   <data name="DebutEvent_Header.Text" xml:space="preserve">
     <value>實裝活動</value>
   </data>
   <data name="DebutEvent_Name.Text" xml:space="preserve">
     <value>首次登場活動：</value>
+  </data>
+  <data name="DebutEvent_Name_Text.Text" xml:space="preserve">
+    <value>活動名稱：</value>
   </data>
   <data name="DebutEvent_Date.Text" xml:space="preserve">
     <value>實裝日期：</value>
@@ -528,32 +537,44 @@
   <data name="AttributeBonus_Level120.Text" xml:space="preserve">
     <value>120級加成</value>
   </data>
+  <data name="AttributeBonus_Level120_Text.Text" xml:space="preserve">
+    <value>120級</value>
+  </data>
   <data name="FleetTech_Header.Text" xml:space="preserve">
     <value>艦隊科技</value>
   </data>
   <data name="FleetTech_ObtainPoints.Text" xml:space="preserve">
     <value>獲得科技點：</value>
   </data>
+  <data name="FleetTech_Obtain.Text" xml:space="preserve">
+    <value>獲得：</value>
+  </data>
   <data name="FleetTech_MaxPoints.Text" xml:space="preserve">
     <value>滿破科技點：</value>
+  </data>
+  <data name="FleetTech_Max.Text" xml:space="preserve">
+    <value>滿破：</value>
   </data>
   <data name="FleetTech_Level120Points.Text" xml:space="preserve">
     <value>120級科技點：</value>
   </data>
+  <data name="FleetTech_Level120.Text" xml:space="preserve">
+    <value>120級：</value>
+  </data>
   <data name="SpecialGear_Header.Text" xml:space="preserve">
     <value>專屬兵裝：</value>
   </data>
+  <data name="SpecialGear_Header_Text.Text" xml:space="preserve">
+    <value>專屬兵裝</value>
+  </data>
   <data name="SpecialGear_CanHave.Content" xml:space="preserve">
     <value>可擁有專屬兵裝</value>
-  </data>
-  <data name="SpecialGear_Name.Text" xml:space="preserve">
-    <value>兵裝名稱：</value>
   </data>
   <data name="SpecialGear_Date.Text" xml:space="preserve">
     <value>實裝日期：</value>
   </data>
   <data name="SpecialGear_Acquire.Text" xml:space="preserve">
-    <value>取得途徑：</value>
+    <value>取得方式：</value>
   </data>
   <data name="AttrBonusPage_Title.Text" xml:space="preserve">
     <value>屬性加成</value>
@@ -972,6 +993,9 @@
   <data name="AttributeBonus_Obtain.Text" xml:space="preserve">
     <value>獲得時加成</value>
   </data>
+  <data name="AttributeBonus_Obtain_Text.Text" xml:space="preserve">
+    <value>獲得時</value>
+  </data>
   <data name="Acquisition_IsPermanentCheckBox.Content" xml:space="preserve">
     <value>常駐</value>
   </data>
@@ -1097,5 +1121,167 @@
   </data>
   <data name="HelpPage_Title.Text" xml:space="preserve">
     <value>幫助與支援</value>
+  </data>
+  <data name="LogPage_Title.Text" xml:space="preserve">
+    <value>日誌記錄</value>
+  </data>
+  <data name="LogPage_EnableLog_Title.Text" xml:space="preserve">
+    <value>啟用日誌記錄</value>
+  </data>
+  <data name="LogPage_EnableLog_Description.Text" xml:space="preserve">
+    <value>記錄所有操作（新增/編輯/刪除艦船、狀態變更、帳戶操作等）</value>
+  </data>
+  <data name="LogPage_EnableLog_Toggle.OnContent" xml:space="preserve">
+    <value>開</value>
+  </data>
+  <data name="LogPage_EnableLog_Toggle.OffContent" xml:space="preserve">
+    <value>關</value>
+  </data>
+  <data name="LogPage_RetentionDays_Title.Text" xml:space="preserve">
+    <value>日誌保留天數</value>
+  </data>
+  <data name="LogPage_RetentionDays_Description.Text" xml:space="preserve">
+    <value>超過此天數的日誌檔案將被自動刪除</value>
+  </data>
+  <data name="LogPage_RetentionDays_Days.Text" xml:space="preserve">
+    <value>天</value>
+  </data>
+  <data name="LogPage_Export_Title.Text" xml:space="preserve">
+    <value>匯出日誌</value>
+  </data>
+  <data name="LogPage_Export_Description.Text" xml:space="preserve">
+    <value>將目前所有日誌匯出為一個文字檔案</value>
+  </data>
+  <data name="LogPage_Export_Button.Content" xml:space="preserve">
+    <value>匯出</value>
+  </data>
+  <data name="FilterTitle_Rarity.Header" xml:space="preserve">
+    <value>稀有度</value>
+  </data>
+  <data name="FilterTitle_Extra.Header" xml:space="preserve">
+    <value>附加狀態</value>
+  </data>
+  <data name="FilterTitle_AttributeBonus.Header" xml:space="preserve">
+    <value>屬性加成</value>
+  </data>
+  <data name="Extra_CanRemodel.Content" xml:space="preserve">
+    <value>可改造</value>
+  </data>
+  <data name="Extra_Remodeled.Content" xml:space="preserve">
+    <value>已改造</value>
+  </data>
+  <data name="Extra_MaxBreak.Content" xml:space="preserve">
+    <value>已滿破</value>
+  </data>
+  <data name="Extra_NotMaxBreak.Content" xml:space="preserve">
+    <value>未滿破</value>
+  </data>
+  <data name="Extra_Level120.Content" xml:space="preserve">
+    <value>已120級</value>
+  </data>
+  <data name="Extra_NotLevel120.Content" xml:space="preserve">
+    <value>未120級</value>
+  </data>
+  <data name="Extra_Oath.Content" xml:space="preserve">
+    <value>已誓約</value>
+  </data>
+  <data name="Extra_NotOath.Content" xml:space="preserve">
+    <value>未誓約</value>
+  </data>
+  <data name="Extra_CanSpecial.Content" xml:space="preserve">
+    <value>可擁有專屬兵裝</value>
+  </data>
+  <data name="Extra_SpecialObtained.Content" xml:space="preserve">
+    <value>已擁有專屬兵裝</value>
+  </data>
+  <data name="MainPage_SortCombo_Item0.Content" xml:space="preserve">
+    <value>按編號排序</value>
+  </data>
+  <data name="MainPage_SortCombo_Item1.Content" xml:space="preserve">
+    <value>按圖鑑排序</value>
+  </data>
+  <data name="MainPage_SortCombo_Item2.Content" xml:space="preserve">
+    <value>按名稱排序</value>
+  </data>
+  <data name="MainPage_SortCombo_Item3.Content" xml:space="preserve">
+    <value>按稀有度排序</value>
+  </data>
+  <data name="MainPage_SortCombo_Item4.Content" xml:space="preserve">
+    <value>按改造日期排序</value>
+  </data>
+  <data name="MainPage_SortCombo_Item11.Content" xml:space="preserve">
+    <value>按兵裝獲得狀態排序</value>
+  </data>
+  <data name="MainPage_SortCombo_Item10.Content" xml:space="preserve">
+    <value>按120級狀態排序</value>
+  </data>
+  <data name="MainPage_SortCombo_Item9.Content" xml:space="preserve">
+    <value>按誓約狀態排序</value>
+  </data>
+  <data name="MainPage_SortCombo_Item8.Content" xml:space="preserve">
+    <value>按突破狀態排序</value>
+  </data>
+  <data name="MainPage_SortCombo_Item7.Content" xml:space="preserve">
+    <value>按改造狀態排序</value>
+  </data>
+  <data name="MainPage_SortCombo_Item6.Content" xml:space="preserve">
+    <value>按獲得狀態排序</value>
+  </data>
+  <data name="MainPage_SortCombo_Item5.Content" xml:space="preserve">
+    <value>按兵裝日期排序</value>
+  </data>
+  <data name="MainPage_SortToggle.Content" xml:space="preserve">
+    <value>升序</value>
+  </data>
+  <data name="MainPage_Header_ID.Text" xml:space="preserve">
+    <value>編號</value>
+  </data>
+  <data name="MainPage_Header_Name.Text" xml:space="preserve">
+    <value>名稱</value>
+  </data>
+  <data name="MainPage_Header_Owned.Text" xml:space="preserve">
+    <value>獲得</value>
+  </data>
+  <data name="MainPage_Header_Oath.Text" xml:space="preserve">
+    <value>誓約</value>
+  </data>
+  <data name="MainPage_Header_Breakthrough.Text" xml:space="preserve">
+    <value>突破</value>
+  </data>
+  <data name="MainPage_Header_Level120.Text" xml:space="preserve">
+    <value>120級</value>
+  </data>
+  <data name="MainPage_Header_Remodel.Text" xml:space="preserve">
+    <value>改造</value>
+  </data>
+  <data name="MainPage_Header_SpecialGear.Text" xml:space="preserve">
+    <value>兵裝</value>
+  </data>
+  <data name="Status_Header.Text" xml:space="preserve">
+    <value>狀態</value>
+  </data>
+  <data name="SpecialGear_Name.Text" xml:space="preserve">
+    <value>兵裝名稱：</value>
+  </data>
+  <data name="Status_Breakthrough.Content" xml:space="preserve">
+    <value>突破：</value>
+  </data>
+  <data name="Status_Breakthrough_Text.Text" xml:space="preserve">
+    <value>突破：</value>
+  </data>
+  <data name="Status_Owned.Content" xml:space="preserve">
+    <value>已獲得</value>
+  </data>
+  <data name="Status_Oath.Content" xml:space="preserve">
+    <value>已誓約</value>
+  </data>
+  <data name="Status_Level120.Content" xml:space="preserve">
+    <value>120級</value>
+  </data>
+  <data name="Status_Remodeled.Content" xml:space="preserve">
+    <value>已改造</value>
+  </data>
+  <data name="Status_SpecialGearObtained.Content" xml:space="preserve">
+    <value>已獲得專屬兵裝</value>
   </data>
 </root>

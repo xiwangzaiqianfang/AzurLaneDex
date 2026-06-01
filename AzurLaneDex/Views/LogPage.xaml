@@ -24,7 +24,7 @@
         <StackPanel Orientation="Horizontal" Margin="20,20,20,12" Spacing="12">
             <Button x:Uid="SettingsPageTitle1" x:Name="BackButton" Click="BackButton_Click" Content="设置" FontSize="28" FontWeight="SemiBold" Margin="0,2,0,0" Background="Transparent" BorderThickness="0" ToolTipService.ToolTip="返回" VerticalAlignment="Center"/>
             <FontIcon Glyph="&#xE974;" FontFamily="Segoe Fluent Icons" FontSize="22" Margin="-20,3,-10,0" VerticalAlignment="Center"/>
-            <TextBlock Text="日志记录" FontSize="28" FontWeight="SemiBold" VerticalAlignment="Center"/>
+            <TextBlock x:Uid="LogPage_Title" Text="日志记录" FontSize="28" FontWeight="SemiBold" VerticalAlignment="Center"/>
         </StackPanel>
 
         <ScrollViewer Grid.Row="1">
@@ -37,10 +37,10 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0">
-                            <TextBlock Text="启用日志记录" FontSize="14"/>
-                            <TextBlock Text="记录所有操作（新增/编辑/删除舰船、状态变更、账户操作等）" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock x:Uid="LogPage_EnableLog_Title" Text="启用日志记录" FontSize="14"/>
+                            <TextBlock x:Uid="LogPage_EnableLog_Description" Text="记录所有操作（新增/编辑/删除舰船、状态变更、账户操作等）" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         </StackPanel>
-                        <ToggleSwitch x:Name="EnableLogToggle" Grid.Column="1" OffContent="关" OnContent="开" Toggled="EnableLogToggle_Toggled" FlowDirection="RightToLeft"/>
+                        <ToggleSwitch x:Uid="LogPage_EnableLog_Toggle" x:Name="EnableLogToggle" Grid.Column="1" OffContent="关" OnContent="开" Toggled="EnableLogToggle_Toggled" FlowDirection="RightToLeft"/>
                     </Grid>
                 </Border>
 
@@ -52,12 +52,12 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0">
-                            <TextBlock Text="日志保留天数" FontSize="14"/>
-                            <TextBlock Text="超过此天数的日志文件将被自动删除" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock x:Uid="LogPage_RetentionDays_Title" Text="日志保留天数" FontSize="14"/>
+                            <TextBlock x:Uid="LogPage_RetentionDays_Description" Text="超过此天数的日志文件将被自动删除" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                             <NumberBox x:Name="RetentionDaysBox" Minimum="1" Maximum="365" Value="30" SpinButtonPlacementMode="Inline" Width="160" ValueChanged="RetentionDaysBox_ValueChanged"/>
-                            <TextBlock Text="天" VerticalAlignment="Center"/>
+                            <TextBlock x:Uid="LogPage_RetentionDays_Days" Text="天" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Grid>
                 </Border>
@@ -70,15 +70,15 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0">
-                            <TextBlock Text="导出日志" FontSize="14"/>
-                            <TextBlock Text="将当前所有日志导出为一个文本文件" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock x:Uid="LogPage_Export_Title" Text="导出日志" FontSize="14"/>
+                            <TextBlock x:Uid="LogPage_Export_Description" Text="将当前所有日志导出为一个文本文件" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         </StackPanel>
-                        <Button Grid.Column="1" x:Name="ExportLogButton" Click="ExportLogButton_Click" Content="导出"/>
+                        <Button x:Uid="LogPage_Export_Button" Grid.Column="1" x:Name="ExportLogButton" Click="ExportLogButton_Click" Content="导出"/>
                     </Grid>
                 </Border>
 
                 <!-- 状态信息 -->
-                <TextBlock x:Name="StatusText" Text="就绪" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+                <TextBlock x:Uid="LogPage_StatusText" x:Name="StatusText" Text="就绪" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
             </StackPanel>
         </ScrollViewer>
     </Grid>

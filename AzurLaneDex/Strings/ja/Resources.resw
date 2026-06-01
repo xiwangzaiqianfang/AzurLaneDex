@@ -477,6 +477,9 @@
   <data name="BasicInfo_CanRemodel.Text" xml:space="preserve">
     <value>改造可能 :</value>
   </data>
+  <data name="BasicInfo_CanRemodel_Text.Text" xml:space="preserve">
+    <value>改造可能 :</value>
+  </data>
   <data name="BasicInfo_RemodelDate.Text" xml:space="preserve">
     <value>改造日：</value>
   </data>
@@ -501,11 +504,17 @@
   <data name="Acquisition_IsPermanent.Text" xml:space="preserve">
     <value>常設か：</value>
   </data>
+  <data name="Acquisition_IsPermanent_Status.Text" xml:space="preserve">
+    <value>常設状態：</value>
+  </data>
   <data name="DebutEvent_Header.Text" xml:space="preserve">
     <value>実装イベント</value>
   </data>
   <data name="DebutEvent_Name.Text" xml:space="preserve">
     <value>初登場イベント：</value>
+  </data>
+  <data name="DebutEvent_Name_Text.Text" xml:space="preserve">
+    <value>イベント名：</value>
   </data>
   <data name="DebutEvent_Date.Text" xml:space="preserve">
     <value>実装日：</value>
@@ -528,26 +537,38 @@
   <data name="AttributeBonus_Level120.Text" xml:space="preserve">
     <value>120レベルボーナス</value>
   </data>
+  <data name="AttributeBonus_Level120_Text.Text" xml:space="preserve">
+    <value>Lv120</value>
+  </data>
   <data name="FleetTech_Header.Text" xml:space="preserve">
     <value>艦隊テック</value>
   </data>
   <data name="FleetTech_ObtainPoints.Text" xml:space="preserve">
     <value>入手Pt：</value>
   </data>
+  <data name="FleetTech_Obtain.Text" xml:space="preserve">
+    <value>入手：</value>
+  </data>
   <data name="FleetTech_MaxPoints.Text" xml:space="preserve">
     <value>完全限界突破Pt：</value>
+  </data>
+  <data name="FleetTech_Max.Text" xml:space="preserve">
+    <value>完全限界突破：</value>
   </data>
   <data name="FleetTech_Level120Points.Text" xml:space="preserve">
     <value>Lv120Pt：</value>
   </data>
+  <data name="FleetTech_Level120.Text" xml:space="preserve">
+    <value>Lv120：</value>
+  </data>
   <data name="SpecialGear_Header.Text" xml:space="preserve">
     <value>専用兵装：</value>
   </data>
+  <data name="SpecialGear_Header_Text.Text" xml:space="preserve">
+    <value>専用兵装</value>
+  </data>
   <data name="SpecialGear_CanHave.Content" xml:space="preserve">
     <value>専用兵装可能</value>
-  </data>
-  <data name="SpecialGear_Name.Text" xml:space="preserve">
-    <value>装備名：</value>
   </data>
   <data name="SpecialGear_Date.Text" xml:space="preserve">
     <value>実装日：</value>
@@ -972,6 +993,9 @@
   <data name="AttributeBonus_Obtain.Text" xml:space="preserve">
     <value>獲得時ボーナス</value>
   </data>
+  <data name="AttributeBonus_Obtain_Text.Text" xml:space="preserve">
+    <value>獲得時</value>
+  </data>
   <data name="Acquisition_IsPermanentCheckBox.Content" xml:space="preserve">
     <value>常設</value>
   </data>
@@ -985,7 +1009,7 @@
     <value>入手</value>
   </data>
   <data name="CampTechPage_Max.Text" xml:space="preserve">
-    <value>限界突破 Max</value>
+    <value>完全限界突破</value>
   </data>
   <data name="CampTechPage_Level120.Text" xml:space="preserve">
     <value>Lv120</value>
@@ -1097,5 +1121,167 @@
   </data>
   <data name="HelpPage_Title.Text" xml:space="preserve">
     <value>ヘルプ・サポート</value>
+  </data>
+  <data name="LogPage_Title.Text" xml:space="preserve">
+    <value>ログ</value>
+  </data>
+  <data name="LogPage_EnableLog_Title.Text" xml:space="preserve">
+    <value>ログ記録を有効化</value>
+  </data>
+  <data name="LogPage_EnableLog_Description.Text" xml:space="preserve">
+    <value>すべての操作を記録（艦船追加/編集/削除、状態変更、アカウント操作など）</value>
+  </data>
+  <data name="LogPage_EnableLog_Toggle.OnContent" xml:space="preserve">
+    <value>オン</value>
+  </data>
+  <data name="LogPage_EnableLog_Toggle.OffContent" xml:space="preserve">
+    <value>オフ</value>
+  </data>
+  <data name="LogPage_RetentionDays_Title.Text" xml:space="preserve">
+    <value>ログ保持日数</value>
+  </data>
+  <data name="LogPage_RetentionDays_Description.Text" xml:space="preserve">
+    <value>この日数を超えたログファイルは自動削除されます</value>
+  </data>
+  <data name="LogPage_RetentionDays_Days.Text" xml:space="preserve">
+    <value>日</value>
+  </data>
+  <data name="LogPage_Export_Title.Text" xml:space="preserve">
+    <value>ログ書き出し</value>
+  </data>
+  <data name="LogPage_Export_Description.Text" xml:space="preserve">
+    <value>現在の全ログをテキストファイルに書き出し</value>
+  </data>
+  <data name="LogPage_Export_Button.Content" xml:space="preserve">
+    <value>書き出し</value>
+  </data>
+  <data name="FilterTitle_Rarity.Header" xml:space="preserve">
+    <value>レアリティ</value>
+  </data>
+  <data name="FilterTitle_Extra.Header" xml:space="preserve">
+    <value>追加状態</value>
+  </data>
+  <data name="FilterTitle_AttributeBonus.Header" xml:space="preserve">
+    <value>属性ボーナス</value>
+  </data>
+  <data name="Extra_CanRemodel.Content" xml:space="preserve">
+    <value>改造可能</value>
+  </data>
+  <data name="Extra_Remodeled.Content" xml:space="preserve">
+    <value>改造済</value>
+  </data>
+  <data name="Extra_MaxBreak.Content" xml:space="preserve">
+    <value>完全限界突破済</value>
+  </data>
+  <data name="Extra_NotMaxBreak.Content" xml:space="preserve">
+    <value>未完全限界突破</value>
+  </data>
+  <data name="Extra_Level120.Content" xml:space="preserve">
+    <value>Lv120済</value>
+  </data>
+  <data name="Extra_NotLevel120.Content" xml:space="preserve">
+    <value>Lv120未到達</value>
+  </data>
+  <data name="Extra_Oath.Content" xml:space="preserve">
+    <value>誓約済</value>
+  </data>
+  <data name="Extra_NotOath.Content" xml:space="preserve">
+    <value>未誓約</value>
+  </data>
+  <data name="Extra_CanSpecial.Content" xml:space="preserve">
+    <value>専用装備可能</value>
+  </data>
+  <data name="Extra_SpecialObtained.Content" xml:space="preserve">
+    <value>専用装備入手済</value>
+  </data>
+  <data name="MainPage_SortCombo_Item0.Content" xml:space="preserve">
+    <value>ID順</value>
+  </data>
+  <data name="MainPage_SortCombo_Item1.Content" xml:space="preserve">
+    <value>図鑑順</value>
+  </data>
+  <data name="MainPage_SortCombo_Item2.Content" xml:space="preserve">
+    <value>名前順</value>
+  </data>
+  <data name="MainPage_SortCombo_Item3.Content" xml:space="preserve">
+    <value>レアリティ順</value>
+  </data>
+  <data name="MainPage_SortCombo_Item4.Content" xml:space="preserve">
+    <value>改造日順</value>
+  </data>
+  <data name="MainPage_SortCombo_Item11.Content" xml:space="preserve">
+    <value>専用装備手状態順</value>
+  </data>
+  <data name="MainPage_SortCombo_Item10.Content" xml:space="preserve">
+    <value>Lv120状態順</value>
+  </data>
+  <data name="MainPage_SortCombo_Item9.Content" xml:space="preserve">
+    <value>誓約状態順</value>
+  </data>
+  <data name="MainPage_SortCombo_Item8.Content" xml:space="preserve">
+    <value>限界突破状態順</value>
+  </data>
+  <data name="MainPage_SortCombo_Item7.Content" xml:space="preserve">
+    <value>改造状態順</value>
+  </data>
+  <data name="MainPage_SortCombo_Item6.Content" xml:space="preserve">
+    <value>入手状態順</value>
+  </data>
+  <data name="MainPage_SortCombo_Item5.Content" xml:space="preserve">
+    <value>専用装備日順</value>
+  </data>
+  <data name="MainPage_SortToggle.Content" xml:space="preserve">
+    <value>昇順</value>
+  </data>
+  <data name="MainPage_Header_ID.Text" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="MainPage_Header_Name.Text" xml:space="preserve">
+    <value>名前</value>
+  </data>
+  <data name="MainPage_Header_Owned.Text" xml:space="preserve">
+    <value>入手</value>
+  </data>
+  <data name="MainPage_Header_Oath.Text" xml:space="preserve">
+    <value>誓約</value>
+  </data>
+  <data name="MainPage_Header_Breakthrough.Text" xml:space="preserve">
+    <value>限界突破</value>
+  </data>
+  <data name="MainPage_Header_Level120.Text" xml:space="preserve">
+    <value>Lv120</value>
+  </data>
+  <data name="MainPage_Header_Remodel.Text" xml:space="preserve">
+    <value>改造</value>
+  </data>
+  <data name="MainPage_Header_SpecialGear.Text" xml:space="preserve">
+    <value>専用装備</value>
+  </data>
+  <data name="Status_Header.Text" xml:space="preserve">
+    <value>状態</value>
+  </data>
+  <data name="SpecialGear_Name.Text" xml:space="preserve">
+    <value>専用装備名：</value>
+  </data>
+  <data name="Status_Breakthrough.Content" xml:space="preserve">
+    <value>限界突破：</value>
+  </data>
+  <data name="Status_Breakthrough_Text.Text" xml:space="preserve">
+    <value>限界突破：</value>
+  </data>
+  <data name="Status_Owned.Content" xml:space="preserve">
+    <value>入手済</value>
+  </data>
+  <data name="Status_Oath.Content" xml:space="preserve">
+    <value>誓約済</value>
+  </data>
+  <data name="Status_Level120.Content" xml:space="preserve">
+    <value>Lv120</value>
+  </data>
+  <data name="Status_Remodeled.Content" xml:space="preserve">
+    <value>改造済</value>
+  </data>
+  <data name="Status_SpecialGearObtained.Content" xml:space="preserve">
+    <value>専用装備入手済</value>
   </data>
 </root>
