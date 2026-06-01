@@ -27,7 +27,7 @@
 
         <!-- 标题栏（仅标题，与 SettingsPage 风格一致） -->
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="20,20,20,12" Spacing="12">
-            <TextBlock Text="帮助与支持" FontSize="28" FontWeight="SemiBold" Margin="10,10,0,0" VerticalAlignment="Center"/>
+            <TextBlock x:Uid="HelpPage_Title" Text="帮助与支持" FontSize="28" FontWeight="SemiBold" Margin="10,10,0,0" VerticalAlignment="Center"/>
         </StackPanel>
 
         <!-- 滚动内容区 -->
@@ -36,14 +36,14 @@
 
                 <!-- 数据存储位置卡片 -->
                 <Border Style="{StaticResource SettingsCardStyle}">
-                    <Expander Header="用户数据存储位置" IsExpanded="False" 
+                    <Expander x:Uid="HelpPage_DataLocation_Header" Header="用户数据存储位置" IsExpanded="False" 
                               HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="0,0,0,12">
                         <StackPanel>
-                            <TextBlock Text="你所有的收集进度、账户信息、设置等数据均保存在本地，路径为：" 
+                            <TextBlock x:Uid="HelpPage_DataLocation_Text1" Text="你所有的收集进度、账户信息、设置等数据均保存在本地，路径为：" 
                                        FontSize="14" TextWrapping="Wrap" Padding="20,10,20,0"/>
                             <TextBox IsReadOnly="True" Text="%LOCALAPPDATA%\Packages\fmlg.AzurLaneDex_n8a9v6zgjkkmw\LocalCache\Local\AzurLaneDex" 
                                      Margin="20,8,20,0" FontFamily="Consolas" FontSize="14" BorderThickness="0" Background="Transparent"/>
-                            <TextBlock Text="你可以备份该文件夹下的所有内容，以便迁移或恢复数据。" 
+                            <TextBlock x:Uid="HelpPage_DataLocation_Text2" Text="你可以备份该文件夹下的所有内容，以便迁移或恢复数据。" 
                                        FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" 
                                        TextWrapping="Wrap" Padding="20,10,20,10"/>
                         </StackPanel>
@@ -52,54 +52,54 @@
 
                 <!-- 应用安装位置卡片（Expander 样式） -->
                 <Border Style="{StaticResource SettingsCardStyle}">
-                    <Expander Header="应用安装位置" IsExpanded="False" 
+                    <Expander x:Uid="HelpPage_InstallLocation_Header" Header="应用安装位置" IsExpanded="False" 
                               HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="0,0,0,12">
                         <StackPanel>
-                            <TextBlock Text="应用通过 MSIX 包安装，默认路径为：" 
+                            <TextBlock x:Uid="HelpPage_InstallLocation_Text1" Text="应用通过 MSIX 包安装，默认路径为：" 
                                        FontSize="14" TextWrapping="Wrap" Padding="20,10,20,0"/>
                             <TextBox IsReadOnly="True" Text="%PROGRAMFILES%\WindowsApps" 
                                      Margin="20,8,20,0" FontFamily="Consolas" FontSize="14" BorderThickness="0" Background="Transparent"/>
-                            <TextBlock Text="此为系统文件夹，一般情况下无需手动访问。若要查看或修改内容，请谨慎操作。" 
+                            <TextBlock x:Uid="HelpPage_InstallLocation_Text2" Text="此为系统文件夹，一般情况下无需手动访问。若要查看或修改内容，请谨慎操作。" 
                                        FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" 
                                        TextWrapping="Wrap" Padding="20,10,20,10"/>
                         </StackPanel>
                     </Expander>
                 </Border>
-                
-                <TextBlock Text="常见问题" FontSize="14" FontWeight="SemiBold" Margin="0,8,0,4"/>
+
+                <TextBlock x:Uid="HelpPage_FAQ" Text="常见问题" FontSize="14" FontWeight="SemiBold" Margin="0,8,0,4"/>
                 <!-- 常见问题区域：每个问题一个独立卡片 -->
                 <Border Style="{StaticResource SettingsCardStyle}">
-                    <Expander Header="如何备份我的数据？" IsExpanded="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="0,0,0,12">
-                        <TextBlock Text="将上述「用户数据存储位置」中的整个“AzurLaneDex”文件夹复制到安全位置即可。恢复时只需覆盖原位置。" 
+                    <Expander x:Uid="HelpPage_Question1" Header="如何备份我的数据？" IsExpanded="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="0,0,0,12">
+                        <TextBlock x:Uid="HelpPage_Answer1" Text="将上述「用户数据存储位置」中的整个“AzurLaneDex”文件夹复制到安全位置即可。恢复时只需覆盖原位置。" 
                                    Padding="20,10,20,10" TextWrapping="Wrap" Margin="0,0,0,0" FontSize="14"/>
                     </Expander>
                 </Border>
 
                 <Border Style="{StaticResource SettingsCardStyle}">
-                    <Expander Header="多台电脑如何同步数据？" IsExpanded="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="0,0,0,12">
-                        <TextBlock Text="不支持云同步。你可以手动备份数据文件夹，在新电脑上安装应用后将数据覆盖到相同位置。" 
+                    <Expander x:Uid="HelpPage_Question2" Header="多台电脑如何同步数据？" IsExpanded="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="0,0,0,12">
+                        <TextBlock x:Uid="HelpPage_Answer2" Text="不支持云同步。你可以手动备份数据文件夹，在新电脑上安装应用后将数据覆盖到相同位置。" 
                                    Padding="20,10,20,10" TextWrapping="Wrap" Margin="0,0,0,0" FontSize="14"/>
                     </Expander>
                 </Border>
 
                 <Border Style="{StaticResource SettingsCardStyle}">
-                    <Expander Header="忘记账户密码怎么办？" IsExpanded="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="0,0,0,12">
-                        <TextBlock Text="若设置了密保问题，可在登录界面点击「忘记密码？」通过密保重置密码。若未设置，请联系开发者或重新创建账户（数据会丢失）。"
+                    <Expander x:Uid="HelpPage_Question3" Header="忘记账户密码怎么办？" IsExpanded="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="0,0,0,12">
+                        <TextBlock x:Uid="HelpPage_Answer3" Text="若设置了密保问题，可在登录界面点击「忘记密码？」通过密保重置密码。若未设置，请联系开发者或重新创建账户（数据会丢失）。"
                                    Padding="20,10,20,10" TextWrapping="Wrap" Margin="0,0,0,0" FontSize="14"/>
                     </Expander>
                 </Border>
 
                 <Border Style="{StaticResource SettingsCardStyle}">
-                    <Expander Header="如何获得管理员权限？" IsExpanded="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="0,0,0,12">
-                        <TextBlock Text="进入「帐户」→「你的账户」→「申请权限」，输入系统管理员密码（默认 developer 的密码）即可将当前账户提升为管理员，解锁新建/编辑舰船功能。"
+                    <Expander x:Uid="HelpPage_Question4" Header="如何获得管理员权限？" IsExpanded="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="0,0,0,12">
+                        <TextBlock x:Uid="HelpPage_Answer4" Text="进入「帐户」→「你的账户」→「申请权限」，输入系统管理员密码（默认 developer 的密码）即可将当前账户提升为管理员，解锁新建/编辑舰船功能。"
                                    Padding="20,10,20,10" TextWrapping="Wrap" Margin="0,0,0,0" FontSize="14"/>
                     </Expander>
                 </Border>
 
                 <Border Style="{StaticResource SettingsCardStyle}">
-                    <Expander Header="如何报告Bug或提建议？" IsExpanded="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="0,0,0,12">
+                    <Expander x:Uid="HelpPage_Question5" Header="如何报告Bug或提建议？" IsExpanded="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="0,0,0,12">
                         <StackPanel Padding="20,10,20,10">
-                            <TextBlock Text="欢迎访问项目主页提交 Issue。" TextWrapping="Wrap" Margin="0,0,0,0" FontSize="14"/>
+                            <TextBlock x:Uid="HelpPage_Answer5" Text="欢迎访问项目主页提交 Issue。" TextWrapping="Wrap" Margin="0,0,0,0" FontSize="14"/>
                             <HyperlinkButton Content="GitHub Issues" NavigateUri="https://github.com/xiwangzaiqianfang/AzurLaneDex/issues" Margin="0,8,0,0"/>
                         </StackPanel>
                     </Expander>

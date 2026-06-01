@@ -11,7 +11,7 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Margin="20,20,20,12" Spacing="12">
-            <TextBlock Text="阵营科技点" FontSize="24" FontWeight="SemiBold" Margin="10,10,0,0" VerticalAlignment="Center"/>
+            <TextBlock x:Uid="CampTechPage_Title" Text="阵营科技点" FontSize="24" FontWeight="SemiBold" Margin="10,10,0,0" VerticalAlignment="Center"/>
             <StackPanel Margin="0,0,0,16">
                 <TextBlock x:Name="TechProgressText" VerticalAlignment="Center" Margin="10,10,0,10"/>
                 <ProgressBar x:Name="TechProgressBar" Height="4" Margin="0,8,0,0"/>
@@ -23,9 +23,9 @@
             <!-- 使用 ItemsRepeater 实现响应式网格布局（每行3列） -->
             <controls:ItemsRepeater x:Name="CardsRepeater">
                 <controls:ItemsRepeater.Layout>
-                    <controls:UniformGridLayout MinItemWidth="220" 
-                                                MinRowSpacing="15" 
-                                                MinColumnSpacing="15"/>
+                    <controls:UniformGridLayout MinItemWidth="250" 
+                                                MinRowSpacing="20" 
+                                                MinColumnSpacing="20"/>
                 </controls:ItemsRepeater.Layout>
                 <controls:ItemsRepeater.ItemTemplate>
                     <DataTemplate>
@@ -41,15 +41,15 @@
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel Grid.Column="0">
-                                        <TextBlock Text="获得" FontSize="14" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+                                        <TextBlock x:Uid="CampTechPage_Obtain" Text="获得" FontSize="14" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
                                         <TextBlock Text="{Binding Obtain}" FontSize="16" HorizontalAlignment="Center"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="1">
-                                        <TextBlock Text="满破" FontSize="14" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+                                        <TextBlock x:Uid="CampTechPage_Max" Text="满破" FontSize="14" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
                                         <TextBlock Text="{Binding Max}" FontSize="16" HorizontalAlignment="Center"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="2">
-                                        <TextBlock Text="120级" FontSize="14" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+                                        <TextBlock x:Uid="CampTechPage_Level120" Text="120级" FontSize="14" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
                                         <TextBlock Text="{Binding Level120}" FontSize="16" HorizontalAlignment="Center"/>
                                     </StackPanel>
                                 </Grid>
@@ -60,6 +60,6 @@
                 </controls:ItemsRepeater.ItemTemplate>
             </controls:ItemsRepeater>
         </ScrollViewer>
-      <Button Grid.Row="2" Content="导出为图片" Click="ExportToImage" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+        <Button Grid.Row="2" x:Uid="ExportImageButton" Content="导出为图片" Click="ExportToImage" HorizontalAlignment="Center" Margin="0,0,0,20"/>
     </Grid>
 </Page>

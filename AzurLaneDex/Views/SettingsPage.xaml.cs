@@ -41,7 +41,9 @@ namespace AzurLaneDex.Views
             if (window != null)
             {
                 var bounds = window.Bounds;
-                WindowSizeLabel.Text = $"当前窗口大小: {bounds.Width} x {bounds.Height}";
+                var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
+                string format = loader.GetString("WindowSizeLabel_Text");
+                WindowSizeLabel.Text = string.Format(format, bounds.Width, bounds.Height);
             }
         }
 

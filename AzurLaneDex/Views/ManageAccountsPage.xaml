@@ -28,9 +28,9 @@
 
 		<!-- 顶部导航栏 -->
 		<StackPanel Orientation="Horizontal" Margin="20,20,20,12" Spacing="12">
-            <Button x:Name="BackButton" Click="BackButton_Click" Content="帐户" FontSize="28" FontWeight="SemiBold" Margin="0,2,0,0" Background="Transparent" BorderThickness="0" ToolTipService.ToolTip="返回" VerticalAlignment="Center"/>
+            <Button x:Uid="AccountPageTitle" x:Name="BackButton" Click="BackButton_Click" Content="帐户" FontSize="28" FontWeight="SemiBold" Margin="0,2,0,0" Background="Transparent" BorderThickness="0" ToolTipService.ToolTip="返回" VerticalAlignment="Center"/>
             <FontIcon Grid.Column="0" Glyph="&#xE974;" FontFamily="Segoe Fluent Icons" FontSize="22" Margin="-20,3,-10,0" VerticalAlignment="Center"/>
-            <TextBlock Text="你的账户" FontSize="28" FontWeight="SemiBold" VerticalAlignment="Center"/>
+            <TextBlock x:Uid="ManageAccountsPage_Title" Text="你的账户" FontSize="28" FontWeight="SemiBold" VerticalAlignment="Center"/>
 		</StackPanel>
 
 		<ScrollViewer Grid.Row="1">
@@ -43,11 +43,11 @@
 							<ColumnDefinition Width="Auto"/>
 						</Grid.ColumnDefinitions>
 						<StackPanel Grid.Column="0" VerticalAlignment="Center">
-							<TextBlock Text="添加其他用户" FontSize="14"/>
+                            <TextBlock x:Uid="ManageAccountsPage_AddCard_Title" Text="添加其他用户" FontSize="14"/>
 						</StackPanel>
 						<Button Grid.Column="1" x:Name="AddAccountButton" Click="AddAccountButton_Click" Style="{StaticResource AccentButtonStyle}">
 							<StackPanel Orientation="Horizontal" Spacing="4">
-								<TextBlock Text="添加帐户" Margin="10,0,10,0"/>
+                                <TextBlock x:Uid="ManageAccountsPage_AddCard_Button" Text="添加帐户" Margin="10,0,10,0"/>
 							</StackPanel>
 						</Button>
 					</Grid>
@@ -59,16 +59,16 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                            <TextBlock Text="为当前帐户申请管理员权限" FontSize="14"/>
+                            <TextBlock x:Uid="ManageAccountsPage_RequestAdminCard_Title" Text="为当前帐户申请管理员权限" FontSize="14"/>
                         </StackPanel>
                         <Button Grid.Column="1" x:Name="RequestAdminButton" Click="RequestAdmin_Click" Style="{StaticResource AccentButtonStyle}">
                             <StackPanel Orientation="Horizontal" Spacing="4">
-                                <TextBlock Text="申请权限" Margin="10,0,10,0"/>
+                                <TextBlock x:Uid="ManageAccountsPage_RequestAdminCard_Button" Text="申请权限" Margin="10,0,10,0"/>
                             </StackPanel>
                         </Button>
                     </Grid>
                 </Border>
-                <TextBlock Text="已添加的账户" FontSize="16" FontWeight="SemiBold"/>
+                <TextBlock x:Uid="ManageAccountsPage_AccountListHeader" Text="已添加的账户" FontSize="16" FontWeight="SemiBold"/>
                 <!-- 账户列表（使用 ItemsRepeater 或 ListView） -->
 				<controls:ItemsRepeater x:Name="AccountsRepeater">
 					<controls:ItemsRepeater.ItemTemplate>
@@ -107,15 +107,15 @@
                                                 <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
                                             <TextBlock Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}">
-												<Run Text="最后登录时间: "/><Run Text="{Binding LastLogin, FallbackValue='从未'}"/>
+												<Run x:Uid="ManageAccountsPage_LastLoginLabel" Text="最后登录时间: "/><Run Text="{Binding LastLogin, FallbackValue='从未'}"/>
                                             </TextBlock>
-                                            <TextBlock Grid.Row="1" Text="是否为管理员帐户" VerticalAlignment="Center"/>
-                                            <ToggleSwitch Grid.Row="1" Grid.Column="1" OffContent="否" OnContent="是" Margin="0,0,0,0"
+                                            <TextBlock x:Uid="ManageAccountsPage_Role_Stats_Title" Grid.Row="1" Text="是否为管理员帐户" VerticalAlignment="Center"/>
+                                            <ToggleSwitch x:Uid="ManageAccountsPage.AdminToggle" Grid.Row="1" Grid.Column="1" OffContent="否" OnContent="是" Margin="0,0,0,0"
 															  IsOn="{Binding IsDeveloper, Mode=OneWay}" VerticalAlignment="Center"
 															  Toggled="AdminToggle_Toggled" Tag="{Binding}" FlowDirection="RightToLeft"
 															  Visibility="{Binding IsAdminVisible, Converter={StaticResource BoolToVisibility}}"/>
-                                            <Button Grid.Row="2" Content="修改密码" Click="ChangePasswordButton_Click" Tag="{Binding}" HorizontalAlignment="Left" Margin="0,8,0,0" VerticalAlignment="Center"/>
-                                            <Button Grid.Row="2" Content="删除此账户" Click="DeleteAccountButton_Click" Tag="{Binding}" Foreground="Red" HorizontalAlignment="Left" Margin="90,8,0,0" VerticalAlignment="Center"/>
+                                            <Button x:Uid="ManageAccountsPage_ChangePasswordButton" Grid.Row="2" Content="修改密码" Click="ChangePasswordButton_Click" Tag="{Binding}" HorizontalAlignment="Left" Margin="0,8,0,0" VerticalAlignment="Center"/>
+                                            <Button x:Uid="ManageAccountsPage_DeleteAccountButton" Grid.Row="2" Content="删除此账户" Click="DeleteAccountButton_Click" Tag="{Binding}" Foreground="Red" HorizontalAlignment="Left" Margin="90,8,0,0" VerticalAlignment="Center"/>
                                         </Grid>
                                     </StackPanel>
 								</Expander>

@@ -4,7 +4,6 @@
       xmlns:controls="using:Microsoft.UI.Xaml.Controls">
 
     <Page.Resources>
-        <!-- 统一卡片标题样式，与 Expander 头部对齐 -->
         <SolidColorBrush x:Key="CardBackgroundFillColorPointerOver" Color="{ThemeResource SystemBaseLowColor}" Opacity="0.1"/>
         <SolidColorBrush x:Key="CardBackgroundFillColorPressed" Color="{ThemeResource SystemBaseLowColor}" Opacity="0.2"/>
         <Style x:Key="SettingsCardStyle" TargetType="Border">

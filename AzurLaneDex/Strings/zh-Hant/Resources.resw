@@ -279,7 +279,7 @@
   <data name="AccountCreateFailed_Message" xml:space="preserve">
     <value>建立帳戶失敗，請稍後再試。</value>
   </data>
-  <data name="AccountPage.Title.Text" xml:space="preserve">
+  <data name="AccountPage_Title.Text" xml:space="preserve">
     <value>帳戶</value>
   </data>
   <data name="AccountPageTitle.Content" xml:space="preserve">
@@ -291,28 +291,28 @@
   <data name="AccountPageSettings.Text" xml:space="preserve">
     <value>帳戶設定</value>
   </data>
-  <data name="AccountPage.PhotoCard.Title.Text" xml:space="preserve">
+  <data name="AccountPage_PhotoCard_Title.Text" xml:space="preserve">
     <value>帳戶照片</value>
   </data>
-  <data name="AccountPage.PhotoCard.Description.Text" xml:space="preserve">
+  <data name="AccountPage_PhotoCard_Description.Text" xml:space="preserve">
     <value>點擊修改頭像</value>
   </data>
-  <data name="AccountPage.AvatarButton.Content" xml:space="preserve">
+  <data name="AccountPage_AvatarButton.Content" xml:space="preserve">
     <value>修改照片</value>
   </data>
-  <data name="AccountPage.LoginOptions.Title.Text" xml:space="preserve">
+  <data name="AccountPage_LoginOptions_Title.Text" xml:space="preserve">
     <value>登入選項</value>
   </data>
-  <data name="AccountPage.LoginOptions.Description.Text" xml:space="preserve">
+  <data name="AccountPage_LoginOptions_Description.Text" xml:space="preserve">
     <value>設定啟動時是否詢問帳號以及預設登入帳戶</value>
   </data>
-  <data name="AccountPage.ManageAccounts.Title.Text" xml:space="preserve">
+  <data name="AccountPage_ManageAccounts_Title.Text" xml:space="preserve">
     <value>你的帳戶</value>
   </data>
-  <data name="AccountPage.ManageAccounts.Description" xml:space="preserve">
+  <data name="AccountPage_ManageAccounts_Description.Text" xml:space="preserve">
     <value>添加或管理本應用中使用的帳戶</value>
   </data>
-  <data name="AccountBackup.Description.Text" xml:space="preserve">
+  <data name="AccountBackup_Description.Text" xml:space="preserve">
     <value>匯出/匯入帳戶資料，建立備份點</value>
   </data>
   <data name="AddShipDialog.Title" xml:space="preserve">
@@ -327,31 +327,31 @@
   <data name="AddShipDialog.CloseButtonText" xml:space="preserve">
     <value>取消</value>
   </data>
-  <data name="BasicInfo.Header.Text" xml:space="preserve">
+  <data name="BasicInfo_Header.Text" xml:space="preserve">
     <value>基本資訊</value>
   </data>
-  <data name="BasicInfo.Id.Text" xml:space="preserve">
+  <data name="BasicInfo_Id.Text" xml:space="preserve">
     <value>編號：</value>
   </data>
-  <data name="BasicInfo.GameOrder.Text" xml:space="preserve">
+  <data name="BasicInfo_GameOrder.Text" xml:space="preserve">
     <value>圖鑑順序：</value>
   </data>
-  <data name="BasicInfo.AutoIdHint.PlaceholderText" xml:space="preserve">
+  <data name="BasicInfo_AutoIdHint.PlaceholderText" xml:space="preserve">
     <value>0 表示自動分配</value>
   </data>
-  <data name="BasicInfo.CategoryOrder.Text" xml:space="preserve">
+  <data name="BasicInfo_CategoryOrder.Text" xml:space="preserve">
     <value>類別內順序：</value>
   </data>
-  <data name="BasicInfo.Name.Text" xml:space="preserve">
+  <data name="BasicInfo_Name.Text" xml:space="preserve">
     <value>艦船名稱：</value>
   </data>
-  <data name="BasicInfo.AltName.Text" xml:space="preserve">
-    <value>和諧名（中國大陸服）：</value>
+  <data name="BasicInfo_AltName.Text" xml:space="preserve">
+    <value>和諧名：</value>
   </data>
-  <data name="BasicInfo.Faction.Text" xml:space="preserve">
+  <data name="BasicInfo_Faction.Text" xml:space="preserve">
     <value>陣營：</value>
   </data>
-  <data name="BasicInfo.ShipClass.Text" xml:space="preserve">
+  <data name="BasicInfo_ShipClass.Text" xml:space="preserve">
     <value>艦種：</value>
   </data>
   <data name="Class_DD.Content" xml:space="preserve">
@@ -429,7 +429,7 @@
   <data name="ShipClass_Sail.Content" xml:space="preserve">
     <value>風帆</value>
   </data>
-  <data name="BasicInfo.Rarity.Text" xml:space="preserve">
+  <data name="BasicInfo_Rarity.Text" xml:space="preserve">
     <value>稀有度：</value>
   </data>
   <data name="Rarity_N.Content" xml:space="preserve">
@@ -471,94 +471,94 @@
   <data name="CategoryTag_META.Text" xml:space="preserve">
     <value>META</value>
   </data>
-  <data name="BasicInfo.Category.Text" xml:space="preserve">
+  <data name="BasicInfo_Category.Text" xml:space="preserve">
     <value>艦船類別：</value>
   </data>
-  <data name="BasicInfo.CanRemodel.Text" xml:space="preserve">
+  <data name="BasicInfo_CanRemodel.Text" xml:space="preserve">
     <value>可改造：</value>
   </data>
-  <data name="BasicInfo.RemodelDate.Text" xml:space="preserve">
+  <data name="BasicInfo_RemodelDate.Text" xml:space="preserve">
     <value>改造日期：</value>
   </data>
-  <data name="Acquisition.Header.Text" xml:space="preserve">
+  <data name="Acquisition_Header.Text" xml:space="preserve">
     <value>取得方式</value>
   </data>
-  <data name="Acquisition.Main.Text" xml:space="preserve">
+  <data name="Acquisition_Main.Text" xml:space="preserve">
     <value>主要取得方式：</value>
   </data>
-  <data name="Acquisition.Detail.Text" xml:space="preserve">
+  <data name="Acquisition_Detail.Text" xml:space="preserve">
     <value>詳細資訊：</value>
   </data>
-  <data name="Acquisition.BuildTime.Text" xml:space="preserve">
+  <data name="Acquisition_BuildTime.Text" xml:space="preserve">
     <value>建造時間：</value>
   </data>
-  <data name="Acquisition.DropLocations.Text" xml:space="preserve">
+  <data name="Acquisition_DropLocations.Text" xml:space="preserve">
     <value>打撈地點：</value>
   </data>
-  <data name="Acquisition.ShopExchange.Text" xml:space="preserve">
+  <data name="Acquisition_ShopExchange.Text" xml:space="preserve">
     <value>商店兌換：</value>
   </data>
-  <data name="Acquisition.IsPermanent.Text" xml:space="preserve">
+  <data name="Acquisition_IsPermanent.Text" xml:space="preserve">
     <value>是否常駐：</value>
   </data>
-  <data name="DebutEvent.Header.Text" xml:space="preserve">
+  <data name="DebutEvent_Header.Text" xml:space="preserve">
     <value>實裝活動</value>
   </data>
-  <data name="DebutEvent.Name.Text" xml:space="preserve">
+  <data name="DebutEvent_Name.Text" xml:space="preserve">
     <value>首次登場活動：</value>
   </data>
-  <data name="DebutEvent.Date.Text" xml:space="preserve">
+  <data name="DebutEvent_Date.Text" xml:space="preserve">
     <value>實裝日期：</value>
   </data>
-  <data name="DebutEvent.Notes.Text" xml:space="preserve">
+  <data name="DebutEvent_Notes.Text" xml:space="preserve">
     <value>備註：</value>
   </data>
-  <data name="AttributeBonus.Header.Text" xml:space="preserve">
+  <data name="AttributeBonus_Header.Text" xml:space="preserve">
     <value>屬性加成</value>
   </data>
-  <data name="AttributeBonus.Attr.Text" xml:space="preserve">
+  <data name="AttributeBonus_Attr.Text" xml:space="preserve">
     <value>屬性：</value>
   </data>
-  <data name="AttributeBonus.Value.Text" xml:space="preserve">
+  <data name="AttributeBonus_Value.Text" xml:space="preserve">
     <value>數值：</value>
   </data>
-  <data name="AttributeBonus.AffectShips.Text" xml:space="preserve">
+  <data name="AttributeBonus_AffectShips.Text" xml:space="preserve">
     <value>適用艦種：</value>
   </data>
-  <data name="AttributeBonus.Level120.Text" xml:space="preserve">
-    <value>120級屬性：</value>
+  <data name="AttributeBonus_Level120.Text" xml:space="preserve">
+    <value>120級加成</value>
   </data>
-  <data name="FleetTech.Header.Text" xml:space="preserve">
+  <data name="FleetTech_Header.Text" xml:space="preserve">
     <value>艦隊科技</value>
   </data>
-  <data name="FleetTech.ObtainPoints.Text" xml:space="preserve">
+  <data name="FleetTech_ObtainPoints.Text" xml:space="preserve">
     <value>獲得科技點：</value>
   </data>
-  <data name="FleetTech.MaxPoints.Text" xml:space="preserve">
+  <data name="FleetTech_MaxPoints.Text" xml:space="preserve">
     <value>滿破科技點：</value>
   </data>
-  <data name="FleetTech.Level120Points.Text" xml:space="preserve">
+  <data name="FleetTech_Level120Points.Text" xml:space="preserve">
     <value>120級科技點：</value>
   </data>
-  <data name="SpecialGear.Header.Text" xml:space="preserve">
+  <data name="SpecialGear_Header.Text" xml:space="preserve">
     <value>專屬兵裝：</value>
   </data>
-  <data name="SpecialGear.CanHave.Text" xml:space="preserve">
+  <data name="SpecialGear_CanHave.Content" xml:space="preserve">
     <value>可擁有專屬兵裝</value>
   </data>
-  <data name="SpecialGear.Name.Text" xml:space="preserve">
+  <data name="SpecialGear_Name.Text" xml:space="preserve">
     <value>兵裝名稱：</value>
   </data>
-  <data name="SpecialGear.Date.Text" xml:space="preserve">
+  <data name="SpecialGear_Date.Text" xml:space="preserve">
     <value>實裝日期：</value>
   </data>
-  <data name="SpecialGear.Acquire.Text" xml:space="preserve">
+  <data name="SpecialGear_Acquire.Text" xml:space="preserve">
     <value>取得途徑：</value>
   </data>
-  <data name="AttrBonusPage.Title.Text" xml:space="preserve">
+  <data name="AttrBonusPage_Title.Text" xml:space="preserve">
     <value>屬性加成</value>
   </data>
-  <data name="AttrBonusPage.FilterLabel.Text" xml:space="preserve">
+  <data name="AttrBonusPage_FilterLabel.Text" xml:space="preserve">
     <value>篩選艦種：</value>
   </data>
   <data name="ExportImageButton.Content" xml:space="preserve">
@@ -727,13 +727,13 @@
     <value>約會大作戰V</value>
   </data>
   <data name="Faction_Meta_Core" xml:space="preserve">
-    <value>META</value>
+    <value>湮燼之核</value>
   </data>
   <data name="FactionMeta_Core.Content" xml:space="preserve">
     <value>湮燼之核</value>
   </data>
   <data name="Faction_Meta.Content" xml:space="preserve">
-    <value>湮燼之核</value>
+    <value>META</value>
   </data>
   <data name="Faction_Meta_Reason" xml:space="preserve">
     <value>構造之理</value>
@@ -819,6 +819,9 @@
   <data name="SettingsPageTitle.Text" xml:space="preserve">
     <value>設定</value>
   </data>
+  <data name="SettingsPageTitle1.Content" xml:space="preserve">
+    <value>設定</value>
+  </data>
   <data name="Setting_Window_Title.Text" xml:space="preserve">
     <value>視窗設定</value>
   </data>
@@ -878,5 +881,221 @@
   </data>
   <data name="Setting_About_4.Content" xml:space="preserve">
     <value>Wiki主頁</value>
+  </data>
+  <data name="WindowSizeLabel_Text" xml:space="preserve">
+    <value>目前視窗大小: {0} x {1}</value>
+  </data>
+  <data name="Attr1_Null" xml:space="preserve">
+    <value>無</value>
+  </data>
+  <data name="Attr_Null.Content" xml:space="preserve">
+    <value>無</value>
+  </data>
+  <data name="Attr1_HP" xml:space="preserve">
+    <value>耐久</value>
+  </data>
+  <data name="Attr_HP.Content" xml:space="preserve">
+    <value>耐久</value>
+  </data>
+  <data name="Attr1_FP" xml:space="preserve">
+    <value>炮擊</value>
+  </data>
+  <data name="Attr_FP.Content" xml:space="preserve">
+    <value>炮擊</value>
+  </data>
+  <data name="Attr1_TRP" xml:space="preserve">
+    <value>雷擊</value>
+  </data>
+  <data name="Attr_TRP.Content" xml:space="preserve">
+    <value>雷擊</value>
+  </data>
+  <data name="Attr1_AVI" xml:space="preserve">
+    <value>航空</value>
+  </data>
+  <data name="Attr_AVI.Content" xml:space="preserve">
+    <value>航空</value>
+  </data>
+  <data name="Attr1_RLD" xml:space="preserve">
+    <value>裝填</value>
+  </data>
+  <data name="Attr_RLD.Content" xml:space="preserve">
+    <value>裝填</value>
+  </data>
+  <data name="Attr1_EVA" xml:space="preserve">
+    <value>機動</value>
+  </data>
+  <data name="Attr_EVA.Content" xml:space="preserve">
+    <value>機動</value>
+  </data>
+  <data name="Attr1_LCK" xml:space="preserve">
+    <value>幸运</value>
+  </data>
+  <data name="Attr_LCK.Content" xml:space="preserve">
+    <value>幸运</value>
+  </data>
+  <data name="Attr1_SPD" xml:space="preserve">
+    <value>航速</value>
+  </data>
+  <data name="Attr_SPD.Content" xml:space="preserve">
+    <value>航速</value>
+  </data>
+  <data name="Attr1_Cost" xml:space="preserve">
+    <value>消耗</value>
+  </data>
+  <data name="Attr_Cost.Content" xml:space="preserve">
+    <value>消耗</value>
+  </data>
+  <data name="Attr1_ASW" xml:space="preserve">
+    <value>反潛</value>
+  </data>
+  <data name="Attr_ASW.Content" xml:space="preserve">
+    <value>反潛</value>
+  </data>
+  <data name="Attr1_Armor" xml:space="preserve">
+    <value>裝甲</value>
+  </data>
+  <data name="Attr_Armor.Content" xml:space="preserve">
+    <value>裝甲</value>
+  </data>
+  <data name="Attr1_ACC" xml:space="preserve">
+    <value>命中</value>
+  </data>
+  <data name="Attr_ACC.Content" xml:space="preserve">
+    <value>命中</value>
+  </data>
+  <data name="Attr1_AA" xml:space="preserve">
+    <value>防空</value>
+  </data>
+  <data name="Attr_AA.Content" xml:space="preserve">
+    <value>防空</value>
+  </data>
+  <data name="AttributeBonus_Obtain.Text" xml:space="preserve">
+    <value>獲得時加成</value>
+  </data>
+  <data name="Acquisition_IsPermanentCheckBox.Content" xml:space="preserve">
+    <value>常駐</value>
+  </data>
+  <data name="Acquisition_DropLocationsBox.PlaceholderText" xml:space="preserve">
+    <value>分號分隔</value>
+  </data>
+  <data name="CampTechPage_Title.Text" xml:space="preserve">
+    <value>陣營科技點</value>
+  </data>
+  <data name="CampTechPage_Obtain.Text" xml:space="preserve">
+    <value>獲得</value>
+  </data>
+  <data name="CampTechPage_Max.Text" xml:space="preserve">
+    <value>滿破</value>
+  </data>
+  <data name="CampTechPage_Level120.Text" xml:space="preserve">
+    <value>120級</value>
+  </data>
+  <data name="LoginOptionsPage_Title.Text" xml:space="preserve">
+    <value>登入選項</value>
+  </data>
+  <data name="LoginOptionsPage_AskAccount_Title.Text" xml:space="preserve">
+    <value>預設帳戶</value>
+  </data>
+  <data name="LoginOptionsPage_AskAccount_Description.Text" xml:space="preserve">
+    <value>啟動時不詢問帳戶時，將自動登入此帳戶。</value>
+  </data>
+  <data name="LoginOptionsPage_DefaultAccount_Title.Text" xml:space="preserve">
+    <value>啟動時詢問帳號</value>
+  </data>
+  <data name="LoginOptionsPage_DefaultAccount_Description.Text" xml:space="preserve">
+    <value>如果啟用，每次啟動都會顯示帳戶選擇視窗；否則將自動使用預設帳戶登入。</value>
+  </data>
+  <data name="LoginOptionsPage_AskAccount_StatusText.Text" xml:space="preserve">
+    <value>關</value>
+  </data>
+  <data name="ManageAccountsPage_Title.Text" xml:space="preserve">
+    <value>你的帳戶</value>
+  </data>
+  <data name="ManageAccountsPage_AddCard_Title.Text" xml:space="preserve">
+    <value>添加其他用戶</value>
+  </data>
+  <data name="ManageAccountsPage_AddCard_Button.Text" xml:space="preserve">
+    <value>添加帳戶</value>
+  </data>
+  <data name="ManageAccountsPage_RequestAdminCard_Title.Text" xml:space="preserve">
+    <value>為目前帳戶申請管理員權限</value>
+  </data>
+  <data name="ManageAccountsPage_RequestAdminCard_Button.Text" xml:space="preserve">
+    <value>申請權限</value>
+  </data>
+  <data name="ManageAccountsPage_AccountListHeader.Text" xml:space="preserve">
+    <value>已添加的帳戶</value>
+  </data>
+  <data name="ManageAccountsPage_LastLoginLabel.Text" xml:space="preserve">
+    <value>最後登入時間：</value>
+  </data>
+  <data name="ManageAccountsPage_ChangePasswordButton.Content" xml:space="preserve">
+    <value>修改密碼</value>
+  </data>
+  <data name="ManageAccountsPage_DeleteAccountButton.Content" xml:space="preserve">
+    <value>刪除此帳戶</value>
+  </data>
+  <data name="ManageAccountsPage.AdminToggle.OffContent" xml:space="preserve">
+    <value>否</value>
+  </data>
+  <data name="ManageAccountsPage.AdminToggle.OnContent" xml:space="preserve">
+    <value>是</value>
+  </data>
+  <data name="ManageAccountsPage_Role_Stats_Title.Text" xml:space="preserve">
+    <value>是否為管理員帳戶？</value>
+  </data>
+  <data name="HelpPage_DataLocation_Header.Header" xml:space="preserve">
+    <value>用戶資料儲存位置</value>
+  </data>
+  <data name="HelpPage_DataLocation_Text1.Text" xml:space="preserve">
+    <value>你所有的收集進度、帳戶資訊、設定等資料均儲存在本地，路徑為：</value>
+  </data>
+  <data name="HelpPage_DataLocation_Text2.Text" xml:space="preserve">
+    <value>你可以備份該資料夾下的所有內容，以便遷移或恢復資料。</value>
+  </data>
+  <data name="HelpPage_InstallLocation_Header.Header" xml:space="preserve">
+    <value>應用安裝位置</value>
+  </data>
+  <data name="HelpPage_InstallLocation_Text1.Text" xml:space="preserve">
+    <value>應用透過 MSIX 包安裝，預設路徑為：</value>
+  </data>
+  <data name="HelpPage_InstallLocation_Text2.Text" xml:space="preserve">
+    <value>此為系統資料夾，一般情況下無需手動存取。若要查看或修改內容，請謹慎操作。</value>
+  </data>
+  <data name="HelpPage_FAQ.Text" xml:space="preserve">
+    <value>常見問題</value>
+  </data>
+  <data name="HelpPage_Question1.Header" xml:space="preserve">
+    <value>如何備份我的資料？</value>
+  </data>
+  <data name="HelpPage_Question5.Header" xml:space="preserve">
+    <value>如何回報Bug或提建議？</value>
+  </data>
+  <data name="HelpPage_Question4.Header" xml:space="preserve">
+    <value>如何獲得管理員權限？</value>
+  </data>
+  <data name="HelpPage_Question3.Header" xml:space="preserve">
+    <value>忘記帳戶密碼怎麼辦？</value>
+  </data>
+  <data name="HelpPage_Question2.Header" xml:space="preserve">
+    <value>多台電腦如何同步資料？</value>
+  </data>
+  <data name="HelpPage_Answer1.Text" xml:space="preserve">
+    <value>將上述「用戶資料儲存位置」中的整個“AzurLaneDex”資料夾複製到安全位置即可。恢復時只需覆蓋原位置。</value>
+  </data>
+  <data name="HelpPage_Answer5.Text" xml:space="preserve">
+    <value>歡迎訪問專案主頁提交 Issue。</value>
+  </data>
+  <data name="HelpPage_Answer4.Text" xml:space="preserve">
+    <value>進入「帳戶」→「你的帳戶」→「申請權限」，輸入系統管理員密碼（預設 developer 的密碼）即可將當前帳戶提升為管理員，解鎖新建/編輯艦船功能。</value>
+  </data>
+  <data name="HelpPage_Answer3.Text" xml:space="preserve">
+    <value>若設定了密保問題，可在登入介面點擊「忘記密碼？」透過密保重設密碼。若未設定，請聯絡開發者或重新建立帳戶（資料會遺失）。</value>
+  </data>
+  <data name="HelpPage_Answer2.Text" xml:space="preserve">
+    <value>不支援雲同步。你可以手動備份資料夾，在新電腦上安裝應用後將資料覆蓋到相同位置。</value>
+  </data>
+  <data name="HelpPage_Title.Text" xml:space="preserve">
+    <value>幫助與支援</value>
   </data>
 </root>

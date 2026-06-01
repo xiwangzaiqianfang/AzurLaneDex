@@ -279,7 +279,7 @@
   <data name="AccountCreateFailed_Message" xml:space="preserve">
     <value>Account creation failed. Please try again later.</value>
   </data>
-  <data name="AccountPage.Title.Text" xml:space="preserve">
+  <data name="AccountPage_Title.Text" xml:space="preserve">
     <value>Account</value>
   </data>
   <data name="AccountPageTitle.Content" xml:space="preserve">
@@ -291,28 +291,28 @@
   <data name="AccountPageSettings.Text" xml:space="preserve">
     <value>Account Settings</value>
   </data>
-  <data name="AccountPage.PhotoCard.Title.Text" xml:space="preserve">
+  <data name="AccountPage_PhotoCard_Title.Text" xml:space="preserve">
     <value>Account Photo</value>
   </data>
-  <data name="AccountPage.PhotoCard.Description.Text" xml:space="preserve">
+  <data name="AccountPage_PhotoCard_Description.Text" xml:space="preserve">
     <value>Click to change avatar</value>
   </data>
-  <data name="AccountPage.AvatarButton.Content" xml:space="preserve">
+  <data name="AccountPage_AvatarButton.Content" xml:space="preserve">
     <value>Change photo</value>
   </data>
-  <data name="AccountPage.LoginOptions.Title.Text" xml:space="preserve">
+  <data name="AccountPage_LoginOptions_Title.Text" xml:space="preserve">
     <value>Login Options</value>
   </data>
-  <data name="AccountPage.LoginOptions.Description.Text" xml:space="preserve">
+  <data name="AccountPage_LoginOptions_Description.Text" xml:space="preserve">
     <value>Set whether to ask for account at startup and default login</value>
   </data>
-  <data name="AccountPage.ManageAccounts.Title.Text" xml:space="preserve">
+  <data name="AccountPage_ManageAccounts_Title.Text" xml:space="preserve">
     <value>Your Accounts</value>
   </data>
-  <data name="AccountPage.ManageAccounts.Description" xml:space="preserve">
+  <data name="AccountPage_ManageAccounts_Description.Text" xml:space="preserve">
     <value>Add or manage accounts used in this app</value>
   </data>
-  <data name="AccountBackup.Description.Text" xml:space="preserve">
+  <data name="AccountBackup_Description.Text" xml:space="preserve">
     <value>Export/Import account data, create backup points</value>
   </data>
   <data name="AddShipDialog.Title" xml:space="preserve">
@@ -327,31 +327,31 @@
   <data name="AddShipDialog.CloseButtonText" xml:space="preserve">
     <value>Cancel</value>
   </data>
-  <data name="BasicInfo.Header.Text" xml:space="preserve">
+  <data name="BasicInfo_Header.Text" xml:space="preserve">
     <value>Basic Info</value>
   </data>
-  <data name="BasicInfo.Id.Text" xml:space="preserve">
+  <data name="BasicInfo_Id.Text" xml:space="preserve">
     <value>ID:</value>
   </data>
-  <data name="BasicInfo.GameOrder.Text" xml:space="preserve">
+  <data name="BasicInfo_GameOrder.Text" xml:space="preserve">
     <value>Gallery Order:</value>
   </data>
-  <data name="BasicInfo.AutoIdHint.PlaceholderText" xml:space="preserve">
+  <data name="BasicInfo_AutoIdHint.PlaceholderText" xml:space="preserve">
     <value>0 means auto-assign</value>
   </data>
-  <data name="BasicInfo.CategoryOrder.Text" xml:space="preserve">
+  <data name="BasicInfo_CategoryOrder.Text" xml:space="preserve">
     <value>Order in Category:</value>
   </data>
-  <data name="BasicInfo.Name.Text" xml:space="preserve">
+  <data name="BasicInfo_Name.Text" xml:space="preserve">
     <value>Ship Name:</value>
   </data>
-  <data name="BasicInfo.AltName.Text" xml:space="preserve">
-    <value>Censored name (CN server):</value>
+  <data name="BasicInfo_AltName.Text" xml:space="preserve">
+    <value>Censored name:</value>
   </data>
-  <data name="BasicInfo.Faction.Text" xml:space="preserve">
+  <data name="BasicInfo_Faction.Text" xml:space="preserve">
     <value>Faction:</value>
   </data>
-  <data name="BasicInfo.ShipClass.Text" xml:space="preserve">
+  <data name="BasicInfo_ShipClass.Text" xml:space="preserve">
     <value>Ship Class:</value>
   </data>
   <data name="Class_DD.Content" xml:space="preserve">
@@ -429,7 +429,7 @@
   <data name="ShipClass_Sail.Content" xml:space="preserve">
     <value>Sail</value>
   </data>
-  <data name="BasicInfo.Rarity.Text" xml:space="preserve">
+  <data name="BasicInfo_Rarity.Text" xml:space="preserve">
     <value>Rarity:</value>
   </data>
   <data name="Rarity_N.Content" xml:space="preserve">
@@ -471,94 +471,94 @@
   <data name="CategoryTag_META.Text" xml:space="preserve">
     <value>META</value>
   </data>
-  <data name="BasicInfo.Category.Text" xml:space="preserve">
+  <data name="BasicInfo_Category.Text" xml:space="preserve">
     <value>Ship Category:</value>
   </data>
-  <data name="BasicInfo.CanRemodel.Text" xml:space="preserve">
+  <data name="BasicInfo_CanRemodel.Text" xml:space="preserve">
     <value>Can Retrofit:</value>
   </data>
-  <data name="BasicInfo.RemodelDate.Text" xml:space="preserve">
+  <data name="BasicInfo_RemodelDate.Text" xml:space="preserve">
     <value>Retrofit Date:</value>
   </data>
-  <data name="Acquisition.Header.Text" xml:space="preserve">
+  <data name="Acquisition_Header.Text" xml:space="preserve">
     <value>Acquisition</value>
   </data>
-  <data name="Acquisition.Main.Text" xml:space="preserve">
+  <data name="Acquisition_Main.Text" xml:space="preserve">
     <value>Main Acquisition:</value>
   </data>
-  <data name="Acquisition.Detail.Text" xml:space="preserve">
+  <data name="Acquisition_Detail.Text" xml:space="preserve">
     <value>Details:</value>
   </data>
-  <data name="Acquisition.BuildTime.Text" xml:space="preserve">
+  <data name="Acquisition_BuildTime.Text" xml:space="preserve">
     <value>Construction Time:</value>
   </data>
-  <data name="Acquisition.DropLocations.Text" xml:space="preserve">
+  <data name="Acquisition_DropLocations.Text" xml:space="preserve">
     <value>Drop Locations:</value>
   </data>
-  <data name="Acquisition.ShopExchange.Text" xml:space="preserve">
+  <data name="Acquisition_ShopExchange.Text" xml:space="preserve">
     <value>Shop Exchange:</value>
   </data>
-  <data name="Acquisition.IsPermanent.Text" xml:space="preserve">
+  <data name="Acquisition_IsPermanent.Text" xml:space="preserve">
     <value>Permanent?</value>
   </data>
-  <data name="DebutEvent.Header.Text" xml:space="preserve">
+  <data name="DebutEvent_Header.Text" xml:space="preserve">
     <value>Debut Event</value>
   </data>
-  <data name="DebutEvent.Name.Text" xml:space="preserve">
+  <data name="DebutEvent_Name.Text" xml:space="preserve">
     <value>First Appearance Event:</value>
   </data>
-  <data name="DebutEvent.Date.Text" xml:space="preserve">
+  <data name="DebutEvent_Date.Text" xml:space="preserve">
     <value>Release Date:</value>
   </data>
-  <data name="DebutEvent.Notes.Text" xml:space="preserve">
+  <data name="DebutEvent_Notes.Text" xml:space="preserve">
     <value>Notes:</value>
   </data>
-  <data name="AttributeBonus.Header.Text" xml:space="preserve">
+  <data name="AttributeBonus_Header.Text" xml:space="preserve">
     <value>Attribute Bonus</value>
   </data>
-  <data name="AttributeBonus.Attr.Text" xml:space="preserve">
+  <data name="AttributeBonus_Attr.Text" xml:space="preserve">
     <value>Attribute</value>
   </data>
-  <data name="AttributeBonus.Value.Text" xml:space="preserve">
+  <data name="AttributeBonus_Value.Text" xml:space="preserve">
     <value>Value:</value>
   </data>
-  <data name="AttributeBonus.AffectShips.Text" xml:space="preserve">
+  <data name="AttributeBonus_AffectShips.Text" xml:space="preserve">
     <value>Affected Classes:</value>
   </data>
-  <data name="AttributeBonus.Level120.Text" xml:space="preserve">
-    <value>Level 120 Bonus:</value>
+  <data name="AttributeBonus_Level120.Text" xml:space="preserve">
+    <value>Level 120 Bonus</value>
   </data>
-  <data name="FleetTech.Header.Text" xml:space="preserve">
+  <data name="FleetTech_Header.Text" xml:space="preserve">
     <value>Fleet Tech</value>
   </data>
-  <data name="FleetTech.ObtainPoints.Text" xml:space="preserve">
+  <data name="FleetTech_ObtainPoints.Text" xml:space="preserve">
     <value>Obtain Points:</value>
   </data>
-  <data name="FleetTech.MaxPoints.Text" xml:space="preserve">
+  <data name="FleetTech_MaxPoints.Text" xml:space="preserve">
     <value>Max Breakthrough Points:</value>
   </data>
-  <data name="FleetTech.Level120Points.Text" xml:space="preserve">
+  <data name="FleetTech_Level120Points.Text" xml:space="preserve">
     <value>Level 120 Points:</value>
   </data>
-  <data name="SpecialGear.Header.Text" xml:space="preserve">
+  <data name="SpecialGear_Header.Text" xml:space="preserve">
     <value>Exclusive Equipment:</value>
   </data>
-  <data name="SpecialGear.CanHave.Text" xml:space="preserve">
+  <data name="SpecialGear_CanHave.Content" xml:space="preserve">
     <value>Can have exclusive Equipment</value>
   </data>
-  <data name="SpecialGear.Name.Text" xml:space="preserve">
+  <data name="SpecialGear_Name.Text" xml:space="preserve">
     <value>Equipment Name:</value>
   </data>
-  <data name="SpecialGear.Date.Text" xml:space="preserve">
+  <data name="SpecialGear_Date.Text" xml:space="preserve">
     <value>Release Date:</value>
   </data>
-  <data name="SpecialGear.Acquire.Text" xml:space="preserve">
+  <data name="SpecialGear_Acquire.Text" xml:space="preserve">
     <value>Acquisition:</value>
   </data>
-  <data name="AttrBonusPage.Title.Text" xml:space="preserve">
+  <data name="AttrBonusPage_Title.Text" xml:space="preserve">
     <value>Attribute Bonus</value>
   </data>
-  <data name="AttrBonusPage.FilterLabel.Text" xml:space="preserve">
+  <data name="AttrBonusPage_FilterLabel.Text" xml:space="preserve">
     <value>Filter by Class:</value>
   </data>
   <data name="ExportImageButton.Content" xml:space="preserve">
@@ -727,13 +727,13 @@
     <value>Date A Live V</value>
   </data>
   <data name="Faction_Meta_Core" xml:space="preserve">
-    <value>META</value>
+    <value>Ash Core</value>
   </data>
   <data name="FactionMeta_Core.Content" xml:space="preserve">
     <value>Ash Core</value>
   </data>
   <data name="Faction_Meta.Content" xml:space="preserve">
-    <value>Ash Core</value>
+    <value>META</value>
   </data>
   <data name="Faction_Meta_Reason" xml:space="preserve">
     <value>Principle of Structure</value>
@@ -819,6 +819,9 @@
   <data name="SettingsPageTitle.Text" xml:space="preserve">
     <value>Settings</value>
   </data>
+  <data name="SettingsPageTitle1.Content" xml:space="preserve">
+    <value>Settings</value>
+  </data>
   <data name="Setting_Window_Title.Text" xml:space="preserve">
     <value>Window Settings</value>
   </data>
@@ -878,5 +881,221 @@
   </data>
   <data name="Setting_About_4.Content" xml:space="preserve">
     <value>Wiki Homepage</value>
+  </data>
+  <data name="WindowSizeLabel_Text" xml:space="preserve">
+    <value>Current window size: {0} x {1}</value>
+  </data>
+  <data name="Attr1_Null" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="Attr_Null.Content" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="Attr1_HP" xml:space="preserve">
+    <value>Hit Point</value>
+  </data>
+  <data name="Attr_HP.Content" xml:space="preserve">
+    <value>Hit Point</value>
+  </data>
+  <data name="Attr1_FP" xml:space="preserve">
+    <value>Fire Power</value>
+  </data>
+  <data name="Attr_FP.Content" xml:space="preserve">
+    <value>Fire Power</value>
+  </data>
+  <data name="Attr1_TRP" xml:space="preserve">
+    <value>Torpedo</value>
+  </data>
+  <data name="Attr_TRP.Content" xml:space="preserve">
+    <value>Torpedo</value>
+  </data>
+  <data name="Attr1_AVI" xml:space="preserve">
+    <value>Aviation</value>
+  </data>
+  <data name="Attr_AVI.Content" xml:space="preserve">
+    <value>Aviation</value>
+  </data>
+  <data name="Attr1_RLD" xml:space="preserve">
+    <value>Reload</value>
+  </data>
+  <data name="Attr_RLD.Content" xml:space="preserve">
+    <value>Reload</value>
+  </data>
+  <data name="Attr1_EVA" xml:space="preserve">
+    <value>Evasion</value>
+  </data>
+  <data name="Attr_EVA.Content" xml:space="preserve">
+    <value>Evasion</value>
+  </data>
+  <data name="Attr1_LCK" xml:space="preserve">
+    <value>Luck</value>
+  </data>
+  <data name="Attr_LCK.Content" xml:space="preserve">
+    <value>Luck</value>
+  </data>
+  <data name="Attr1_SPD" xml:space="preserve">
+    <value>Speed</value>
+  </data>
+  <data name="Attr_SPD.Content" xml:space="preserve">
+    <value>Speed</value>
+  </data>
+  <data name="Attr1_Cost" xml:space="preserve">
+    <value>Oil Cost</value>
+  </data>
+  <data name="Attr_Cost.Content" xml:space="preserve">
+    <value>Oil Cost</value>
+  </data>
+  <data name="Attr1_ASW" xml:space="preserve">
+    <value>Anti-Submarine Warefare</value>
+  </data>
+  <data name="Attr_ASW.Content" xml:space="preserve">
+    <value>Anti-Submarine Warefare</value>
+  </data>
+  <data name="Attr1_Armor" xml:space="preserve">
+    <value>Armor</value>
+  </data>
+  <data name="Attr_Armor.Content" xml:space="preserve">
+    <value>Armor</value>
+  </data>
+  <data name="Attr1_ACC" xml:space="preserve">
+    <value>Accuracy</value>
+  </data>
+  <data name="Attr_ACC.Content" xml:space="preserve">
+    <value>Accuracy</value>
+  </data>
+  <data name="Attr1_AA" xml:space="preserve">
+    <value>Anti-Air</value>
+  </data>
+  <data name="Attr_AA.Content" xml:space="preserve">
+    <value>Anti-Air</value>
+  </data>
+  <data name="AttributeBonus_Obtain.Text" xml:space="preserve">
+    <value>Acquisition Bonus</value>
+  </data>
+  <data name="Acquisition_IsPermanentCheckBox.Content" xml:space="preserve">
+    <value>Permanent</value>
+  </data>
+  <data name="Acquisition_DropLocationsBox.PlaceholderText" xml:space="preserve">
+    <value>Semicolon-separated</value>
+  </data>
+  <data name="CampTechPage_Title.Text" xml:space="preserve">
+    <value>Camp Tech Points</value>
+  </data>
+  <data name="CampTechPage_Obtain.Text" xml:space="preserve">
+    <value>Obtain</value>
+  </data>
+  <data name="CampTechPage_Max.Text" xml:space="preserve">
+    <value>Max Break</value>
+  </data>
+  <data name="CampTechPage_Level120.Text" xml:space="preserve">
+    <value>Level 120</value>
+  </data>
+  <data name="LoginOptionsPage_Title.Text" xml:space="preserve">
+    <value>Login Options</value>
+  </data>
+  <data name="LoginOptionsPage_AskAccount_Title.Text" xml:space="preserve">
+    <value>Default Account</value>
+  </data>
+  <data name="LoginOptionsPage_AskAccount_Description.Text" xml:space="preserve">
+    <value>When not asked for account at startup, this account will be used automatically.</value>
+  </data>
+  <data name="LoginOptionsPage_DefaultAccount_Title.Text" xml:space="preserve">
+    <value>Ask for account at startup</value>
+  </data>
+  <data name="LoginOptionsPage_DefaultAccount_Description.Text" xml:space="preserve">
+    <value>If enabled, an account selection window will appear at each startup; otherwise, the default account will be used automatically.</value>
+  </data>
+  <data name="LoginOptionsPage_AskAccount_StatusText.Text" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="ManageAccountsPage_Title.Text" xml:space="preserve">
+    <value>Your Accounts</value>
+  </data>
+  <data name="ManageAccountsPage_AddCard_Title.Text" xml:space="preserve">
+    <value>Add another user</value>
+  </data>
+  <data name="ManageAccountsPage_AddCard_Button.Text" xml:space="preserve">
+    <value>Add Account</value>
+  </data>
+  <data name="ManageAccountsPage_RequestAdminCard_Title.Text" xml:space="preserve">
+    <value>Request admin privileges for current account</value>
+  </data>
+  <data name="ManageAccountsPage_RequestAdminCard_Button.Text" xml:space="preserve">
+    <value>Request Admin</value>
+  </data>
+  <data name="ManageAccountsPage_AccountListHeader.Text" xml:space="preserve">
+    <value>Added Accounts</value>
+  </data>
+  <data name="ManageAccountsPage_LastLoginLabel.Text" xml:space="preserve">
+    <value>Last Login: </value>
+  </data>
+  <data name="ManageAccountsPage_ChangePasswordButton.Content" xml:space="preserve">
+    <value>Change Password</value>
+  </data>
+  <data name="ManageAccountsPage_DeleteAccountButton.Content" xml:space="preserve">
+    <value>Delete Account</value>
+  </data>
+  <data name="ManageAccountsPage.AdminToggle.OffContent" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="ManageAccountsPage.AdminToggle.OnContent" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="ManageAccountsPage_Role_Stats_Title.Text" xml:space="preserve">
+    <value>Is it an administrator account?</value>
+  </data>
+  <data name="HelpPage_DataLocation_Header.Header" xml:space="preserve">
+    <value>User Data Location</value>
+  </data>
+  <data name="HelpPage_DataLocation_Text1.Text" xml:space="preserve">
+    <value>All your collection progress, account info, settings are stored locally at:</value>
+  </data>
+  <data name="HelpPage_DataLocation_Text2.Text" xml:space="preserve">
+    <value>You can back up everything in this folder to migrate or restore data.</value>
+  </data>
+  <data name="HelpPage_InstallLocation_Header.Header" xml:space="preserve">
+    <value>App Install Location</value>
+  </data>
+  <data name="HelpPage_InstallLocation_Text1.Text" xml:space="preserve">
+    <value>The app is installed via MSIX package, default path:</value>
+  </data>
+  <data name="HelpPage_InstallLocation_Text2.Text" xml:space="preserve">
+    <value>This is a system folder, normally you don't need to access it manually. Please be careful if you view or modify content.</value>
+  </data>
+  <data name="HelpPage_FAQ.Text" xml:space="preserve">
+    <value>FAQ</value>
+  </data>
+  <data name="HelpPage_Question1.Header" xml:space="preserve">
+    <value>How to back up my data?</value>
+  </data>
+  <data name="HelpPage_Question5.Header" xml:space="preserve">
+    <value>How to report a bug or suggest a feature?</value>
+  </data>
+  <data name="HelpPage_Question4.Header" xml:space="preserve">
+    <value>How to get admin privileges?</value>
+  </data>
+  <data name="HelpPage_Question3.Header" xml:space="preserve">
+    <value>Forgot account password?</value>
+  </data>
+  <data name="HelpPage_Question2.Header" xml:space="preserve">
+    <value>How to sync data across multiple PCs?</value>
+  </data>
+  <data name="HelpPage_Answer1.Text" xml:space="preserve">
+    <value>Copy the entire "AzurLaneDex" folder from the user data location above to a safe place. To restore, overwrite the original location.</value>
+  </data>
+  <data name="HelpPage_Answer5.Text" xml:space="preserve">
+    <value>Welcome to submit an issue on the project homepage.</value>
+  </data>
+  <data name="HelpPage_Answer4.Text" xml:space="preserve">
+    <value>Go to Account → Your Accounts → Request Admin, enter the system admin password (default password for 'developer'), and your current account will be promoted to admin, unlocking ship add/edit features.</value>
+  </data>
+  <data name="HelpPage_Answer3.Text" xml:space="preserve">
+    <value>If you set a security question, click "Forgot password?" on the login screen to reset via the security answer. Otherwise, contact the developer or create a new account (data will be lost).</value>
+  </data>
+  <data name="HelpPage_Answer2.Text" xml:space="preserve">
+    <value>Cloud sync is not supported. You can manually back up the data folder and copy it to the same location on the new PC after installing the app.</value>
+  </data>
+  <data name="HelpPage_Title.Text" xml:space="preserve">
+    <value>Help &amp; Support</value>
   </data>
 </root>

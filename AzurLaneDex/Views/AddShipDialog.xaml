@@ -18,7 +18,7 @@
                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                     BorderThickness="1" CornerRadius="8" Padding="12">
                 <StackPanel>
-                    <TextBlock x:Uid="BasicInfo.Header" Text="基本信息" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,12"/>
+                    <TextBlock x:Uid="BasicInfo_Header" Text="基本信息" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,12"/>
                     <Grid RowSpacing="12" ColumnSpacing="12">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -36,25 +36,25 @@
                             <ColumnDefinition Width="100"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Row="0" Grid.Column="0" x:Uid="BasicInfo.Id" Text="编号:" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="0" Grid.Column="0" x:Uid="BasicInfo_Id" Text="编号:" VerticalAlignment="Center"/>
                         <NumberBox x:Name="IdBox" Grid.Row="0" Grid.Column="1" Minimum="0" SpinButtonPlacementMode="Inline" Value="0" x:Uid="BasicInfo.AutoIdHint" PlaceholderText="0 表示自动分配"/>
 
-                        <TextBlock x:Name="GameOrderLabel" x:Uid="BasicInfo.GameOrder" Grid.Row="1" Grid.Column="0" Text="图鉴顺序:" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="GameOrderLabel" x:Uid="BasicInfo_GameOrder" Grid.Row="1" Grid.Column="0" Text="图鉴顺序:" VerticalAlignment="Center"/>
                         <NumberBox x:Name="GameOrderBox" Grid.Row="1" Grid.Column="1" Minimum="0" SpinButtonPlacementMode="Inline" Value="0"/>
 
-                        <TextBlock x:Name="CategoryOrderLabel" x:Uid="BasicInfo.CategoryOrder"  Grid.Row="1" Grid.Column="0" Text="类别内顺序:" VerticalAlignment="Center" Visibility="Collapsed"/>
+                        <TextBlock x:Name="CategoryOrderLabel" x:Uid="BasicInfo_CategoryOrder"  Grid.Row="1" Grid.Column="0" Text="类别内顺序:" VerticalAlignment="Center" Visibility="Collapsed"/>
                         <NumberBox x:Name="CategoryOrderBox" Grid.Row="1" Grid.Column="1" Minimum="0" Value="0" SpinButtonPlacementMode="Inline" Visibility="Collapsed"/>
 
-                        <TextBlock Grid.Row="2" Grid.Column="0" x:Uid="BasicInfo.Name" Text="舰船名称:" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" x:Uid="BasicInfo_Name" Text="舰船名称:" VerticalAlignment="Center"/>
                         <TextBox x:Name="NameBox" Grid.Row="2" Grid.Column="1"/>
 
-                        <TextBlock Grid.Row="3" Grid.Column="0" x:Uid="BasicInfo.AltName" Text="和谐名:" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="3" Grid.Column="0" x:Uid="BasicInfo_AltName" Text="和谐名:" VerticalAlignment="Center"/>
                         <TextBox x:Name="AltNameBox" Grid.Row="3" Grid.Column="1"/>
 
-                        <TextBlock Grid.Row="4" Grid.Column="0" x:Uid="BasicInfo.Faction" Text="阵营:" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="4" Grid.Column="0" x:Uid="BasicInfo_Faction" Text="阵营:" VerticalAlignment="Center"/>
                         <ComboBox x:Name="FactionCombo" Grid.Row="4" Grid.Column="1"/>
 
-                        <TextBlock Grid.Row="5" Grid.Column="0" x:Uid="BasicInfo.ShipClass" Text="舰种:" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="5" Grid.Column="0" x:Uid="BasicInfo_ShipClass" Text="舰种:" VerticalAlignment="Center"/>
                         <ComboBox x:Name="ShipClassCombo" SelectionChanged="ShipClassCombo_SelectionChanged" Grid.Row="5" Grid.Column="1">
                             <ComboBoxItem x:Uid="ShipClass_DD">驱逐</ComboBoxItem>
                             <ComboBoxItem x:Uid="ShipClass_CL">轻巡</ComboBoxItem>
@@ -73,7 +73,7 @@
                             <ComboBoxItem x:Uid="ShipClass_Sail">风帆</ComboBoxItem>
                         </ComboBox>
 
-                        <TextBlock Grid.Row="6" Grid.Column="0" x:Uid="BasicInfo.Rarity" Text="稀有度:" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="6" Grid.Column="0" x:Uid="BasicInfo_Rarity" Text="稀有度:" VerticalAlignment="Center"/>
                         <ComboBox x:Name="RarityCombo" Grid.Row="6" Grid.Column="1">
                             <ComboBoxItem x:Uid="Rarity_N">普通</ComboBoxItem>
                             <ComboBoxItem x:Uid="Rarity_R">稀有</ComboBoxItem>
@@ -82,7 +82,7 @@
                             <ComboBoxItem x:Uid="Rarity_UR">海上传奇</ComboBoxItem>
                         </ComboBox>
 
-                        <TextBlock Grid.Row="7" Grid.Column="0" x:Uid="BasicInfo.Category" Text="舰船类别:" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="7" Grid.Column="0" x:Uid="BasicInfo_Category" Text="舰船类别:" VerticalAlignment="Center"/>
                         <ComboBox x:Name="CategoryCombo" Grid.Row="7" Grid.Column="1" SelectedIndex="0" SelectionChanged="CategoryCombo_SelectionChanged">
                             <ComboBoxItem x:Uid="Category_Normal">角色</ComboBoxItem>
                             <ComboBoxItem x:Uid="Category_Collab">联动</ComboBoxItem>
@@ -90,10 +90,10 @@
                             <ComboBoxItem x:Uid="Category_META">META</ComboBoxItem>
                         </ComboBox>
 
-                        <TextBlock Grid.Row="8" Grid.Column="0" x:Uid="BasicInfo.CanRemodel" Text="可改造:" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="8" Grid.Column="0" x:Uid="BasicInfo_CanRemodel" Text="可改造:" VerticalAlignment="Center"/>
                         <CheckBox x:Name="CanRemodelCheckBox" Grid.Row="8" Grid.Column="1" VerticalAlignment="Center"/>
 
-                        <TextBlock Grid.Row="9" Grid.Column="0" x:Uid="BasicInfo.RemodelDate" Text="改造日期:" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="9" Grid.Column="0" x:Uid="BasicInfo_RemodelDate" Text="改造日期:" VerticalAlignment="Center"/>
                         <DatePicker x:Name="RemodelDatePicker" Grid.Row="9" Grid.Column="1" IsEnabled="{Binding IsChecked, ElementName=CanRemodelCheckBox}"/>
 
                     </Grid>
@@ -105,7 +105,7 @@
                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                     BorderThickness="1" CornerRadius="8" Padding="12">
                 <StackPanel>
-                    <TextBlock x:Uid="Acquisition.Header" Text="获取方式" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,12"/>
+                    <TextBlock x:Uid="Acquisition_Header" Text="获取方式" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,12"/>
                     <Grid RowSpacing="12" ColumnSpacing="12">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -120,23 +120,23 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Grid.Row="0" Grid.Column="0" x:Uid="Acquisition.Main" Text="主要获取方式:" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="0" Grid.Column="0" x:Uid="Acquisition_Main" Text="主要获取方式:" VerticalAlignment="Center"/>
                         <TextBox x:Name="AcquireMainBox" Grid.Row="0" Grid.Column="1"/>
 
-                        <TextBlock Grid.Row="1" Grid.Column="0" x:Uid="Acquisition.Detail" Text="详细信息:" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" x:Uid="Acquisition_Detail" Text="详细信息:" VerticalAlignment="Center"/>
                         <TextBox x:Name="AcquireDetailBox" Grid.Row="1" Grid.Column="1"/>
 
-                        <TextBlock Grid.Row="2" Grid.Column="0" x:Uid="Acquisition.BuildTime" Text="建造时间:" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" x:Uid="Acquisition_BuildTime" Text="建造时间:" VerticalAlignment="Center"/>
                         <TextBox x:Name="BuildTimeBox" Grid.Row="2" Grid.Column="1"/>
 
-                        <TextBlock Grid.Row="3" Grid.Column="0" x:Uid="Acquisition.DropLocations" Text="打捞地点:" VerticalAlignment="Center"/>
-                        <TextBox x:Name="DropLocationsBox" Grid.Row="3" Grid.Column="1" PlaceholderText="分号分隔"/>
+                        <TextBlock Grid.Row="3" Grid.Column="0" x:Uid="Acquisition_DropLocations" Text="打捞地点:" VerticalAlignment="Center"/>
+                        <TextBox x:Name="DropLocationsBox" x:Uid="Acquisition_DropLocationsBox" Grid.Row="3" Grid.Column="1" PlaceholderText="分号分隔"/>
 
-                        <TextBlock Grid.Row="4" Grid.Column="0" x:Uid="Acquisition.ShopExchange" Text="商店兑换:" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="4" Grid.Column="0" x:Uid="Acquisition_ShopExchange" Text="商店兑换:" VerticalAlignment="Center"/>
                         <TextBox x:Name="ShopExchangeBox" Grid.Row="4" Grid.Column="1"/>
 
-                        <TextBlock Grid.Row="5" Grid.Column="0" x:Uid="Acquisition.IsPermanent" Text="是否常驻:" VerticalAlignment="Center"/>
-                        <CheckBox x:Name="IsPermanentCheckBox" Grid.Row="5" Grid.Column="1" Content="常驻" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="5" Grid.Column="0" x:Uid="Acquisition_IsPermanent" Text="是否常驻:" VerticalAlignment="Center"/>
+                        <CheckBox x:Name="IsPermanentCheckBox" x:Uid="Acquisition_IsPermanentCheckBox" Grid.Row="5" Grid.Column="1" Content="常驻" VerticalAlignment="Center"/>
                     </Grid>
                 </StackPanel>
             </Border>
@@ -146,7 +146,7 @@
                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                     BorderThickness="1" CornerRadius="8" Padding="12">
                 <StackPanel>
-                    <TextBlock x:Uid="DebutEvent.Header" Text="实装活动" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,12"/>
+                    <TextBlock x:Uid="DebutEvent_Header" Text="实装活动" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,12"/>
                     <Grid RowSpacing="12" ColumnSpacing="12">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -157,11 +157,11 @@
                             <ColumnDefinition Width="100"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Row="0" Grid.Column="0" x:Uid="DebutEvent.Name" Text="首次登场活动:" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="0" Grid.Column="0" x:Uid="DebutEvent_Name" Text="首次登场活动:" VerticalAlignment="Center"/>
                         <TextBox x:Name="DebutEventBox" Grid.Row="0" Grid.Column="1"/>
-                        <TextBlock Grid.Row="1" Grid.Column="0" x:Uid="DebutEvent.Date" Text="实装日期:" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" x:Uid="DebutEvent_Date" Text="实装日期:" VerticalAlignment="Center"/>
                         <DatePicker x:Name="ReleaseDatePicker" Grid.Row="1" Grid.Column="1"/>
-                        <TextBlock Grid.Row="2" Grid.Column="0" x:Uid="DebutEvent.Notes" Text="备注:" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" x:Uid="DebutEvent_Notes" Text="备注:" VerticalAlignment="Center"/>
                         <TextBox x:Name="NotesBox" Grid.Row="2" Grid.Column="1" AcceptsReturn="True" Height="60"/>
                     </Grid>
                 </StackPanel>
@@ -172,9 +172,9 @@
                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                     BorderThickness="1" CornerRadius="8" Padding="12">
                 <StackPanel>
-                    <TextBlock x:Uid="AttributeBonus.Header" Text="属性加成" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,12"/>
+                    <TextBlock x:Uid="AttributeBonus_Header" Text="属性加成" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,12"/>
                     <StackPanel>
-                        <TextBlock x:Uid="AttributeBonus.Obtain" Text="获得时加成" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                        <TextBlock x:Uid="AttributeBonus_Obtain" Text="获得时加成" FontWeight="SemiBold" Margin="0,0,0,8"/>
                         <Grid RowSpacing="12" ColumnSpacing="12">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -185,24 +185,24 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <!-- 获得时属性选择 -->
-                            <TextBlock Grid.Row="0" Grid.Column="0" x:Uid="AttributeBonus.Attr" Text="属性:" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Row="0" Grid.Column="0" x:Uid="AttributeBonus_Attr" Text="属性:" VerticalAlignment="Center"/>
                             <ComboBox x:Name="ObtainBonusAttrCombo" Grid.Row="0" Grid.Column="1">
-                                <ComboBoxItem>无</ComboBoxItem>
-                                <ComboBoxItem>耐久</ComboBoxItem>
-                                <ComboBoxItem>炮击</ComboBoxItem>
-                                <ComboBoxItem>雷击</ComboBoxItem>
-                                <ComboBoxItem>防空</ComboBoxItem>
-                                <ComboBoxItem>航空</ComboBoxItem>
-                                <ComboBoxItem>命中</ComboBoxItem>
-                                <ComboBoxItem>装填</ComboBoxItem>
-                                <ComboBoxItem>机动</ComboBoxItem>
-                                <ComboBoxItem>反潜</ComboBoxItem>
+                                <ComboBoxItem x:Uid="Attr_Null">无</ComboBoxItem>
+                                <ComboBoxItem x:Uid="Attr_HP">耐久</ComboBoxItem>
+                                <ComboBoxItem x:Uid="Attr_FP">炮击</ComboBoxItem>
+                                <ComboBoxItem x:Uid="Attr_TRP">雷击</ComboBoxItem>
+                                <ComboBoxItem x:Uid="Attr_AA">防空</ComboBoxItem>
+                                <ComboBoxItem x:Uid="Attr_AVI">航空</ComboBoxItem>
+                                <ComboBoxItem x:Uid="Attr_ACC">命中</ComboBoxItem>
+                                <ComboBoxItem x:Uid="Attr_RLD">装填</ComboBoxItem>
+                                <ComboBoxItem x:Uid="Attr_EVA">机动</ComboBoxItem>
+                                <ComboBoxItem x:Uid="Attr_ASW">反潜</ComboBoxItem>
                             </ComboBox>
                             <!-- 获得时数值 -->
-                            <TextBlock Grid.Row="1" Grid.Column="0" x:Uid="AttributeBonus.Value" Text="数值:" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Row="1" Grid.Column="0" x:Uid="AttributeBonus_Value" Text="数值:" VerticalAlignment="Center"/>
                             <NumberBox x:Name="ObtainBonusValueBox" Grid.Row="1" Grid.Column="1" Minimum="0" Value="0" SpinButtonPlacementMode="Inline"/>
                         </Grid>
-                        <TextBlock x:Uid="AttributeBonus.AffectShips" Text="适用舰种" Margin="0,12,0,4"/>
+                        <TextBlock x:Uid="AttributeBonus_AffectShips" Text="适用舰种" Margin="0,12,0,4"/>
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -216,23 +216,24 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <CheckBox Grid.Row="0" Grid.Column="0" x:Name="ObtainAffectDD" Content="驱逐" Margin="0,4,0,0"/>
-                            <CheckBox Grid.Row="0" Grid.Column="1" x:Name="ObtainAffectCL" Content="轻巡" Margin="0,4,0,0"/>
-                            <CheckBox Grid.Row="0" Grid.Column="2" x:Name="ObtainAffectCA" Content="重巡" Margin="0,4,0,0"/>
-                            <CheckBox Grid.Row="0" Grid.Column="3" x:Name="ObtainAffectCB" Content="超巡" Margin="0,4,0,0"/>
-                            <CheckBox Grid.Row="1" Grid.Column="0" x:Name="ObtainAffectBC" Content="战巡" Margin="0,4,0,0"/>
-                            <CheckBox Grid.Row="1" Grid.Column="1" x:Name="ObtainAffectBB" Content="战列" Margin="0,4,0,0"/>
-                            <CheckBox Grid.Row="1" Grid.Column="2" x:Name="ObtainAffectBBV" Content="航战" Margin="0,4,0,0"/>
-                            <CheckBox Grid.Row="1" Grid.Column="3" x:Name="ObtainAffectCV" Content="航母" Margin="0,4,0,0"/>
-                            <CheckBox Grid.Row="2" Grid.Column="0" x:Name="ObtainAffectCVL" Content="轻航" Margin="0,4,0,0"/>
-                            <CheckBox Grid.Row="2" Grid.Column="1" x:Name="ObtainAffectAR" Content="维修" Margin="0,4,0,0"/>
-                            <CheckBox Grid.Row="2" Grid.Column="2" x:Name="ObtainAffectSS" Content="潜艇" Margin="0,4,0,0"/>
-                            <CheckBox Grid.Row="2" Grid.Column="3" x:Name="ObtainAffectSSV" Content="潜母" Margin="0,4,0,0"/>
-                            <CheckBox Grid.Row="3" Grid.Column="0" x:Name="ObtainAffectAE" Content="运输" Margin="0,4,0,0"/>
-                            <CheckBox Grid.Row="3" Grid.Column="1" x:Name="ObtainAffectSail" Content="风帆" Margin="0,4,0,0"/>
+                            <CheckBox Grid.Row="0" Grid.Column="0" x:Name="ObtainAffectDD" x:Uid="ShipClass_DD" Content="驱逐" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="0" Grid.Column="1" x:Name="ObtainAffectCL" x:Uid="ShipClass_CL" Content="轻巡" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="0" Grid.Column="2" x:Name="ObtainAffectCA" x:Uid="ShipClass_CA" Content="重巡" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="0" Grid.Column="3" x:Name="ObtainAffectCB" x:Uid="ShipClass_CB" Content="超巡" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="1" Grid.Column="0" x:Name="ObtainAffectBM" x:Uid="ShipClass_BM" Content="重炮" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="1" Grid.Column="1" x:Name="ObtainAffectBC" x:Uid="ShipClass_BC" Content="战巡" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="1" Grid.Column="2" x:Name="ObtainAffectBB" x:Uid="ShipClass_BB" Content="战列" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="1" Grid.Column="3" x:Name="ObtainAffectBBV" x:Uid="ShipClass_BBV" Content="航战" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="2" Grid.Column="0" x:Name="ObtainAffectCV" x:Uid="ShipClass_CV" Content="航母" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="2" Grid.Column="1" x:Name="ObtainAffectCVL" x:Uid="ShipClass_CVL" Content="轻航" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="2" Grid.Column="2" x:Name="ObtainAffectAR" x:Uid="ShipClass_AR" Content="维修" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="2" Grid.Column="3" x:Name="ObtainAffectSS" x:Uid="ShipClass_SS" Content="潜艇" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="3" Grid.Column="0" x:Name="ObtainAffectSSV" x:Uid="ShipClass_SSV" Content="潜母" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="3" Grid.Column="1" x:Name="ObtainAffectAE" x:Uid="ShipClass_AE" Content="运输" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="3" Grid.Column="2" x:Name="ObtainAffectSail" x:Uid="ShipClass_Sail" Content="风帆" Margin="0,4,0,0" MaxWidth="80"/>
                         </Grid>
                         <Rectangle Height="1" Fill="{ThemeResource CardStrokeColorDefaultBrush}" Margin="0,16,0,16"/>
-                        <TextBlock x:Uid="AttributeBonus.Level120" Text="120级属性:"  FontWeight="SemiBold" Margin="0,0,0,8" VerticalAlignment="Center"/>
+                        <TextBlock x:Uid="AttributeBonus_Level120" Text="120级属性:"  FontWeight="SemiBold" Margin="0,0,0,8" VerticalAlignment="Center"/>
                         <Grid RowSpacing="12" ColumnSpacing="12">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -242,24 +243,24 @@
                                 <ColumnDefinition Width="100"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock x:Uid="AttributeBonus.Attr" Grid.Row="0" Grid.Column="0" Text="属性:" VerticalAlignment="Center"/>
+                            <TextBlock x:Uid="AttributeBonus_Attr" Grid.Row="0" Grid.Column="0" Text="属性:" VerticalAlignment="Center"/>
                             <ComboBox x:Name="Level120BonusAttrCombo" Grid.Row="0" Grid.Column="1">
-                                <ComboBoxItem>无</ComboBoxItem>
-                                <ComboBoxItem>耐久</ComboBoxItem>
-                                <ComboBoxItem>炮击</ComboBoxItem>
-                                <ComboBoxItem>雷击</ComboBoxItem>
-                                <ComboBoxItem>防空</ComboBoxItem>
-                                <ComboBoxItem>航空</ComboBoxItem>
-                                <ComboBoxItem>命中</ComboBoxItem>
-                                <ComboBoxItem>装填</ComboBoxItem>
-                                <ComboBoxItem>机动</ComboBoxItem>
-                                <ComboBoxItem>反潜</ComboBoxItem>
+                                    <ComboBoxItem x:Uid="Attr_Null">无</ComboBoxItem>
+                                    <ComboBoxItem x:Uid="Attr_HP">耐久</ComboBoxItem>
+                                    <ComboBoxItem x:Uid="Attr_FP">炮击</ComboBoxItem>
+                                    <ComboBoxItem x:Uid="Attr_TRP">雷击</ComboBoxItem>
+                                    <ComboBoxItem x:Uid="Attr_AA">防空</ComboBoxItem>
+                                    <ComboBoxItem x:Uid="Attr_AVI">航空</ComboBoxItem>
+                                    <ComboBoxItem x:Uid="Attr_ACC">命中</ComboBoxItem>
+                                    <ComboBoxItem x:Uid="Attr_RLD">装填</ComboBoxItem>
+                                    <ComboBoxItem x:Uid="Attr_EVA">机动</ComboBoxItem>
+                                    <ComboBoxItem x:Uid="Attr_ASW">反潜</ComboBoxItem>
                             </ComboBox>
-                            <TextBlock x:Uid="AttributeBonus.Value" Grid.Row="1" Grid.Column="0" Text="数值:" VerticalAlignment="Center"/>
+                            <TextBlock x:Uid="AttributeBonus_Value" Grid.Row="1" Grid.Column="0" Text="数值:" VerticalAlignment="Center"/>
                             <NumberBox x:Name="Level120BonusValueBox" Grid.Row="1" Grid.Column="1" Minimum="0" Value="0" SpinButtonPlacementMode="Inline"/>
                         </Grid>
 
-                        <TextBlock x:Uid="AttributeBonus.AffectShips" Text="120级适用舰种" Margin="0,12,0,4"/>
+                        <TextBlock x:Uid="AttributeBonus_AffectShips" Text="120级适用舰种" Margin="0,12,0,4"/>
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -273,20 +274,21 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <CheckBox Grid.Row="0" Grid.Column="0" x:Name="Level120AffectDD" Content="驱逐" Margin="0,4,0,0"/>
-                            <CheckBox Grid.Row="0" Grid.Column="1" x:Name="Level120AffectCL" Content="轻巡" Margin="0,4,0,0"/>
-                            <CheckBox Grid.Row="0" Grid.Column="2" x:Name="Level120AffectCA" Content="重巡" Margin="0,4,0,0"/>
-                            <CheckBox Grid.Row="0" Grid.Column="3" x:Name="Level120AffectCB" Content="超巡" Margin="0,4,0,0"/>
-                            <CheckBox Grid.Row="1" Grid.Column="0" x:Name="Level120AffectBC" Content="战巡" Margin="0,4,0,0"/>
-                            <CheckBox Grid.Row="1" Grid.Column="1" x:Name="Level120AffectBB" Content="战列" Margin="0,4,0,0"/>
-                            <CheckBox Grid.Row="1" Grid.Column="2" x:Name="Level120AffectBBV" Content="航战" Margin="0,4,0,0"/>
-                            <CheckBox Grid.Row="1" Grid.Column="3" x:Name="Level120AffectCV" Content="航母" Margin="0,4,0,0"/>
-                            <CheckBox Grid.Row="2" Grid.Column="0" x:Name="Level120AffectCVL" Content="轻航" Margin="0,4,0,0"/>
-                            <CheckBox Grid.Row="2" Grid.Column="1" x:Name="Level120AffectAR" Content="维修" Margin="0,4,0,0"/>
-                            <CheckBox Grid.Row="2" Grid.Column="2" x:Name="Level120AffectSS" Content="潜艇" Margin="0,4,0,0"/>
-                            <CheckBox Grid.Row="2" Grid.Column="3" x:Name="Level120AffectSSV" Content="潜母" Margin="0,4,0,0"/>
-                            <CheckBox Grid.Row="3" Grid.Column="0" x:Name="Level120AffectAE" Content="运输" Margin="0,4,0,0"/>
-                            <CheckBox Grid.Row="3" Grid.Column="1" x:Name="Level120AffectSail" Content="风帆" Margin="0,4,0,0"/>
+                            <CheckBox Grid.Row="0" Grid.Column="0" x:Name="Level120AffectDD" x:Uid="ShipClass_DD" Content="驱逐" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="0" Grid.Column="1" x:Name="Level120AffectCL" x:Uid="ShipClass_CL" Content="轻巡" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="0" Grid.Column="2" x:Name="Level120AffectCA" x:Uid="ShipClass_CA" Content="重巡" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="0" Grid.Column="3" x:Name="Level120AffectCB" x:Uid="ShipClass_CB" Content="超巡" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="1" Grid.Column="0" x:Name="Level120AffectBM" x:Uid="ShipClass_BM" Content="重炮" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="1" Grid.Column="1" x:Name="Level120AffectBC" x:Uid="ShipClass_BC" Content="战巡" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="1" Grid.Column="2" x:Name="Level120AffectBB" x:Uid="ShipClass_BB" Content="战列" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="1" Grid.Column="3" x:Name="Level120AffectBBV" x:Uid="ShipClass_BBV" Content="航战" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="2" Grid.Column="0" x:Name="Level120AffectCV" x:Uid="ShipClass_CV" Content="航母" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="2" Grid.Column="1" x:Name="Level120AffectCVL" x:Uid="ShipClass_CVL" Content="轻航" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="2" Grid.Column="2" x:Name="Level120AffectAR" x:Uid="ShipClass_AR" Content="维修" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="2" Grid.Column="3" x:Name="Level120AffectSS" x:Uid="ShipClass_SS" Content="潜艇" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="3" Grid.Column="0" x:Name="Level120AffectSSV" x:Uid="ShipClass_SSV" Content="潜母" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="3" Grid.Column="1" x:Name="Level120AffectAE" x:Uid="ShipClass_AE" Content="运输" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="3" Grid.Column="2" x:Name="Level120AffectSail" x:Uid="ShipClass_Sail" Content="风帆" Margin="0,4,0,0" MaxWidth="80"/>
                         </Grid>
                     </StackPanel>
                 </StackPanel>
@@ -297,7 +299,7 @@
                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                     BorderThickness="1" CornerRadius="8" Padding="12">
                 <StackPanel>
-                    <TextBlock x:Uid="FleetTech.Header" Text="舰队科技" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,12"/>
+                    <TextBlock x:Uid="FleetTech_Header" Text="舰队科技" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,12"/>
                     <Grid RowSpacing="12" ColumnSpacing="12">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -308,11 +310,11 @@
                             <ColumnDefinition Width="120"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock x:Uid="FleetTech.ObtainPoints" Grid.Row="0" Grid.Column="0" Text="获得科技点:" VerticalAlignment="Center"/>
+                        <TextBlock x:Uid="FleetTech_ObtainPoints" Grid.Row="0" Grid.Column="0" Text="获得科技点:" VerticalAlignment="Center"/>
                         <NumberBox x:Name="TechPointsObtainBox" Grid.Row="0" Grid.Column="1" Minimum="0" Value="0" SpinButtonPlacementMode="Inline"/>
-                        <TextBlock x:Uid="FleetTech.MaxPoints" Grid.Row="1" Grid.Column="0" Text="满破科技点:" VerticalAlignment="Center"/>
+                        <TextBlock x:Uid="FleetTech_MaxPoints" Grid.Row="1" Grid.Column="0" Text="满破科技点:" VerticalAlignment="Center"/>
                         <NumberBox x:Name="TechPointsMaxBox" Grid.Row="1" Grid.Column="1" Minimum="0" Value="0" SpinButtonPlacementMode="Inline"/>
-                        <TextBlock x:Uid="FleetTech.Level120Points" Grid.Row="2" Grid.Column="0" Text="120级科技点:" VerticalAlignment="Center"/>
+                        <TextBlock x:Uid="FleetTech_Level120Points" Grid.Row="2" Grid.Column="0" Text="120级科技点:" VerticalAlignment="Center"/>
                         <NumberBox x:Name="TechPoints120Box" Grid.Row="2" Grid.Column="1" Minimum="0" Value="0" SpinButtonPlacementMode="Inline"/>
                     </Grid>
                 </StackPanel>
@@ -323,8 +325,8 @@
                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                     BorderThickness="1" CornerRadius="8" Padding="12">
                 <StackPanel>
-                    <TextBlock x:Uid="SpecialGear.Header" Text="专属兵装" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,12"/>
-                    <CheckBox x:Uid="SpecialGear.CanHave" x:Name="CanSpecialGearCheckBox" Content="可拥有专属兵装" Margin="0,0,0,8"/>
+                    <TextBlock x:Uid="SpecialGear_Header" Text="专属兵装" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,12"/>
+                    <CheckBox x:Uid="SpecialGear_CanHave" x:Name="CanSpecialGearCheckBox" Content="可拥有专属兵装" Margin="0,0,0,8"/>
                     <Grid RowSpacing="12" ColumnSpacing="12">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -335,11 +337,11 @@
                             <ColumnDefinition Width="100"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock x:Uid="SpecialGear.Name" Grid.Row="0" Grid.Column="0" Text="兵装名称:" VerticalAlignment="Center"/>
+                        <TextBlock x:Uid="SpecialGear_Name" Grid.Row="0" Grid.Column="0" Text="兵装名称:" VerticalAlignment="Center"/>
                         <TextBox x:Name="SpecialGearNameBox" Grid.Row="0" Grid.Column="1" IsEnabled="False"/>
-                        <TextBlock x:Uid="SpecialGear.Date" Grid.Row="1" Grid.Column="0" Text="实装日期:" VerticalAlignment="Center"/>
+                        <TextBlock x:Uid="SpecialGear_Date" Grid.Row="1" Grid.Column="0" Text="实装日期:" VerticalAlignment="Center"/>
                         <DatePicker x:Name="SpecialGearDatePicker" Grid.Row="1" Grid.Column="1" IsEnabled="False"/>
-                        <TextBlock x:Uid="SpecialGear.Acquire" Grid.Row="2" Grid.Column="0" Text="获取途径:" VerticalAlignment="Center"/>
+                        <TextBlock x:Uid="SpecialGear_Acquire" Grid.Row="2" Grid.Column="0" Text="获取途径:" VerticalAlignment="Center"/>
                         <TextBox x:Name="SpecialGearAcquireBox" Grid.Row="2" Grid.Column="1" IsEnabled="False"/>
                     </Grid>
                 </StackPanel>

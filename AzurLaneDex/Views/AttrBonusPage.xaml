@@ -12,11 +12,11 @@
 
         <!-- 顶部标题栏 -->
         <StackPanel Grid.Row="0" Margin="20,20,20,12" Spacing="12">
-            <TextBlock x:Uid="AttrBonusPage.Title" Text="属性加成" FontSize="24" FontWeight="SemiBold" Margin="10,10,0,0" VerticalAlignment="Center"/>
+            <TextBlock x:Uid="AttrBonusPage_Title" Text="属性加成" FontSize="24" FontWeight="SemiBold" Margin="10,10,0,0" VerticalAlignment="Center"/>
 
             <!-- 舰种筛选下拉框 -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="10,12,0,0">
-                <TextBlock x:Uid="AttrBonusPage.FilterLabel" Text="筛选舰种:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <TextBlock x:Uid="AttrBonusPage_FilterLabel" Text="筛选舰种:" VerticalAlignment="Center" Margin="0,0,10,0"/>
                 <ComboBox x:Name="ShipClassFilter" 
                           MinWidth="160" 
                           SelectionChanged="ShipClassFilter_SelectionChanged"/>
@@ -38,8 +38,8 @@
                                 BorderThickness="1" CornerRadius="8" Padding="12"
                                 MinWidth="140" MinHeight="90">
                             <StackPanel VerticalAlignment="Center">
-                                <TextBlock Text="{Binding AttrName}" FontSize="14" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                                <TextBlock Text="{Binding Value}" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,8,0,0"/>
+                                <TextBlock Text="{Binding AttrName}" FontSize="14" HorizontalAlignment="Center"/>
+                                <TextBlock Text="{Binding Value}" FontSize="24" HorizontalAlignment="Center" Margin="0,8,0,0"/>
                             </StackPanel>
                         </Border>
                     </DataTemplate>

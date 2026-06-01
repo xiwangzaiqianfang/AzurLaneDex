@@ -22,7 +22,7 @@
 
         <!-- 顶部导航栏 -->
         <StackPanel Orientation="Horizontal" Margin="20,20,20,12" Spacing="12">
-            <Button x:Name="BackButton" Click="BackButton_Click" Content="设置" FontSize="28" FontWeight="SemiBold" Margin="0,2,0,0" Background="Transparent" BorderThickness="0" ToolTipService.ToolTip="返回" VerticalAlignment="Center"/>
+            <Button x:Uid="SettingsPageTitle1" x:Name="BackButton" Click="BackButton_Click" Content="设置" FontSize="28" FontWeight="SemiBold" Margin="0,2,0,0" Background="Transparent" BorderThickness="0" ToolTipService.ToolTip="返回" VerticalAlignment="Center"/>
             <FontIcon Glyph="&#xE974;" FontFamily="Segoe Fluent Icons" FontSize="22" Margin="-20,3,-10,0" VerticalAlignment="Center"/>
             <TextBlock Text="日志记录" FontSize="28" FontWeight="SemiBold" VerticalAlignment="Center"/>
         </StackPanel>

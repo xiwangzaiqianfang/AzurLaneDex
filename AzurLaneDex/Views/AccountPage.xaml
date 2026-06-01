@@ -80,7 +80,7 @@
 
 		<!-- 标题 -->
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="20,20,20,12" Spacing="12">
-            <TextBlock x:Uid="AccountPage.Title" Text="帐户" FontSize="28" FontWeight="SemiBold" Margin="10,10,0,0" VerticalAlignment="Center"/>
+            <TextBlock x:Uid="AccountPage_Title" Text="帐户" FontSize="28" FontWeight="SemiBold" Margin="10,10,0,0" VerticalAlignment="Center"/>
         </StackPanel>
 
         <ScrollViewer Grid.Row="1">
@@ -113,10 +113,10 @@
                         </Grid.ColumnDefinitions>
                         <FontIcon Grid.Column="0" Glyph="&#xE8B9;" FontFamily="Segoe Fluent Icons" FontSize="22" Margin="0,0,14,0" VerticalAlignment="Center"/>
                         <StackPanel Grid.Column="1">
-                            <TextBlock x:Uid="AccountPage.PhotoCard.Title" Text="帐户照片" FontSize="14"/>
-                            <TextBlock x:Uid="AccountPage.PhotoCard.Description" Text="点击修改头像" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock x:Uid="AccountPage_PhotoCard_Title" Text="帐户照片" FontSize="14"/>
+                            <TextBlock x:Uid="AccountPage_PhotoCard_Description" Text="点击修改头像" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         </StackPanel>
-                        <Button x:Uid="AccountPage.AvatarButton" Grid.Column="2" Content="修改照片" x:Name="ChangeAvatarButton" Click="ChangeAvatarButton_Click"/>
+                        <Button x:Uid="AccountPage_AvatarButton" Grid.Column="2" Content="修改照片" x:Name="ChangeAvatarButton" Click="ChangeAvatarButton_Click"/>
                     </Grid>
                 </Border>
 
@@ -129,8 +129,8 @@
                         </Grid.ColumnDefinitions>
                         <FontIcon Grid.Column="0" Glyph="&#xE8D7;" FontFamily="Segoe Fluent Icons" FontSize="22" Margin="0,0,14,0" VerticalAlignment="Center"/>
                         <StackPanel Grid.Column="1">
-                            <TextBlock x:Uid="AccountPage.LoginOptions.Title" Text="登录选项" FontSize="14"/>
-                            <TextBlock x:Uid="AccountPage.LoginOptions.Description" Text="设置启动时是否询问账号以及默认登录账户" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock x:Uid="AccountPage_LoginOptions_Title" Text="登录选项" FontSize="14"/>
+                            <TextBlock x:Uid="AccountPage_LoginOptions_Description" Text="设置启动时是否询问账号以及默认登录账户" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         </StackPanel>
                         <FontIcon x:Name="AccountLoginArrowIcon" Grid.Column="2" Glyph="&#xE974;" FontFamily="Segoe Fluent Icons"  FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
                     </Grid>
@@ -145,8 +145,8 @@
                         </Grid.ColumnDefinitions>
                         <FontIcon Grid.Column="0" Glyph="&#xE779;" FontFamily="Segoe Fluent Icons" FontSize="22" Margin="0,0,14,0" VerticalAlignment="Center"/>
                         <StackPanel Grid.Column="1">
-                            <TextBlock x:Uid="AccountPage.ManageAccounts.Title" Text="你的账户" FontSize="14"/>
-                            <TextBlock x:Uid="AccountPage.ManageAccounts.Description" Text="添加或管理本应用中使用的帐户" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock x:Uid="AccountPage_ManageAccounts_Title" Text="你的账户" FontSize="14"/>
+                            <TextBlock x:Uid="AccountPage_ManageAccounts_Description" Text="添加或管理本应用中使用的帐户" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         </StackPanel>
                         <FontIcon x:Name="AccountManageArrowIcon" Grid.Column="2" Glyph="&#xE974;" FontFamily="Segoe Fluent Icons"  FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
                     </Grid>
@@ -162,7 +162,7 @@
                         <FontIcon Grid.Column="0" Glyph="&#xEBC4;" FontFamily="Segoe Fluent Icons" FontSize="22" Margin="0,0,14,0" VerticalAlignment="Center"/>
                         <StackPanel Grid.Column="1">
                             <TextBlock x:Uid="AccountBackupPage" Text="帐户备份" FontSize="14"/>
-                            <TextBlock x:Uid="AccountBackup.Description" Text="导出/导入账户数据，创建备份点" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock x:Uid="AccountBackup_Description" Text="导出/导入账户数据，创建备份点" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         </StackPanel>
                         <FontIcon x:Name="AccountBackupArrowIcon" Grid.Column="2" Glyph="&#xE974;" FontFamily="Segoe Fluent Icons"  FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
                     </Grid>
