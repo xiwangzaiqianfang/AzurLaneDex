@@ -15,6 +15,7 @@ namespace AzurLaneDex.Views
         public LogPage()
         {
             this.InitializeComponent();
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             Loaded += LogPage_Loaded;
         }
 
@@ -34,6 +35,7 @@ namespace AzurLaneDex.Views
 
         private void EnableLogToggle_Toggled(object sender, RoutedEventArgs e)
         {
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             bool enabled = EnableLogToggle.IsOn;
             int days = (int)RetentionDaysBox.Value;
             LogService.SetSettings(enabled, days);
@@ -43,11 +45,12 @@ namespace AzurLaneDex.Views
                 _app.ShipManager.Config["log_retention_days"] = days;
                 _app.ShipManager.SaveConfig();
             }
-            StatusText.Text = enabled ? "日志记录已启用" : "日志记录已禁用";
+            StatusText.Text = enabled ? loader.GetString("LogEnabled_Message") : loader.GetString("LogDisabled_Message");
         }
 
         private void RetentionDaysBox_ValueChanged(object sender, NumberBoxValueChangedEventArgs e)
         {
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             if (!this.IsLoaded) return;
             int days = (int)e.NewValue;
             bool enabled = EnableLogToggle.IsOn;
@@ -59,11 +62,12 @@ namespace AzurLaneDex.Views
             }
             // 触发一次清理
             LogService.CleanOldLogs();
-            StatusText.Text = $"日志保留天数已设为 {days} 天";
+            StatusText.Text = string.Format(loader.GetString("LogRetentionSet_Message"), days); ;
         }
 
         private async void ExportLogButton_Click(object sender, RoutedEventArgs e)
         {
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             try
             {
                 var picker = new FileSavePicker();
@@ -75,25 +79,26 @@ namespace AzurLaneDex.Views
                 var file = await picker.PickSaveFileAsync();
                 if (file == null) return;
 
-                StatusText.Text = "正在导出日志...";
+                StatusText.Text = loader.GetString("ExportingLogs_Message");
                 string path = await LogService.ExportLogsAsync(file.Path);
-                StatusText.Text = $"日志已导出至 {path}";
-                await ShowDialog("导出成功", $"日志已保存至 {path}");
+                StatusText.Text = string.Format(loader.GetString("LogsExported_Message"), path);
+                await ShowDialog(loader.GetString("Dialog_Success_Title"), string.Format(loader.GetString("LogsExported_Message"), path));
             }
             catch (Exception ex)
             {
-                StatusText.Text = $"导出失败: {ex.Message}";
-                await ShowDialog("导出失败", ex.Message);
+                StatusText.Text = string.Format(loader.GetString("ExportFailed_Message"), ex.Message);
+                await ShowDialog(loader.GetString("ExportFailed_Message"), ex.Message);
             }
         }
 
         private async Task ShowDialog(string title, string content)
         {
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             var dialog = new ContentDialog
             {
                 Title = title,
                 Content = content,
-                CloseButtonText = "确定",
+                CloseButtonText = loader.GetString("Common_Confirm"),
                 XamlRoot = this.XamlRoot,
                 Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
             };

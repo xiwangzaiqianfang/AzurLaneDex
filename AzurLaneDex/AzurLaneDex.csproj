@@ -17,6 +17,10 @@
     <Content Include="Assets\**" />
     <None Remove="AzurLaneDex.pfx" />
     <None Remove="MainWindow.xaml" />
+    <None Remove="Strings\Resources_en.txt" />
+    <None Remove="Strings\Resources_ja.txt" />
+    <None Remove="Strings\Resources_zh-Hans.txt" />
+    <None Remove="Strings\Resources_zh-Hant.txt" />
     <None Remove="Views\AccountBackupPage.xaml" />
     <None Remove="Views\AccountLoginDialog.xaml" />
     <None Remove="Views\AccountPage.xaml" />

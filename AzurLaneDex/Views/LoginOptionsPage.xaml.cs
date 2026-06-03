@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
+using Windows.ApplicationModel.Resources;
 using System.Linq;
 
 namespace AzurLaneDex.Views
@@ -16,6 +17,7 @@ namespace AzurLaneDex.Views
         public LoginOptionsPage()
         {
             this.InitializeComponent();
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -75,8 +77,9 @@ namespace AzurLaneDex.Views
         }
         private void LoadConfig()
         {
+            var loader = ResourceLoader.GetForViewIndependentUse();
             AskAccountToggleSwitch.IsOn = _config.GetValueOrDefault("ask_account_on_startup", true) is bool b && b;
-            StatusText.Text = AskAccountToggleSwitch.IsOn ? "开" : "关";
+            StatusText.Text = AskAccountToggleSwitch.IsOn ? loader.GetString("Toggle_On") : loader.GetString("Toggle_Off");
         }
     }
 }

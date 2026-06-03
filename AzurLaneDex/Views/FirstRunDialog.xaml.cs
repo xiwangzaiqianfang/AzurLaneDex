@@ -13,6 +13,7 @@ namespace AzurLaneDex.Views
         public FirstRunDialog()
         {
             this.InitializeComponent();
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             this.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
         }
 

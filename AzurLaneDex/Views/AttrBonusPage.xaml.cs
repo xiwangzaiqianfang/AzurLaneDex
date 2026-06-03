@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage.Pickers;
+using Windows.ApplicationModel.Resources;
 using WinRT.Interop;
 
 namespace AzurLaneDex.Views
@@ -15,22 +16,28 @@ namespace AzurLaneDex.Views
     {
         private ShipManager _manager;
         private Dictionary<string, int> _currentAttrTotals = new(); // 属性名称 -> 总值
+        private readonly ResourceLoader _loader = ResourceLoader.GetForViewIndependentUse();
 
-        private readonly List<string> _allShipClasses = new()
+        private List<string> GetAttrNames()
         {
-            "全舰种", "驱逐", "轻巡", "重巡", "超巡", "战巡", "战列", "航战",
-            "航母", "轻航", "维修", "潜艇", "潜母", "运输", "风帆", "重炮", "其他"
-        };
-
-        private readonly List<string> _attrNames = new()
-        {
-            "耐久", "炮击", "雷击", "防空", "航空",
-            "命中", "装填", "机动", "反潜"
-        };
+            return new List<string>
+            {
+                _loader.GetString("Attr1_HP"),
+                _loader.GetString("Attr1_FP"),
+                _loader.GetString("Attr1_TRP"),
+                _loader.GetString("Attr1_AA"),
+                _loader.GetString("Attr1_AVI"),
+                _loader.GetString("Attr1_ACC"),
+                _loader.GetString("Attr1_RLD"),
+                _loader.GetString("Attr1_EVA"),
+                _loader.GetString("Attr1_ASW")
+            };
+        }
 
         public AttrBonusPage()
         {
             this.InitializeComponent();
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             Loaded += AttrBonusPage_Loaded;
         }
 
@@ -41,7 +48,25 @@ namespace AzurLaneDex.Views
             if (_manager != null)
             {
                 // 初始化下拉框
-                ShipClassFilter.ItemsSource = _allShipClasses;
+                ShipClassFilter.ItemsSource = new List<string>
+                    {
+                _loader.GetString("ShipClass_All"),
+                _loader.GetString("ShipClass_DD1"),
+                _loader.GetString("ShipClass_CL1"),
+                _loader.GetString("ShipClass_CA1"),
+                _loader.GetString("ShipClass_CB1"),
+                _loader.GetString("ShipClass_BC1"),
+                _loader.GetString("ShipClass_BB1"),
+                _loader.GetString("ShipClass_BBV1"),
+                _loader.GetString("ShipClass_CV1"),
+                _loader.GetString("ShipClass_CVL1"),
+                _loader.GetString("ShipClass_AR1"),
+                _loader.GetString("ShipClass_SS1"),
+                _loader.GetString("ShipClass_SSV1"),
+                _loader.GetString("ShipClass_AE1"),
+                _loader.GetString("ShipClass_Sail1"),
+                _loader.GetString("ShipClass_BM1")
+            };
                 ShipClassFilter.SelectedIndex = 0; // "全舰种"
 
                 LoadData();
@@ -58,14 +83,17 @@ namespace AzurLaneDex.Views
 
             // 根据当前选择的舰种计算总计
             string selectedClass = ShipClassFilter.SelectedItem as string;
+            var attrNames = GetAttrNames();
+
             _currentAttrTotals.Clear();
-            foreach (var attr in _attrNames)
+            foreach (var attr in attrNames)
             {
                 _currentAttrTotals[attr] = 0;
             }
 
-            if (selectedClass == "全舰种")
-            {
+            string allShipsLabel = _loader.GetString("ShipClass_All");
+            if (selectedClass == allShipsLabel)
+                {
                 // 对所有舰种求和
                 foreach (var kvp in globalBonuses)
                 {
@@ -79,7 +107,7 @@ namespace AzurLaneDex.Views
             else
             {
                 // 只取指定舰种
-                foreach (var attr in _attrNames)
+                foreach (var attr in attrNames)
                 {
                     int total = 0;
                     if (globalBonuses.TryGetValue((selectedClass, attr), out int val))
@@ -89,7 +117,7 @@ namespace AzurLaneDex.Views
             }
 
             // 生成卡片数据
-            var cards = _attrNames.Select(attr => new AttrCardData
+            var cards = attrNames.Select(attr => new AttrCardData
             {
                 AttrName = attr,
                 Value = _currentAttrTotals[attr]
@@ -105,6 +133,7 @@ namespace AzurLaneDex.Views
 
         private async void ExportToImage(object sender, RoutedEventArgs e)
         {
+            var loader = ResourceLoader.GetForViewIndependentUse();
             try
             {
                 // 截取当前页面内容（不包括滚动条外的部分）
@@ -137,9 +166,9 @@ namespace AzurLaneDex.Views
                     }
                     var dialog = new ContentDialog
                     {
-                        Title = "导出成功",
-                        Content = $"图片已保存至 {file.Path}",
-                        CloseButtonText = "确定",
+                        Title = loader.GetString("Dialog_Success_Title"),
+                        Content = string.Format(loader.GetString("Picture_Save_Message"), file.Path),
+                        CloseButtonText = loader.GetString("Common_Confirm"),
                         XamlRoot = this.XamlRoot,
                         Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
                     };
@@ -150,9 +179,9 @@ namespace AzurLaneDex.Views
             {
                 var errorDialog = new ContentDialog
                 {
-                    Title = "导出失败",
+                    Title = loader.GetString("Dialog_Error_Title"),
                     Content = ex.Message,
-                    CloseButtonText = "确定",
+                    CloseButtonText = loader.GetString("Common_Confirm"),
                     XamlRoot = this.XamlRoot,
                     Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
                 };
@@ -162,11 +191,12 @@ namespace AzurLaneDex.Views
 
         private async Task ShowDialog(string title, string content)
         {
+            var loader = ResourceLoader.GetForViewIndependentUse();
             var dialog = new ContentDialog
             {
                 Title = title,
                 Content = content,
-                CloseButtonText = "确定",
+                CloseButtonText = loader.GetString("Common_Confirm"),
                 XamlRoot = this.XamlRoot,
                 Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
             };

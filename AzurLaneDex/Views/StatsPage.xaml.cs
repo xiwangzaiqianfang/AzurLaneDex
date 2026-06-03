@@ -18,6 +18,7 @@ namespace AzurLaneDex.Views
         public StatsPage()
         {
             this.InitializeComponent();
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             Loaded += StatsPage_Loaded;
         }
 
@@ -35,21 +36,22 @@ namespace AzurLaneDex.Views
 
         private void LoadStats()
         {
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             var stats = _manager.stats();
 
             var cards = new List<StatCardData>
             {
-                new StatCardData { Title = "总计舰船", Value = stats.Total },
-                new StatCardData { Title = "已获得", Value = stats.Owned },
-                new StatCardData { Title = "未获得", Value = stats.NotOwned },
-                new StatCardData { Title = "已满破", Value = stats.MaxBreakthrough },
-                new StatCardData { Title = "未满破", Value = stats.NotMaxBreakthrough },
-                new StatCardData { Title = "已誓约", Value = stats.Oath },
-                new StatCardData { Title = "已改造", Value = stats.Remodeled },
-                new StatCardData { Title = "可改造未改造", Value = stats.CanRemodelNot },
-                new StatCardData { Title = "120级", Value = stats.Level120 },
-                new StatCardData { Title = "已获得特殊兵装", Value = stats.SpecialGearObtained },
-                new StatCardData { Title = "未获得特殊兵装", Value = stats.SpecialGearNotObtained },
+                new StatCardData { Title = loader.GetString("Stat_TotalShips"), Value = stats.Total },
+                new StatCardData { Title = loader.GetString("Stat_Owned"), Value = stats.Owned },
+                new StatCardData { Title = loader.GetString("Stat_NotOwned"), Value = stats.NotOwned },
+                new StatCardData { Title = loader.GetString("Stat_MaxBreak"), Value = stats.MaxBreakthrough },
+                new StatCardData { Title = loader.GetString("Stat_NotMaxBreak"), Value = stats.NotMaxBreakthrough },
+                new StatCardData { Title = loader.GetString("Stat_Oath"), Value = stats.Oath },
+                new StatCardData { Title = loader.GetString("Stat_Remodeled"), Value = stats.Remodeled },
+                new StatCardData { Title = loader.GetString("Stat_CanRemodelNot"), Value = stats.CanRemodelNot },
+                new StatCardData { Title = loader.GetString("Stat_Level120"), Value = stats.Level120 },
+                new StatCardData { Title = loader.GetString("Stat_SpecialGearObtained"), Value = stats.SpecialGearObtained },
+                new StatCardData { Title = loader.GetString("Stat_SpecialGearNotObtained"), Value = stats.SpecialGearNotObtained },
             };
 
             StatsRepeater.ItemsSource = cards;
@@ -58,7 +60,7 @@ namespace AzurLaneDex.Views
             int numerator = stats.Owned + stats.Remodeled;
             int denominator = stats.Total + stats.CanRemodelTotal;
             int percent = denominator == 0 ? 0 : numerator * 100 / denominator;
-            CollectionProgressText.Text = $"收集进度: {percent}% ({numerator}/{denominator})";
+            CollectionProgressText.Text = string.Format(loader.GetString("CollectionProgress_Format"), percent, numerator, denominator);
             CollectionProgressBar.Minimum = 0;
             CollectionProgressBar.Maximum = denominator;
             CollectionProgressBar.Value = numerator;
@@ -66,6 +68,7 @@ namespace AzurLaneDex.Views
 
         private async void ExportToImage(object sender, RoutedEventArgs e)
         {
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             try
             {
                 var renderTarget = new RenderTargetBitmap();
@@ -94,22 +97,23 @@ namespace AzurLaneDex.Views
                                              pixels.ToArray());
                         await encoder.FlushAsync();
                     }
-                    await ShowDialog("导出成功", $"图片已保存至 {file.Path}");
+                    await ShowDialog(loader.GetString("Dialog_Success_Title"), string.Format(loader.GetString("Picture_Save_Message"), file.Path));
                 }
             }
             catch (Exception ex)
             {
-                await ShowDialog("导出失败", ex.Message);
+                await ShowDialog(loader.GetString("Dialog_Error_Title"), ex.Message);
             }
         }
 
         private async Task ShowDialog(string title, string content)
         {
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             var dialog = new ContentDialog
             {
                 Title = title,
                 Content = content,
-                CloseButtonText = "确定",
+                CloseButtonText = loader.GetString("Common_Confirm"),
                 XamlRoot = this.XamlRoot
             };
             await dialog.ShowAsync();

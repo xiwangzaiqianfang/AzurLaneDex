@@ -81,7 +81,7 @@
 
 		<!-- 顶部导航栏 -->
 		<StackPanel Grid.Row="0" Orientation="Horizontal" Margin="20,20,20,12" Spacing="12">
-            <Button x:Uid="AccountPageTitle" x:Name="BackButton" Click="BackButton_Click" Content="帐户" FontSize="28" FontWeight="SemiBold" Margin="0,2,0,0" Background="Transparent" BorderThickness="0" ToolTipService.ToolTip="返回" VerticalAlignment="Center"/>
+            <Button x:Uid="AccountPageTitle" x:Name="BackButton" Click="BackButton_Click" Content="帐户" FontSize="28" FontWeight="SemiBold" Margin="0,2,0,0" Background="Transparent" BorderThickness="0" VerticalAlignment="Center"/>
             <FontIcon Grid.Column="0" Glyph="&#xE974;" FontFamily="Segoe Fluent Icons" FontSize="22" Margin="-20,3,-10,0" VerticalAlignment="Center"/>
             <TextBlock x:Uid="AccountBackupPage" Text="帐户备份" FontSize="28" FontWeight="SemiBold" VerticalAlignment="Center"/>
 		</StackPanel>

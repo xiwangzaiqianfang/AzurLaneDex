@@ -39,6 +39,7 @@ namespace AzurLaneDex.Views
         // 导出用户状态
         private async void ExportData_Click(object sender, RoutedEventArgs e)
         {
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             try
             {
                 var picker = new FileSavePicker();
@@ -55,7 +56,7 @@ namespace AzurLaneDex.Views
                 string statePath = _shipManager.GetUserStatePath();
                 if (!File.Exists(statePath))
                 {
-                    await ShowError("没有找到用户状态文件");
+                    await ShowError(loader.GetString("UserStateFileNotFound_Message"));
                     LogService.Operation("用户状态操作操作", "导出功能没有找到用户状态文件");
                     return;
                 }
@@ -66,12 +67,12 @@ namespace AzurLaneDex.Views
                     await src.CopyToAsync(dest);
                 }
 
-                await ShowSuccess("导出成功", $"数据已保存至 {file.Path}");
+                await ShowSuccess(loader.GetString("Dialog_Success_Title"), string.Format(loader.GetString("ExportSuccess_Message"), file.Path));
                 LogService.Operation("用户状态操作", $"用户状态文件导出至 {file.Path}");
             }
             catch (Exception ex)
             {
-                await ShowError($"导出失败: {ex.Message}");
+                await ShowError(string.Format(loader.GetString("ExportFailed_Message"), ex.Message));
                 LogService.Operation("用户状态操作", $"导出失败：{ex.Message}");
             }
         }
@@ -79,6 +80,7 @@ namespace AzurLaneDex.Views
         // 导入用户状态（覆盖当前账户）
         private async void ImportData_Click(object sender, RoutedEventArgs e)
         {
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             try
             {
                 var picker = new FileOpenPicker();
@@ -92,10 +94,10 @@ namespace AzurLaneDex.Views
 
                 var confirm = new ContentDialog
                 {
-                    Title = "确认导入",
-                    Content = "这将覆盖当前账户的所有收集进度，是否继续？",
-                    PrimaryButtonText = "导入",
-                    CloseButtonText = "取消",
+                    Title = loader.GetString("Import_Message_Title"),
+                    Content = loader.GetString("Import_Message_Content"),
+                    PrimaryButtonText = loader.GetString("Import_Message_Confirm"),
+                    CloseButtonText = loader.GetString("Common_Cancel"),
                     XamlRoot = this.XamlRoot,
                     Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
                 };
@@ -112,12 +114,12 @@ namespace AzurLaneDex.Views
                 _shipManager.Load();
                 _shipManager.NotifyDataChanged();
 
-                await ShowSuccess("导入成功", "账户状态已恢复，请返回主界面查看。");
+                await ShowSuccess(loader.GetString("Dialog_Success_Title"), loader.GetString("ImportSuccess_Message")); 
                 LogService.Operation("用户状态操作", "用户状态导入");
             }
             catch (Exception ex)
             {
-                await ShowError($"导入失败: {ex.Message}");
+                await ShowError(string.Format(loader.GetString("ImportFailed_Message"), ex.Message));
                 LogService.Operation("用户状态操作", $"导入失败，{ex.Message}");
             }
         }
@@ -125,6 +127,7 @@ namespace AzurLaneDex.Views
         // 创建备份点（带时间戳的副本）
         private async void CreateBackup_Click(object sender, RoutedEventArgs e)
         {
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             try
             {
                 string backupDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -135,28 +138,29 @@ namespace AzurLaneDex.Views
                 string statePath = _shipManager.GetUserStatePath();
                 if (!File.Exists(statePath))
                 {
-                    await ShowError("没有找到用户状态文件");
+                    await ShowError(loader.GetString("UserStateFileNotFound_Message"));
                     LogService.Operation("用户状态操作", "备份功能没有找到用户状态文件");
                     return;
                 }
                 File.Copy(statePath, backupFile, true);
-                await ShowSuccess("备份成功", $"备份已保存到:\n{backupFile}");
+                await ShowSuccess(loader.GetString("Dialog_Success_Title"), string.Format(loader.GetString("BackupSuccess_Message"), backupFile));
                 LogService.Operation("用户状态操作", $"用户状态文件保存至：\n{backupFile}");
             }
             catch (Exception ex)
             {
-                await ShowError($"备份失败: {ex.Message}");
+                await ShowError(string.Format(loader.GetString("BackupFailed_Message"), ex.Message));
                 LogService.Operation("用户状态操作", $"备份失败：{ex.Message}");
             }
         }
 
         private async Task ShowError(string message)
         {
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             var dialog = new ContentDialog
             {
-                Title = "错误",
+                Title = loader.GetString("Dialog_Error_Title"),
                 Content = message,
-                CloseButtonText = "确定",
+                CloseButtonText = loader.GetString("Common_Confirm"),
                 XamlRoot = this.XamlRoot,
                 Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
             };
@@ -165,11 +169,12 @@ namespace AzurLaneDex.Views
 
         private async Task ShowSuccess(string title, string message)
         {
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             var dialog = new ContentDialog
             {
                 Title = title,
                 Content = message,
-                CloseButtonText = "确定",
+                CloseButtonText = loader.GetString("Common_Confirm"),
                 XamlRoot = this.XamlRoot,
                 Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
             };

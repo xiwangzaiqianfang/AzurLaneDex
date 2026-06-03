@@ -209,28 +209,28 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <CheckBox Grid.Row="0" Grid.Column="0" x:Name="ObtainAffectDD" x:Uid="ShipClass_DD" Content="驱逐" Margin="0,4,0,0" MaxWidth="80"/>
-                            <CheckBox Grid.Row="0" Grid.Column="1" x:Name="ObtainAffectCL" x:Uid="ShipClass_CL" Content="轻巡" Margin="0,4,0,0" MaxWidth="80"/>
-                            <CheckBox Grid.Row="0" Grid.Column="2" x:Name="ObtainAffectCA" x:Uid="ShipClass_CA" Content="重巡" Margin="0,4,0,0" MaxWidth="80"/>
-                            <CheckBox Grid.Row="0" Grid.Column="3" x:Name="ObtainAffectCB" x:Uid="ShipClass_CB" Content="超巡" Margin="0,4,0,0" MaxWidth="80"/>
-                            <CheckBox Grid.Row="1" Grid.Column="0" x:Name="ObtainAffectBM" x:Uid="ShipClass_BM" Content="重炮" Margin="0,4,0,0" MaxWidth="80"/>
-                            <CheckBox Grid.Row="1" Grid.Column="1" x:Name="ObtainAffectBC" x:Uid="ShipClass_BC" Content="战巡" Margin="0,4,0,0" MaxWidth="80"/>
-                            <CheckBox Grid.Row="1" Grid.Column="2" x:Name="ObtainAffectBB" x:Uid="ShipClass_BB" Content="战列" Margin="0,4,0,0" MaxWidth="80"/>
-                            <CheckBox Grid.Row="1" Grid.Column="3" x:Name="ObtainAffectBBV" x:Uid="ShipClass_BBV" Content="航战" Margin="0,4,0,0" MaxWidth="80"/>
-                            <CheckBox Grid.Row="2" Grid.Column="0" x:Name="ObtainAffectCV" x:Uid="ShipClass_CV" Content="航母" Margin="0,4,0,0" MaxWidth="80"/>
-                            <CheckBox Grid.Row="2" Grid.Column="1" x:Name="ObtainAffectCVL" x:Uid="ShipClass_CVL" Content="轻航" Margin="0,4,0,0" MaxWidth="80"/>
-                            <CheckBox Grid.Row="2" Grid.Column="2" x:Name="ObtainAffectAR" x:Uid="ShipClass_AR" Content="维修" Margin="0,4,0,0" MaxWidth="80"/>
-                            <CheckBox Grid.Row="2" Grid.Column="3" x:Name="ObtainAffectSS" x:Uid="ShipClass_SS" Content="潜艇" Margin="0,4,0,0" MaxWidth="80"/>
-                            <CheckBox Grid.Row="3" Grid.Column="0" x:Name="ObtainAffectSSV" x:Uid="ShipClass_SSV" Content="潜母" Margin="0,4,0,0" MaxWidth="80"/>
-                            <CheckBox Grid.Row="3" Grid.Column="1" x:Name="ObtainAffectAE" x:Uid="ShipClass_AE" Content="运输" Margin="0,4,0,0" MaxWidth="80"/>
-                            <CheckBox Grid.Row="3" Grid.Column="2" x:Name="ObtainAffectSail" x:Uid="ShipClass_Sail" Content="风帆" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="0" Grid.Column="1" x:Name="ObtainAffectCL" x:Uid="ShipClass_CL" Content="轻巡" Margin="16,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="0" Grid.Column="2" x:Name="ObtainAffectCA" x:Uid="ShipClass_CA" Content="重巡" Margin="16,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="1" Grid.Column="0" x:Name="ObtainAffectCB" x:Uid="ShipClass_CB" Content="超巡" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="1" Grid.Column="1" x:Name="ObtainAffectBM" x:Uid="ShipClass_BM" Content="重炮" Margin="16,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="1" Grid.Column="2" x:Name="ObtainAffectBC" x:Uid="ShipClass_BC" Content="战巡" Margin="16,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="2" Grid.Column="0" x:Name="ObtainAffectBB" x:Uid="ShipClass_BB" Content="战列" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="2" Grid.Column="1" x:Name="ObtainAffectBBV" x:Uid="ShipClass_BBV" Content="航战" Margin="16,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="2" Grid.Column="2" x:Name="ObtainAffectCV" x:Uid="ShipClass_CV" Content="航母" Margin="16,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="3" Grid.Column="0" x:Name="ObtainAffectCVL" x:Uid="ShipClass_CVL" Content="轻航" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="3" Grid.Column="1" x:Name="ObtainAffectAR" x:Uid="ShipClass_AR" Content="维修" Margin="16,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="3" Grid.Column="2" x:Name="ObtainAffectSS" x:Uid="ShipClass_SS" Content="潜艇" Margin="16,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="4" Grid.Column="0" x:Name="ObtainAffectSSV" x:Uid="ShipClass_SSV" Content="潜母" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="4" Grid.Column="1" x:Name="ObtainAffectAE" x:Uid="ShipClass_AE" Content="运输" Margin="16,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="4" Grid.Column="2" x:Name="ObtainAffectSail" x:Uid="ShipClass_Sail" Content="风帆" Margin="16,4,0,0" MaxWidth="80"/>
                         </Grid>
                         <Rectangle Height="1" Fill="{ThemeResource CardStrokeColorDefaultBrush}" Margin="0,16,0,16"/>
                         <TextBlock x:Uid="AttributeBonus_Level120" Text="120级属性:"  FontWeight="SemiBold" Margin="0,0,0,8" VerticalAlignment="Center"/>
@@ -267,28 +267,28 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <CheckBox Grid.Row="0" Grid.Column="0" x:Name="Level120AffectDD" x:Uid="ShipClass_DD" Content="驱逐" Margin="0,4,0,0" MaxWidth="80"/>
-                            <CheckBox Grid.Row="0" Grid.Column="1" x:Name="Level120AffectCL" x:Uid="ShipClass_CL" Content="轻巡" Margin="0,4,0,0" MaxWidth="80"/>
-                            <CheckBox Grid.Row="0" Grid.Column="2" x:Name="Level120AffectCA" x:Uid="ShipClass_CA" Content="重巡" Margin="0,4,0,0" MaxWidth="80"/>
-                            <CheckBox Grid.Row="0" Grid.Column="3" x:Name="Level120AffectCB" x:Uid="ShipClass_CB" Content="超巡" Margin="0,4,0,0" MaxWidth="80"/>
-                            <CheckBox Grid.Row="1" Grid.Column="0" x:Name="Level120AffectBM" x:Uid="ShipClass_BM" Content="重炮" Margin="0,4,0,0" MaxWidth="80"/>
-                            <CheckBox Grid.Row="1" Grid.Column="1" x:Name="Level120AffectBC" x:Uid="ShipClass_BC" Content="战巡" Margin="0,4,0,0" MaxWidth="80"/>
-                            <CheckBox Grid.Row="1" Grid.Column="2" x:Name="Level120AffectBB" x:Uid="ShipClass_BB" Content="战列" Margin="0,4,0,0" MaxWidth="80"/>
-                            <CheckBox Grid.Row="1" Grid.Column="3" x:Name="Level120AffectBBV" x:Uid="ShipClass_BBV" Content="航战" Margin="0,4,0,0" MaxWidth="80"/>
-                            <CheckBox Grid.Row="2" Grid.Column="0" x:Name="Level120AffectCV" x:Uid="ShipClass_CV" Content="航母" Margin="0,4,0,0" MaxWidth="80"/>
-                            <CheckBox Grid.Row="2" Grid.Column="1" x:Name="Level120AffectCVL" x:Uid="ShipClass_CVL" Content="轻航" Margin="0,4,0,0" MaxWidth="80"/>
-                            <CheckBox Grid.Row="2" Grid.Column="2" x:Name="Level120AffectAR" x:Uid="ShipClass_AR" Content="维修" Margin="0,4,0,0" MaxWidth="80"/>
-                            <CheckBox Grid.Row="2" Grid.Column="3" x:Name="Level120AffectSS" x:Uid="ShipClass_SS" Content="潜艇" Margin="0,4,0,0" MaxWidth="80"/>
-                            <CheckBox Grid.Row="3" Grid.Column="0" x:Name="Level120AffectSSV" x:Uid="ShipClass_SSV" Content="潜母" Margin="0,4,0,0" MaxWidth="80"/>
-                            <CheckBox Grid.Row="3" Grid.Column="1" x:Name="Level120AffectAE" x:Uid="ShipClass_AE" Content="运输" Margin="0,4,0,0" MaxWidth="80"/>
-                            <CheckBox Grid.Row="3" Grid.Column="2" x:Name="Level120AffectSail" x:Uid="ShipClass_Sail" Content="风帆" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="0" Grid.Column="1" x:Name="Level120AffectCL" x:Uid="ShipClass_CL" Content="轻巡" Margin="16,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="0" Grid.Column="2" x:Name="Level120AffectCA" x:Uid="ShipClass_CA" Content="重巡" Margin="16,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="1" Grid.Column="0" x:Name="Level120AffectCB" x:Uid="ShipClass_CB" Content="超巡" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="1" Grid.Column="1" x:Name="Level120AffectBM" x:Uid="ShipClass_BM" Content="重炮" Margin="16,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="1" Grid.Column="2" x:Name="Level120AffectBC" x:Uid="ShipClass_BC" Content="战巡" Margin="16,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="2" Grid.Column="0" x:Name="Level120AffectBB" x:Uid="ShipClass_BB" Content="战列" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="2" Grid.Column="1" x:Name="Level120AffectBBV" x:Uid="ShipClass_BBV" Content="航战" Margin="16,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="2" Grid.Column="2" x:Name="Level120AffectCV" x:Uid="ShipClass_CV" Content="航母" Margin="16,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="3" Grid.Column="0" x:Name="Level120AffectCVL" x:Uid="ShipClass_CVL" Content="轻航" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="3" Grid.Column="1" x:Name="Level120AffectAR" x:Uid="ShipClass_AR" Content="维修" Margin="16,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="3" Grid.Column="2" x:Name="Level120AffectSS" x:Uid="ShipClass_SS" Content="潜艇" Margin="16,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="4" Grid.Column="0" x:Name="Level120AffectSSV" x:Uid="ShipClass_SSV" Content="潜母" Margin="0,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="4" Grid.Column="1" x:Name="Level120AffectAE" x:Uid="ShipClass_AE" Content="运输" Margin="16,4,0,0" MaxWidth="80"/>
+                            <CheckBox Grid.Row="4" Grid.Column="2" x:Name="Level120AffectSail" x:Uid="ShipClass_Sail" Content="风帆" Margin="16,4,0,0" MaxWidth="80"/>
                         </Grid>
                     </StackPanel>
                 </StackPanel>

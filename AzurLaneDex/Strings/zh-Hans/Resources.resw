@@ -318,6 +318,9 @@
   <data name="AddShipDialog.Title" xml:space="preserve">
     <value>新增舰船</value>
   </data>
+  <data name="AddShipDialog_Title" xml:space="preserve">
+    <value>新增舰船</value>
+  </data>
   <data name="AddShipButton.Label" xml:space="preserve">
     <value>新增舰船</value>
   </data>
@@ -360,10 +363,16 @@
   <data name="ShipClass_DD.Content" xml:space="preserve">
     <value>驱逐</value>
   </data>
+  <data name="ShipClass_DD1" xml:space="preserve">
+    <value>驱逐</value>
+  </data>
   <data name="Class_CL.Content" xml:space="preserve">
     <value>轻巡</value>
   </data>
   <data name="ShipClass_CL.Content" xml:space="preserve">
+    <value>轻巡</value>
+  </data>
+  <data name="ShipClass_CL1" xml:space="preserve">
     <value>轻巡</value>
   </data>
   <data name="Class_CA.Content" xml:space="preserve">
@@ -378,7 +387,7 @@
   <data name="Class_BB.Content" xml:space="preserve">
     <value>战列</value>
   </data>
-  <data name="ShipClass_BB.Content" xml:space="preserve">
+  <data name="ShipClass_BB1" xml:space="preserve">
     <value>战列</value>
   </data>
   <data name="Class_BBV.Content" xml:space="preserve">
@@ -387,10 +396,16 @@
   <data name="ShipClass_BBV.Content" xml:space="preserve">
     <value>航战</value>
   </data>
+  <data name="ShipClass_BBV1" xml:space="preserve">
+    <value>航战</value>
+  </data>
   <data name="Class_CV.Content" xml:space="preserve">
     <value>航母</value>
   </data>
   <data name="ShipClass_CV.Content" xml:space="preserve">
+    <value>航母</value>
+  </data>
+  <data name="ShipClass_CV1" xml:space="preserve">
     <value>航母</value>
   </data>
   <data name="Class_CVL.Content" xml:space="preserve">
@@ -399,10 +414,13 @@
   <data name="ShipClass_CVL.Content" xml:space="preserve">
     <value>轻航</value>
   </data>
+  <data name="ShipClass_CVL1" xml:space="preserve">
+    <value>轻航</value>
+  </data>
   <data name="Class_AR.Content" xml:space="preserve">
     <value>维修</value>
   </data>
-  <data name="ShipClass_AR.Content" xml:space="preserve">
+  <data name="ShipClass_AR1" xml:space="preserve">
     <value>维修</value>
   </data>
   <data name="Class_SS.Content" xml:space="preserve">
@@ -411,10 +429,16 @@
   <data name="ShipClass_SS.Content" xml:space="preserve">
     <value>潜艇</value>
   </data>
+  <data name="ShipClass_SS1" xml:space="preserve">
+    <value>潜艇</value>
+  </data>
   <data name="Class_SSV.Content" xml:space="preserve">
     <value>潜母</value>
   </data>
   <data name="ShipClass_SSV.Content" xml:space="preserve">
+    <value>潜母</value>
+  </data>
+  <data name="ShipClass_SSV1" xml:space="preserve">
     <value>潜母</value>
   </data>
   <data name="Class_AE.Content" xml:space="preserve">
@@ -429,22 +453,40 @@
   <data name="ShipClass_Sail.Content" xml:space="preserve">
     <value>风帆</value>
   </data>
+  <data name="ShipClass_Sail1" xml:space="preserve">
+    <value>风帆</value>
+  </data>
   <data name="BasicInfo_Rarity.Text" xml:space="preserve">
     <value>稀有度:</value>
   </data>
   <data name="Rarity_N.Content" xml:space="preserve">
     <value>普通</value>
   </data>
+  <data name="Rarity_Normal" xml:space="preserve">
+    <value>普通</value>
+  </data>
   <data name="Rarity_R.Content" xml:space="preserve">
+    <value>稀有</value>
+  </data>
+  <data name="Rarity_Rare" xml:space="preserve">
     <value>稀有</value>
   </data>
   <data name="Rarity_SR.Content" xml:space="preserve">
     <value>精锐</value>
   </data>
+  <data name="Rarity_Elite" xml:space="preserve">
+    <value>精锐</value>
+  </data>
   <data name="Rarity_SSR.Content" xml:space="preserve">
     <value>超稀有</value>
   </data>
+  <data name="Rarity_SuperRare" xml:space="preserve">
+    <value>超稀有</value>
+  </data>
   <data name="Rarity_UR.Content" xml:space="preserve">
+    <value>海上传奇</value>
+  </data>
+  <data name="Rarity_Legendary" xml:space="preserve">
     <value>海上传奇</value>
   </data>
   <data name="Category_Normal.Content" xml:space="preserve">
@@ -786,7 +828,13 @@
   <data name="Rarity_Decisive.Content" xml:space="preserve">
     <value>最高方案</value>
   </data>
+  <data name="Rarity_Decisive1" xml:space="preserve">
+    <value>最高方案</value>
+  </data>
   <data name="Rarity_Ultimate.Content" xml:space="preserve">
+    <value>决战方案</value>
+  </data>
+  <data name="Rarity_Ultimate1" xml:space="preserve">
     <value>决战方案</value>
   </data>
   <data name="FilterTitle_Faction.Header" xml:space="preserve">
@@ -795,22 +843,28 @@
   <data name="FilterTitle_Class.Header" xml:space="preserve">
     <value>舰种</value>
   </data>
-  <data name="ShipClass_BC.Content" xml:space="preserve">
+  <data name="ShipClass_BC1" xml:space="preserve">
     <value>战巡</value>
   </data>
-  <data name="ShipClass_BM.Content" xml:space="preserve">
+  <data name="ShipClass_BM1" xml:space="preserve">
     <value>重炮</value>
   </data>
   <data name="ShipClass_CB.Content" xml:space="preserve">
     <value>超巡</value>
   </data>
-  <data name="ShipClass_CA.Content" xml:space="preserve">
+  <data name="ShipClass_CB1" xml:space="preserve">
+    <value>超巡</value>
+  </data>
+  <data name="ShipClass_CA1" xml:space="preserve">
     <value>重巡</value>
   </data>
   <data name="BatchOperationButton.Label" xml:space="preserve">
     <value>批量操作</value>
   </data>
   <data name="FilterButton.Label" xml:space="preserve">
+    <value>筛选</value>
+  </data>
+  <data name="FilterDialog_Title" xml:space="preserve">
     <value>筛选</value>
   </data>
   <data name="ResetAndRefreshButton.Label" xml:space="preserve">
@@ -842,6 +896,9 @@
   </data>
   <data name="SettingsPageTitle1.Content" xml:space="preserve">
     <value>设置</value>
+  </data>
+  <data name="SettingsPageTitle1.ToolTipService.ToolTip" xml:space="preserve">
+    <value>返回</value>
   </data>
   <data name="Setting_Window_Title.Text" xml:space="preserve">
     <value>窗口设置</value>
@@ -1033,7 +1090,7 @@
     <value>关</value>
   </data>
   <data name="ManageAccountsPage_Title.Text" xml:space="preserve">
-    <value>你的账户</value>
+    <value>你的帐户</value>
   </data>
   <data name="ManageAccountsPage_AddCard_Title.Text" xml:space="preserve">
     <value>添加其他用户</value>
@@ -1134,7 +1191,13 @@
   <data name="LogPage_EnableLog_Toggle.OnContent" xml:space="preserve">
     <value>开</value>
   </data>
+  <data name="Toggle_On" xml:space="preserve">
+    <value>开</value>
+  </data>
   <data name="LogPage_EnableLog_Toggle.OffContent" xml:space="preserve">
+    <value>关</value>
+  </data>
+  <data name="Toggle_Off" xml:space="preserve">
     <value>关</value>
   </data>
   <data name="LogPage_RetentionDays_Title.Text" xml:space="preserve">
@@ -1233,6 +1296,9 @@
   <data name="MainPage_SortToggle.Content" xml:space="preserve">
     <value>升序</value>
   </data>
+  <data name="SortAscending" xml:space="preserve">
+    <value>升序</value>
+  </data>
   <data name="MainPage_Header_ID.Text" xml:space="preserve">
     <value>编号</value>
   </data>
@@ -1283,5 +1349,476 @@
   </data>
   <data name="Status_SpecialGearObtained.Content" xml:space="preserve">
     <value>已获得专属兵装</value>
+  </data>
+  <data name="StatsPage_Title.Text" xml:space="preserve">
+    <value>统计概览</value>
+  </data>
+  <data name="UpdatePage_AppVersion_CheckButton.Content" xml:space="preserve">
+    <value>检查更新</value>
+  </data>
+  <data name="UpdatePage_AppVersion_Title.Text" xml:space="preserve">
+    <value>应用版本</value>
+  </data>
+  <data name="UpdatePage_Title.Text" xml:space="preserve">
+    <value>更新</value>
+  </data>
+  <data name="UpdatePage_AppVersion_DownloadButton.Content" xml:space="preserve">
+    <value>下载并安装</value>
+  </data>
+  <data name="UpdatePage_AppSource_Description.Text" xml:space="preserve">
+    <value>选择检查应用更新的方式</value>
+  </data>
+  <data name="UpdatePage_AppSource_Title.Text" xml:space="preserve">
+    <value>应用更新源</value>
+  </data>
+  <data name="UpdatePage_DataUpdate_Title.Text" xml:space="preserve">
+    <value>舰船数据</value>
+  </data>
+  <data name="UpdatePage_DataUpdate_Description.Text" xml:space="preserve">
+    <value>获取最新舰船资料</value>
+  </data>
+  <data name="UpdatePage_DataUpdate_CheckButton.Content" xml:space="preserve">
+    <value>检查更新</value>
+  </data>
+  <data name="UpdatePage_DataUpdate_DownloadButton.Content" xml:space="preserve">
+    <value>下载并安装</value>
+  </data>
+  <data name="UpdatePage_DataSource_Title.Text" xml:space="preserve">
+    <value>数据更新源</value>
+  </data>
+  <data name="UpdatePage_DataSource_Description.Text" xml:space="preserve">
+    <value>选择数据文件的来源及代理（可选）</value>
+  </data>
+  <data name="UpdatePage_DataSource_GitHubRaw.Content" xml:space="preserve">
+    <value>GiHub (raw)</value>
+  </data>
+  <data name="UpdatePage_DataSource_GitHubCDN.Content" xml:space="preserve">
+    <value>GitHub (CDN)</value>
+  </data>
+  <data name="UpdatePage_DataSource_GiteeRaw.Content" xml:space="preserve">
+    <value>Gitee (raw)</value>
+  </data>
+  <data name="UpdatePage_DataSource_Custom.Content" xml:space="preserve">
+    <value>自定义URL</value>
+  </data>
+  <data name="UpdatePage_DataSource_Custom_Placeholder.PlaceholderText" xml:space="preserve">
+    <value>自定义URL</value>
+  </data>
+  <data name="UpdatePage_Proxy_Placeholder.PlaceholderText" xml:space="preserve">
+    <value>代理地址（例如 http://127.0.0.1:7890）</value>
+  </data>
+  <data name="UpdatePage_AppSource_GitHubPages.Content" xml:space="preserve">
+    <value>GitHub Pages</value>
+  </data>
+  <data name="UpdatePage_AppSource_Gitee.Content" xml:space="preserve">
+    <value>Gitee Releases</value>
+  </data>
+  <data name="UserStateFileNotFound_Message" xml:space="preserve">
+    <value>没有找到用户状态文件</value>
+  </data>
+  <data name="ExportSuccess_Message" xml:space="preserve">
+    <value>数据已成功保存至：{0}</value>
+  </data>
+  <data name="ExportFailed_Message" xml:space="preserve">
+    <value>导出失败：{0}</value>
+  </data>
+  <data name="ImportSuccess_Message" xml:space="preserve">
+    <value>账户状态已恢复，请返回主界面查看。</value>
+  </data>
+  <data name="ImportFailed_Message" xml:space="preserve">
+    <value>导入失败：{0}</value>
+  </data>
+  <data name="BackupSuccess_Message" xml:space="preserve">
+    <value>备份已保存到 {0}</value>
+  </data>
+  <data name="BackupFailed_Message" xml:space="preserve">
+    <value>备份失败：{0}</value>
+  </data>
+  <data name="Admin_Role" xml:space="preserve">
+    <value>管理员</value>
+  </data>
+  <data name="NormalUser_Role" xml:space="preserve">
+    <value>普通用户</value>
+  </data>
+  <data name="SystemAccount_Role" xml:space="preserve">
+    <value>系统帐户</value>
+  </data>
+  <data name="NoOtherAccount_Title" xml:space="preserve">
+    <value>没有其他可用账户</value>
+  </data>
+  <data name="NoOtherAccount_Message" xml:space="preserve">
+    <value>当前只有一个账户，无法切换。</value>
+  </data>
+  <data name="SwitchAccountSuccess_Message" xml:space="preserve">
+    <value>账户已切换，将返回主界面。</value>
+  </data>
+  <data name="Import_Message_Title" xml:space="preserve">
+    <value>确认导入</value>
+  </data>
+  <data name="Import_Message_Content" xml:space="preserve">
+    <value>这将覆盖当前账户的所有收集进度，是否继续？</value>
+  </data>
+  <data name="Import_Message_Confirm" xml:space="preserve">
+    <value>导入</value>
+  </data>
+  <data name="EditShipDialog_Title" xml:space="preserve">
+    <value>编辑舰船</value>
+  </data>
+  <data name="ShipNameEmpty_Message" xml:space="preserve">
+    <value>舰船名称不能为空</value>
+  </data>
+  <data name="PleaseSelectFaction_Message" xml:space="preserve">
+    <value>请选择阵营</value>
+  </data>
+  <data name="PleaseSelectShipClass_Message" xml:space="preserve">
+    <value>请选择舰种</value>
+  </data>
+  <data name="PleaseSelectRarity_Message" xml:space="preserve">
+    <value>请选择稀有度</value>
+  </data>
+  <data name="IncompleteInput_Title" xml:space="preserve">
+    <value>输入不完整</value>
+  </data>
+  <data name="ShipClass_BB.Content" xml:space="preserve">
+    <value>战列</value>
+  </data>
+  <data name="ShipClass_AR.Content" xml:space="preserve">
+    <value>维修</value>
+  </data>
+  <data name="ShipClass_AE1" xml:space="preserve">
+    <value>运输</value>
+  </data>
+  <data name="ShipClass_CA.Content" xml:space="preserve">
+    <value>重巡</value>
+  </data>
+  <data name="ShipClass_BC.Content" xml:space="preserve">
+    <value>战巡</value>
+  </data>
+  <data name="ShipClass_BM.Content" xml:space="preserve">
+    <value>重炮</value>
+  </data>
+  <data name="ShipClass_All" xml:space="preserve">
+    <value>全舰种</value>
+  </data>
+  <data name="Picture_Save_Message" xml:space="preserve">
+    <value>图片已保存至 {0}</value>
+  </data>
+  <data name="CampTechProgress_Format" xml:space="preserve">
+    <value>科技点进度: {0}/{1} ({2}%)</value>
+  </data>
+  <data name="LogEnabled_Message" xml:space="preserve">
+    <value>日志记录已启用</value>
+  </data>
+  <data name="LogDisabled_Message" xml:space="preserve">
+    <value>日志记录已禁用</value>
+  </data>
+  <data name="LogRetentionSet_Message" xml:space="preserve">
+    <value>日志保留天数已设为 {0} 天</value>
+  </data>
+  <data name="ExportingLogs_Message" xml:space="preserve">
+    <value>正在导出日志...</value>
+  </data>
+  <data name="LogsExported_Message" xml:space="preserve">
+    <value>日志已导出至 {0}</value>
+  </data>
+  <data name="BatchOp_MarkOwned" xml:space="preserve">
+    <value>标记为已获得</value>
+  </data>
+  <data name="BatchOp_MarkNotOwnedAndClear" xml:space="preserve">
+    <value>标记为未获得并清除所有状态</value>
+  </data>
+  <data name="BatchOp_MarkMaxBreak" xml:space="preserve">
+    <value>标记为已满破</value>
+  </data>
+  <data name="BatchOp_MarkNotMaxBreak" xml:space="preserve">
+    <value>标记为未满破</value>
+  </data>
+  <data name="BatchOp_MarkLevel120" xml:space="preserve">
+    <value>标记为已120级</value>
+  </data>
+  <data name="BatchOp_MarkNotLevel120" xml:space="preserve">
+    <value>标记为未120级</value>
+  </data>
+  <data name="BatchOp_MarkOath" xml:space="preserve">
+    <value>标记为已誓约</value>
+  </data>
+  <data name="BatchOp_MarkNotOath" xml:space="preserve">
+    <value>标记为未誓约</value>
+  </data>
+  <data name="BatchOp_MarkRemodeled" xml:space="preserve">
+    <value>标记为已改造</value>
+  </data>
+  <data name="BatchOp_MarkNotRemodeled" xml:space="preserve">
+    <value>标记为未改造</value>
+  </data>
+  <data name="BatchOp_MarkSpecialGear" xml:space="preserve">
+    <value>标记为已获得专属兵装</value>
+  </data>
+  <data name="BatchOp_MarkNotSpecialGear" xml:space="preserve">
+    <value>标记为未获得专属兵装</value>
+  </data>
+  <data name="BatchOperation_Title" xml:space="preserve">
+    <value>批量操作</value>
+  </data>
+  <data name="NoShipSelected_Message" xml:space="preserve">
+    <value>请先勾选要操作的舰船</value>
+  </data>
+  <data name="ConfirmBatchOp_Title" xml:space="preserve">
+    <value>确认批量操作</value>
+  </data>
+  <data name="ConfirmBatchOp_Message" xml:space="preserve">
+    <value>确定要对 {0} 艘舰船执行“{1}”操作吗？</value>
+  </data>
+  <data name="ConfirmDelete_Title" xml:space="preserve">
+    <value>确认删除</value>
+  </data>
+  <data name="ConfirmDeleteShip_Message" xml:space="preserve">
+    <value>确定要删除舰船 {0} 吗？此操作不可恢复。</value>
+  </data>
+  <data name="SortDescending" xml:space="preserve">
+    <value>降序</value>
+  </data>
+  <data name="ConfirmDeleteAccount_Message" xml:space="preserve">
+    <value>确定要删除账户“{0}”吗？此操作不可恢复。</value>
+  </data>
+  <data name="CannotDeleteCurrentAccount_Message" xml:space="preserve">
+    <value>无法删除当前账户，因为没有其他可用账户。</value>
+  </data>
+  <data name="CannotChangeOwnAdminStatus_Message" xml:space="preserve">
+    <value>不能修改当前登录账户的权限。</value>
+  </data>
+  <data name="InsufficientPrivilege_Message" xml:space="preserve">
+    <value>只有系统账户或管理员才能修改其他账户的权限。</value>
+  </data>
+  <data name="AdminPasswordPlaceholder" xml:space="preserve">
+    <value>请输入应用系统管理员密码</value>
+  </data>
+  <data name="RequestAdmin_Title" xml:space="preserve">
+    <value>提升权限</value>
+  </data>
+  <data name="AdminGranted_Message" xml:space="preserve">
+    <value>您已获得管理员权限，请重新打开相关页面以启用新建/编辑功能。</value>
+  </data>
+  <data name="WrongAdminPassword_Message" xml:space="preserve">
+    <value>密码错误，无法提升权限。</value>
+  </data>
+  <data name="WrongAdminRole_Message" xml:space="preserve">
+    <value>只有管理员才能修改其他用户的密码。</value>
+  </data>
+  <data name="OldPasswordPlaceholder" xml:space="preserve">
+    <value>旧密码</value>
+  </data>
+  <data name="NewPasswordOptionalPlaceholder" xml:space="preserve">
+    <value>新密码（留空则不修改）</value>
+  </data>
+  <data name="NewPasswordPlaceholder" xml:space="preserve">
+    <value>新密码</value>
+  </data>
+  <data name="ChangePassword_Title" xml:space="preserve">
+    <value>修改密码 - {0}</value>
+  </data>
+  <data name="OldPasswordWrong_Message" xml:space="preserve">
+    <value>旧密码错误，修改失败</value>
+  </data>
+  <data name="PasswordChangeFailed_Message" xml:space="preserve">
+    <value>修改失败</value>
+  </data>
+  <data name="PasswordChangeSuccess_Message" xml:space="preserve">
+    <value>密码修改成功</value>
+  </data>
+  <data name="InvalidFileFormat_Message" xml:space="preserve">
+    <value>迁移失败，文件格式不正确</value>
+  </data>
+  <data name="MigrationSuccess_Message" xml:space="preserve">
+    <value>文件已成功替换并自动迁移</value>
+  </data>
+  <data name="ReadFailed_Title" xml:space="preserve">
+    <value>读取失败</value>
+  </data>
+  <data name="MigrationAndOverwrite_Message" xml:space="preserve">
+    <value>数据已成功迁移并覆盖，请返回主界面查看。</value>
+  </data>
+  <data name="ResetWindow_Title" xml:space="preserve">
+    <value>重置窗口大小</value>
+  </data>
+  <data name="WindowReset_Message" xml:space="preserve">
+    <value>窗口大小已重置</value>
+  </data>
+  <data name="RestartApp_Title" xml:space="preserve">
+    <value>重启应用</value>
+  </data>
+  <data name="RestartApp_Message" xml:space="preserve">
+    <value>语言已更改，需要重启应用才能完全生效。是否立即重启？</value>
+  </data>
+  <data name="RestartApp_Message_PrimaryButtonText" xml:space="preserve">
+    <value>立即重启</value>
+  </data>
+  <data name="RestartApp_Message_CloseButtonText" xml:space="preserve">
+    <value>以后</value>
+  </data>
+  <data name="NotSet" xml:space="preserve">
+    <value>未设定</value>
+  </data>
+  <data name="NoAcquireInfo" xml:space="preserve">
+    <value>暂无获取方式</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>无</value>
+  </data>
+  <data name="NoRestriction" xml:space="preserve">
+    <value>无限制</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>是</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>否</value>
+  </data>
+  <data name="Permanent" xml:space="preserve">
+    <value>常驻</value>
+  </data>
+  <data name="NotPermanent" xml:space="preserve">
+    <value>未常驻</value>
+  </data>
+  <data name="InsufficientPrivilege_Title" xml:space="preserve">
+    <value>权限不足</value>
+  </data>
+  <data name="EditShipNeedDeveloper_Message" xml:space="preserve">
+    <value>只有开发者账户才能编辑舰船</value>
+  </data>
+  <data name="Stat_TotalShips" xml:space="preserve">
+    <value>总计舰船</value>
+  </data>
+  <data name="Stat_Owned" xml:space="preserve">
+    <value>已获得</value>
+  </data>
+  <data name="Stat_NotOwned" xml:space="preserve">
+    <value>未获得</value>
+  </data>
+  <data name="Stat_MaxBreak" xml:space="preserve">
+    <value>已满破</value>
+  </data>
+  <data name="Stat_NotMaxBreak" xml:space="preserve">
+    <value>未满破</value>
+  </data>
+  <data name="Stat_Oath" xml:space="preserve">
+    <value>已誓约</value>
+  </data>
+  <data name="Stat_Remodeled" xml:space="preserve">
+    <value>已改造</value>
+  </data>
+  <data name="Stat_CanRemodelNot" xml:space="preserve">
+    <value>可改造但未改造</value>
+  </data>
+  <data name="Stat_Level120" xml:space="preserve">
+    <value>120级</value>
+  </data>
+  <data name="Stat_SpecialGearObtained" xml:space="preserve">
+    <value>已获得专属兵装</value>
+  </data>
+  <data name="Stat_SpecialGearNotObtained" xml:space="preserve">
+    <value>未获得专属兵装</value>
+  </data>
+  <data name="CollectionProgress_Format" xml:space="preserve">
+    <value>收集进度: {0}% ({1}/{2})</value>
+  </data>
+  <data name="CheckingAppUpdate" xml:space="preserve">
+    <value>正在检查应用更新......</value>
+  </data>
+  <data name="VersionJsonFormatError" xml:space="preserve">
+    <value>version.json 格式错误</value>
+  </data>
+  <data name="NewVersionAvailable" xml:space="preserve">
+    <value>发现新版本 {0}，点击「下载并安装」更新。</value>
+  </data>
+  <data name="AlreadyLatestVersion" xml:space="preserve">
+    <value>当前已是最新版本。</value>
+  </data>
+  <data name="CheckUpdateFailed" xml:space="preserve">
+    <value>检查失败: {0}</value>
+  </data>
+  <data name="InvalidDownloadUrl" xml:space="preserve">
+    <value>下载链接无效</value>
+  </data>
+  <data name="Downloading" xml:space="preserve">
+    <value>正在下载......</value>
+  </data>
+  <data name="DownloadCompleteStartingInstall" xml:space="preserve">
+    <value>下载完成，正在启动安装......</value>
+  </data>
+  <data name="DownloadFailed1" xml:space="preserve">
+    <value>下载失败</value>
+  </data>
+  <data name="DownloadFailed" xml:space="preserve">
+    <value>下载失败: {0}</value>
+  </data>
+  <data name="CheckingDataVersion" xml:space="preserve">
+    <value>正在检查数据版本......</value>
+  </data>
+  <data name="PleaseEnterValidCustomUrl" xml:space="preserve">
+    <value>请填写有效的自定义 URL</value>
+  </data>
+  <data name="CannotGetRemoteDataVersion" xml:space="preserve">
+    <value>无法获取远程数据版本</value>
+  </data>
+  <data name="NewDataVersionAvailable" xml:space="preserve">
+    <value>发现新数据版本 {0}，点击「下载并安装」更新。</value>
+  </data>
+  <data name="DataAlreadyLatest" xml:space="preserve">
+    <value>数据已是最新版本。</value>
+  </data>
+  <data name="DataUpdateFailed1" xml:space="preserve">
+    <value>检查失败: {0}</value>
+  </data>
+  <data name="DataUpdateFailed" xml:space="preserve">
+    <value>数据更新失败，请检查网络或 URL。</value>
+  </data>
+  <data name="DataUpdatedToVersion" xml:space="preserve">
+    <value>数据已更新至版本 {0}。</value>
+  </data>
+  <data name="DownloadingData" xml:space="preserve">
+    <value>正在下载数据......</value>
+  </data>
+  <data name="PleaseCheckUpdateFirst" xml:space="preserve">
+    <value>请先检查更新</value>
+  </data>
+  <data name="SecurityQuestionBox.PlaceholderText" xml:space="preserve">
+    <value>例如：您的生日是？</value>
+  </data>
+  <data name="SecurityAnswerBox.PlaceholderText" xml:space="preserve">
+    <value>答案（用于找回密码）</value>
+  </data>
+  <data name="SecurityQuestionBox.Header" xml:space="preserve">
+    <value>密保答案</value>
+  </data>
+  <data name="SecurityAnswerBox.Header" xml:space="preserve">
+    <value>密保问题</value>
+  </data>
+  <data name="PasswordBox.PlaceholderText" xml:space="preserve">
+    <value>密码（可选）</value>
+  </data>
+  <data name="FirstRun_NameBox.PlaceholderText" xml:space="preserve">
+    <value>账户名</value>
+  </data>
+  <data name="IsDeveloperCheckBox.Content" xml:space="preserve">
+    <value>设为开发者账户</value>
+  </data>
+  <data name="SetDefaultCheckBox.Content" xml:space="preserve">
+    <value>设为默认账户</value>
+  </data>
+  <data name="SelectAvatar.Content" xml:space="preserve">
+    <value>选择头像</value>
+  </data>
+  <data name="AvatarPathText.Text" xml:space="preserve">
+    <value>未选择头像</value>
+  </data>
+  <data name="FirstRunDialog.Title" xml:space="preserve">
+    <value>初始化账户</value>
+  </data>
+  <data name="FirstRunDialog.PrimaryButtonText" xml:space="preserve">
+    <value>创建</value>
+  </data>
+  <data name="FirstRunDialog.CloseButtonText" xml:space="preserve">
+    <value>退出</value>
   </data>
 </root>

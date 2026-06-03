@@ -16,6 +16,7 @@ namespace AzurLaneDex.Views
         public AccountLoginDialog(AccountManager accountManager, bool requirePassword = true)
         {
             this.InitializeComponent();
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             this.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
             _accountManager = accountManager;
             _requirePassword = requirePassword;

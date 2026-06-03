@@ -27,6 +27,7 @@ namespace AzurLaneDex.Views
 
         private void AccountPage_Loaded(object sender, RoutedEventArgs e)
         {
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             var app = (App)Application.Current;
             var mainWindow = (Application.Current as App)?.GetMainWindow() as MainWindow;
             if (mainWindow != null)
@@ -46,8 +47,8 @@ namespace AzurLaneDex.Views
             if (currentAccount != null)
             {
                 AccountNameText.Text = currentAccount.Name;
-                string role = currentAccount.IsDeveloper ? "管理员" : "普通用户";
-                if (currentAccount.IsSystem) role = "系统账户";
+                string role = currentAccount.IsDeveloper ? loader.GetString("Admin_Role") : loader.GetString("NormalUser_Role");
+                if (currentAccount.IsSystem) role = loader.GetString("SystemAccount_Role");
                 AccountRoleText.Text = role;
                 LoadAvatar(currentAccount.AvatarPath);
 
@@ -127,26 +128,28 @@ namespace AzurLaneDex.Views
         }
         private async void SwitchAccountButton_Click(object sender, RoutedEventArgs e)
         {
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             var app = (App)Application.Current;
             var regularAccounts = app.AccountManager.GetAccountList();
             if (regularAccounts.Count <= 1)
             {
-                await ShowInfo("没有其他可用账户", "当前只有一个账户，无法切换。");
+                await ShowInfo(loader.GetString("NoOtherAccount_Title"), loader.GetString("NoOtherAccount_Message"));
                 return;
             }
             if (await app.SwitchAccountAsync())
             {
-                await ShowInfo("切换成功", "账户已切换，将返回主界面。");
+                await ShowInfo(loader.GetString("Dialog_Success_Title"), loader.GetString("SwitchAccountSuccess_Message"));
             }
         }
         
         private async Task ShowInfo(string title, string content)
         {
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             var dialog = new ContentDialog
             {
                 Title = title,
                 Content = content,
-                CloseButtonText = "确定",
+                CloseButtonText = loader.GetString("Common_Confirm"),
                 XamlRoot = this.XamlRoot,
                 Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
             };

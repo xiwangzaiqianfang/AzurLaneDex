@@ -41,6 +41,7 @@ public sealed partial class MainPage : Page
     public MainPage()
     {
         this.InitializeComponent();
+        var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
         this.Loaded += MainPage_Loaded;
         this.SizeChanged += MainPage_SizeChanged;
 
@@ -533,28 +534,31 @@ public sealed partial class MainPage : Page
 
     private void SortOrderToggle_Checked(object sender, RoutedEventArgs e)
     {
+        var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
         _isAscending = false;
-        SortOrderToggle.Content = "降序";
+        SortOrderToggle.Content = loader.GetString("SortDescending");
         RefreshShipList();
     }
 
     private void SortOrderToggle_Unchecked(object sender, RoutedEventArgs e)
     {
+        var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
         _isAscending = true;
-        SortOrderToggle.Content = "升序";
+        SortOrderToggle.Content = loader.GetString("SortAscending");
         RefreshShipList();
     }
 
     private async void BatchOperation_Click(object sender, RoutedEventArgs e)
     {
+        var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
         var selectedShips = _currentShips.Where(s => s.IsSelected).ToList();
         if (selectedShips.Count == 0)
         {
             var dialog = new ContentDialog
             {
-                Title = "批量操作",
-                Content = "请先勾选要操作的舰船",
-                CloseButtonText = "确定",
+                Title = loader.GetString("BatchOperation_Title"),
+                Content = loader.GetString("NoShipSelected_Message"),
+                CloseButtonText = loader.GetString("Common_Confirm"),
                 XamlRoot = this.Content.XamlRoot,
                 Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
             };
@@ -565,18 +569,18 @@ public sealed partial class MainPage : Page
         var menu = new MenuFlyout();
         var operations = new (string text, Action<ShipViewModel> action)[]
         {
-            ("标记为已获得", s => s.Owned = true),
-            ("标记为未获得并清除所有状态", s => { s.Owned = false; s.Breakthrough = 0; s.Oath = false; s.Level120 = false; s.Remodeled = false; s.SpecialGearObtained = false; }),
-            ("标记为已满破", s => s.Breakthrough = 3),
-            ("标记为未满破", s => s.Breakthrough = 0),
-            ("标记为已120级", s => s.Level120 = true),
-            ("标记为未120级", s => s.Level120 = false),
-            ("标记为已誓约", s => s.Oath = true),
-            ("标记为未誓约", s => s.Oath = false),
-            ("标记为已改造", s => s.Remodeled = true),
-            ("标记为未改造", s => s.Remodeled = false),
-            ("标记为已获得特殊兵装", s => s.SpecialGearObtained = true),
-            ("标记为未获得特殊兵装", s => s.SpecialGearObtained = false),
+            (loader.GetString("BatchOp_MarkOwned"), s => s.Owned = true),
+            (loader.GetString("BatchOp_MarkNotOwnedAndClear"), s => { s.Owned = false; s.Breakthrough = 0; s.Oath = false; s.Level120 = false; s.Remodeled = false; s.SpecialGearObtained = false; }),
+            (loader.GetString("BatchOp_MarkMaxBreak"), s => s.Breakthrough = 3),
+            (loader.GetString("BatchOp_MarkNotMaxBreak"), s => s.Breakthrough = 0),
+            (loader.GetString("BatchOp_MarkLevel120"), s => s.Level120 = true),
+            (loader.GetString("BatchOp_MarkNotLevel120"), s => s.Level120 = false),
+            (loader.GetString("BatchOp_MarkOath"), s => s.Oath = true),
+            (loader.GetString("BatchOp_MarkNotOath"), s => s.Oath = false),
+            (loader.GetString("BatchOp_MarkRemodeled"), s => s.Remodeled = true),
+            (loader.GetString("BatchOp_MarkNotRemodeled"), s => s.Remodeled = false),
+            (loader.GetString("BatchOp_MarkSpecialGear"), s => s.SpecialGearObtained = true),
+            (loader.GetString("BatchOp_MarkNotSpecialGear"), s => s.SpecialGearObtained = false),
         };
         foreach (var op in operations)
         {
@@ -585,10 +589,10 @@ public sealed partial class MainPage : Page
             {
                 var dialog = new ContentDialog
                 {
-                    Title = "确认批量操作",
-                    Content = $"确定要对 {selectedShips.Count} 艘舰船执行“{op.text}”操作吗？",
-                    PrimaryButtonText = "确定",
-                    CloseButtonText = "取消",
+                    Title = loader.GetString("ConfirmBatchOp_Title"),
+                    Content = string.Format(loader.GetString("ConfirmBatchOp_Message"), selectedShips.Count, op.text),
+                    PrimaryButtonText = loader.GetString("Common_Confirm"),
+                    CloseButtonText = loader.GetString("Common_Cancel"),
                     XamlRoot = this.XamlRoot,
                     Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
                 };
@@ -607,6 +611,7 @@ public sealed partial class MainPage : Page
 
     private async void FilterButton_Click(object sender, RoutedEventArgs e)
     {
+        var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
         var filterPanel = new FilterPanel();
         if (_currentCategoryFilter.HasValue)
             filterPanel.SetCategory(_currentCategoryFilter.Value);
@@ -615,10 +620,10 @@ public sealed partial class MainPage : Page
 
         var dialog = new ContentDialog
         {
-            Title = "筛选",
+            Title = loader.GetString("FilterDialog_Title"),
             Content = filterPanel,
-            PrimaryButtonText = "确定",
-            CloseButtonText = "取消",
+            PrimaryButtonText = loader.GetString("Common_Confirm"),
+            CloseButtonText = loader.GetString("Common_Cancel"),
             DefaultButton = ContentDialogButton.Primary,
             XamlRoot = this.Content.XamlRoot,
             Width = 600,
@@ -730,13 +735,14 @@ public sealed partial class MainPage : Page
     private void ContextMenu_NotSpecialGear_Click(object sender, RoutedEventArgs e) { if (_contextShip != null) { _contextShip.SpecialGearObtained = false; _shipManager.Save(); } }
     private async void ContextMenu_Delete_Click(object sender, RoutedEventArgs e)
     {
+        var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
         if (_contextShip == null) return;
         var dialog = new ContentDialog
         {
-            Title = "确认删除",
-            Content = $"确定要删除舰船 {_contextShip.Name} 吗？此操作不可恢复。",
-            PrimaryButtonText = "删除",
-            CloseButtonText = "取消",
+            Title = loader.GetString("ConfirmDelete_Title"),
+            Content = string.Format(loader.GetString("ConfirmDeleteShip_Message"), _contextShip.Name),
+            PrimaryButtonText = loader.GetString("Common_Delete"),
+            CloseButtonText = loader.GetString("Common_Cancel"),
             XamlRoot = this.XamlRoot,
             Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
         };

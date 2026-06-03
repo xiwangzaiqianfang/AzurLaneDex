@@ -7,20 +7,36 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage.Pickers;
+using Windows.ApplicationModel.Resources;
 using WinRT.Interop;
 
 namespace AzurLaneDex.Views
 {
     public sealed partial class CampTechPage : Page
     {
+        private readonly ResourceLoader _loader = ResourceLoader.GetForViewIndependentUse();
+
         private ShipManager _manager;
 
         // 所有阵营列表（按常见顺序）
-        private readonly List<string> _allFactions = new()
+        private List<string> AllFactions()
+        {
+            return new List<string>
             {
-                "白鹰", "皇家", "重樱", "铁血", "东煌", "撒丁帝国",
-                "北方联合", "自由鸢尾", "维希教廷", "郁金王国", "飓风", "META", "其他"
+                _loader.GetString("Faction_EagleUnion"),
+                _loader.GetString("Faction_RoyalNavy"),
+                _loader.GetString("Faction_SakuraEmpire"),
+                _loader.GetString("Faction_IronBlood"),
+                _loader.GetString("Faction_DragonEmpery"),
+                _loader.GetString("Faction_Sardegna"),
+                _loader.GetString("Faction_NorthernUnion"),
+                _loader.GetString("Faction_FreeFrench"),
+                _loader.GetString("Faction_Vichya"),
+                _loader.GetString("Faction_Tulip"),
+                _loader.GetString("Faction_Tempesta"),
+                _loader.GetString("Faction_Other")
             };
+        }
 
         public class CampCardData
         {
@@ -34,6 +50,7 @@ namespace AzurLaneDex.Views
         public CampTechPage()
         {
             this.InitializeComponent();
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             Loaded += CampTechPage_Loaded;
         }
 
@@ -54,12 +71,14 @@ namespace AzurLaneDex.Views
 
         private void LoadData()
         {
+            var loader = ResourceLoader.GetForViewIndependentUse();
             // 计算实际阵营科技点
             var campData = _manager.CalculateCampTechPoints();
 
             // 构建完整卡片列表（所有阵营）
             var cards = new List<CampCardData>();
-            foreach (var faction in _allFactions)
+            var allFactions = AllFactions();
+            foreach (var faction in allFactions)
             {
                 if (campData.TryGetValue(faction, out var data))
                 {
@@ -88,7 +107,8 @@ namespace AzurLaneDex.Views
             // 更新总进度条
             int totalTech = _manager.GetTotalTechPoints();
             int ownedTech = _manager.GetOwnedTechPoints();
-            TechProgressText.Text = $"科技点进度: {ownedTech}/{totalTech} ({(totalTech == 0 ? 0 : ownedTech * 100 / totalTech)}%)";
+            int percent = totalTech == 0 ? 0 : ownedTech * 100 / totalTech;
+            TechProgressText.Text = string.Format(loader.GetString("CampTechProgress_Format"), ownedTech, totalTech, percent);
             TechProgressBar.Minimum = 0;
             TechProgressBar.Maximum = totalTech;
             TechProgressBar.Value = ownedTech;

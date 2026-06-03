@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Windows.ApplicationModel.Resources;
 using static AzurLaneDex.Models.ShipStatic;
 
 namespace AzurLaneDex.Views
@@ -12,13 +13,32 @@ namespace AzurLaneDex.Views
     public sealed partial class AddShipDialog : ContentDialog
     {
         private int _editingShipId = 0;
+        private readonly ResourceLoader _loader = ResourceLoader.GetForViewIndependentUse();
+        private Dictionary<ShipCategory, List<string>> _factionMap;
+        private Dictionary<ShipCategory, List<string>> _rarityMap;
         public AddShipDialog(ShipStatic editShip = null)
         {
-             _factionMap = new Dictionary<ShipCategory, List<string>>
+            var loader = ResourceLoader.GetForViewIndependentUse();
+            _factionMap = new Dictionary<ShipCategory, List<string>>
+            {
+                [ShipCategory.Normal] = GetNormalFactions(),
+                [ShipCategory.Collab] = GetCollabFactions(),
+                [ShipCategory.Research] = GetNormalFactions(),
+                [ShipCategory.META] = GetMetaFactions()
+            };
+            _rarityMap = new Dictionary<ShipCategory, List<string>>
+            {
+                [ShipCategory.Normal] = GetNormalRarities(),
+                [ShipCategory.Collab] = GetNormalRarities(),
+                [ShipCategory.Research] = GetResearchRarities(),
+                [ShipCategory.META] = GetNormalRarities()
+            };
+            /*
+            _factionMap = new Dictionary<ShipCategory, List<string>>
             {
                 [ShipCategory.Normal] = _normalFactions,
                 [ShipCategory.Collab] = _collabFactions,
-                [ShipCategory.Research] = _normalFactions, // 科研使用常规阵营
+                [ShipCategory.Research] = _normalFactions,
                 [ShipCategory.META] = _metaFactions
             };
             _rarityMap = new Dictionary<ShipCategory, List<string>>
@@ -28,30 +48,42 @@ namespace AzurLaneDex.Views
                 [ShipCategory.Research] = _researchRarities,
                 [ShipCategory.META] = _normalRarities
             };
+            */
             this.InitializeComponent();
             if (editShip != null)
             {
                 _editingShipId = editShip.Id;
                 LoadShipData(editShip);
-                this.Title = "编辑舰船";
+                this.Title = loader.GetString("EditShipDialog_Title");
                 // 可选：禁止修改 ID
                 // IdBox.IsEnabled = false;
             }
             else
             {
-                this.Title = "新增舰船";
+                this.Title = loader.GetString("AddShipDialog_Title");
                 // 清空默认值（略）
             }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            ShipClassCombo.ItemsSource = GetShipClasses();
+            if (ShipClassCombo.Items.Count > 0 && ShipClassCombo.SelectedIndex == -1)
+            {
+                ShipClassCombo.SelectedIndex = 0;
+            }
             if (_editingShipId == 0)
             {
                 // 初始化日期选择器为今天
                 ReleaseDatePicker.Date = DateTimeOffset.Now;
                 SpecialGearDatePicker.Date = DateTimeOffset.Now;
                 RemodelDatePicker.Date = DateTimeOffset.Now;
+                ShipClassCombo.SelectedIndex = 0;
+                if (ObtainBonusAttrCombo.Items.Count > 0)
+                    ObtainBonusAttrCombo.SelectedIndex = 0;
+                if (Level120BonusAttrCombo.Items.Count > 0)
+                    Level120BonusAttrCombo.SelectedIndex = 0;
+
             }
 
             // 监听特殊兵装复选框，启用/禁用相关控件
@@ -69,32 +101,33 @@ namespace AzurLaneDex.Views
 
         private void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            // 验证必填项（例如名称不能为空）
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
+            // 验证必填项
             if (string.IsNullOrWhiteSpace(NameBox.Text))
             {
                 args.Cancel = true;
-                ShowError("舰船名称不能为空");
+                ShowError(loader.GetString("ShipNameEmpty_Message"));
                 return;
             }
 
             if (FactionCombo.SelectedItem == null)
             {
                 args.Cancel = true;
-                ShowError("请选择阵营");
+                ShowError(loader.GetString("PleaseSelectFaction_Message"));
                 return;
             }
 
             if (ShipClassCombo.SelectedItem == null)
             {
                 args.Cancel = true;
-                ShowError("请选择舰种");
+                ShowError(loader.GetString("PleaseSelectShipClass_Message"));
                 return;
             }
 
             if (RarityCombo.SelectedItem == null)
             {
                 args.Cancel = true;
-                ShowError("请选择稀有度");
+                ShowError(loader.GetString("PleaseSelectRarity_Message"));
                 return;
             }
         }
@@ -102,6 +135,99 @@ namespace AzurLaneDex.Views
         private bool _isLoadingShipData = false; // 防止加载数据时触发事件
 
         // 阵营列表定义
+        private List<string> GetNormalFactions()
+        {
+            return new List<string>
+            {
+                _loader.GetString("Faction_EagleUnion"),
+                _loader.GetString("Faction_RoyalNavy"),
+                _loader.GetString("Faction_SakuraEmpire"),
+                _loader.GetString("Faction_IronBlood"),
+                _loader.GetString("Faction_DragonEmpery"),
+                _loader.GetString("Faction_Sardegna"),
+                _loader.GetString("Faction_NorthernUnion"),
+                _loader.GetString("Faction_FreeFrench"),
+                _loader.GetString("Faction_Vichya"),
+                _loader.GetString("Faction_Tulip"),
+                _loader.GetString("Faction_Tempesta"),
+                _loader.GetString("Faction_Other")
+            };
+        }
+        private List<string> GetCollabFactions()
+        {
+            return new List<string>
+            {
+                _loader.GetString("Faction_Collab_Nep"),
+                _loader.GetString("Faction_Collab_Bilibili"),
+                _loader.GetString("Faction_Collab_Utawarerumono"),
+                _loader.GetString("Faction_Collab_KizunaAI"),
+                _loader.GetString("Faction_Collab_Hololive"),
+                _loader.GetString("Faction_Collab_DoAXVV"),
+                _loader.GetString("Faction_Collab_Idolmaster"),
+                _loader.GetString("Faction_Collab_SSSS"),
+                _loader.GetString("Faction_Collab_Ryza"),
+                _loader.GetString("Faction_Collab_Senran"),
+                _loader.GetString("Faction_Collab_Toloveru"),
+                _loader.GetString("Faction_Collab_BRS"),
+                _loader.GetString("Faction_Collab_Danmachi"),
+                _loader.GetString("Faction_Collab_Yumia"),
+                _loader.GetString("Faction_Collab_DAL")
+            };
+        }
+        private List<string> GetMetaFactions()
+        {
+            return new List<string>
+            {
+                _loader.GetString("Faction_Meta_Flame"),
+                _loader.GetString("Faction_Meta_Core"),
+                _loader.GetString("Faction_Meta_Reason"),
+                _loader.GetString("Faction_Meta_Light"),
+                _loader.GetString("Faction_Meta_Fire")
+            };
+        }
+        private List<string> GetNormalRarities()
+        {
+            return new List<string>
+            {
+                _loader.GetString("Rarity_Normal"),
+                _loader.GetString("Rarity_Rare"),
+                _loader.GetString("Rarity_Elite"),
+                _loader.GetString("Rarity_SuperRare"),
+                _loader.GetString("Rarity_Legendary")
+            };
+        }
+        private List<string> GetResearchRarities()
+        {
+            return new List<string>
+            {
+                _loader.GetString("Rarity_Decisive1"),
+                _loader.GetString("Rarity_Ultimate1")
+            };
+        }
+        private List<string> GetShipClasses()
+        {
+            return new List<string>
+            {
+                _loader.GetString("ShipClass_DD1"),
+                _loader.GetString("ShipClass_CL1"),
+                _loader.GetString("ShipClass_CA1"),
+                _loader.GetString("ShipClass_CB1"),
+                _loader.GetString("ShipClass_BC1"),
+                _loader.GetString("ShipClass_BB1"),
+                _loader.GetString("ShipClass_BBV1"),
+                _loader.GetString("ShipClass_CV1"),
+                _loader.GetString("ShipClass_CVL1"),
+                _loader.GetString("ShipClass_AR1"),
+                _loader.GetString("ShipClass_SS1"),
+                _loader.GetString("ShipClass_SSV1"),
+                _loader.GetString("ShipClass_AE1"),
+                _loader.GetString("ShipClass_Sail1"),
+                _loader.GetString("ShipClass_BM1")
+            };
+        }
+
+        // 阵营列表定义（旧）
+        /*
         private readonly List<string> _normalFactions = new()
         {
             "白鹰", "皇家", "重樱", "铁血", "东煌", "撒丁帝国",
@@ -119,6 +245,7 @@ namespace AzurLaneDex.Views
         {
             "破敌之炬", "湮烬之核", "构造之理", "逐光之焰", "摇曳之火"
         };
+        
 
         // 阵营映射：类别 -> 列表
         private Dictionary<ShipCategory, List<string>> _factionMap;
@@ -136,6 +263,7 @@ namespace AzurLaneDex.Views
 
         // 稀有度映射：类别 -> 列表
         private Dictionary<ShipCategory, List<string>> _rarityMap;
+        */
         private void ShipClassCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (_isLoadingShipData) return;
@@ -323,11 +451,12 @@ namespace AzurLaneDex.Views
 
         private async void ShowError(string message)
         {
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             var dialog = new ContentDialog
             {
-                Title = "输入不完整",
+                Title = loader.GetString("IncompleteInput_Title"),
                 Content = message,
-                CloseButtonText = "确定",
+                CloseButtonText = loader.GetString("Common_Confirm"),
                 XamlRoot = this.XamlRoot,
                 Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
             };

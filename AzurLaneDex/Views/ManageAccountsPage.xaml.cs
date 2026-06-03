@@ -17,6 +17,7 @@ namespace AzurLaneDex.Views
         public ManageAccountsPage()
         {
             this.InitializeComponent();
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             Loaded += ManageAccountsPage_Loaded;
         }
 
@@ -48,6 +49,7 @@ namespace AzurLaneDex.Views
 
         private async void AddAccountButton_Click(object sender, RoutedEventArgs e)
         {
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             var dialog = new FirstRunDialog();
             dialog.XamlRoot = this.XamlRoot;
             dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
@@ -61,23 +63,24 @@ namespace AzurLaneDex.Views
                 }
                 else
                 {
-                    await ShowError("账户名已存在");
+                    await ShowError(loader.GetString("AccountExists_Message"));
                 }
             }
         }
 
         private async void DeleteAccountButton_Click(object sender, RoutedEventArgs e)
         {
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             var button = sender as Button;
             var account = button?.Tag as Account;
             if (account == null) return;
 
             var dialog = new ContentDialog
             {
-                Title = "确认删除",
-                Content = $"确定要删除账户“{account.Name}”吗？此操作不可恢复。",
-                PrimaryButtonText = "删除",
-                CloseButtonText = "取消",
+                Title = loader.GetString("ConfirmDelete_Title"),
+                Content = string.Format(loader.GetString("ConfirmDeleteAccount_Message"), account.Name),
+                PrimaryButtonText = loader.GetString("Common_Delete"),
+                CloseButtonText = loader.GetString("Common_Cancel"),
                 XamlRoot = this.XamlRoot,
                 Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
             };
@@ -93,7 +96,7 @@ namespace AzurLaneDex.Views
                     _accountManager.SetCurrentAccount(other.Name);
                 else
                 {
-                    await ShowError("无法删除当前账户，因为没有其他可用账户。");
+                    await ShowError(loader.GetString("CannotDeleteCurrentAccount_Message"));
                     return;
                 }
 
@@ -107,11 +110,12 @@ namespace AzurLaneDex.Views
 
         private async Task ShowError(string message)
         {
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             var dialog = new ContentDialog
             {
-                Title = "错误",
+                Title = loader.GetString("Dialog_Error_Title"),
                 Content = message,
-                CloseButtonText = "确定",
+                CloseButtonText = loader.GetString("Common_Confirm"),
                 XamlRoot = this.XamlRoot,
                 Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
             };
@@ -119,6 +123,7 @@ namespace AzurLaneDex.Views
         }
         private async void AdminToggle_Toggled(object sender, RoutedEventArgs e)
         {
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             if (_isUpdating) return;
             var toggle = sender as ToggleSwitch;
             var account = toggle?.Tag as Account;
@@ -130,7 +135,7 @@ namespace AzurLaneDex.Views
                 // 不能修改当前登录账户的管理员状态
                 if (account.Name == _accountManager.CurrentAccount)
                 {
-                    await ShowError("不能修改当前登录账户的权限。");
+                    await ShowError(loader.GetString("CannotChangeOwnAdminStatus_Message"));
                     toggle.IsOn = !toggle.IsOn; // 恢复原值
                     return;
                 }
@@ -138,7 +143,7 @@ namespace AzurLaneDex.Views
                 var current = _accountManager.Accounts.FirstOrDefault(a => a.Name == _accountManager.CurrentAccount);
                 if (current == null || !current.IsDeveloper)
                 {
-                    await ShowError("只有系统账户或管理员才能修改其他账户的权限。");
+                    await ShowError(loader.GetString("InsufficientPrivilege_Message"));
                     toggle.IsOn = !toggle.IsOn;
                     return;
                 }
@@ -149,7 +154,7 @@ namespace AzurLaneDex.Views
                 // 手动刷新界面中该账户的显示文本（如角色文本），但不需要整体刷新列表
                 var container = toggle.FindAscendant<Expander>()?.FindDescendant<TextBlock>(tb => tb.Name == "RoleText");
                 if (container != null)
-                    container.Text = account.IsDeveloper ? "管理员" : "普通用户";
+                    container.Text = account.IsDeveloper ? loader.GetString("Admin_Role") : loader.GetString("NormalUser_Role");
             }
             finally
             {
@@ -159,17 +164,18 @@ namespace AzurLaneDex.Views
         }
         private async void RequestAdmin_Click(object sender, RoutedEventArgs e)
         {
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             // 弹出密码输入框
-            var passwordBox = new PasswordBox { PlaceholderText = "请输入系统管理员密码" };
+            var passwordBox = new PasswordBox { PlaceholderText = loader.GetString("AdminPasswordPlaceholder") };
             var panel = new StackPanel();
             panel.Children.Add(passwordBox);
 
             var dialog = new ContentDialog
             {
-                Title = "提升权限",
+                Title = loader.GetString("RequestAdmin_Title"),
                 Content = panel,
-                PrimaryButtonText = "确认",
-                CloseButtonText = "取消",
+                PrimaryButtonText = loader.GetString("Common_Confirm"),
+                CloseButtonText = loader.GetString("Common_Cancel"),
                 XamlRoot = this.XamlRoot,
                 Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
                 DefaultButton = ContentDialogButton.Primary
@@ -186,17 +192,18 @@ namespace AzurLaneDex.Views
                     {
                         current.IsDeveloper = true;
                         _accountManager.Save();
-                        await ShowError("您已获得管理员权限，请重新打开相关页面以启用新建/编辑功能。");
+                        await ShowError(loader.GetString("AdminGranted_Message"));
                     }
                 }
                 else
                 {
-                    await ShowError("密码错误，无法提升权限。");
+                    await ShowError(loader.GetString("WrongAdminPassword_Message"));
                 }
             }
         }
         private async void ChangePasswordButton_Click(object sender, RoutedEventArgs e)
         {
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             var button = sender as Button;
             var account = button?.Tag as Account;
             if (account == null) return;
@@ -210,13 +217,13 @@ namespace AzurLaneDex.Views
 
             if (!isSelf && !isAdmin)
             {
-                await ShowError("只有管理员才能修改其他用户的密码。");
+                await ShowError(loader.GetString("WrongAdminRole_Message"));
                 return;
             }
 
-            var passwordBox = new PasswordBox { PlaceholderText = isSelf ? "旧密码" : "新密码（留空则不修改）" };
-            var newPasswordBox = new PasswordBox { PlaceholderText = "新密码" };
-            var confirmBox = new PasswordBox { PlaceholderText = "确认新密码" };
+            var passwordBox = new PasswordBox { PlaceholderText = isSelf ? loader.GetString("OldPasswordPlaceholder") : loader.GetString("NewPasswordOptionalPlaceholder") };
+            var newPasswordBox = new PasswordBox { PlaceholderText = loader.GetString("NewPasswordPlaceholder") };
+            var confirmBox = new PasswordBox { PlaceholderText = loader.GetString("ConfirmPassword_Placeholder") };
 
             var panel = new StackPanel { Spacing = 12 };
             if (isSelf)
@@ -226,10 +233,10 @@ namespace AzurLaneDex.Views
 
             var dialog = new ContentDialog
             {
-                Title = $"修改密码 - {account.Name}",
+                Title = string.Format(loader.GetString("ChangePassword_Title"), account.Name),
                 Content = panel,
-                PrimaryButtonText = "确认",
-                CloseButtonText = "取消",
+                PrimaryButtonText = loader.GetString("Common_Confirm"),
+                CloseButtonText = loader.GetString("Common_Cancel"),
                 XamlRoot = this.XamlRoot,
                 DefaultButton = ContentDialogButton.Primary
             };
@@ -241,7 +248,7 @@ namespace AzurLaneDex.Views
 
             if (newPwd != confirmPwd)
             {
-                await ShowError("两次输入的新密码不一致");
+                await ShowError(loader.GetString("PasswordMismatch_Message"));
                 return;
             }
 
@@ -252,7 +259,7 @@ namespace AzurLaneDex.Views
                 success = app.AccountManager.ChangePassword(account.Name, oldPwd, newPwd);
                 if (!success)
                 {
-                    await ShowError("旧密码错误，修改失败");
+                    await ShowError(loader.GetString("OldPasswordWrong_Message"));
                     return;
                 }
             }
@@ -263,12 +270,12 @@ namespace AzurLaneDex.Views
                 success = app.AccountManager.AdminSetPassword(account.Name, newPwd);
                 if (!success)
                 {
-                    await ShowError("修改失败");
+                    await ShowError(loader.GetString("PasswordChangeFailed_Message"));
                     return;
                 }
             }
 
-            await ShowError("密码修改成功");
+            await ShowError(loader.GetString("PasswordChangeSuccess_Message"));
             LogService.Info($"用户 {app.AccountManager.CurrentAccount} 修改了账户 {account.Name} 的密码");
         }
     }

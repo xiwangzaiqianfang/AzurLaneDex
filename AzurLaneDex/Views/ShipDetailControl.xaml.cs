@@ -27,10 +27,12 @@ public sealed partial class ShipDetailControl : UserControl
     public ShipDetailControl()
     {
         this.InitializeComponent();
+        var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
     }
 
     public void SetShip(ShipViewModel? ship)
     {
+        var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
         if (_currentShip != null && ship != null && _currentShip.Id == ship.Id)
         {
             // 记录改造状态是否变化（在更新 UI 前比较）
@@ -97,8 +99,8 @@ public sealed partial class ShipDetailControl : UserControl
         ShipClassText.Text = ship.ShipClass;
         RarityText.Text = ship.EffectiveRarity;
         // 改造相关
-        CanRemodelText.Text = ship.CanRemodel ? "是" : "否";
-        RemodelDateText.Text = string.IsNullOrEmpty(ship.RemodelDate) ? "未设定" : ship.RemodelDate;        
+        CanRemodelText.Text = ship.CanRemodel ? loader.GetString("Yes") : loader.GetString("No");
+        RemodelDateText.Text = string.IsNullOrEmpty(ship.RemodelDate) ? loader.GetString("NotSet") : ship.RemodelDate;        
 
         // 状态
         OwnedCheckBox.IsChecked = ship.Owned;
@@ -114,14 +116,14 @@ public sealed partial class ShipDetailControl : UserControl
         if (!string.IsNullOrEmpty(ship.ObtainBonusAttr) && ship.ObtainBonusValue != 0)
             ObtainBonusText.Text = $"{ship.ObtainBonusAttr} +{ship.ObtainBonusValue}";
         else
-            ObtainBonusText.Text = "无";
-        ObtainAffectsText.Text = ship.ObtainAffects.Count > 0 ? string.Join(", ", ship.ObtainAffects) : "无限制";
+            ObtainBonusText.Text = loader.GetString("None");
+        ObtainAffectsText.Text = ship.ObtainAffects.Count > 0 ? string.Join(", ", ship.ObtainAffects) : loader.GetString("NoRestriction");
 
         if (!string.IsNullOrEmpty(ship.Level120BonusAttr) && ship.Level120BonusValue != 0)
             Level120BonusText.Text = $"{ship.Level120BonusAttr} +{ship.Level120BonusValue}";
         else
-            Level120BonusText.Text = "无";
-        Level120AffectsText.Text = ship.Level120Affects.Count > 0 ? string.Join(", ", ship.Level120Affects) : "无限制";
+            Level120BonusText.Text = loader.GetString("None");
+        Level120AffectsText.Text = ship.Level120Affects.Count > 0 ? string.Join(", ", ship.Level120Affects) : loader.GetString("NoRestriction");
 
         // 科技点
         TechPointsObtainText.Text = ship.TechPointsObtain.ToString();
@@ -129,12 +131,12 @@ public sealed partial class ShipDetailControl : UserControl
         TechPoints120Text.Text = ship.TechPoints120.ToString();
 
         // 获取方式
-        AcquireMainText.Text = string.IsNullOrEmpty(ship.AcquireMain) ? "无" : ship.AcquireMain;
+        AcquireMainText.Text = string.IsNullOrEmpty(ship.AcquireMain) ? loader.GetString("None") : ship.AcquireMain;
         AcquireDetailText.Text = string.IsNullOrEmpty(ship.AcquireDetail) ? "" : ship.AcquireDetail;
         BuildTimeText.Text = string.IsNullOrEmpty(ship.BuildTime) ? "" : $"{ship.BuildTime}";
         DropLocationsText.Text = ship.DropLocations.Count > 0 ? $"打捞地点： {string.Join(", ", ship.DropLocations)}" : "";
         ShopExchangeText.Text = string.IsNullOrEmpty(ship.ShopExchange) ? "" : $"{ship.ShopExchange}";
-        IsPermanentText.Text = ship.IsPermanent ? "常驻" : "未常驻";
+        IsPermanentText.Text = ship.IsPermanent ? loader.GetString("Permanent") : loader.GetString("NotPermanent");
 
         bool hasAcquire = !string.IsNullOrEmpty(ship.AcquireMain) || !string.IsNullOrEmpty(ship.AcquireDetail) ||
                           !string.IsNullOrEmpty(ship.BuildTime) || ship.DropLocations.Count > 0 ||
@@ -142,8 +144,8 @@ public sealed partial class ShipDetailControl : UserControl
         AcquireBorder.Visibility = hasAcquire ? Visibility.Visible : Visibility.Collapsed;
 
         // 实装活动
-        DebutEventText.Text = string.IsNullOrEmpty(ship.DebutEvent) ? "无" : ship.DebutEvent;
-        ReleaseDateText.Text = string.IsNullOrEmpty(ship.ReleaseDate) ? "无" : ship.ReleaseDate;
+        DebutEventText.Text = string.IsNullOrEmpty(ship.DebutEvent) ? loader.GetString("None") : ship.DebutEvent;
+        ReleaseDateText.Text = string.IsNullOrEmpty(ship.ReleaseDate) ? loader.GetString("None") : ship.ReleaseDate;
         NotesText.Text = string.IsNullOrEmpty(ship.Notes) ? "" : ship.Notes;
         bool hasEvent = !string.IsNullOrEmpty(ship.DebutEvent) || !string.IsNullOrEmpty(ship.ReleaseDate);
         EventBorder.Visibility = hasEvent ? Visibility.Visible : Visibility.Collapsed;
@@ -153,8 +155,8 @@ public sealed partial class ShipDetailControl : UserControl
         if (ship.CanSpecialGear)
         {
             SpecialGearNameText.Text = ship.SpecialGearName;
-            SpecialGearDateText.Text = string.IsNullOrEmpty(ship.SpecialGearDate) ? "未设定" : ship.SpecialGearDate;
-            SpecialGearAcquireText.Text = string.IsNullOrEmpty(ship.SpecialGearAcquire) ? "暂无获取方式" : ship.SpecialGearAcquire;
+            SpecialGearDateText.Text = string.IsNullOrEmpty(ship.SpecialGearDate) ? loader.GetString("NotSet") : ship.SpecialGearDate;
+            SpecialGearAcquireText.Text = string.IsNullOrEmpty(ship.SpecialGearAcquire) ? loader.GetString("NoAcquireInfo") : ship.SpecialGearAcquire;
             SetDefaultGearIcon();
             StartGearFadeIn();
             // 加载兵装图标
@@ -612,6 +614,7 @@ public sealed partial class ShipDetailControl : UserControl
 
     private void RefreshAvatarForRemodel()
     {
+        var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
         if (_currentShip == null) return;
         string avatarName = _currentShip.Remodeled && _currentShip.CanRemodel
                             ? _currentShip.Name + "改"
@@ -650,15 +653,15 @@ public sealed partial class ShipDetailControl : UserControl
     private async void EditShipButton_Click(object sender, RoutedEventArgs e)
     {
         if (_currentShip == null) return;
-
+        var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
         var app = Application.Current as App;
         if (app?.AccountManager?.IsDeveloper() != true)
         {
             var dialog = new ContentDialog
             {
-                Title = "权限不足",
-                Content = "只有开发者账户才能编辑舰船",
-                CloseButtonText = "确定",
+                Title = loader.GetString("InsufficientPrivilege_Title"),
+                Content = loader.GetString("EditShipNeedDeveloper_Message"),
+                CloseButtonText = loader.GetString("Common_Confirm"),
                 XamlRoot = this.XamlRoot,
                 Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
             };
@@ -666,7 +669,7 @@ public sealed partial class ShipDetailControl : UserControl
             return;
         }
 
-        var shipStatic = _currentShip.GetStaticCopy(); // 需要实现此方法
+        var shipStatic = _currentShip.GetStaticCopy();
         var editDialog = new AddShipDialog(shipStatic);
         editDialog.XamlRoot = this.XamlRoot;
         editDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
@@ -682,6 +685,7 @@ public sealed partial class ShipDetailControl : UserControl
     // 判断是否为三艘特殊布里
     private bool IsSpecialBulin(ShipViewModel? ship)
     {
+        var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
         if (ship == null) return false;
         return ship.Name == "泛用型布里"
             || ship.Name == "试作型布里MKII"

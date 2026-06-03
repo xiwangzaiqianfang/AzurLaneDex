@@ -318,6 +318,9 @@
   <data name="AddShipDialog.Title" xml:space="preserve">
     <value>艦船追加</value>
   </data>
+  <data name="AddShipDialog_Title" xml:space="preserve">
+    <value>艦船追加</value>
+  </data>
   <data name="AddShipButton.Label" xml:space="preserve">
     <value>艦船追加</value>
   </data>
@@ -360,10 +363,16 @@
   <data name="ShipClass_DD.Content" xml:space="preserve">
     <value>駆逐</value>
   </data>
+  <data name="ShipClass_DD1" xml:space="preserve">
+    <value>駆逐</value>
+  </data>
   <data name="Class_CL.Content" xml:space="preserve">
     <value>軽巡</value>
   </data>
   <data name="ShipClass_CL.Content" xml:space="preserve">
+    <value>軽巡</value>
+  </data>
+  <data name="ShipClass_CL1" xml:space="preserve">
     <value>軽巡</value>
   </data>
   <data name="Class_CA.Content" xml:space="preserve">
@@ -378,7 +387,7 @@
   <data name="Class_BB.Content" xml:space="preserve">
     <value>戦艦</value>
   </data>
-  <data name="ShipClass_BB.Content" xml:space="preserve">
+  <data name="ShipClass_BB1" xml:space="preserve">
     <value>戦艦</value>
   </data>
   <data name="Class_BBV.Content" xml:space="preserve">
@@ -387,10 +396,16 @@
   <data name="ShipClass_BBV.Content" xml:space="preserve">
     <value>航戦</value>
   </data>
+  <data name="ShipClass_BBV1" xml:space="preserve">
+    <value>航戦</value>
+  </data>
   <data name="Class_CV.Content" xml:space="preserve">
     <value>空母</value>
   </data>
   <data name="ShipClass_CV.Content" xml:space="preserve">
+    <value>空母</value>
+  </data>
+  <data name="ShipClass_CV1" xml:space="preserve">
     <value>空母</value>
   </data>
   <data name="Class_CVL.Content" xml:space="preserve">
@@ -399,10 +414,13 @@
   <data name="ShipClass_CVL.Content" xml:space="preserve">
     <value>軽母</value>
   </data>
+  <data name="ShipClass_CVL1" xml:space="preserve">
+    <value>軽母</value>
+  </data>
   <data name="Class_AR.Content" xml:space="preserve">
     <value>工作</value>
   </data>
-  <data name="ShipClass_AR.Content" xml:space="preserve">
+  <data name="ShipClass_AR1" xml:space="preserve">
     <value>工作</value>
   </data>
   <data name="Class_SS.Content" xml:space="preserve">
@@ -411,10 +429,16 @@
   <data name="ShipClass_SS.Content" xml:space="preserve">
     <value>潜水</value>
   </data>
+  <data name="ShipClass_SS1" xml:space="preserve">
+    <value>潜水</value>
+  </data>
   <data name="Class_SSV.Content" xml:space="preserve">
     <value>潜母</value>
   </data>
   <data name="ShipClass_SSV.Content" xml:space="preserve">
+    <value>潜母</value>
+  </data>
+  <data name="ShipClass_SSV1" xml:space="preserve">
     <value>潜母</value>
   </data>
   <data name="Class_AE.Content" xml:space="preserve">
@@ -429,22 +453,40 @@
   <data name="ShipClass_Sail.Content" xml:space="preserve">
     <value>帆船</value>
   </data>
+  <data name="ShipClass_Sail1" xml:space="preserve">
+    <value>帆船</value>
+  </data>
   <data name="BasicInfo_Rarity.Text" xml:space="preserve">
     <value>レアリティ:</value>
   </data>
   <data name="Rarity_N.Content" xml:space="preserve">
     <value>ノーマル</value>
   </data>
+  <data name="Rarity_Normal" xml:space="preserve">
+    <value>ノーマル</value>
+  </data>
   <data name="Rarity_R.Content" xml:space="preserve">
+    <value>レア</value>
+  </data>
+  <data name="Rarity_Rare" xml:space="preserve">
     <value>レア</value>
   </data>
   <data name="Rarity_SR.Content" xml:space="preserve">
     <value>エリート</value>
   </data>
+  <data name="Rarity_Elite" xml:space="preserve">
+    <value>エリート</value>
+  </data>
   <data name="Rarity_SSR.Content" xml:space="preserve">
     <value>SSR</value>
   </data>
+  <data name="Rarity_SuperRare" xml:space="preserve">
+    <value>SSR</value>
+  </data>
   <data name="Rarity_UR.Content" xml:space="preserve">
+    <value>海上伝説</value>
+  </data>
+  <data name="Rarity_Legendary" xml:space="preserve">
     <value>海上伝説</value>
   </data>
   <data name="Category_Normal.Content" xml:space="preserve">
@@ -786,7 +828,13 @@
   <data name="Rarity_Decisive.Content" xml:space="preserve">
     <value>最高計画</value>
   </data>
+  <data name="Rarity_Decisive1" xml:space="preserve">
+    <value>最高計画</value>
+  </data>
   <data name="Rarity_Ultimate.Content" xml:space="preserve">
+    <value>決戦計画</value>
+  </data>
+  <data name="Rarity_Ultimate1" xml:space="preserve">
     <value>決戦計画</value>
   </data>
   <data name="FilterTitle_Faction.Header" xml:space="preserve">
@@ -795,22 +843,28 @@
   <data name="FilterTitle_Class.Header" xml:space="preserve">
     <value>艦種</value>
   </data>
-  <data name="ShipClass_BC.Content" xml:space="preserve">
+  <data name="ShipClass_BC1" xml:space="preserve">
     <value>巡戦</value>
   </data>
-  <data name="ShipClass_BM.Content" xml:space="preserve">
+  <data name="ShipClass_BM1" xml:space="preserve">
     <value>重砲</value>
   </data>
   <data name="ShipClass_CB.Content" xml:space="preserve">
     <value>超巡</value>
   </data>
-  <data name="ShipClass_CA.Content" xml:space="preserve">
+  <data name="ShipClass_CB1" xml:space="preserve">
+    <value>超巡</value>
+  </data>
+  <data name="ShipClass_CA1" xml:space="preserve">
     <value>重巡</value>
   </data>
   <data name="BatchOperationButton.Label" xml:space="preserve">
     <value>一括操作</value>
   </data>
   <data name="FilterButton.Label" xml:space="preserve">
+    <value>フィルタ</value>
+  </data>
+  <data name="FilterDialog_Title" xml:space="preserve">
     <value>フィルタ</value>
   </data>
   <data name="ResetAndRefreshButton.Label" xml:space="preserve">
@@ -842,6 +896,9 @@
   </data>
   <data name="SettingsPageTitle1.Content" xml:space="preserve">
     <value>設定</value>
+  </data>
+  <data name="SettingsPageTitle1.ToolTipService.ToolTip" xml:space="preserve">
+    <value>戻る</value>
   </data>
   <data name="Setting_Window_Title.Text" xml:space="preserve">
     <value>ウィンドウ設定</value>
@@ -1134,7 +1191,13 @@
   <data name="LogPage_EnableLog_Toggle.OnContent" xml:space="preserve">
     <value>オン</value>
   </data>
+  <data name="Toggle_On" xml:space="preserve">
+    <value>オン</value>
+  </data>
   <data name="LogPage_EnableLog_Toggle.OffContent" xml:space="preserve">
+    <value>オフ</value>
+  </data>
+  <data name="Toggle_Off" xml:space="preserve">
     <value>オフ</value>
   </data>
   <data name="LogPage_RetentionDays_Title.Text" xml:space="preserve">
@@ -1233,6 +1296,9 @@
   <data name="MainPage_SortToggle.Content" xml:space="preserve">
     <value>昇順</value>
   </data>
+  <data name="SortAscending" xml:space="preserve">
+    <value>昇順</value>
+  </data>
   <data name="MainPage_Header_ID.Text" xml:space="preserve">
     <value>ID</value>
   </data>
@@ -1283,5 +1349,476 @@
   </data>
   <data name="Status_SpecialGearObtained.Content" xml:space="preserve">
     <value>専用装備入手済</value>
+  </data>
+  <data name="StatsPage_Title.Text" xml:space="preserve">
+    <value>統計概要</value>
+  </data>
+  <data name="UpdatePage_AppVersion_CheckButton.Content" xml:space="preserve">
+    <value>更新確認</value>
+  </data>
+  <data name="UpdatePage_AppVersion_Title.Text" xml:space="preserve">
+    <value>アプリバージョン</value>
+  </data>
+  <data name="UpdatePage_Title.Text" xml:space="preserve">
+    <value>アップデート</value>
+  </data>
+  <data name="UpdatePage_AppVersion_DownloadButton.Content" xml:space="preserve">
+    <value>ダウンロード・インストール</value>
+  </data>
+  <data name="UpdatePage_AppSource_Description.Text" xml:space="preserve">
+    <value>アプリ更新確認方法を選択</value>
+  </data>
+  <data name="UpdatePage_AppSource_Title.Text" xml:space="preserve">
+    <value>アプリ更新元</value>
+  </data>
+  <data name="UpdatePage_DataUpdate_Title.Text" xml:space="preserve">
+    <value>艦船データ</value>
+  </data>
+  <data name="UpdatePage_DataUpdate_Description.Text" xml:space="preserve">
+    <value>最新艦船データを取得</value>
+  </data>
+  <data name="UpdatePage_DataUpdate_CheckButton.Content" xml:space="preserve">
+    <value>更新確認</value>
+  </data>
+  <data name="UpdatePage_DataUpdate_DownloadButton.Content" xml:space="preserve">
+    <value>ダウンロード・インストール</value>
+  </data>
+  <data name="UpdatePage_DataSource_Title.Text" xml:space="preserve">
+    <value>データ更新元</value>
+  </data>
+  <data name="UpdatePage_DataSource_Description.Text" xml:space="preserve">
+    <value>データファイルのソースとプロキシを選択（任意）</value>
+  </data>
+  <data name="UpdatePage_DataSource_GitHubRaw.Content" xml:space="preserve">
+    <value>GiHub (raw)</value>
+  </data>
+  <data name="UpdatePage_DataSource_GitHubCDN.Content" xml:space="preserve">
+    <value>GitHub (CDN)</value>
+  </data>
+  <data name="UpdatePage_DataSource_GiteeRaw.Content" xml:space="preserve">
+    <value>Gitee (raw)</value>
+  </data>
+  <data name="UpdatePage_DataSource_Custom.Content" xml:space="preserve">
+    <value>カスタムURL</value>
+  </data>
+  <data name="UpdatePage_DataSource_Custom_Placeholder.PlaceholderText" xml:space="preserve">
+    <value>カスタムURL</value>
+  </data>
+  <data name="UpdatePage_Proxy_Placeholder.PlaceholderText" xml:space="preserve">
+    <value>プロキシアドレス（例：http://127.0.0.1:7890）</value>
+  </data>
+  <data name="UpdatePage_AppSource_GitHubPages.Content" xml:space="preserve">
+    <value>GitHub Pages</value>
+  </data>
+  <data name="UpdatePage_AppSource_Gitee.Content" xml:space="preserve">
+    <value>Gitee Releases</value>
+  </data>
+  <data name="UserStateFileNotFound_Message" xml:space="preserve">
+    <value>ユーザーステータスファイルが見つかりません</value>
+  </data>
+  <data name="ExportSuccess_Message" xml:space="preserve">
+    <value>データは正常に保存されました：{0}</value>
+  </data>
+  <data name="ExportFailed_Message" xml:space="preserve">
+    <value>エクスポートに失敗しました：{0}</value>
+  </data>
+  <data name="ImportSuccess_Message" xml:space="preserve">
+    <value>アカウントの状態は復元されました。メイン画面に戻って確認してください。</value>
+  </data>
+  <data name="ImportFailed_Message" xml:space="preserve">
+    <value>インポートに失敗しました：{0}</value>
+  </data>
+  <data name="BackupSuccess_Message" xml:space="preserve">
+    <value>バックアップは {0} に保存されました</value>
+  </data>
+  <data name="BackupFailed_Message" xml:space="preserve">
+    <value>バックアップに失敗しました：{0}</value>
+  </data>
+  <data name="Admin_Role" xml:space="preserve">
+    <value>管理者</value>
+  </data>
+  <data name="NormalUser_Role" xml:space="preserve">
+    <value>一般ユーザー</value>
+  </data>
+  <data name="SystemAccount_Role" xml:space="preserve">
+    <value>システムアカウント</value>
+  </data>
+  <data name="NoOtherAccount_Title" xml:space="preserve">
+    <value>他に利用可能なアカウントはありません</value>
+  </data>
+  <data name="NoOtherAccount_Message" xml:space="preserve">
+    <value>現在アカウントは1つしかありません。切り替えできません。</value>
+  </data>
+  <data name="SwitchAccountSuccess_Message" xml:space="preserve">
+    <value>アカウントを切り替えました。メイン画面に戻ります。</value>
+  </data>
+  <data name="Import_Message_Title" xml:space="preserve">
+    <value>インポートを確認</value>
+  </data>
+  <data name="Import_Message_Content" xml:space="preserve">
+    <value>これにより、現在のアカウントのすべての収集進捗が上書きされます。続行しますか？</value>
+  </data>
+  <data name="Import_Message_Confirm" xml:space="preserve">
+    <value>インポート</value>
+  </data>
+  <data name="EditShipDialog_Title" xml:space="preserve">
+    <value>艦船を編集</value>
+  </data>
+  <data name="ShipNameEmpty_Message" xml:space="preserve">
+    <value>艦船名は空にできません</value>
+  </data>
+  <data name="PleaseSelectFaction_Message" xml:space="preserve">
+    <value>陣営を選択してください</value>
+  </data>
+  <data name="PleaseSelectShipClass_Message" xml:space="preserve">
+    <value>艦種を選択してください</value>
+  </data>
+  <data name="PleaseSelectRarity_Message" xml:space="preserve">
+    <value>レア度を選択してください</value>
+  </data>
+  <data name="IncompleteInput_Title" xml:space="preserve">
+    <value>入力が不完全です</value>
+  </data>
+  <data name="ShipClass_BB.Content" xml:space="preserve">
+    <value>戦艦</value>
+  </data>
+  <data name="ShipClass_AR.Content" xml:space="preserve">
+    <value>工作</value>
+  </data>
+  <data name="ShipClass_AE1" xml:space="preserve">
+    <value>輸送</value>
+  </data>
+  <data name="ShipClass_CA.Content" xml:space="preserve">
+    <value>重巡</value>
+  </data>
+  <data name="ShipClass_BC.Content" xml:space="preserve">
+    <value>巡戦</value>
+  </data>
+  <data name="ShipClass_BM.Content" xml:space="preserve">
+    <value>重砲</value>
+  </data>
+  <data name="ShipClass_All" xml:space="preserve">
+    <value>全艦種</value>
+  </data>
+  <data name="Picture_Save_Message" xml:space="preserve">
+    <value>画像は {0} に保存されました</value>
+  </data>
+  <data name="CampTechProgress_Format" xml:space="preserve">
+    <value>テック進捗: {0}/{1} ({2}%)</value>
+  </data>
+  <data name="LogEnabled_Message" xml:space="preserve">
+    <value>ログ記録は有効です</value>
+  </data>
+  <data name="LogDisabled_Message" xml:space="preserve">
+    <value>ログ記録は無効です</value>
+  </data>
+  <data name="LogRetentionSet_Message" xml:space="preserve">
+    <value>ログの保持日数が {0} 日に設定されました</value>
+  </data>
+  <data name="ExportingLogs_Message" xml:space="preserve">
+    <value>ログをエクスポート中...</value>
+  </data>
+  <data name="LogsExported_Message" xml:space="preserve">
+    <value>ログは {0} にエクスポートされました</value>
+  </data>
+  <data name="BatchOp_MarkOwned" xml:space="preserve">
+    <value>取得済みとしてマーク</value>
+  </data>
+  <data name="BatchOp_MarkNotOwnedAndClear" xml:space="preserve">
+    <value>未取得としてマークし、すべての状態をクリア</value>
+  </data>
+  <data name="BatchOp_MarkMaxBreak" xml:space="preserve">
+    <value>完全限界突破済みとしてマーク</value>
+  </data>
+  <data name="BatchOp_MarkNotMaxBreak" xml:space="preserve">
+    <value>限界突破未完了としてマーク</value>
+  </data>
+  <data name="BatchOp_MarkLevel120" xml:space="preserve">
+    <value>120レベルに到達済みとしてマーク</value>
+  </data>
+  <data name="BatchOp_MarkNotLevel120" xml:space="preserve">
+    <value>120レベル未到達としてマーク</value>
+  </data>
+  <data name="BatchOp_MarkOath" xml:space="preserve">
+    <value>誓約済みとしてマーク</value>
+  </data>
+  <data name="BatchOp_MarkNotOath" xml:space="preserve">
+    <value>誓約未済としてマーク</value>
+  </data>
+  <data name="BatchOp_MarkRemodeled" xml:space="preserve">
+    <value>改造済みとしてマーク</value>
+  </data>
+  <data name="BatchOp_MarkNotRemodeled" xml:space="preserve">
+    <value>改造未実施としてマーク</value>
+  </data>
+  <data name="BatchOp_MarkSpecialGear" xml:space="preserve">
+    <value>専用兵装取得済みとしてマーク</value>
+  </data>
+  <data name="BatchOp_MarkNotSpecialGear" xml:space="preserve">
+    <value>専用兵装未取得としてマーク</value>
+  </data>
+  <data name="BatchOperation_Title" xml:space="preserve">
+    <value>一括操作</value>
+  </data>
+  <data name="NoShipSelected_Message" xml:space="preserve">
+    <value>操作する艦船を先に選択してください</value>
+  </data>
+  <data name="ConfirmBatchOp_Title" xml:space="preserve">
+    <value>バッチ操作を確認</value>
+  </data>
+  <data name="ConfirmBatchOp_Message" xml:space="preserve">
+    <value>{0} 隻の艦船に「{1}」操作を実行してもよろしいですか？</value>
+  </data>
+  <data name="ConfirmDelete_Title" xml:space="preserve">
+    <value>削除を確認</value>
+  </data>
+  <data name="ConfirmDeleteShip_Message" xml:space="preserve">
+    <value>艦船 {0} を削除してもよろしいですか？この操作は元に戻せません。</value>
+  </data>
+  <data name="SortDescending" xml:space="preserve">
+    <value>降順</value>
+  </data>
+  <data name="ConfirmDeleteAccount_Message" xml:space="preserve">
+    <value>アカウント「{0}」を削除してもよろしいですか？この操作は元に戻せません。</value>
+  </data>
+  <data name="CannotDeleteCurrentAccount_Message" xml:space="preserve">
+    <value>他の利用可能なアカウントが存在しないため、現在のアカウントを削除できません。</value>
+  </data>
+  <data name="CannotChangeOwnAdminStatus_Message" xml:space="preserve">
+    <value>現在ログインしているアカウントの権限は変更できません。</value>
+  </data>
+  <data name="InsufficientPrivilege_Message" xml:space="preserve">
+    <value>システムアカウントまたは管理者のみが他のアカウントの権限を変更できます。</value>
+  </data>
+  <data name="AdminPasswordPlaceholder" xml:space="preserve">
+    <value>アプリケーションシステムの管理者パスワードを入力してください</value>
+  </data>
+  <data name="RequestAdmin_Title" xml:space="preserve">
+    <value>権限昇格</value>
+  </data>
+  <data name="AdminGranted_Message" xml:space="preserve">
+    <value>管理者権限を取得しました。新規作成／編集機能を有効にするには、関連ページを再度開いてください。</value>
+  </data>
+  <data name="WrongAdminPassword_Message" xml:space="preserve">
+    <value>パスワードが間違っています。権限を昇格できません。</value>
+  </data>
+  <data name="WrongAdminRole_Message" xml:space="preserve">
+    <value>管理者のみが他のユーザーのパスワードを変更できます。</value>
+  </data>
+  <data name="OldPasswordPlaceholder" xml:space="preserve">
+    <value>旧パスワード</value>
+  </data>
+  <data name="NewPasswordOptionalPlaceholder" xml:space="preserve">
+    <value>新しいパスワード（空欄の場合は変更なし）</value>
+  </data>
+  <data name="NewPasswordPlaceholder" xml:space="preserve">
+    <value>新しいパスワード</value>
+  </data>
+  <data name="ChangePassword_Title" xml:space="preserve">
+    <value>パスワード変更 - {0}</value>
+  </data>
+  <data name="OldPasswordWrong_Message" xml:space="preserve">
+    <value>旧パスワードが間違っています。変更に失敗しました。</value>
+  </data>
+  <data name="PasswordChangeFailed_Message" xml:space="preserve">
+    <value>変更に失敗しました</value>
+  </data>
+  <data name="PasswordChangeSuccess_Message" xml:space="preserve">
+    <value>パスワードの変更に成功しました</value>
+  </data>
+  <data name="InvalidFileFormat_Message" xml:space="preserve">
+    <value>移行に失敗しました。ファイル形式が正しくありません。</value>
+  </data>
+  <data name="MigrationSuccess_Message" xml:space="preserve">
+    <value>ファイルは正常に置き換えられ、自動的に移行されました</value>
+  </data>
+  <data name="ReadFailed_Title" xml:space="preserve">
+    <value>読み取りに失敗しました</value>
+  </data>
+  <data name="MigrationAndOverwrite_Message" xml:space="preserve">
+    <value>データは正常に移行および上書きされました。メイン画面に戻って確認してください。</value>
+  </data>
+  <data name="ResetWindow_Title" xml:space="preserve">
+    <value>ウィンドウサイズをリセット</value>
+  </data>
+  <data name="WindowReset_Message" xml:space="preserve">
+    <value>ウィンドウサイズをリセットしました</value>
+  </data>
+  <data name="RestartApp_Title" xml:space="preserve">
+    <value>アプリを再起動</value>
+  </data>
+  <data name="RestartApp_Message" xml:space="preserve">
+    <value>言語が変更されました。完全に反映するにはアプリを再起動する必要があります。今すぐ再起動しますか？</value>
+  </data>
+  <data name="RestartApp_Message_PrimaryButtonText" xml:space="preserve">
+    <value>今すぐ再起動</value>
+  </data>
+  <data name="RestartApp_Message_CloseButtonText" xml:space="preserve">
+    <value>後で</value>
+  </data>
+  <data name="NotSet" xml:space="preserve">
+    <value>未設定</value>
+  </data>
+  <data name="NoAcquireInfo" xml:space="preserve">
+    <value>入手方法はありません</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>なし</value>
+  </data>
+  <data name="NoRestriction" xml:space="preserve">
+    <value>無制限</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>はい</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>いいえ</value>
+  </data>
+  <data name="Permanent" xml:space="preserve">
+    <value>常駐</value>
+  </data>
+  <data name="NotPermanent" xml:space="preserve">
+    <value>常駐していない</value>
+  </data>
+  <data name="InsufficientPrivilege_Title" xml:space="preserve">
+    <value>権限が不足しています</value>
+  </data>
+  <data name="EditShipNeedDeveloper_Message" xml:space="preserve">
+    <value>開発者アカウントのみが艦船を編集できます</value>
+  </data>
+  <data name="Stat_TotalShips" xml:space="preserve">
+    <value>合計艦船</value>
+  </data>
+  <data name="Stat_Owned" xml:space="preserve">
+    <value>取得済み</value>
+  </data>
+  <data name="Stat_NotOwned" xml:space="preserve">
+    <value>未取得</value>
+  </data>
+  <data name="Stat_MaxBreak" xml:space="preserve">
+    <value>完全限界突破済</value>
+  </data>
+  <data name="Stat_NotMaxBreak" xml:space="preserve">
+    <value>未完全限界突破</value>
+  </data>
+  <data name="Stat_Oath" xml:space="preserve">
+    <value>誓約済</value>
+  </data>
+  <data name="Stat_Remodeled" xml:space="preserve">
+    <value>改造済</value>
+  </data>
+  <data name="Stat_CanRemodelNot" xml:space="preserve">
+    <value>改造可能だが未実施</value>
+  </data>
+  <data name="Stat_Level120" xml:space="preserve">
+    <value>Lv120</value>
+  </data>
+  <data name="Stat_SpecialGearObtained" xml:space="preserve">
+    <value>専用兵装取得済み</value>
+  </data>
+  <data name="Stat_SpecialGearNotObtained" xml:space="preserve">
+    <value>専用兵装未取得</value>
+  </data>
+  <data name="CollectionProgress_Format" xml:space="preserve">
+    <value>収集進捗: {0}% ({1}/{2})</value>
+  </data>
+  <data name="CheckingAppUpdate" xml:space="preserve">
+    <value>アプリのアップデートを確認中...</value>
+  </data>
+  <data name="VersionJsonFormatError" xml:space="preserve">
+    <value>version.json の形式が正しくありません</value>
+  </data>
+  <data name="NewVersionAvailable" xml:space="preserve">
+    <value>新しいバージョン {0} が見つかりました。「ダウンロードしてインストール」をクリックして更新してください。</value>
+  </data>
+  <data name="AlreadyLatestVersion" xml:space="preserve">
+    <value>現在、最新バージョンです。</value>
+  </data>
+  <data name="CheckUpdateFailed" xml:space="preserve">
+    <value>確認に失敗しました: {0}</value>
+  </data>
+  <data name="InvalidDownloadUrl" xml:space="preserve">
+    <value>ダウンロードリンクが無効です</value>
+  </data>
+  <data name="Downloading" xml:space="preserve">
+    <value>ダウンロード中......</value>
+  </data>
+  <data name="DownloadCompleteStartingInstall" xml:space="preserve">
+    <value>ダウンロードが完了しました。インストールを開始しています......</value>
+  </data>
+  <data name="DownloadFailed1" xml:space="preserve">
+    <value>ダウンロードに失敗しました</value>
+  </data>
+  <data name="DownloadFailed" xml:space="preserve">
+    <value>ダウンロードに失敗しました: {0}</value>
+  </data>
+  <data name="CheckingDataVersion" xml:space="preserve">
+    <value>データバージョンを確認中......</value>
+  </data>
+  <data name="PleaseEnterValidCustomUrl" xml:space="preserve">
+    <value>有効なカスタム URL を入力してください</value>
+  </data>
+  <data name="CannotGetRemoteDataVersion" xml:space="preserve">
+    <value>リモートデータのバージョンを取得できません</value>
+  </data>
+  <data name="NewDataVersionAvailable" xml:space="preserve">
+    <value>新しいデータバージョン {0} が見つかりました。「ダウンロードしてインストール」をクリックして更新してください。</value>
+  </data>
+  <data name="DataAlreadyLatest" xml:space="preserve">
+    <value>データは最新バージョンです。</value>
+  </data>
+  <data name="DataUpdateFailed1" xml:space="preserve">
+    <value>確認に失敗しました: {0}</value>
+  </data>
+  <data name="DataUpdateFailed" xml:space="preserve">
+    <value>データの更新に失敗しました。ネットワークまたは URL を確認してください。</value>
+  </data>
+  <data name="DataUpdatedToVersion" xml:space="preserve">
+    <value>データがバージョン {0} に更新されました。</value>
+  </data>
+  <data name="DownloadingData" xml:space="preserve">
+    <value>データをダウンロード中......</value>
+  </data>
+  <data name="PleaseCheckUpdateFirst" xml:space="preserve">
+    <value>先にアップデートを確認してください</value>
+  </data>
+  <data name="SecurityQuestionBox.PlaceholderText" xml:space="preserve">
+    <value>例えば：あなたの誕生日は？</value>
+  </data>
+  <data name="SecurityAnswerBox.PlaceholderText" xml:space="preserve">
+    <value>答え（パスワード再設定用）</value>
+  </data>
+  <data name="SecurityQuestionBox.Header" xml:space="preserve">
+    <value>セキュリティ答え</value>
+  </data>
+  <data name="SecurityAnswerBox.Header" xml:space="preserve">
+    <value>秘密の質問</value>
+  </data>
+  <data name="PasswordBox.PlaceholderText" xml:space="preserve">
+    <value>パスワード（任意）</value>
+  </data>
+  <data name="FirstRun_NameBox.PlaceholderText" xml:space="preserve">
+    <value>アカウント名</value>
+  </data>
+  <data name="IsDeveloperCheckBox.Content" xml:space="preserve">
+    <value>開発者アカウントに設定</value>
+  </data>
+  <data name="SetDefaultCheckBox.Content" xml:space="preserve">
+    <value>デフォルトアカウントに設定</value>
+  </data>
+  <data name="SelectAvatar.Content" xml:space="preserve">
+    <value>アバターを選択</value>
+  </data>
+  <data name="AvatarPathText.Text" xml:space="preserve">
+    <value>アバター未選択</value>
+  </data>
+  <data name="FirstRunDialog.Title" xml:space="preserve">
+    <value>アカウントを初期化</value>
+  </data>
+  <data name="FirstRunDialog.PrimaryButtonText" xml:space="preserve">
+    <value>作成</value>
+  </data>
+  <data name="FirstRunDialog.CloseButtonText" xml:space="preserve">
+    <value>終了</value>
   </data>
 </root>

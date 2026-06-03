@@ -42,6 +42,7 @@ namespace AzurLaneDex.Views
         public UpdatePage()
         {
             this.InitializeComponent();
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             Loaded += UpdatePage_Loaded;
         }
 
@@ -69,7 +70,8 @@ namespace AzurLaneDex.Views
 
         private async void CheckAppUpdate_Click(object sender, RoutedEventArgs e)
         {
-            StatusText.Text = "正在检查应用更新...";
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
+            StatusText.Text = loader.GetString("CheckingAppUpdate");
             DownloadAppButton.Visibility = Visibility.Collapsed;
             _latestAppVersion = null;
             _latestAppDownloadUrl = null;
@@ -89,7 +91,7 @@ namespace AzurLaneDex.Views
 
                     if (string.IsNullOrEmpty(remoteVersion))
                     {
-                        StatusText.Text = "version.json 格式错误";
+                        StatusText.Text = loader.GetString("VersionJsonFormatError");
                         return;
                     }
 
@@ -119,31 +121,32 @@ namespace AzurLaneDex.Views
                 {
                     if (CompareVersion(_latestAppVersion, _currentAppVersion) > 0)
                     {
-                        StatusText.Text = $"发现新版本 {_latestAppVersion}，点击「下载并安装」更新。";
+                        StatusText.Text = string.Format(loader.GetString("NewVersionAvailable"), _latestAppVersion);
                         DownloadAppButton.Visibility = Visibility.Visible;
                     }
                     else
                     {
-                        StatusText.Text = "当前已是最新版本。";
+                        StatusText.Text = loader.GetString("AlreadyLatestVersion");
                     }
                 }
             }
             catch (Exception ex)
             {
-                StatusText.Text = $"检查失败: {ex.Message}";
+                StatusText.Text = string.Format(loader.GetString("CheckUpdateFailed"), ex.Message);
             }
         }
 
         private async void DownloadApp_Click(object sender, RoutedEventArgs e)
         {
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             if (string.IsNullOrEmpty(_latestAppDownloadUrl))
             {
-                StatusText.Text = "下载链接无效";
+                StatusText.Text = loader.GetString("InvalidDownloadUrl");
                 return;
             }
             DownloadProgressBar.Visibility = Visibility.Visible;
             DownloadProgressBar.IsIndeterminate = false;
-            DownloadStatusText.Text = "正在下载...";
+            DownloadStatusText.Text = loader.GetString("Downloading");
             StatusText.Text = "";
             try
             {
@@ -171,11 +174,11 @@ namespace AzurLaneDex.Views
                 bool success = await DownloadWithProgressAsync(_latestAppDownloadUrl, downloadPath, ProxyBox.Text.Trim(), progress);
                 if (!success)
                 {
-                    StatusText.Text = "下载失败";
+                    StatusText.Text = loader.GetString("DownloadFailed");
                     return;
                 }
 
-                StatusText.Text = "下载完成，正在启动安装...";
+                StatusText.Text = loader.GetString("DownloadCompleteStartingInstall");
                 DownloadStatusText.Text = "安装包已就绪，正在启动安装程序...";
 
                 var psi = new ProcessStartInfo
@@ -190,7 +193,7 @@ namespace AzurLaneDex.Views
             }
             catch (Exception ex)
             {
-                StatusText.Text = $"下载失败: {ex.Message}";
+                StatusText.Text = string.Format(loader.GetString("DownloadFailed1"), ex.Message);
                 DownloadStatusText.Text = "";
                 DownloadProgressBar.Visibility = Visibility.Collapsed;
             }
@@ -242,18 +245,19 @@ namespace AzurLaneDex.Views
         private void DataDataSourceCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (DataCustomUrlBox == null) return;
-            DataCustomUrlBox.Visibility = DataDataSourceCombo.SelectedIndex == 2 ? Visibility.Visible : Visibility.Collapsed;
+            DataCustomUrlBox.Visibility = DataDataSourceCombo.SelectedIndex == 3 ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private async void CheckDataUpdate_Click(object sender, RoutedEventArgs e)
         {
-            StatusText.Text = "正在检查数据版本...";
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
+            StatusText.Text = loader.GetString("CheckingDataVersion");
             try
             {
                 string url = GetDataUrl();
                 if (string.IsNullOrEmpty(url))
                 {
-                    StatusText.Text = "请填写有效的自定义 URL";
+                    StatusText.Text = loader.GetString("PleaseEnterValidCustomUrl");
                     return;
                 }
 
@@ -262,41 +266,42 @@ namespace AzurLaneDex.Views
 
                 if (string.IsNullOrEmpty(_remoteDataVersion))
                 {
-                    StatusText.Text = "无法获取远程数据版本";
+                    StatusText.Text = loader.GetString("CannotGetRemoteDataVersion");
                     return;
                 }
 
                 if (CompareVersion(_remoteDataVersion, _shipManager.Version) > 0)
                 {
-                    StatusText.Text = $"发现新数据版本 {_remoteDataVersion}，点击「下载并安装」更新。";
+                    StatusText.Text = string.Format(loader.GetString("NewDataVersionAvailable"), _remoteDataVersion);
                 }
                 else
                 {
-                    StatusText.Text = "数据已是最新版本。";
+                    StatusText.Text = loader.GetString("DataAlreadyLatest");
                 }
             }
             catch (Exception ex)
             {
-                StatusText.Text = $"检查失败: {ex.Message}";
+                StatusText.Text = string.Format(loader.GetString("DataUpdateFailed1"), ex.Message);
             }
         }
 
         private async void DownloadData_Click(object sender, RoutedEventArgs e)
         {
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             if (string.IsNullOrEmpty(_latestDataUrl))
             {
-                StatusText.Text = "请先检查更新";
+                StatusText.Text = loader.GetString("PleaseCheckUpdateFirst");
                 return;
             }
 
-            StatusText.Text = "正在下载数据...";
+            StatusText.Text = loader.GetString("DownloadingData");
             try
             {
                 bool success = await _shipManager.UpdateDataFromUrlAsync(_latestDataUrl, ProxyBox.Text.Trim());
                 if (success)
-                    StatusText.Text = $"数据已更新至版本 {_remoteDataVersion}。";
+                    StatusText.Text = string.Format(loader.GetString("DataUpdatedToVersion"), _remoteDataVersion);
                 else
-                    StatusText.Text = "数据更新失败，请检查网络或 URL。";
+                    StatusText.Text = loader.GetString("DataUpdateFailed");
             }
             catch (Exception ex)
             {

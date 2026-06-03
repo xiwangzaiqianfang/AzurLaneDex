@@ -25,6 +25,7 @@ namespace AzurLaneDex.Views
         public SettingsPage()
         {
             this.InitializeComponent();
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             _app = Application.Current as App;
             this.Loaded += SettingsPage_Loaded;
         }
@@ -49,6 +50,7 @@ namespace AzurLaneDex.Views
 
         private async void MigrateOldData_Click(object sender, RoutedEventArgs e)
         {
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             var picker = new FileOpenPicker();
             var window = _app.GetMainWindow();
             if (window == null) return;
@@ -65,7 +67,7 @@ namespace AzurLaneDex.Views
                 var newStatic = MigrateOldStaticJson(oldJson);
                 if (newStatic == null)
                 {
-                    await ShowDialog("迁移失败", "文件格式不正确");
+                    await ShowDialog(loader.GetString("Dialog_Error_Title"), loader.GetString("InvalidFileFormat_Message"));
                     LogService.Operation("数据迁移操作", "文件格式错误");
                     return;
                 }
@@ -76,18 +78,19 @@ namespace AzurLaneDex.Views
                     await src.CopyToAsync(dest);
                 }
                 _app.ShipManager?.Load();
-                await ShowDialog("成功", "文件已替换并自动迁移。");
+                await ShowDialog(loader.GetString("Dialog_Success_Title"), loader.GetString("MigrationSuccess_Message"));
                 LogService.Operation("数据迁移操作", "迁移成功");
             }
             catch (Exception ex)
             {
-                await ShowDialog("失败", ex.Message);
+                await ShowDialog(loader.GetString("Dialog_Error_Title"), ex.Message);
                 LogService.Operation("数据迁移操作", $"迁移失败：{ex.Message}");
             }
         }
 
         private async Task PerformDataMigration()
         {
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             var picker = new FileOpenPicker();
             var window = _app.GetMainWindow();
             if (window == null) return;
@@ -104,12 +107,12 @@ namespace AzurLaneDex.Views
             }
             catch (Exception ex)
             {
-                await ShowDialog("读取失败", ex.Message);
+                await ShowDialog(loader.GetString("ReadFailed_Title"), ex.Message);
                 LogService.Operation("数据迁移操作", $"迁移失败：{ex.Message}");
                 return;
             }
 
-            // 迁移逻辑（请复用之前完整的 MigrateOldStaticJson 方法）
+            // 迁移逻辑
             try
             {
                 // 调用迁移函数（直接使用 ShipManager 的迁移逻辑）
@@ -122,12 +125,12 @@ namespace AzurLaneDex.Views
 
                 // 重新加载 ShipManager
                 _app.ShipManager?.Load();
-                await ShowDialog("成功", "数据已迁移并覆盖，请返回主界面查看。");
+                await ShowDialog(loader.GetString("Dialog_Success_Title"), loader.GetString("MigrationAndOverwrite_Message"));
                 LogService.Operation("数据迁移操作", "数据已成功迁移并覆盖");
             }
             catch (Exception ex)
             {
-                await ShowDialog("迁移失败", ex.Message);
+                await ShowDialog(loader.GetString("Dialog_Error_Title"), ex.Message);
                 LogService.Operation("数据迁移操作", $"迁移失败：{ex.Message}");
             }
         }
@@ -154,6 +157,7 @@ namespace AzurLaneDex.Views
         // 添加语言切换事件处理
         private async void LanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             if (LanguageComboBox.SelectedItem is ComboBoxItem selected)
             {
                 string newLang = selected.Tag?.ToString();
@@ -172,10 +176,10 @@ namespace AzurLaneDex.Views
                 // 询问用户是否立即重启
                 var dialog = new ContentDialog
                 {
-                    Title = "重启应用",
-                    Content = "语言已更改，需要重启应用才能完全生效。是否立即重启？",
-                    PrimaryButtonText = "立即重启",
-                    CloseButtonText = "以后",
+                    Title = loader.GetString("RestartApp_Title"),
+                    Content = loader.GetString("RestartApp_Message"),
+                    PrimaryButtonText = loader.GetString("RestartApp_Message_PrimaryButtonText"),
+                    CloseButtonText = loader.GetString("RestartApp_Message_CloseButtonText"),
                     XamlRoot = this.XamlRoot,
                     Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
                 };
@@ -223,6 +227,7 @@ namespace AzurLaneDex.Views
 
         private async void ResetWindowClick(object sender, RoutedEventArgs e)
         {
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             var window = _app.GetMainWindow();
             if (window == null) return;
             var manager = WinUIEx.WindowManager.Get(window);
@@ -232,9 +237,9 @@ namespace AzurLaneDex.Views
             UpdateWindowSizeLabel();
             var dialog = new ContentDialog
             {
-                Title = "重置窗口",
-                Content = "窗口大小已重置",
-                CloseButtonText = "确定",
+                Title = loader.GetString("ResetWindow_Title"),
+                Content = loader.GetString("WindowReset_Message"),
+                CloseButtonText = loader.GetString("Common_Confirm"),
                 XamlRoot = this.Content.XamlRoot
             };
             await dialog.ShowAsync();
@@ -252,11 +257,12 @@ namespace AzurLaneDex.Views
 
         private async Task ShowDialog(string title, string content)
         {
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             var dialog = new ContentDialog
             {
                 Title = title,
                 Content = content,
-                CloseButtonText = "确定",
+                CloseButtonText = loader.GetString("Common_Confirm"),
                 XamlRoot = this.XamlRoot
             };
             await dialog.ShowAsync();

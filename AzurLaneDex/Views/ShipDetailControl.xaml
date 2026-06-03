@@ -141,8 +141,8 @@
                     <TextBlock x:Name="BuildTimeText" Grid.Row="3" Grid.Column="1" TextWrapping="Wrap" Margin="0,4,0,0"/>
                     <TextBlock x:Uid="Acquisition_ShopExchange" Text="商店兑换:" Grid.Row="4" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                     <TextBlock x:Name="ShopExchangeText" Grid.Row="4" Grid.Column="1" TextWrapping="Wrap" Margin="0,4,0,0"/>
-                    <TextBlock Text="常驻状态:" Grid.Row="5" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                    <TextBlock x:Uid="Acquisition_IsPermanent_Status" x:Name="IsPermanentText" Grid.Row="5" Grid.Column="1" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                    <TextBlock x:Uid="Acquisition_IsPermanent_Status" Text="常驻状态:" Grid.Row="5" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                    <TextBlock x:Name="IsPermanentText" Grid.Row="5" Grid.Column="1" TextWrapping="Wrap" Margin="0,4,0,0"/>
                 </StackPanel>
             </Border>
 
