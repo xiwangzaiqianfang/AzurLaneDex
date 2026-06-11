@@ -482,37 +482,39 @@ public sealed partial class ShipDetailControl : UserControl
         {
             if (_currentShip != null)
             {
-                _currentShip.Owned = OwnedCheckBox.IsChecked ?? false;
-                if (!_currentShip.Owned)
+                bool newOwned = OwnedCheckBox.IsChecked ?? false;
+                if (_currentShip.Owned != newOwned)
                 {
-                    _currentShip.Breakthrough = 0;
-                    _currentShip.Oath = false;
-                    _currentShip.Level120 = false;
-                    _currentShip.Remodeled = false;
-                    _currentShip.SpecialGearObtained = false;
-                    BreakthroughSlider.Value = 0;
-                    OathCheckBox.IsChecked = false;
-                    Level120CheckBox.IsChecked = false;
-                    RemodeledCheckBox.IsChecked = false;
-                    SpecialGearObtainedCheckBox.IsChecked = false;
+                    _currentShip.Owned = newOwned;
+                    if (!_currentShip.Owned)
+                    {
+                        _currentShip.Breakthrough = 0;
+                        _currentShip.Oath = false;
+                        _currentShip.Level120 = false;
+                        _currentShip.Remodeled = false;
+                        _currentShip.SpecialGearObtained = false;
+                        BreakthroughSlider.Value = 0;
+                        OathCheckBox.IsChecked = false;
+                        Level120CheckBox.IsChecked = false;
+                        RemodeledCheckBox.IsChecked = false;
+                        SpecialGearObtainedCheckBox.IsChecked = false;
+                    }
+                    RemodeledCheckBox.IsEnabled = _currentShip.CanRemodel && _currentShip.Owned;
+                    SaveShip();
+                    UpdateControlStates();
+                    LogService.Operation("状态变更", $"舰船 {_currentShip.Name} (ID:{_currentShip.Id}) 获得状态改为 {_currentShip.Owned}");
                 }
-                RemodeledCheckBox.IsEnabled = _currentShip.CanRemodel && _currentShip.Owned;
-                SaveShip();
-                UpdateControlStates();
             }
         }
         finally
         {
             _isUpdating = false;
         }
-        if (!_isUpdating)
-            LogService.Operation("状态变更", $"舰船 {_currentShip.Name} (ID:{_currentShip.Id}) 获得状态改为 {_currentShip.Owned}");
     }
 
     private void OnBreakthroughChanged(object sender, RangeBaseValueChangedEventArgs e)
     {
         if (_isUpdating) return;
-        // 特殊布里禁止手动更改突破
         if (IsSpecialBulin(_currentShip))
         {
             BreakthroughSlider.Value = 3;
@@ -524,17 +526,19 @@ public sealed partial class ShipDetailControl : UserControl
             if (_currentShip != null)
             {
                 int newValue = (int)e.NewValue;
-                _currentShip.Breakthrough = newValue;
-                BreakthroughValueText.Text = newValue.ToString();
-                SaveShip();
+                if (_currentShip.Breakthrough != newValue)
+                {
+                    _currentShip.Breakthrough = newValue;
+                    BreakthroughValueText.Text = newValue.ToString();
+                    SaveShip();
+                    LogService.Operation("状态变更", $"舰船 {_currentShip.Name} (ID:{_currentShip.Id}) 突破状态改为 {_currentShip.Breakthrough}");
+                }
             }
         }
         finally
         {
             _isUpdating = false;
         }
-        if (!_isUpdating)
-            LogService.Operation("状态变更", $"舰船 {_currentShip.Name} (ID:{_currentShip.Id}) 突破状态改为 {_currentShip.Breakthrough}");
     }
 
     private void OnOathChanged(object sender, RoutedEventArgs e)
@@ -545,16 +549,19 @@ public sealed partial class ShipDetailControl : UserControl
         {
             if (_currentShip != null)
             {
-                _currentShip.Oath = OathCheckBox.IsChecked ?? false;
-                SaveShip();
+                bool newOath = OathCheckBox.IsChecked ?? false;
+                if (_currentShip.Oath != newOath)
+                {
+                    _currentShip.Oath = newOath;
+                    SaveShip();
+                    LogService.Operation("状态变更", $"舰船 {_currentShip.Name} (ID:{_currentShip.Id}) 誓约状态改为 {_currentShip.Oath}");
+                }
             }
         }
         finally
         {
             _isUpdating = false;
         }
-        if (!_isUpdating)
-            LogService.Operation("状态变更", $"舰船 {_currentShip.Name} (ID:{_currentShip.Id}) 誓约状态改为 {_currentShip.Oath}");
     }
 
     private void OnLevel120Changed(object sender, RoutedEventArgs e)
@@ -565,16 +572,19 @@ public sealed partial class ShipDetailControl : UserControl
         {
             if (_currentShip != null)
             {
-                _currentShip.Level120 = Level120CheckBox.IsChecked ?? false;
-                SaveShip();
+                bool newLevel120 = Level120CheckBox.IsChecked ?? false;
+                if (_currentShip.Level120 != newLevel120)
+                {
+                    _currentShip.Level120 = newLevel120;
+                    SaveShip();
+                    LogService.Operation("状态变更", $"舰船 {_currentShip.Name} (ID:{_currentShip.Id}) 等级状态改为 {_currentShip.Level120}");
+                }
             }
         }
         finally
         {
             _isUpdating = false;
         }
-        if (!_isUpdating)
-            LogService.Operation("状态变更", $"舰船 {_currentShip.Name} (ID:{_currentShip.Id}) 等级状态改为 {_currentShip.Level120}");
     }
 
     private void OnRemodeledChanged(object sender, RoutedEventArgs e)
@@ -586,14 +596,16 @@ public sealed partial class ShipDetailControl : UserControl
             if (_currentShip != null)
             {
                 bool wasRemodeled = _currentShip.Remodeled;
-                _currentShip.Remodeled = RemodeledCheckBox.IsChecked ?? false;
+                bool newRemodeled = RemodeledCheckBox.IsChecked ?? false;
                 SaveShip();
 
-                // 如果改造状态实际发生了变化，立即刷新名称、稀有度、头像
-                if (wasRemodeled != _currentShip.Remodeled)
+                if (wasRemodeled != newRemodeled)
                 {
+                    _currentShip.Remodeled = newRemodeled;
+                    SaveShip();
                     RefreshNameAndRarityDisplay();
                     RefreshAvatarForRemodel();
+                    LogService.Operation("状态变更", $"舰船 {_currentShip.Name} (ID:{_currentShip.Id}) 改造状态改为 {_currentShip.Remodeled}");
                 }
             }
         }
@@ -601,8 +613,6 @@ public sealed partial class ShipDetailControl : UserControl
         {
             _isUpdating = false;
         }
-        if (!_isUpdating)
-            LogService.Operation("状态变更", $"舰船 {_currentShip.Name} (ID:{_currentShip.Id}) 改造状态改为 {_currentShip.Remodeled}");
     }
 
     private void RefreshNameAndRarityDisplay()
@@ -630,18 +640,18 @@ public sealed partial class ShipDetailControl : UserControl
         _isUpdating = true;
         try
         {
+            bool newObtained = SpecialGearObtainedCheckBox.IsChecked ?? false;
             if (_currentShip != null)
             {
-                _currentShip.SpecialGearObtained = SpecialGearObtainedCheckBox.IsChecked ?? false;
+                _currentShip.SpecialGearObtained = newObtained;
                 SaveShip();
+                LogService.Operation("状态变更", $"舰船 {_currentShip.Name} (ID:{_currentShip.Id}) 专属兵装状态改为 {_currentShip.SpecialGearObtained}");
             }
         }
         finally
         {
             _isUpdating = false;
         }
-        if (!_isUpdating)
-            LogService.Operation("状态变更", $"舰船 {_currentShip.Name} (ID:{_currentShip.Id}) 专属兵装状态改为 {_currentShip.SpecialGearObtained}");
     }
 
     private async void SaveShip()
