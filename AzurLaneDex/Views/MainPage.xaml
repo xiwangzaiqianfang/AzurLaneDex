@@ -6,7 +6,8 @@
 
     <Page.Resources>
         <converters:BoolToCheckMarkConverter x:Key="BoolToCheckMark"/>
-        <converters:BoolToBreakthroughTextConverter x:Key="BoolToBreakthroughText"/>
+        <!--converters:BoolToBreakthroughTextConverter x:Key="BoolToBreakthroughText"/-->
+        <converters:BreakthroughToDisplayConverter x:Key="BreakthroughToDisplay"/>
         <converters:BoolToHeartConverter x:Key="BoolToHeart"/>
         <converters:BoolToStarConverter x:Key="BoolToStar"/>
 
@@ -14,22 +15,7 @@
         <DataTemplate x:Key="FullTemplate">
             <Grid>
                 <Grid.ContextFlyout>
-                    <MenuFlyout>
-                        <MenuFlyoutItem x:Name="ContextMenuOwned" Text="标记为已获得" Click="ContextMenu_Owned_Click"/>
-                        <MenuFlyoutItem x:Name="ContextMenuNotOwned" Text="标记为未获得" Click="ContextMenu_NotOwned_Click"/>
-                        <MenuFlyoutItem x:Name="ContextMenuMaxBreak" Text="标记为已满破" Click="ContextMenu_MaxBreak_Click"/>
-                        <MenuFlyoutItem x:Name="ContextMenuNotMaxBreak" Text="标记为未满破" Click="ContextMenu_NotMaxBreak_Click"/>
-                        <MenuFlyoutItem x:Name="ContextMenuLevel120" Text="标记为已120级" Click="ContextMenu_Level120_Click"/>
-                        <MenuFlyoutItem x:Name="ContextMenuNotLevel120" Text="标记为未120级" Click="ContextMenu_NotLevel120_Click"/>
-                        <MenuFlyoutItem x:Name="ContextMenuOath" Text="标记为已誓约" Click="ContextMenu_Oath_Click"/>
-                        <MenuFlyoutItem x:Name="ContextMenuNotOath" Text="标记为未誓约" Click="ContextMenu_NotOath_Click"/>
-                        <MenuFlyoutItem x:Name="ContextMenuRemodeled" Text="标记为已改造" Click="ContextMenu_Remodeled_Click"/>
-                        <MenuFlyoutItem x:Name="ContextMenuNotRemodeled" Text="标记为未改造" Click="ContextMenu_NotRemodeled_Click"/>
-                        <MenuFlyoutItem x:Name="ContextMenuSpecialGear" Text="标记为已拥有特殊兵装" Click="ContextMenu_SpecialGear_Click"/>
-                        <MenuFlyoutItem x:Name="ContextMenuNotSpecialGear" Text="标记为未拥有特殊兵装" Click="ContextMenu_NotSpecialGear_Click"/>
-                        <MenuFlyoutSeparator x:Name="SeparatorDelete"/>
-                        <MenuFlyoutItem x:Uid="DeleteShipButton" x:Name="ContextMenuDelete" Text="删除舰船" Click="ContextMenu_Delete_Click" Foreground="Red"/>
-                    </MenuFlyout>
+                    <StaticResource ResourceKey="ShipContextMenu"/>
                 </Grid.ContextFlyout>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="40"/>
@@ -47,7 +33,7 @@
                 <TextBlock Grid.Column="2" Text="{Binding DisplayName}" FontWeight="SemiBold" VerticalAlignment="Center"/>
                 <TextBlock Grid.Column="3" Text="{Binding Owned, Converter={StaticResource BoolToCheckMark}}" VerticalAlignment="Center"/>
                 <TextBlock Grid.Column="4" Text="{Binding Oath, Converter={StaticResource BoolToHeart}}" VerticalAlignment="Center"/>
-                <TextBlock Grid.Column="5" Text="{Binding BreakthroughDisplay}" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="5" Text="{Binding Breakthrough, Converter={StaticResource BreakthroughToDisplay}}" VerticalAlignment="Center"/>
                 <TextBlock Grid.Column="6" Text="{Binding Level120, Converter={StaticResource BoolToStar}}" VerticalAlignment="Center"/>
                 <TextBlock Grid.Column="7" Text="{Binding Remodeled, Converter={StaticResource BoolToCheckMark}}" VerticalAlignment="Center"/>
                 <TextBlock Grid.Column="8" Text="{Binding SpecialGearObtained, Converter={StaticResource BoolToCheckMark}}" VerticalAlignment="Center"/>
@@ -58,22 +44,7 @@
         <DataTemplate x:Key="CompactTemplate">
             <Grid>
                 <Grid.ContextFlyout>
-                    <MenuFlyout>
-                        <MenuFlyoutItem Text="标记为已获得" Click="ContextMenu_Owned_Click"/>
-                        <MenuFlyoutItem Text="标记为未获得" Click="ContextMenu_NotOwned_Click"/>
-                        <MenuFlyoutItem Text="标记为已满破" Click="ContextMenu_MaxBreak_Click"/>
-                        <MenuFlyoutItem Text="标记为未满破" Click="ContextMenu_NotMaxBreak_Click"/>
-                        <MenuFlyoutItem Text="标记为已120级" Click="ContextMenu_Level120_Click"/>
-                        <MenuFlyoutItem Text="标记为未120级" Click="ContextMenu_NotLevel120_Click"/>
-                        <MenuFlyoutItem Text="标记为已誓约" Click="ContextMenu_Oath_Click"/>
-                        <MenuFlyoutItem Text="标记为未誓约" Click="ContextMenu_NotOath_Click"/>
-                        <MenuFlyoutItem Text="标记为已改造" Click="ContextMenu_Remodeled_Click"/>
-                        <MenuFlyoutItem Text="标记为未改造" Click="ContextMenu_NotRemodeled_Click"/>
-                        <MenuFlyoutItem Text="标记为已拥有特殊兵装" Click="ContextMenu_SpecialGear_Click"/>
-                        <MenuFlyoutItem Text="标记为未拥有特殊兵装" Click="ContextMenu_NotSpecialGear_Click"/>
-                        <MenuFlyoutSeparator/>
-                        <MenuFlyoutItem x:Uid="DeleteShipButton" Text="删除舰船" Click="ContextMenu_Delete_Click" Foreground="Red"/>
-                    </MenuFlyout>
+                    <StaticResource ResourceKey="ShipContextMenu"/>
                 </Grid.ContextFlyout>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="40"/>
@@ -97,22 +68,7 @@
         <DataTemplate x:Key="MinimalTemplate">
             <Grid>
                 <Grid.ContextFlyout>
-                    <MenuFlyout>
-                        <MenuFlyoutItem Text="标记为已获得" Click="ContextMenu_Owned_Click"/>
-                        <MenuFlyoutItem Text="标记为未获得" Click="ContextMenu_NotOwned_Click"/>
-                        <MenuFlyoutItem Text="标记为已满破" Click="ContextMenu_MaxBreak_Click"/>
-                        <MenuFlyoutItem Text="标记为未满破" Click="ContextMenu_NotMaxBreak_Click"/>
-                        <MenuFlyoutItem Text="标记为已120级" Click="ContextMenu_Level120_Click"/>
-                        <MenuFlyoutItem Text="标记为未120级" Click="ContextMenu_NotLevel120_Click"/>
-                        <MenuFlyoutItem Text="标记为已誓约" Click="ContextMenu_Oath_Click"/>
-                        <MenuFlyoutItem Text="标记为未誓约" Click="ContextMenu_NotOath_Click"/>
-                        <MenuFlyoutItem Text="标记为已改造" Click="ContextMenu_Remodeled_Click"/>
-                        <MenuFlyoutItem Text="标记为未改造" Click="ContextMenu_NotRemodeled_Click"/>
-                        <MenuFlyoutItem Text="标记为已拥有特殊兵装" Click="ContextMenu_SpecialGear_Click"/>
-                        <MenuFlyoutItem Text="标记为未拥有特殊兵装" Click="ContextMenu_NotSpecialGear_Click"/>
-                        <MenuFlyoutSeparator/>
-                        <MenuFlyoutItem x:Uid="DeleteShipButton" Text="删除舰船" Click="ContextMenu_Delete_Click" Foreground="Red"/>
-                    </MenuFlyout>
+                    <StaticResource ResourceKey="ShipContextMenu"/>
                 </Grid.ContextFlyout>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="40"/>
@@ -124,6 +80,81 @@
                 <TextBlock Grid.Column="2" Text="{Binding DisplayName}" FontWeight="SemiBold" VerticalAlignment="Center"/>
             </Grid>
         </DataTemplate>
+        
+        <!-- 右键菜单资源项 -->
+        <!-- 统一右键菜单（Windows 11 风格分组） -->
+        <MenuFlyout x:Key="ShipContextMenu">
+            <!-- 第一组：最常用指令（获得、120级、满破、改造） -->
+            <MenuFlyoutItem x:Name="CtxMenu_ToggleOwned" Click="CtxMenu_ToggleOwned_Click">
+                <MenuFlyoutItem.Icon>
+                    <FontIcon x:Name="CtxMenu_OwnedIcon" Glyph="&#xE10B;"/>
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+            <MenuFlyoutItem x:Name="CtxMenu_ToggleLevel120" Click="CtxMenu_ToggleLevel120_Click">
+                <MenuFlyoutItem.Icon>
+                    <FontIcon x:Name="CtxMenu_Level120Icon" Glyph="&#xE752;"/>
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+            <MenuFlyoutItem x:Name="CtxMenu_ToggleMaxBreak" Click="CtxMenu_ToggleMaxBreak_Click">
+                <MenuFlyoutItem.Icon>
+                    <FontIcon x:Name="CtxMenu_MaxBreakIcon" Glyph="&#xE734;"/>
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+            <MenuFlyoutItem x:Name="CtxMenu_ToggleRemodel" Click="CtxMenu_ToggleRemodel_Click">
+                <MenuFlyoutItem.Icon>
+                    <FontIcon x:Name="CtxMenu_RemodelIcon" Glyph="&#xE794;"/>
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+
+            <MenuFlyoutSeparator/>
+
+            <!-- 第二组：常用指令（誓约、兵装） + 突破子菜单 -->
+            <MenuFlyoutItem x:Name="CtxMenu_ToggleOath" Click="CtxMenu_ToggleOath_Click">
+                <MenuFlyoutItem.Icon>
+                    <FontIcon x:Name="CtxMenu_OathIcon" Glyph="&#xEB51;"/>
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+            <MenuFlyoutItem x:Name="CtxMenu_ToggleSpecialGear" Click="CtxMenu_ToggleSpecialGear_Click">
+                <MenuFlyoutItem.Icon>
+                    <FontIcon x:Name="CtxMenu_SpecialGearIcon" Glyph="&#xE157;"/>
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+
+            <!-- 突破子菜单（突破一次、两次、三次） -->
+            <MenuFlyoutSubItem x:Name="CtxMenu_BreakthroughSub" Text="突破状态">
+                <MenuFlyoutSubItem.Icon>
+                    <FontIcon Glyph="&#xE734;"/>
+                </MenuFlyoutSubItem.Icon>
+                <MenuFlyoutItem x:Name="CtxMenu_Break1" Tag="1" Click="CtxMenu_Break_Click">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon Glyph="&#xE73E;"/>
+                    </MenuFlyoutItem.Icon>
+                    <MenuFlyoutItem.Text>突破一次</MenuFlyoutItem.Text>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem x:Name="CtxMenu_Break2" Tag="2" Click="CtxMenu_Break_Click">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon Glyph="&#xE73E;"/>
+                    </MenuFlyoutItem.Icon>
+                    <MenuFlyoutItem.Text>突破两次</MenuFlyoutItem.Text>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem x:Name="CtxMenu_Break3" Tag="3" Click="CtxMenu_Break_Click">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon Glyph="&#xE73E;"/>
+                    </MenuFlyoutItem.Icon>
+                    <MenuFlyoutItem.Text>满破（三次）</MenuFlyoutItem.Text>
+                </MenuFlyoutItem>
+            </MenuFlyoutSubItem>
+
+            <MenuFlyoutSeparator/>
+
+            <!-- 第三组：删除（仅开发者可见） -->
+            <MenuFlyoutItem x:Name="CtxMenu_Delete" Foreground="Red" Click="CtxMenu_Delete_Click">
+                <MenuFlyoutItem.Icon>
+                    <SymbolIcon Symbol="Delete"/>
+                </MenuFlyoutItem.Icon>
+                <MenuFlyoutItem.Text>删除舰船</MenuFlyoutItem.Text>
+            </MenuFlyoutItem>
+        </MenuFlyout>
     </Page.Resources>
 
     <Grid>
@@ -159,7 +190,7 @@
         </StackPanel>
 
         <!-- 分类选择器（SelectorBar）单独一行 -->
-        <SelectorBar x:Name="CategorySelector" Grid.Row="1" Margin="12,-6,12,0"
+        <SelectorBar x:Name="CategorySelector" Grid.Row="1" Margin="12,0,12,0"
                      SelectionChanged="CategorySelector_SelectionChanged">
             <SelectorBarItem x:Uid="CategoryTag_Normal" Text="角色" Tag="Normal" />
             <SelectorBarItem x:Uid="CategoryTag_Collab" Text="联动" Tag="Collab" />

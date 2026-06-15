@@ -134,8 +134,9 @@
                     </StackPanel>
                     <TextBlock x:Uid="Acquisition_Main" Text="主要获取:" Grid.Row="0" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                     <TextBlock x:Name="AcquireMainText" Grid.Row="0" Grid.Column="1" TextWrapping="Wrap" Margin="0,4,0,0"/>
-                    <TextBlock x:Name="AcquireDetailText" Grid.Row="1" Grid.Column="0" TextWrapping="Wrap" Margin="0,4,0,0" 
-                               Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontSize="12"/>
+                    <TextBlock x:Uid="AcquisitionDetail" Text="获取详细:" Grid.Row="1" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                    <TextBlock x:Name="AcquireDetailText" Grid.Row="1" Grid.Column="1" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                    <TextBlock x:Uid="AcquisitionDropLocations" Text="打捞地点:" Grid.Row="1" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                     <TextBlock x:Name="DropLocationsText" Grid.Row="2" Grid.Column="0" TextWrapping="Wrap" Margin="0,4,0,0"/>
                     <TextBlock x:Uid="Acquisition_BuildTime" Text="建造时间:" Grid.Row="3" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                     <TextBlock x:Name="BuildTimeText" Grid.Row="3" Grid.Column="1" TextWrapping="Wrap" Margin="0,4,0,0"/>

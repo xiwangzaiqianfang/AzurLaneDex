@@ -2,6 +2,7 @@
                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                xmlns:controls="using:Microsoft.UI.Xaml.Controls"
+               xmlns:local="using:AzurLaneDex.Views.Controls"
                x:Uid="AddShipDialog"
                Title="新增舰船"
                PrimaryButtonText="添加"
@@ -45,11 +46,21 @@
                         <TextBlock x:Name="CategoryOrderLabel" x:Uid="BasicInfo_CategoryOrder"  Grid.Row="1" Grid.Column="0" Text="类别内顺序:" VerticalAlignment="Center" Visibility="Collapsed"/>
                         <NumberBox x:Name="CategoryOrderBox" Grid.Row="1" Grid.Column="1" Minimum="0" Value="0" SpinButtonPlacementMode="Inline" Visibility="Collapsed"/>
 
-                        <TextBlock Grid.Row="2" Grid.Column="0" x:Uid="BasicInfo_Name" Text="舰船名称:" VerticalAlignment="Center"/>
-                        <TextBox x:Name="NameBox" Grid.Row="2" Grid.Column="1"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" x:Uid="BasicInfo_Name" Text="舰船名称:" VerticalAlignment="Top" Margin="0,4,0,0"/>
+                        <StackPanel Grid.Row="2" Grid.Column="1">
+                            <TextBox x:Name="NameZhBox" Header="简体中文" PlaceholderText="简体中文名称"/>
+                            <TextBox x:Name="NameZhHantBox" Header="繁體中文" PlaceholderText="繁體中文名稱" Margin="0,8,0,0"/>
+                            <TextBox x:Name="NameEnBox" Header="English" PlaceholderText="English name" Margin="0,8,0,0"/>
+                            <TextBox x:Name="NameJaBox" Header="日本語" PlaceholderText="日本語名" Margin="0,8,0,0"/>
+                        </StackPanel>
 
-                        <TextBlock Grid.Row="3" Grid.Column="0" x:Uid="BasicInfo_AltName" Text="和谐名:" VerticalAlignment="Center"/>
-                        <TextBox x:Name="AltNameBox" Grid.Row="3" Grid.Column="1"/>
+                        <TextBlock Grid.Row="3" Grid.Column="0" x:Uid="BasicInfo_AltName" Text="和谐名:" VerticalAlignment="Top" Margin="0,4,0,0"/>
+                        <StackPanel Grid.Row="3" Grid.Column="1">
+                            <TextBox x:Name="AltNameZhBox" Header="简体中文" PlaceholderText="简体中文和谐名"/>
+                            <TextBox x:Name="AltNameZhHantBox" Header="繁體中文" PlaceholderText="繁體中文和諧名" Margin="0,8,0,0"/>
+                            <TextBox x:Name="AltNameEnBox" Header="English" PlaceholderText="English censored name" Margin="0,8,0,0"/>
+                            <TextBox x:Name="AltNameJaBox" Header="日本語" PlaceholderText="日本語和諧名" Margin="0,8,0,0"/>
+                        </StackPanel>
 
                         <TextBlock Grid.Row="4" Grid.Column="0" x:Uid="BasicInfo_Faction" Text="阵营:" VerticalAlignment="Center"/>
                         <ComboBox x:Name="FactionCombo" Grid.Row="4" Grid.Column="1"/>
@@ -87,7 +98,7 @@
                             <ComboBoxItem x:Uid="Category_Normal">角色</ComboBoxItem>
                             <ComboBoxItem x:Uid="Category_Collab">联动</ComboBoxItem>
                             <ComboBoxItem x:Uid="Category_Research">科研</ComboBoxItem>
-                            <ComboBoxItem x:Uid="Category_META">META</ComboBoxItem>
+                            <ComboBoxItem x:Uid="Category_META1">META</ComboBoxItem>
                         </ComboBox>
 
                         <TextBlock Grid.Row="8" Grid.Column="0" x:Uid="BasicInfo_CanRemodel" Text="可改造:" VerticalAlignment="Center"/>
@@ -106,10 +117,17 @@
                     BorderThickness="1" CornerRadius="8" Padding="12">
                 <StackPanel>
                     <TextBlock x:Uid="Acquisition_Header" Text="获取方式" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,12"/>
+                    <!-- 动态条目列表 -->
+                        <ItemsControl x:Name="AcquireEntriesItemsControl" Margin="0,0,0,8">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                <local:AcquireEntryControl Margin="0,4" DeleteRequested="OnEntryDeleteRequested"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <Button x:Uid="AddAcquireEntryButton" x:Name="AddAcquireEntryButton" Content="+ 添加获取方式" Click="AddAcquireEntry_Click" HorizontalAlignment="Left" Margin="0,4,0,12"/>
                     <Grid RowSpacing="12" ColumnSpacing="12">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
@@ -119,24 +137,31 @@
                             <ColumnDefinition Width="100"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
+                        <!--
+                        <TextBlock Grid.Row="0" Grid.Column="0" x:Uid="Acquisition_Main" Text="主要获取方式:" VerticalAlignment="Top"/>
+                        <StackPanel Grid.Row="0" Grid.Column="1">
+                            <TextBox x:Name="AcquireMainZhBox" Header="简体中文"/>
+                            <TextBox x:Name="AcquireMainZhHantBox" Header="繁體中文" Margin="0,8,0,0"/>
+                            <TextBox x:Name="AcquireMainEnBox" Header="English" Margin="0,8,0,0"/>
+                            <TextBox x:Name="AcquireMainJaBox" Header="日本語" Margin="0,8,0,0"/>
+                        </StackPanel>
 
-                        <TextBlock Grid.Row="0" Grid.Column="0" x:Uid="Acquisition_Main" Text="主要获取方式:" VerticalAlignment="Center"/>
-                        <TextBox x:Name="AcquireMainBox" Grid.Row="0" Grid.Column="1"/>
-
-                        <TextBlock Grid.Row="1" Grid.Column="0" x:Uid="Acquisition_Detail" Text="详细信息:" VerticalAlignment="Center"/>
-                        <TextBox x:Name="AcquireDetailBox" Grid.Row="1" Grid.Column="1"/>
-
-                        <TextBlock Grid.Row="2" Grid.Column="0" x:Uid="Acquisition_BuildTime" Text="建造时间:" VerticalAlignment="Center"/>
-                        <TextBox x:Name="BuildTimeBox" Grid.Row="2" Grid.Column="1"/>
-
-                        <TextBlock Grid.Row="3" Grid.Column="0" x:Uid="Acquisition_DropLocations" Text="打捞地点:" VerticalAlignment="Center"/>
-                        <TextBox x:Name="DropLocationsBox" x:Uid="Acquisition_DropLocationsBox" Grid.Row="3" Grid.Column="1" PlaceholderText="分号分隔"/>
-
-                        <TextBlock Grid.Row="4" Grid.Column="0" x:Uid="Acquisition_ShopExchange" Text="商店兑换:" VerticalAlignment="Center"/>
-                        <TextBox x:Name="ShopExchangeBox" Grid.Row="4" Grid.Column="1"/>
-
-                        <TextBlock Grid.Row="5" Grid.Column="0" x:Uid="Acquisition_IsPermanent" Text="是否常驻:" VerticalAlignment="Center"/>
-                        <CheckBox x:Name="IsPermanentCheckBox" x:Uid="Acquisition_IsPermanentCheckBox" Grid.Row="5" Grid.Column="1" Content="常驻" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" x:Uid="Acquisition_Detail" Text="详细信息:" VerticalAlignment="Top"/>
+                        <StackPanel Grid.Row="1" Grid.Column="1">
+                            <TextBox x:Name="AcquireDetailZhBox" Header="简体中文"/>
+                            <TextBox x:Name="AcquireDetailZhHantBox" Header="繁體中文" Margin="0,8,0,0"/>
+                            <TextBox x:Name="AcquireDetailEnBox" Header="English" Margin="0,8,0,0"/>
+                            <TextBox x:Name="AcquireDetailJaBox" Header="日本語" Margin="0,8,0,0"/>
+                        </StackPanel>
+                         -->
+                        <TextBlock Grid.Row="0" Grid.Column="0" x:Uid="Acquisition_BuildTime" Text="建造时间:" VerticalAlignment="Center"/>
+                        <TextBox x:Name="BuildTimeBox" Grid.Row="0" Grid.Column="1"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" x:Uid="Acquisition_DropLocations" Text="打捞地点:" VerticalAlignment="Center"/>
+                        <TextBox x:Name="DropLocationsBox" x:Uid="Acquisition_DropLocationsBox" Grid.Row="1" Grid.Column="1" PlaceholderText="分号分隔"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" x:Uid="Acquisition_ShopExchange" Text="商店兑换:" VerticalAlignment="Center"/>
+                        <TextBox x:Name="ShopExchangeBox" Grid.Row="2" Grid.Column="1"/>
+                        <TextBlock Grid.Row="3" Grid.Column="0" x:Uid="Acquisition_IsPermanent" Text="是否常驻:" VerticalAlignment="Center"/>
+                        <CheckBox x:Name="IsPermanentCheckBox" x:Uid="Acquisition_IsPermanentCheckBox" Grid.Row="3" Grid.Column="1" Content="常驻" VerticalAlignment="Center"/>
                     </Grid>
                 </StackPanel>
             </Border>
@@ -157,12 +182,22 @@
                             <ColumnDefinition Width="100"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Row="0" Grid.Column="0" x:Uid="DebutEvent_Name" Text="首次登场活动:" VerticalAlignment="Center"/>
-                        <TextBox x:Name="DebutEventBox" Grid.Row="0" Grid.Column="1"/>
+                        <TextBlock Grid.Row="0" Grid.Column="0" x:Uid="DebutEvent_Name" Text="首次登场活动:" VerticalAlignment="Top"/>
+                        <StackPanel Grid.Row="0" Grid.Column="1">
+                            <TextBox x:Name="DebutEventZhBox" Header="简体中文"/>
+                            <TextBox x:Name="DebutEventZhHantBox" Header="繁體中文" Margin="0,8,0,0"/>
+                            <TextBox x:Name="DebutEventEnBox" Header="English" Margin="0,8,0,0"/>
+                            <TextBox x:Name="DebutEventJaBox" Header="日本語" Margin="0,8,0,0"/>
+                        </StackPanel>
                         <TextBlock Grid.Row="1" Grid.Column="0" x:Uid="DebutEvent_Date" Text="实装日期:" VerticalAlignment="Center"/>
                         <DatePicker x:Name="ReleaseDatePicker" Grid.Row="1" Grid.Column="1"/>
-                        <TextBlock Grid.Row="2" Grid.Column="0" x:Uid="DebutEvent_Notes" Text="备注:" VerticalAlignment="Center"/>
-                        <TextBox x:Name="NotesBox" Grid.Row="2" Grid.Column="1" AcceptsReturn="True" Height="60"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" x:Uid="DebutEvent_Notes" Text="备注:" VerticalAlignment="Top"/>
+                        <StackPanel Grid.Row="2" Grid.Column="1">
+                            <TextBox x:Name="NotesZhBox" Header="简体中文" AcceptsReturn="True" Height="60"/>
+                            <TextBox x:Name="NotesZhHantBox" Header="繁體中文" AcceptsReturn="True" Height="60" Margin="0,8,0,0"/>
+                            <TextBox x:Name="NotesEnBox" Header="English" AcceptsReturn="True" Height="60" Margin="0,8,0,0"/>
+                            <TextBox x:Name="NotesJaBox" Header="日本語" AcceptsReturn="True" Height="60" Margin="0,8,0,0"/>
+                        </StackPanel>
                     </Grid>
                 </StackPanel>
             </Border>
@@ -337,12 +372,36 @@
                             <ColumnDefinition Width="100"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock x:Uid="SpecialGear_Name" Grid.Row="0" Grid.Column="0" Text="兵装名称:" VerticalAlignment="Center"/>
-                        <TextBox x:Name="SpecialGearNameBox" Grid.Row="0" Grid.Column="1" IsEnabled="False"/>
+                        <TextBlock x:Uid="SpecialGear_Name" Grid.Row="0" Grid.Column="0" Text="兵装名称:" VerticalAlignment="Top"/>
+                        <StackPanel Grid.Row="0" Grid.Column="1">
+                            <TextBox x:Name="SpecialGearNameZhBox" Header="简体中文" AcceptsReturn="True" Height="60"/>
+                            <TextBox x:Name="SpecialGearNameZhHantBox" Header="繁體中文" AcceptsReturn="True" Height="60" Margin="0,8,0,0"/>
+                            <TextBox x:Name="SpecialGearNameEnBox" Header="English" AcceptsReturn="True" Height="60" Margin="0,8,0,0"/>
+                            <TextBox x:Name="SpecialGearNameJaBox" Header="日本語" AcceptsReturn="True" Height="60" Margin="0,8,0,0"/>
+                        </StackPanel>
                         <TextBlock x:Uid="SpecialGear_Date" Grid.Row="1" Grid.Column="0" Text="实装日期:" VerticalAlignment="Center"/>
                         <DatePicker x:Name="SpecialGearDatePicker" Grid.Row="1" Grid.Column="1" IsEnabled="False"/>
-                        <TextBlock x:Uid="SpecialGear_Acquire" Grid.Row="2" Grid.Column="0" Text="获取途径:" VerticalAlignment="Center"/>
-                        <TextBox x:Name="SpecialGearAcquireBox" Grid.Row="2" Grid.Column="1" IsEnabled="False"/>
+                        <TextBlock x:Uid="SpecialGear_Acquire" Grid.Row="2" Grid.Column="0" Text="获取途径:" VerticalAlignment="Top"/>
+                        <ComboBox x:Name="SpecialGearTypeCombo" Grid.Row="2" Grid.Column="1" Margin="0,0,0,8" IsEnabled="False" SelectionChanged="SpecialGearTypeCombo_SelectionChanged">
+                            <ComboBoxItem x:Uid="gear_1" Content="兵装制造" Tag="gear_1"/>
+                            <ComboBoxItem x:Uid="gear_2" Content="活动获取" Tag="gear_2"/>
+                            <ComboBoxItem x:Uid="gear_3" Content="限时制造" Tag="gear_3"/>
+                            <ComboBoxItem x:Uid="gear_4" Content="商店 PT 兑换" Tag="gear_4"/>
+                            <ComboBoxItem x:Uid="gear_5" Content="活动任务奖励" Tag="gear_5"/>
+                            <ComboBoxItem x:Uid="gear_custom" Content="自定义文本" Tag="gear_custom"/>
+                        </ComboBox>
+                        <StackPanel Grid.Row="3" Grid.Column="1" x:Name="DynamicParamPanel" Visibility="Collapsed" Margin="0,0,0,8">
+                            <TextBox x:Name="Param1Box" Header="参数1" Margin="0,0,0,8"/>
+                                <TextBox x:Name="Param2Box" Header="参数2" PlaceholderText="例如：8000"/>
+                        </StackPanel>
+                        <!-- 自定义文本面板（多语言） -->
+                        <StackPanel Grid.Row="3" Grid.Column="1" x:Name="CustomTextPanel" Visibility="Collapsed">
+                            <TextBlock Text="自定义文本 (多语言)" Margin="0,0,0,4"/>
+                            <TextBox x:Name="CustomTextZhBox" Header="简体中文" AcceptsReturn="True" Height="60"/>
+                            <TextBox x:Name="CustomTextZhHantBox" Header="繁體中文" AcceptsReturn="True" Height="60" Margin="0,8,0,0"/>
+                            <TextBox x:Name="CustomTextEnBox" Header="English" AcceptsReturn="True" Height="60" Margin="0,8,0,0"/>
+                            <TextBox x:Name="CustomTextJaBox" Header="日本語" AcceptsReturn="True" Height="60" Margin="0,8,0,0"/>
+                        </StackPanel>
                     </Grid>
                 </StackPanel>
             </Border>

@@ -2,7 +2,7 @@
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
-using static AzurLaneDex.Models.ShipStatic;
+using AzurLaneDex.Models;
 
 namespace AzurLaneDex.Views
 {

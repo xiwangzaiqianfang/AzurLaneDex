@@ -1,5 +1,7 @@
-﻿using AzurLaneDex.Services;
+﻿using AzurLaneDex.Models;
+using AzurLaneDex.Services;
 using AzurLaneDex.ViewModels;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -9,7 +11,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using static AzurLaneDex.Models.ShipStatic;
 
 namespace AzurLaneDex.Views;
 
@@ -145,12 +146,12 @@ public sealed partial class MainPage : Page
     {
         DataTemplate template;
         bool showFull, showCompact, showMinimal;
-        if (windowWidth >= 1200)
+        if (windowWidth >= 1000)
         {
             template = _fullTemplate;
             showFull = true; showCompact = false; showMinimal = false;
         }
-        else if (windowWidth >= 850)
+        else if (windowWidth >= 830)
         {
             template = _compactTemplate;
             showFull = false; showCompact = true; showMinimal = false;
@@ -224,25 +225,27 @@ public sealed partial class MainPage : Page
     {
         _allSuggestions.Clear();
 
-        // 辅助函数：检查是否为有效文本（不含路径分隔符）
         bool IsValidText(string text) => !string.IsNullOrEmpty(text) && !text.Contains('\\') && !text.Contains('/');
 
         foreach (var ship in _shipManager.Ships)
         {
-            if (IsValidText(ship.Name))
-                _allSuggestions.Add(new SuggestionItem { DisplayText = ship.Name, SearchText = ship.Name });
+            string rawName = ship.RawName;
+            if (IsValidText(rawName))
+                _allSuggestions.Add(new SuggestionItem { DisplayText = rawName, SearchText = rawName });
             else
-                System.Diagnostics.Debug.WriteLine($"无效的舰船名称: {ship.Name}");
+                System.Diagnostics.Debug.WriteLine($"无效的舰船名称: {rawName}");
         }
         foreach (var ship in _shipManager.Ships)
         {
-            if (IsValidText(ship.AltName))
-                _allSuggestions.Add(new SuggestionItem { DisplayText = $"[和谐名称] {ship.AltName}", SearchText = ship.AltName });
+            string rawAlt = ship.RawAltName;
+            if (IsValidText(rawAlt))
+                _allSuggestions.Add(new SuggestionItem { DisplayText = $"[和谐名称] {rawAlt}", SearchText = rawAlt });
         }
         foreach (var ship in _shipManager.Ships)
         {
-            if (IsValidText(ship.SpecialGearName))
-                _allSuggestions.Add(new SuggestionItem { DisplayText = $"[专属兵装] {ship.SpecialGearName}", SearchText = ship.SpecialGearName });
+            string gear = ship.SpecialGearName.GetValueOrDefault("zh-Hans");
+            if (IsValidText(gear))
+                _allSuggestions.Add(new SuggestionItem { DisplayText = $"[专属兵装] {gear}", SearchText = gear });
         }
         var eventNames = _shipManager.Ships
             .Where(s => IsValidText(s.DebutEvent))
@@ -293,9 +296,9 @@ public sealed partial class MainPage : Page
         if (!string.IsNullOrEmpty(keyword))
         {
             source = source.Where(s =>
-                s.Name.Contains(keyword, StringComparison.OrdinalIgnoreCase) ||
-                (s.AltName?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                (s.SpecialGearName?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                s.RawName.Contains(keyword, StringComparison.OrdinalIgnoreCase) ||
+                (s.RawAltName?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (s.SpecialGearName.GetValueOrDefault("zh-Hans")?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false) ||
                 (s.DebutEvent?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false) ||
                 (s.AcquireMain?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false) ||
                 (s.AcquireDetail?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false)
@@ -344,7 +347,7 @@ public sealed partial class MainPage : Page
             {
                 0 => s => s.Id,
                 1 => s => s.CategoryOrder,
-                2 => s => s.Name,
+                2 => s => s.RawName,   // 使用原始中文名称排序
                 3 => s => GetRaritySortValue(s),
                 4 => s => s.CanRemodel ? (s.RemodelDate ?? "9999-12-31") : "9999-12-31",
                 5 => s => s.CanSpecialGear ? (s.SpecialGearDate ?? "9999-12-31") : "9999-12-31",
@@ -413,7 +416,7 @@ public sealed partial class MainPage : Page
             {
                 0 => s => s.Id,
                 1 => s => s.CategoryOrder,
-                2 => s => s.Name,
+                2 => s => s.RawName,
                 3 => s => GetRaritySortValue(s),
                 4 => s => s.CanRemodel ? (s.RemodelDate ?? "9999-12-31") : "9999-12-31",
                 5 => s => s.CanSpecialGear ? (s.SpecialGearDate ?? "9999-12-31") : "9999-12-31",
@@ -440,7 +443,6 @@ public sealed partial class MainPage : Page
     {
         foreach (var ship in _currentShips)
             ship.IsSelected = true;
-        // 同步其他表头的全选复选框状态
         var checkBox = sender as CheckBox;
         if (checkBox != FullHeader.FindName("SelectAllCheckBox") && FullHeader.Visibility == Visibility.Visible)
             SelectAllCheckBox.IsChecked = true;
@@ -514,20 +516,8 @@ public sealed partial class MainPage : Page
 
     private int GetRaritySortValue(ShipViewModel ship)
     {
-        var map = new Dictionary<string, int>
-        {
-            ["普通"] = 0,
-            ["稀有"] = 1,
-            ["精锐"] = 2,
-            ["超稀有"] = 3,
-            ["海上传奇"] = 4,
-            ["最高方案"] = 5,
-            ["决战方案"] = 6
-        };
-        int baseValue = map.GetValueOrDefault(ship.Rarity, 99);
-        if (ship.Remodeled && ship.CanRemodel && baseValue < map.Count - 1)
-            return baseValue + 1;
-        return baseValue;
+        // 使用 RarityId 而不是本地化字符串
+        return ship.RarityId;
     }
 
     private void SortCombo_SelectionChanged(object sender, SelectionChangedEventArgs e) => RefreshShipList();
@@ -567,45 +557,189 @@ public sealed partial class MainPage : Page
         }
 
         var menu = new MenuFlyout();
-        var operations = new (string text, Action<ShipViewModel> action)[]
+
+        // ========== 第一组：获得状态 ==========
+        var markOwnedItem = new MenuFlyoutItem
         {
-            (loader.GetString("BatchOp_MarkOwned"), s => s.Owned = true),
-            (loader.GetString("BatchOp_MarkNotOwnedAndClear"), s => { s.Owned = false; s.Breakthrough = 0; s.Oath = false; s.Level120 = false; s.Remodeled = false; s.SpecialGearObtained = false; }),
-            (loader.GetString("BatchOp_MarkMaxBreak"), s => s.Breakthrough = 3),
-            (loader.GetString("BatchOp_MarkNotMaxBreak"), s => s.Breakthrough = 0),
-            (loader.GetString("BatchOp_MarkLevel120"), s => s.Level120 = true),
-            (loader.GetString("BatchOp_MarkNotLevel120"), s => s.Level120 = false),
-            (loader.GetString("BatchOp_MarkOath"), s => s.Oath = true),
-            (loader.GetString("BatchOp_MarkNotOath"), s => s.Oath = false),
-            (loader.GetString("BatchOp_MarkRemodeled"), s => s.Remodeled = true),
-            (loader.GetString("BatchOp_MarkNotRemodeled"), s => s.Remodeled = false),
-            (loader.GetString("BatchOp_MarkSpecialGear"), s => s.SpecialGearObtained = true),
-            (loader.GetString("BatchOp_MarkNotSpecialGear"), s => s.SpecialGearObtained = false),
+            Text = loader.GetString("BatchOp_MarkOwned") ?? "标记为已获得",
+            Icon = new FontIcon { Glyph = "\uE10B" }
         };
-        foreach (var op in operations)
+        markOwnedItem.Click += async (s, args) => await BatchOperationWithFilterAsync(
+            selectedShips,
+            ship => ship.Owned = true,
+            ship => true, // 无条件，对所有舰船执行
+            "标记为已获得",
+            "已成功标记 {0} 艘舰船为已获得。");
+
+        var clearAllItem = new MenuFlyoutItem
         {
-            var item = new MenuFlyoutItem { Text = op.text };
-            item.Click += async (s, args) =>
+            Text = loader.GetString("BatchOp_MarkNotOwnedAndClear") ?? "标记为未获得并清除所有状态",
+            Icon = new FontIcon { Glyph = "\uE10A" },
+            Foreground = new SolidColorBrush(Microsoft.UI.Colors.OrangeRed)
+        };
+        clearAllItem.Click += async (s, args) => await BatchOperationWithFilterAsync(
+            selectedShips,
+            ship =>
             {
-                var dialog = new ContentDialog
-                {
-                    Title = loader.GetString("ConfirmBatchOp_Title"),
-                    Content = string.Format(loader.GetString("ConfirmBatchOp_Message"), selectedShips.Count, op.text),
-                    PrimaryButtonText = loader.GetString("Common_Confirm"),
-                    CloseButtonText = loader.GetString("Common_Cancel"),
-                    XamlRoot = this.XamlRoot,
-                    Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
-                };
-                if (await dialog.ShowAsync() != ContentDialogResult.Primary)
-                    return;
-                foreach (var ship in selectedShips)
-                    op.action(ship);
-                _shipManager.Save();
-                RefreshShipList();
-                ShipDetailControl.SetShip(ShipListView.SelectedItem as ShipViewModel);
-            };
-            menu.Items.Add(item);
-        }
+                ship.Owned = false;
+                ship.Breakthrough = 0;
+                ship.Oath = false;
+                ship.Level120 = false;
+                ship.Remodeled = false;
+                ship.SpecialGearObtained = false;
+            },
+            ship => true,
+            "标记为未获得并清除状态",
+            "已成功标记 {0} 艘舰船为未获得并清除相关状态。");
+
+        menu.Items.Add(markOwnedItem);
+        menu.Items.Add(clearAllItem);
+        menu.Items.Add(new MenuFlyoutSeparator());
+
+        // ========== 第二组：突破状态（子菜单）==========
+        var breakSubMenu = new MenuFlyoutSubItem
+        {
+            Text = loader.GetString("BatchOp_BreakthroughSub") ?? "突破状态",
+            Icon = new FontIcon { Glyph = "\uE734" }
+        };
+        var breakFullItem = new MenuFlyoutItem
+        {
+            Text = loader.GetString("BatchOp_MarkMaxBreak") ?? "标记为满破",
+            Icon = new FontIcon { Glyph = "\uE734" }
+        };
+        breakFullItem.Click += async (s, args) => await BatchOperationWithFilterAsync(
+            selectedShips,
+            ship => ship.Breakthrough = 3,
+            ship => ship.Owned && !IsBulinShip(ship),
+            "标记为满破",
+            "已成功标记 {0} 艘舰船为满破（跳过未获得或布里舰船 {1} 艘）。");
+
+        var breakClearItem = new MenuFlyoutItem
+        {
+            Text = loader.GetString("BatchOp_MarkNotMaxBreak") ?? "标记为未突破",
+            Icon = new FontIcon { Glyph = "\uE735" }
+        };
+        breakClearItem.Click += async (s, args) => await BatchOperationWithFilterAsync(
+            selectedShips,
+            ship => ship.Breakthrough = 0,
+            ship => ship.Owned && !IsBulinShip(ship),
+            "标记为未突破",
+            "已成功标记 {0} 艘舰船为未突破（跳过未获得或布里舰船 {1} 艘）。");
+
+        breakSubMenu.Items.Add(breakFullItem);
+        breakSubMenu.Items.Add(breakClearItem);
+        menu.Items.Add(breakSubMenu);
+        menu.Items.Add(new MenuFlyoutSeparator());
+
+        // ========== 第三组：等级与誓约 ==========
+        var level120Item = new MenuFlyoutItem
+        {
+            Text = loader.GetString("BatchOp_MarkLevel120") ?? "标记为120级",
+            Icon = new FontIcon { Glyph = "\uE752" }
+        };
+        level120Item.Click += async (s, args) => await BatchOperationWithFilterAsync(
+            selectedShips,
+            ship => ship.Level120 = true,
+            ship => ship.Owned,
+            "标记为120级",
+            "已成功标记 {0} 艘舰船为120级（跳过未获得舰船 {1} 艘）。");
+
+        var unlevel120Item = new MenuFlyoutItem
+        {
+            Text = loader.GetString("BatchOp_MarkNotLevel120") ?? "取消120级",
+            Icon = new FontIcon { Glyph = "\uE87F" }
+        };
+        unlevel120Item.Click += async (s, args) => await BatchOperationWithFilterAsync(
+            selectedShips,
+            ship => ship.Level120 = false,
+            ship => ship.Owned,
+            "取消120级",
+            "已成功取消 {0} 艘舰船的120级标记（跳过未获得舰船 {1} 艘）。");
+
+        var oathItem = new MenuFlyoutItem
+        {
+            Text = loader.GetString("BatchOp_MarkOath") ?? "标记为誓约",
+            Icon = new FontIcon { Glyph = "\uEB51" }
+        };
+        oathItem.Click += async (s, args) => await BatchOperationWithFilterAsync(
+            selectedShips,
+            ship => ship.Oath = true,
+            ship => ship.Owned,
+            "标记为誓约",
+            "已成功标记 {0} 艘舰船为誓约（跳过未获得舰船 {1} 艘）。");
+
+        var unoathItem = new MenuFlyoutItem
+        {
+            Text = loader.GetString("BatchOp_MarkNotOath") ?? "取消誓约",
+            Icon = new FontIcon { Glyph = "\uEB52" }
+        };
+        unoathItem.Click += async (s, args) => await BatchOperationWithFilterAsync(
+            selectedShips,
+            ship => ship.Oath = false,
+            ship => ship.Owned,
+            "取消誓约",
+            "已成功取消 {0} 艘舰船的誓约标记（跳过未获得舰船 {1} 艘）。");
+
+        menu.Items.Add(level120Item);
+        menu.Items.Add(unlevel120Item);
+        menu.Items.Add(oathItem);
+        menu.Items.Add(unoathItem);
+        menu.Items.Add(new MenuFlyoutSeparator());
+
+        // ========== 第四组：改造与兵装 ==========
+        var remodelItem = new MenuFlyoutItem
+        {
+            Text = loader.GetString("BatchOp_MarkRemodeled") ?? "标记为改造",
+            Icon = new FontIcon { Glyph = "\uE794" }
+        };
+        remodelItem.Click += async (s, args) => await BatchOperationWithFilterAsync(
+            selectedShips,
+            ship => ship.Remodeled = true,
+            ship => ship.Owned && ship.CanRemodel,
+            "标记为改造",
+            "已成功标记 {0} 艘舰船为改造（跳过未获得或不支持改造的舰船 {1} 艘）。");
+
+        var unremodelItem = new MenuFlyoutItem
+        {
+            Text = loader.GetString("BatchOp_MarkNotRemodeled") ?? "取消改造",
+            Icon = new FontIcon { Glyph = "\uEB78" }
+        };
+        unremodelItem.Click += async (s, args) => await BatchOperationWithFilterAsync(
+            selectedShips,
+            ship => ship.Remodeled = false,
+            ship => ship.Owned && ship.CanRemodel,
+            "取消改造",
+            "已成功取消 {0} 艘舰船的改造标记（跳过未获得或不支持改造的舰船 {1} 艘）。");
+
+        var specialGearItem = new MenuFlyoutItem
+        {
+            Text = loader.GetString("BatchOp_MarkSpecialGear") ?? "获得专属兵装",
+            Icon = new FontIcon { Glyph = "\uF157" }
+        };
+        specialGearItem.Click += async (s, args) => await BatchOperationWithFilterAsync(
+            selectedShips,
+            ship => ship.SpecialGearObtained = true,
+            ship => ship.Owned && ship.CanSpecialGear,
+            "获得专属兵装",
+            "已成功为 {0} 艘舰船标记获得专属兵装（跳过未获得或无兵装的舰船 {1} 艘）。");
+
+        var unspecialGearItem = new MenuFlyoutItem
+        {
+            Text = loader.GetString("BatchOp_MarkNotSpecialGear") ?? "取消专属兵装",
+            Icon = new FontIcon { Glyph = "\uF159" }
+        };
+        unspecialGearItem.Click += async (s, args) => await BatchOperationWithFilterAsync(
+            selectedShips,
+            ship => ship.SpecialGearObtained = false,
+            ship => ship.Owned && ship.CanSpecialGear,
+            "取消专属兵装",
+            "已成功为 {0} 艘舰船取消专属兵装标记（跳过未获得或无兵装的舰船 {1} 艘）。");
+
+        menu.Items.Add(remodelItem);
+        menu.Items.Add(unremodelItem);
+        menu.Items.Add(specialGearItem);
+        menu.Items.Add(unspecialGearItem);
+
         menu.ShowAt(BatchOperationButton);
     }
 
@@ -702,54 +836,417 @@ public sealed partial class MainPage : Page
     private void ShipListView_RightTapped(object sender, RightTappedRoutedEventArgs e)
     {
         var obj = (e.OriginalSource as FrameworkElement)?.DataContext;
-        if (obj is ShipViewModel ship)
+        if (obj is not ShipViewModel ship) return;
+        _contextShip = ship;
+        ShipListView.SelectedItem = ship;
+
+        // 获取统一菜单资源
+        var menu = (MenuFlyout)Resources["ShipContextMenu"];
+        if (menu == null) return;
+
+        var items = menu.Items;
+
+        // 判断是否为布里系列
+        bool isBulin = ship.DisplayName.Contains("布里") || ship.RawName.Contains("布里");
+        bool isOwned = ship.Owned;
+
+        // ----- 第一组（索引0~3）-----
+        // 0. 获得/未获得
+        if (items[0] is MenuFlyoutItem ownItem)
         {
-            _contextShip = ship;
-            ShipListView.SelectedItem = ship;
+            var icon = ownItem.Icon as FontIcon;
+            ownItem.Text = _contextShip.Owned ? "标记为未获得" : "标记为已获得";
+            if (icon != null) icon.Glyph = _contextShip.Owned ? "\uE10A" : "\uE10B";
+            ownItem.IsEnabled = true;
         }
-        else
+        // 1. 120级
+        if (items[1] is MenuFlyoutItem lv120Item)
         {
-            _contextShip = null;
+            var icon = lv120Item.Icon as FontIcon;
+            lv120Item.Text = _contextShip.Level120 ? "取消120级" : "标记120级";
+            if (icon != null) icon.Glyph = _contextShip.Level120 ? "\uE87F" : "\uE752";
+            lv120Item.IsEnabled = isOwned;
         }
-        var app = Application.Current as App;
-        bool isDeveloper = app?.AccountManager?.IsDeveloper() ?? false;
-        var menuDelete = this.FindName("ContextMenuDelete") as UIElement;
-        if (menuDelete != null)
-            menuDelete.Visibility = isDeveloper ? Visibility.Visible : Visibility.Collapsed;
-        var separatorDelete = this.FindName("SeparatorDelete") as UIElement;
-        if (separatorDelete != null)
-            separatorDelete.Visibility = isDeveloper ? Visibility.Visible : Visibility.Collapsed;
+        // 2. 满破/未满破
+        if (items[2] is MenuFlyoutItem breakItem)
+        {
+            var icon = breakItem.Icon as FontIcon;
+            bool isFull = _contextShip.Breakthrough >= 3;
+            breakItem.Text = isFull ? "取消满破" : "标记满破";
+            if (icon != null) icon.Glyph = isFull ? "\uE735" : "\uE734";
+            breakItem.IsEnabled = isOwned && !isBulin;
+        }
+        // 3. 改造（仅可改造舰船显示）
+        if (items[3] is MenuFlyoutItem remodelItem)
+        {
+            if (isOwned && ship.CanRemodel)
+            {
+                remodelItem.Visibility = Visibility.Visible;
+                var icon = remodelItem.Icon as FontIcon;
+                remodelItem.Text = ship.Remodeled ? "取消改造" : "标记改造";
+                if (icon != null) icon.Glyph = ship.Remodeled ? "\uEB78" : "\uE794";
+                remodelItem.IsEnabled = true;
+            }
+            else
+            {
+                remodelItem.Visibility = Visibility.Visible;  // 依然显示但禁用
+                remodelItem.Text = "不可改造";
+                remodelItem.Icon = new FontIcon { Glyph = "\uE794" };
+                remodelItem.IsEnabled = false;
+            }
+        }
+
+        // 分隔符在索引4，跳过
+
+        // ----- 第二组（索引5~7）-----
+        // 5. 誓约
+        if (items[5] is MenuFlyoutItem oathItem)
+        {
+            var icon = oathItem.Icon as FontIcon;
+            oathItem.Text = _contextShip.Oath ? "取消誓约" : "标记誓约";
+           if (icon != null) icon.Glyph = _contextShip.Oath ? "\uEB52" : "\uEB51";
+            oathItem.IsEnabled = isOwned;
+        }
+        // 6. 专属兵装
+        if (items[6] is MenuFlyoutItem gearItem)
+        {
+            if (isOwned && ship.CanSpecialGear)
+            {
+                gearItem.Visibility = Visibility.Visible;
+                var icon = gearItem.Icon as FontIcon;
+                gearItem.Text = ship.SpecialGearObtained ? "取消兵装" : "获得兵装";
+                if (icon != null) icon.Glyph = ship.SpecialGearObtained ? "\uF159" : "\uF157";
+                gearItem.IsEnabled = true;
+            }
+            else
+            {
+                gearItem.Visibility = Visibility.Visible;
+                gearItem.Text = "无专属兵装";
+                gearItem.Icon = new FontIcon { Glyph = "\uF157" };
+                gearItem.IsEnabled = false;
+            }
+        }
+        // 7. 突破子菜单（更新子项选中状态）
+        if (items[7] is MenuFlyoutSubItem breakSub)
+        {
+            bool enableSub = isOwned && !isBulin;
+            breakSub.IsEnabled = enableSub;
+            if (enableSub)
+            {
+                // 更新子菜单项选中图标（仅在启用时）
+                int currentBreak = ship.Breakthrough;
+                for (int i = 0; i < breakSub.Items.Count; i++)
+                {
+                    if (breakSub.Items[i] is MenuFlyoutItem subItem && subItem.Tag is string tag && int.TryParse(tag, out int level))
+                    {
+                        if (level == currentBreak)
+                            subItem.Icon = new FontIcon { Glyph = "\uE73E" };
+                        else
+                            subItem.Icon = null;
+                    }
+                }
+            }
+        }
+
+        // 分隔符在索引8，跳过
+
+        // ----- 第三组：删除（索引9）-----
+        if (items[9] is MenuFlyoutItem deleteItem)
+        {
+            var app = (App)Application.Current;
+            deleteItem.Visibility = app.AccountManager.IsDeveloper() ? Visibility.Visible : Visibility.Collapsed;
+            deleteItem.IsEnabled = true;
+        }
+    }
+    // 获得/未获得（带确认对话框）
+    private async void CtxMenu_ToggleOwned_Click(object sender, RoutedEventArgs e)
+    {
+        bool willBeNotOwned = _contextShip.Owned;
+        var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
+        await UpdateShipStateAndRefreshAsync(ship =>
+        {
+            if (ship.Owned)
+            {
+                // 已获得 -> 未获得，清除状态
+                ship.Owned = false;
+                ship.Breakthrough = 0;
+                ship.Level120 = false;
+                ship.Oath = false;
+                ship.Remodeled = false;
+                ship.SpecialGearObtained = false;
+            }
+            else
+            {
+                ship.Owned = true;
+            }
+        }, requireConfirm: willBeNotOwned,   // 仅当变为未获得时需要确认
+          confirmTitle: loader.GetString("ConfirmClear_Title"),
+          confirmContent: loader.GetString("ConfirmClearOwned_Message"));
     }
 
-    private void ContextMenu_Owned_Click(object sender, RoutedEventArgs e) { if (_contextShip != null) { _contextShip.Owned = true; _shipManager.Save(); } }
-    private void ContextMenu_NotOwned_Click(object sender, RoutedEventArgs e) { if (_contextShip != null) { _contextShip.Owned = false; _contextShip.Breakthrough = 0; _contextShip.Oath = false; _contextShip.Level120 = false; _contextShip.Remodeled = false; _contextShip.SpecialGearObtained = false; _shipManager.Save(); } }
-    private void ContextMenu_MaxBreak_Click(object sender, RoutedEventArgs e) { if (_contextShip != null) { _contextShip.Breakthrough = 3; _shipManager.Save(); } }
-    private void ContextMenu_NotMaxBreak_Click(object sender, RoutedEventArgs e) { if (_contextShip != null) { _contextShip.Breakthrough = 0; _shipManager.Save(); } }
-    private void ContextMenu_Level120_Click(object sender, RoutedEventArgs e) { if (_contextShip != null) { _contextShip.Level120 = true; _shipManager.Save(); } }
-    private void ContextMenu_NotLevel120_Click(object sender, RoutedEventArgs e) { if (_contextShip != null) { _contextShip.Level120 = false; _shipManager.Save(); } }
-    private void ContextMenu_Oath_Click(object sender, RoutedEventArgs e) { if (_contextShip != null) { _contextShip.Oath = true; _shipManager.Save(); } }
-    private void ContextMenu_NotOath_Click(object sender, RoutedEventArgs e) { if (_contextShip != null) { _contextShip.Oath = false; _shipManager.Save(); } }
-    private void ContextMenu_Remodeled_Click(object sender, RoutedEventArgs e) { if (_contextShip != null && _contextShip.CanRemodel) { _contextShip.Remodeled = true; _shipManager.Save(); } }
-    private void ContextMenu_NotRemodeled_Click(object sender, RoutedEventArgs e) { if (_contextShip != null) { _contextShip.Remodeled = false; _shipManager.Save(); } }
-    private void ContextMenu_SpecialGear_Click(object sender, RoutedEventArgs e) { if (_contextShip != null) { _contextShip.SpecialGearObtained = true; _shipManager.Save(); } }
-    private void ContextMenu_NotSpecialGear_Click(object sender, RoutedEventArgs e) { if (_contextShip != null) { _contextShip.SpecialGearObtained = false; _shipManager.Save(); } }
-    private async void ContextMenu_Delete_Click(object sender, RoutedEventArgs e)
+    private async void CtxMenu_ToggleLevel120_Click(object sender, RoutedEventArgs e)
+    {
+        await UpdateShipStateAndRefreshAsync(ship => ship.Level120 = !ship.Level120);
+    }
+
+    private async void CtxMenu_ToggleMaxBreak_Click(object sender, RoutedEventArgs e)
+    {
+        await UpdateShipStateAndRefreshAsync(ship =>
+        {
+            ship.Breakthrough = (ship.Breakthrough >= 3) ? 0 : 3;
+        });
+    }
+
+    private async void CtxMenu_ToggleRemodel_Click(object sender, RoutedEventArgs e)
+    {
+        if (!_contextShip.CanRemodel) return;
+        await UpdateShipStateAndRefreshAsync(ship => ship.Remodeled = !ship.Remodeled);
+    }
+
+    private async void CtxMenu_ToggleOath_Click(object sender, RoutedEventArgs e)
+    {
+        await UpdateShipStateAndRefreshAsync(ship => ship.Oath = !ship.Oath);
+    }
+
+    private async void CtxMenu_ToggleSpecialGear_Click(object sender, RoutedEventArgs e)
+    {
+        if (!_contextShip.CanSpecialGear) return;
+        await UpdateShipStateAndRefreshAsync(ship => ship.SpecialGearObtained = !ship.SpecialGearObtained);
+    }
+
+    // 突破子菜单项点击（突破一次、两次、三次）
+    private async void CtxMenu_Break_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuFlyoutItem item && item.Tag is string tag && int.TryParse(tag, out int breakLevel))
+        {
+            await UpdateShipStateAndRefreshAsync(ship => ship.Breakthrough = breakLevel);
+        }
+    }
+
+    // 删除舰船（仅开发者）
+    private async void CtxMenu_Delete_Click(object sender, RoutedEventArgs e)
     {
         var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
-        if (_contextShip == null) return;
         var dialog = new ContentDialog
         {
-            Title = loader.GetString("ConfirmDelete_Title"),
-            Content = string.Format(loader.GetString("ConfirmDeleteShip_Message"), _contextShip.Name),
-            PrimaryButtonText = loader.GetString("Common_Delete"),
-            CloseButtonText = loader.GetString("Common_Cancel"),
+            Title = loader.GetString("ConfirmDelete_Title") ?? "确认删除",
+            Content = string.Format(loader.GetString("ConfirmDeleteShip_Message") ?? "确定要删除舰船 {0} 吗？", _contextShip.DisplayName),
+            PrimaryButtonText = loader.GetString("Common_Delete") ?? "删除",
+            CloseButtonText = loader.GetString("Common_Cancel") ?? "取消",
             XamlRoot = this.XamlRoot,
             Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
         };
         if (await dialog.ShowAsync() == ContentDialogResult.Primary)
         {
-            _shipManager.DeleteShip(_contextShip.Id);
+            int deletedId = _contextShip.Id;
+            _shipManager.DeleteShip(deletedId);
+            // 删除后直接刷新，无需恢复选中（因为舰船已不存在）
             RefreshShipList();
+            ShipDetailControl.SetShip(null);
         }
+    }
+    /// 执行舰船状态修改，保存数据，刷新列表并恢复选中与滚动位置
+    private async Task UpdateShipStateAndRefreshAsync(Action<ShipViewModel> updateAction, bool requireConfirm = false, string confirmTitle = null, string confirmContent = null)
+    {
+        if (_contextShip == null) return;
+
+        // 如果需要确认对话框
+        if (requireConfirm)
+        {
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
+            var dialog = new ContentDialog
+            {
+                Title = confirmTitle ?? loader.GetString("ConfirmClear_Title") ?? "确认",
+                Content = confirmContent ?? loader.GetString("ConfirmClearOwned_Message") ?? "是否继续？",
+                PrimaryButtonText = loader.GetString("Common_Confirm") ?? "确定",
+                CloseButtonText = loader.GetString("Common_Cancel") ?? "取消",
+                XamlRoot = this.XamlRoot,
+                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
+            };
+            if (await dialog.ShowAsync() != ContentDialogResult.Primary)
+                return;
+        }
+
+        // 记录当前选中的舰船ID和滚动位置
+        int? selectedId = (ShipListView.SelectedItem as ShipViewModel)?.Id;
+        var scrollViewer = FindScrollViewer(ShipListView);
+        double? verticalOffset = scrollViewer?.VerticalOffset;
+
+        // 执行状态修改
+        updateAction(_contextShip);
+
+        // 保存数据
+        _shipManager.Save();
+
+        // 刷新列表（保留选中和滚动）
+        RefreshShipList();
+
+        // 恢复选中
+        if (selectedId.HasValue)
+        {
+            var newSelected = _currentShips.FirstOrDefault(s => s.Id == selectedId.Value);
+            if (newSelected != null)
+            {
+                ShipListView.SelectedItem = newSelected;
+                ShipDetailControl.SetShip(newSelected);
+            }
+        }
+
+        // 恢复滚动位置（需要等待UI更新）
+        if (scrollViewer != null && verticalOffset.HasValue)
+        {
+            DispatcherQueue.TryEnqueue(() =>
+            {
+                scrollViewer.ChangeView(null, verticalOffset.Value, null);
+            });
+        }
+    }
+
+    /// <summary>
+    /// 执行批量操作，保留选中和滚动位置
+    /// </summary>
+    private async Task ExecuteBatchOperationAsync(List<ShipViewModel> ships, Action<ShipViewModel> operation, string title, string content)
+    {
+        var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
+        var dialog = new ContentDialog
+        {
+            Title = title,
+            Content = content,
+            PrimaryButtonText = loader.GetString("Common_Confirm"),
+            CloseButtonText = loader.GetString("Common_Cancel"),
+            XamlRoot = this.XamlRoot,
+            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
+        };
+        if (await dialog.ShowAsync() != ContentDialogResult.Primary)
+            return;
+
+        await RefreshAndRestoreSelectionAsync(() =>
+        {
+            foreach (var ship in ships)
+                operation(ship);
+            _shipManager.Save();
+        });
+    }
+    private async Task RefreshAndRestoreSelectionAsync(Action updateAction = null)
+    {
+        // 记录当前选中的舰船ID和滚动位置
+        int? selectedId = (ShipListView.SelectedItem as ShipViewModel)?.Id;
+        var scrollViewer = FindScrollViewer(ShipListView);
+        double? verticalOffset = scrollViewer?.VerticalOffset;
+
+        // 执行更新操作（如果有）
+        updateAction?.Invoke();
+
+        // 刷新列表
+        RefreshShipList();
+
+        // 恢复选中
+        if (selectedId.HasValue)
+        {
+            var newSelected = _currentShips.FirstOrDefault(s => s.Id == selectedId.Value);
+            if (newSelected != null)
+            {
+                ShipListView.SelectedItem = newSelected;
+                ShipDetailControl.SetShip(newSelected);
+            }
+        }
+
+        // 恢复滚动位置
+        if (scrollViewer != null && verticalOffset.HasValue)
+        {
+            DispatcherQueue.TryEnqueue(() =>
+            {
+                scrollViewer.ChangeView(null, verticalOffset.Value, null);
+            });
+        }
+    }
+    private async Task BatchOperationWithFilterAsync(
+    List<ShipViewModel> selectedShips,
+    Action<ShipViewModel> operation,
+    Func<ShipViewModel, bool> condition,
+    string operationName,
+    string successMessageFormat)
+    {
+        var applicableShips = selectedShips.Where(condition).ToList();
+        var skippedCount = selectedShips.Count - applicableShips.Count;
+
+        // 如果没有符合条件的舰船，直接提示并返回
+        if (applicableShips.Count == 0)
+        {
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
+            var dialog = new ContentDialog
+            {
+                Title = "批量操作",
+                Content = $"没有符合条件（{operationName}）的舰船。操作已取消。",
+                CloseButtonText = loader.GetString("Common_Confirm") ?? "确定",
+                XamlRoot = this.XamlRoot,
+                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
+            };
+            await dialog.ShowAsync();
+            return;
+        }
+
+        // 弹出确认对话框
+        var confirmDialog = new ContentDialog
+        {
+            Title = "确认批量操作",
+            Content = $"将对 {applicableShips.Count} 艘舰船执行“{operationName}”。{(skippedCount > 0 ? $"\n跳过 {skippedCount} 艘不符合条件的舰船。" : "")}\n是否继续？",
+            PrimaryButtonText = "确定",
+            CloseButtonText = "取消",
+            XamlRoot = this.XamlRoot,
+            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
+        };
+        if (await confirmDialog.ShowAsync() != ContentDialogResult.Primary)
+            return;
+
+        // 保存当前状态（选中和滚动位置）
+        int? selectedId = (ShipListView.SelectedItem as ShipViewModel)?.Id;
+        var scrollViewer = FindScrollViewer(ShipListView);
+        double? verticalOffset = scrollViewer?.VerticalOffset;
+
+        // 执行操作
+        foreach (var ship in applicableShips)
+        {
+            operation(ship);
+        }
+        _shipManager.Save();
+
+        // 刷新列表
+        RefreshShipList();
+
+        // 恢复选中
+        if (selectedId.HasValue)
+        {
+            var newSelected = _currentShips.FirstOrDefault(s => s.Id == selectedId.Value);
+            if (newSelected != null)
+            {
+                ShipListView.SelectedItem = newSelected;
+                ShipDetailControl.SetShip(newSelected);
+            }
+        }
+
+        // 恢复滚动位置
+        if (scrollViewer != null && verticalOffset.HasValue)
+        {
+            DispatcherQueue.TryEnqueue(() =>
+            {
+                scrollViewer.ChangeView(null, verticalOffset.Value, null);
+            });
+        }
+
+        // 显示操作结果
+        var resultDialog = new ContentDialog
+        {
+            Title = "批量操作完成",
+            Content = string.Format(successMessageFormat, applicableShips.Count, skippedCount),
+            CloseButtonText = "确定",
+            XamlRoot = this.XamlRoot,
+            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
+        };
+        await resultDialog.ShowAsync();
+    }
+    private bool IsBulinShip(ShipViewModel ship)
+    {
+        return ship.DisplayName.Contains("布里") || ship.RawName.Contains("布里");
     }
 }

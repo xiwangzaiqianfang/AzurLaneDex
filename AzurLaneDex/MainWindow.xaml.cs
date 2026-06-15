@@ -110,6 +110,9 @@ public sealed partial class MainWindow : Window
             }
         }
 
+        var resourceManager = new ImageResourceManager(App.DataRoot);
+        resourceManager.MigrateLegacyAvatarFolders();
+
         // 加载日志配置
         if (app.ShipManager != null && app.ShipManager.Config.TryGetValue("log_enabled", out var enabledObj))
         {
@@ -152,6 +155,13 @@ public sealed partial class MainWindow : Window
             System.Diagnostics.Debug.WriteLine($"Auto login to {regularAccounts[0]}");
             app.AccountManager.SetCurrentAccount(regularAccounts[0]);
         }
+
+        // 恢复侧边栏展开状态
+        if (app.ShipManager != null)
+        {
+            bool savedOpen = LoadPaneOpenState();
+            MainNavView.IsPaneOpen = savedOpen;
+        }
         if (ContentFrame.Content == null || ContentFrame.Content.GetType() != typeof(MainPage))
         {
             ContentFrame.Navigate(typeof(MainPage));
@@ -192,6 +202,7 @@ public sealed partial class MainWindow : Window
     private void TitleBar_PaneToggleRequested(Microsoft.UI.Xaml.Controls.TitleBar sender, object args)
     {
         MainNavView.IsPaneOpen = !MainNavView.IsPaneOpen;
+        SavePaneOpenState(MainNavView.IsPaneOpen);
     }
 
     public void NavigateTo(Type pageType, object parameter = null)
@@ -238,5 +249,26 @@ public sealed partial class MainWindow : Window
         };
         if (tag != null)
             SetSelectedNavItem(tag);
+    }
+    private void SavePaneOpenState(bool isOpen)
+    {
+        var app = (App)Application.Current;
+        if (app.ShipManager?.Config != null)
+        {
+            app.ShipManager.Config["nav_pane_open"] = isOpen;
+            app.ShipManager.SaveConfig();
+        }
+    }
+
+    private bool LoadPaneOpenState()
+    {
+        var app = (App)Application.Current;
+        if (app.ShipManager?.Config != null &&
+            app.ShipManager.Config.TryGetValue("nav_pane_open", out var obj) &&
+            obj is bool savedState)
+        {
+            return savedState;
+        }
+        return true; // 默认展开
     }
 }

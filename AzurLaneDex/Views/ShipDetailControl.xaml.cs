@@ -1,4 +1,5 @@
-﻿using ABI.System;
+﻿using AzurLaneDex.Helpers;
+using AzurLaneDex.Models;
 using AzurLaneDex.Services;
 using AzurLaneDex.ViewModels;
 using Microsoft.UI.Xaml;
@@ -11,10 +12,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
-using Windows.Storage.Streams;
-
-using Uri = System.Uri;
+using static AzurLaneDex.Models.ShipStatic;
 using Exception = System.Exception;
+using Uri = System.Uri;
 
 namespace AzurLaneDex.Views;
 
@@ -24,6 +24,7 @@ public sealed partial class ShipDetailControl : UserControl
     private ShipViewModel? _currentShip;
     private int _avatarLoadToken = 0;
     private int _gearLoadToken = 0;
+
     public ShipDetailControl()
     {
         this.InitializeComponent();
@@ -33,15 +34,19 @@ public sealed partial class ShipDetailControl : UserControl
     public void SetShip(ShipViewModel? ship)
     {
         var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
+
+        // 添加 null 检查
+        if (ship == null)
+        {
+            ClearDisplay();
+            return;
+        }
+
         if (_currentShip != null && ship != null && _currentShip.Id == ship.Id)
         {
-            // 记录改造状态是否变化（在更新 UI 前比较）
             bool remodelChanged = _currentShip.Remodeled != ship.Remodeled;
-
-            // 更新引用（重要！）
             _currentShip = ship;
 
-            // 仅增量更新变化的部分
             ShipNameText.Text = ship.DisplayName;
             RarityText.Text = ship.EffectiveRarity;
             OwnedCheckBox.IsChecked = ship.Owned;
@@ -54,15 +59,24 @@ public sealed partial class ShipDetailControl : UserControl
             SpecialGearBorder.Visibility = ship.CanSpecialGear ? Visibility.Visible : Visibility.Collapsed;
             if (ship.CanSpecialGear)
             {
-                SpecialGearNameText.Text = ship.SpecialGearName;
+                SpecialGearNameText.Text = ship.SpecialGearName.GetLocalized();
                 SpecialGearDateText.Text = string.IsNullOrEmpty(ship.SpecialGearDate) ? "未设定" : ship.SpecialGearDate;
-                SpecialGearAcquireText.Text = string.IsNullOrEmpty(ship.SpecialGearAcquire) ? "暂无获取方式" : ship.SpecialGearAcquire;
+                if (ship.SpecialGearEntries != null && ship.SpecialGearEntries.Any())
+                {
+                    var displayTexts = ship.SpecialGearEntries.Select(entry => FormatGearEntry(entry)).Where(t => !string.IsNullOrEmpty(t));
+                    SpecialGearAcquireText.Text = ship.SpecialGearAcquireText;
+                }
+                else
+                {
+                    SpecialGearAcquireText.Text = loader.GetString("NoAcquireInfo");
+                }
                 SetDefaultGearIcon();
                 StartGearFadeIn();
-                // 异步加载自定义图标（使用新的 token）
                 _gearLoadToken++;
                 int token = _gearLoadToken;
-                LoadCustomGearIcon(ship.SpecialGearName, token);
+                string gearNameChinese = ship.SpecialGearName.GetValueOrDefault("zh-Hans");
+                if (!string.IsNullOrEmpty(gearNameChinese))
+                    LoadCustomGearIcon(gearNameChinese, token);
             }
             else
             {
@@ -75,13 +89,17 @@ public sealed partial class ShipDetailControl : UserControl
             }
             if (remodelChanged)
             {
-                string avatarName0 = ship.Remodeled && ship.CanRemodel ? ship.Name + "改" : ship.Name;
+                string avatarName0 = ship.Remodeled && ship.CanRemodel ? ship.RawName + "改" : ship.RawName;
                 int token = ++_avatarLoadToken;
                 ShipAvatarImage.Opacity = 0;
-                LoadAndFadeInAvatar(avatarName0, ship.Name, token);
+                LoadAndFadeInAvatar(avatarName0, ship.RawName, token);
             }
             UpdateControlStates();
             return;
+        }
+        else if (!string.IsNullOrEmpty(ship.AcquireMainLegacyText))
+        {
+            AcquireMainText.Text = ship.AcquireMainLegacyText;
         }
         _currentShip = ship;
         if (ship == null)
@@ -98,9 +116,8 @@ public sealed partial class ShipDetailControl : UserControl
         FactionText.Text = ship.Faction;
         ShipClassText.Text = ship.ShipClass;
         RarityText.Text = ship.EffectiveRarity;
-        // 改造相关
         CanRemodelText.Text = ship.CanRemodel ? loader.GetString("Yes") : loader.GetString("No");
-        RemodelDateText.Text = string.IsNullOrEmpty(ship.RemodelDate) ? loader.GetString("NotSet") : ship.RemodelDate;        
+        RemodelDateText.Text = string.IsNullOrEmpty(ship.RemodelDate) ? loader.GetString("NotSet") : ship.RemodelDate;
 
         // 状态
         OwnedCheckBox.IsChecked = ship.Owned;
@@ -111,19 +128,19 @@ public sealed partial class ShipDetailControl : UserControl
         RemodeledCheckBox.IsEnabled = ship.CanRemodel && ship.Owned;
         RemodeledCheckBox.IsChecked = ship.Remodeled;
         SpecialGearObtainedCheckBox.IsChecked = ship.SpecialGearObtained;
+        IsPermanentText.Text = ship.IsPermanent ? loader.GetString("Permanent") : loader.GetString("NotPermanent");
 
         // 属性加成
         if (!string.IsNullOrEmpty(ship.ObtainBonusAttr) && ship.ObtainBonusValue != 0)
             ObtainBonusText.Text = $"{ship.ObtainBonusAttr} +{ship.ObtainBonusValue}";
         else
             ObtainBonusText.Text = loader.GetString("None");
-        ObtainAffectsText.Text = ship.ObtainAffects.Count > 0 ? string.Join(", ", ship.ObtainAffects) : loader.GetString("NoRestriction");
-
+        ObtainAffectsText.Text = ship.ObtainAffectsDisplay; // 使用已本地化的显示属性
         if (!string.IsNullOrEmpty(ship.Level120BonusAttr) && ship.Level120BonusValue != 0)
             Level120BonusText.Text = $"{ship.Level120BonusAttr} +{ship.Level120BonusValue}";
         else
             Level120BonusText.Text = loader.GetString("None");
-        Level120AffectsText.Text = ship.Level120Affects.Count > 0 ? string.Join(", ", ship.Level120Affects) : loader.GetString("NoRestriction");
+        Level120AffectsText.Text = ship.Level120AffectsDisplay;
 
         // 科技点
         TechPointsObtainText.Text = ship.TechPointsObtain.ToString();
@@ -131,18 +148,117 @@ public sealed partial class ShipDetailControl : UserControl
         TechPoints120Text.Text = ship.TechPoints120.ToString();
 
         // 获取方式
-        AcquireMainText.Text = string.IsNullOrEmpty(ship.AcquireMain) ? loader.GetString("None") : ship.AcquireMain;
-        AcquireDetailText.Text = string.IsNullOrEmpty(ship.AcquireDetail) ? "" : ship.AcquireDetail;
-        BuildTimeText.Text = string.IsNullOrEmpty(ship.BuildTime) ? "" : $"{ship.BuildTime}";
-        DropLocationsText.Text = ship.DropLocations.Count > 0 ? $"打捞地点： {string.Join(", ", ship.DropLocations)}" : "";
-        ShopExchangeText.Text = string.IsNullOrEmpty(ship.ShopExchange) ? "" : $"{ship.ShopExchange}";
-        IsPermanentText.Text = ship.IsPermanent ? loader.GetString("Permanent") : loader.GetString("NotPermanent");
+        bool hasBuild = false;
+        bool hasDrop = false;
+        bool hasExchange = false;
+        bool isUnbuildable = ship.AcquireEntries.Any(e => e.Tag == "acquire_11") ||
+                     string.IsNullOrWhiteSpace(ship.BuildTime) ||
+                     ship.BuildTime.Contains("无法建造");
+        bool isUndroppable = ship.AcquireEntries.Any(e => e.Tag == "acquire_50") ||
+                             ship.DropLocations == null || ship.DropLocations.Count == 0 ||
+                             (ship.AcquireMainLegacyText?.Contains("无法打捞") ?? false);
+        bool isUnexchangeable = ship.AcquireEntries.Any(e => e.Tag == "acquire_51") ||
+                                string.IsNullOrWhiteSpace(ship.ShopExchange) ||
+                                ship.ShopExchange.Contains("无法兑换");
+        if (ship.AcquireEntries != null && ship.AcquireEntries.Any())
+        {
+            // 构建主要获取方式（Category 去重）
+            var categories = new HashSet<string>();
+            var detailItems = new List<string>();
 
-        bool hasAcquire = !string.IsNullOrEmpty(ship.AcquireMain) || !string.IsNullOrEmpty(ship.AcquireDetail) ||
-                          !string.IsNullOrEmpty(ship.BuildTime) || ship.DropLocations.Count > 0 ||
-                          !string.IsNullOrEmpty(ship.ShopExchange);
-        AcquireBorder.Visibility = hasAcquire ? Visibility.Visible : Visibility.Collapsed;
+            foreach (var entry in ship.AcquireEntries)
+            {
+                // 排除否定标记和打捞详情（acquire_61 已单独显示）
+                if (entry.Tag == "acquire_11" || entry.Tag == "acquire_50" || entry.Tag == "acquire_51" || entry.Tag == "acquire_61")
+                    continue;
 
+                var tagDef = TagLibrary.GetAllTags().FirstOrDefault(t => t.Tag == entry.Tag);
+                if (tagDef != null)
+                {
+                    categories.Add(tagDef.LocalizedCategory);
+                    string detail = FormatAcquireEntry(entry);
+                    if (!string.IsNullOrEmpty(detail))
+                        detailItems.Add(detail);
+                }
+            }
+
+            AcquireMainText.Text = string.Join("、", categories);
+            AcquireDetailText.Text = string.Join("；", detailItems);
+        }
+        else if (!string.IsNullOrEmpty(ship.AcquireMainLegacyText))
+        {
+            // 降级兼容旧数据
+            AcquireMainText.Text = ship.AcquireMainLegacyText;
+            AcquireDetailText.Text = ship.AcquireDetailLegacyText;
+        }
+        else
+        {
+            AcquireMainText.Text = loader.GetString("None");
+            AcquireDetailText.Text = "";
+        }
+        // 打捞地点独立展示
+        var dropLocationParts = new List<string>();
+        // 原有普通/档案/活动掉落点
+        if (ship.DropLocations != null && ship.DropLocations.Any())
+        {
+            dropLocationParts.Add(string.Format(string.Join("、", ship.DropLocations)));
+        }
+        // 新增：处理 acquire_61（作战档案无冒号掉落）
+        var archiveDropEntries = ship.AcquireEntries?.Where(e => e.Tag == "acquire_61").ToList();
+        if (archiveDropEntries != null && archiveDropEntries.Any())
+        {
+            foreach (var entry in archiveDropEntries)
+            {
+                string formatted = FormatAcquireEntry(entry);
+                if (!string.IsNullOrEmpty(formatted))
+                    dropLocationParts.Add(formatted);
+            }
+        }
+
+        if (dropLocationParts.Any())
+        {
+            DropLocationsText.Text = string.Join("；", dropLocationParts);
+        }
+        else if (ship.AcquireEntries?.Any(e => e.Tag == "acquire_50") == true)
+        {
+            DropLocationsText.Text = loader.GetString("acquire_50");
+        }
+        else
+        {
+            DropLocationsText.Text = "";
+        }
+
+        if (isUnbuildable)
+            BuildTimeText.Text = loader.GetString("acquire_11"); // 资源文件中定义 "无法建造"
+        else
+            BuildTimeText.Text = ship.BuildTime;
+        var exchangeEntries = ship.AcquireEntries.Where(e =>
+            e.Tag.StartsWith("acquire_14") ||   // 舰队商店
+            e.Tag.StartsWith("acquire_15") ||   // 军需商店
+            e.Tag.StartsWith("acquire_16") ||   // META商店
+            e.Tag.StartsWith("acquire_17") ||   // 核心商店
+            e.Tag.StartsWith("acquire_18") ||   // 勋章商店
+            e.Tag == "acquire_19" ||             // 原型商店
+            e.Tag == "acquire_20" ||             // 活动商店
+            e.Tag == "acquire_21" ||             // 礼包购买
+            e.Tag == "acquire_22" ||             // 科研（但科研不一定是兑换）
+            e.Tag == "acquire_23" ||             // 作战补给
+            e.Tag == "acquire_24" ||             // 通用兑换
+            e.Tag == "acquire_51");              // 无法兑换（否定标记）
+        if (exchangeEntries.Any())
+        {
+            var exchangeTexts = exchangeEntries.Select(entry => FormatAcquireEntry(entry));
+            ShopExchangeText.Text = string.Join("；", exchangeTexts);
+        }
+        else if (isUnexchangeable)
+        {
+            ShopExchangeText.Text = loader.GetString("acquire_51");
+         }
+        // "无法兑换"
+        else
+        {
+            ShopExchangeText.Text = ship.ShopExchange;
+        }
         // 实装活动
         DebutEventText.Text = string.IsNullOrEmpty(ship.DebutEvent) ? loader.GetString("None") : ship.DebutEvent;
         ReleaseDateText.Text = string.IsNullOrEmpty(ship.ReleaseDate) ? loader.GetString("None") : ship.ReleaseDate;
@@ -154,15 +270,28 @@ public sealed partial class ShipDetailControl : UserControl
         SpecialGearBorder.Visibility = ship.CanSpecialGear ? Visibility.Visible : Visibility.Collapsed;
         if (ship.CanSpecialGear)
         {
-            SpecialGearNameText.Text = ship.SpecialGearName;
+            SpecialGearNameText.Text = ship.SpecialGearName.GetLocalized();
             SpecialGearDateText.Text = string.IsNullOrEmpty(ship.SpecialGearDate) ? loader.GetString("NotSet") : ship.SpecialGearDate;
-            SpecialGearAcquireText.Text = string.IsNullOrEmpty(ship.SpecialGearAcquire) ? loader.GetString("NoAcquireInfo") : ship.SpecialGearAcquire;
+            if (!string.IsNullOrEmpty(ship.SpecialGearAcquireText))
+            {
+                SpecialGearAcquireText.Text = ship.SpecialGearAcquireText;
+            }
+            else if (ship.SpecialGearEntries != null && ship.SpecialGearEntries.Any())
+            {
+                var displayTexts = ship.SpecialGearEntries.Select(entry => FormatGearEntry(entry)).Where(t => !string.IsNullOrEmpty(t));
+                SpecialGearAcquireText.Text = string.Join("；", displayTexts);
+            }
+            else
+            {
+                SpecialGearAcquireText.Text = loader.GetString("NoAcquireInfo");
+            }
             SetDefaultGearIcon();
             StartGearFadeIn();
-            // 加载兵装图标
             _gearLoadToken++;
             int token = _gearLoadToken;
-            LoadCustomGearIcon(ship.SpecialGearName, token);
+            string gearNameChinese = ship.SpecialGearName.GetValueOrDefault("zh-Hans");
+            if (!string.IsNullOrEmpty(gearNameChinese))
+                LoadCustomGearIcon(gearNameChinese, token);
         }
         else
         {
@@ -172,21 +301,44 @@ public sealed partial class ShipDetailControl : UserControl
             SpecialGearImage.Opacity = 0;
             SpecialGearImage.Source = null;
         }
+
         var app = Application.Current as App;
         bool isDev = app?.AccountManager?.IsDeveloper() ?? false;
         EditShipButton.Visibility = isDev ? Visibility.Visible : Visibility.Collapsed;
         UpdateControlStates();
-        if (string.IsNullOrEmpty(ship.Name))
+        if (string.IsNullOrEmpty(ship.RawName))
         {
             SetDefaultAvatar();
             StartAvatarFadeIn();
             return;
         }
 
-        string avatarName = ship.Remodeled && ship.CanRemodel ? ship.Name + "改" : ship.Name;
-
+        string avatarName = ship.Remodeled && ship.CanRemodel ? ship.RawName + "改" : ship.RawName;
         ShipAvatarImage.Opacity = 0;
-        LoadAndFadeInAvatar(avatarName, ship.Name, currentToken);
+        LoadAndFadeInAvatar(avatarName, ship.RawName, currentToken);
+    }
+
+    private string FormatGearEntry(SpecialGearEntry entry)
+    {
+        if (entry.Tag == "gear_custom")
+            return entry.CustomText.GetLocalized();
+
+        string template = GetGearTagTemplate(entry.Tag);
+        if (string.IsNullOrEmpty(template)) return "";
+        try
+        {
+            return string.Format(template, entry.Parameters.ToArray());
+        }
+        catch
+        {
+            return template;
+        }
+    }
+
+    private string GetGearTagTemplate(string tag)
+    {
+        var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
+        return loader.GetString($"{tag}") ?? "";
     }
 
     private void TryLoadImage(string uriString, int token, Action<bool> callback)
@@ -195,7 +347,6 @@ public sealed partial class ShipDetailControl : UserControl
         {
             var uri = new Uri(uriString);
             var bitmap = new BitmapImage();
-            // 监听加载失败事件
             bitmap.ImageFailed += (s, e) =>
             {
                 if (token == _avatarLoadToken)
@@ -215,24 +366,21 @@ public sealed partial class ShipDetailControl : UserControl
                 callback?.Invoke(false);
         }
     }
+
     private void SetDefaultAvatar()
     {
         var defaultUri = new Uri("ms-appx:///Assets/Ship/default.png");
         ShipAvatarImage.Source = new BitmapImage(defaultUri);
     }
 
-    // 实际加载头像资源并淡入
     private async void LoadAndFadeInAvatar(string shipName, string fallbackName, int token)
     {
         if (token != _avatarLoadToken) return;
-        // 重置头像为透明（准备淡入）
         ShipAvatarImage.Opacity = 0;
 
-        // 尝试加载 png/jpg
         string jpgUri = $"ms-appx:///Assets/Ship/{shipName}.jpg";
         TryLoadImage(jpgUri, token, success =>
         {
-            // 再次检查 pending 是否已变化
             if (token != _avatarLoadToken) return;
             if (success)
             {
@@ -260,20 +408,23 @@ public sealed partial class ShipDetailControl : UserControl
                             StartAvatarFadeIn();
                         }
                     }
-            });
+                });
             }
         });
     }
+
     private void StartAvatarFadeIn()
     {
-        AvatarFadeInStoryboard.Stop();      // 停止可能正在播放的动画
-        ShipAvatarImage.Opacity = 0;        // 从完全透明开始淡入
+        AvatarFadeInStoryboard.Stop();
+        ShipAvatarImage.Opacity = 0;
         AvatarFadeInStoryboard.Begin();
     }
+
     private async void LoadCustomGearIcon(string gearName, int token)
     {
         if (string.IsNullOrEmpty(gearName) || token != _gearLoadToken) return;
         string[] extensions = { ".jpg", ".png" };
+        bool loaded = false;
         foreach (var ext in extensions)
         {
             string relativePath = $"Assets/Gear/{gearName}{ext}";
@@ -288,9 +439,10 @@ public sealed partial class ShipDetailControl : UserControl
                     if (token == _gearLoadToken)
                     {
                         SpecialGearImage.Source = bitmap;
-                        StartGearFadeIn(); // 替换默认图标后重新淡入
+                        StartGearFadeIn();
+                        loaded = true;
                     }
-                    return; // 成功，退出循环
+                    return;
                 }
             }
             catch (Exception ex)
@@ -298,135 +450,24 @@ public sealed partial class ShipDetailControl : UserControl
                 System.Diagnostics.Debug.WriteLine($"Failed to load {relativePath}: {ex.Message}");
             }
         }
-    }
-    /*
-    private void TryLoadCustomGearIcon(string uriString, string gearName, int token)
-    {
-        System.Diagnostics.Debug.WriteLine($"TryLoadCustomGearIcon: {uriString}, token={token}, current={_gearLoadToken}");
-        try
+        if (!loaded && token == _gearLoadToken)
         {
-            var uri = new Uri(uriString);
-            var bitmap = new BitmapImage();
-            bitmap.ImageOpened += (s, e) =>
-            {
-                System.Diagnostics.Debug.WriteLine($"ImageOpened success: {uriString}");
-                if (token == _gearLoadToken)
-                {
-                    SpecialGearImage.Source = bitmap;
-                    StartGearFadeIn();   // 重新淡入，替换默认图标
-                }
-            };
-            bitmap.ImageFailed += (s, e) =>
-            {
-                System.Diagnostics.Debug.WriteLine($"ImageFailed: {uriString}, error: {e.ErrorMessage}");
-                if (token != _gearLoadToken) return;
-                // 尝试另一种扩展名
-                string alternative = uriString.EndsWith(".jpg")
-                    ? uriString.Replace(".jpg", ".png")
-                    : uriString.Replace(".png", ".jpg");
-                if (alternative != uriString)
-                {
-                    System.Diagnostics.Debug.WriteLine($"Retry with alternative: {alternative}");
-                    TryLoadCustomGearIcon(alternative, gearName, token);
-                }
-                else
-                {
-                    System.Diagnostics.Debug.WriteLine($"No alternative, keep default icon");
-                }
-                // 否则保持默认图标
-            };
-            bitmap.UriSource = uri;
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Exception: {ex.Message}");
+            // 所有扩展名都找不到，使用默认图标
+            SetDefaultGearIcon();
+            StartGearFadeIn();
         }
     }
-    
-    private void TryLoadIcon(string uriString, int token, Action<bool> callback)
-    {
-        try
-        {
-            var uri = new Uri(uriString);
-            var bitmap = new BitmapImage();
-            // 监听加载失败事件
-            bitmap.ImageFailed += (s, e) =>
-            {
-                System.Diagnostics.Debug.WriteLine($"TryLoadIcon: ImageFailed for {uriString}");
-                if (token == _gearLoadToken)
-                    callback?.Invoke(false);
-            };
-            bitmap.ImageOpened += (s, e) =>
-            {
-                System.Diagnostics.Debug.WriteLine($"TryLoadIcon: ImageOpened for {uriString}");
-                if (token == _gearLoadToken)
-                    callback?.Invoke(true);
-            };
-            bitmap.UriSource = uri;
-            SpecialGearImage.Source = bitmap;
-        }
-        catch
-        {
-            if (token == _gearLoadToken)
-                callback?.Invoke(false);
-        }
-    }
-    */
+
     private void SetDefaultGearIcon()
     {
         var defaultUri = new Uri("ms-appx:///Assets/Gear/default.png");
         SpecialGearImage.Source = new BitmapImage(defaultUri);
     }
 
-    /*
-    private async void LoadAndFadeInGear(string gearName, string fallbackName, int token)
-    {
-        System.Diagnostics.Debug.WriteLine($"LoadAndFadeInGear: gearName={gearName}, fallback={fallbackName}, token={token}, current _gearLoadToken={_gearLoadToken}");
-        if (token != _gearLoadToken) return;
-        // 重置头像为透明（准备淡入）
-        SpecialGearImage.Opacity = 0;
-
-        // 尝试加载 png/jpg
-        string jpgUri = $"ms-appx:///Assets/Gear/{gearName}.jpg";
-        TryLoadIcon(jpgUri, token, success =>
-        {
-            // 再次检查 pending 是否已变化
-            if (token != _gearLoadToken) return;
-            if (success)
-            {
-                StartGearFadeIn();
-            }
-            else
-            {
-                string pngUri = $"ms-appx:///Assets/Gear/{gearName}.png";
-                TryLoadIcon(pngUri, token, success2 =>
-                {
-                    if (token != _gearLoadToken) return;
-                    if (success2)
-                    {
-                        StartGearFadeIn();
-                    }
-                    else
-                    {
-                        if (gearName != fallbackName)
-                        {
-                            LoadAndFadeInGear(fallbackName, fallbackName, token);
-                        }
-                        else
-                        {
-                            SetDefaultGearIcon();
-                            StartGearFadeIn();
-                        }
-                    }
-                });
-            }
-        });
-    }
-    */
     private void StartGearFadeIn()
     {
-        GearFadeInStoryboard.Stop();      // 停止可能正在播放的动画
-        SpecialGearImage.Opacity = 0;        // 从完全透明开始淡入
+        GearFadeInStoryboard.Stop();
+        SpecialGearImage.Opacity = 0;
         GearFadeInStoryboard.Begin();
     }
 
@@ -482,37 +523,39 @@ public sealed partial class ShipDetailControl : UserControl
         {
             if (_currentShip != null)
             {
-                _currentShip.Owned = OwnedCheckBox.IsChecked ?? false;
-                if (!_currentShip.Owned)
+                bool newOwned = OwnedCheckBox.IsChecked ?? false;
+                if (_currentShip.Owned != newOwned)
                 {
-                    _currentShip.Breakthrough = 0;
-                    _currentShip.Oath = false;
-                    _currentShip.Level120 = false;
-                    _currentShip.Remodeled = false;
-                    _currentShip.SpecialGearObtained = false;
-                    BreakthroughSlider.Value = 0;
-                    OathCheckBox.IsChecked = false;
-                    Level120CheckBox.IsChecked = false;
-                    RemodeledCheckBox.IsChecked = false;
-                    SpecialGearObtainedCheckBox.IsChecked = false;
+                    _currentShip.Owned = newOwned;
+                    if (!_currentShip.Owned)
+                    {
+                        _currentShip.Breakthrough = 0;
+                        _currentShip.Oath = false;
+                        _currentShip.Level120 = false;
+                        _currentShip.Remodeled = false;
+                        _currentShip.SpecialGearObtained = false;
+                        BreakthroughSlider.Value = 0;
+                        OathCheckBox.IsChecked = false;
+                        Level120CheckBox.IsChecked = false;
+                        RemodeledCheckBox.IsChecked = false;
+                        SpecialGearObtainedCheckBox.IsChecked = false;
+                    }
+                    RemodeledCheckBox.IsEnabled = _currentShip.CanRemodel && _currentShip.Owned;
+                    SaveShip();
+                    UpdateControlStates();
+                    LogService.Operation("状态变更", $"舰船 {_currentShip.DisplayName} (ID:{_currentShip.Id}) 获得状态改为 {_currentShip.Owned}");
                 }
-                RemodeledCheckBox.IsEnabled = _currentShip.CanRemodel && _currentShip.Owned;
-                SaveShip();
-                UpdateControlStates();
             }
         }
         finally
         {
             _isUpdating = false;
         }
-        if (!_isUpdating)
-            LogService.Operation("状态变更", $"舰船 {_currentShip.Name} (ID:{_currentShip.Id}) 获得状态改为 {_currentShip.Owned}");
     }
 
     private void OnBreakthroughChanged(object sender, RangeBaseValueChangedEventArgs e)
     {
         if (_isUpdating) return;
-        // 特殊布里禁止手动更改突破
         if (IsSpecialBulin(_currentShip))
         {
             BreakthroughSlider.Value = 3;
@@ -524,17 +567,19 @@ public sealed partial class ShipDetailControl : UserControl
             if (_currentShip != null)
             {
                 int newValue = (int)e.NewValue;
-                _currentShip.Breakthrough = newValue;
-                BreakthroughValueText.Text = newValue.ToString();
-                SaveShip();
+                if (_currentShip.Breakthrough != newValue)
+                {
+                    _currentShip.Breakthrough = newValue;
+                    BreakthroughValueText.Text = newValue.ToString();
+                    SaveShip();
+                    LogService.Operation("状态变更", $"舰船 {_currentShip.DisplayName} (ID:{_currentShip.Id}) 突破状态改为 {_currentShip.Breakthrough}");
+                }
             }
         }
         finally
         {
             _isUpdating = false;
         }
-        if (!_isUpdating)
-            LogService.Operation("状态变更", $"舰船 {_currentShip.Name} (ID:{_currentShip.Id}) 突破状态改为 {_currentShip.Breakthrough}");
     }
 
     private void OnOathChanged(object sender, RoutedEventArgs e)
@@ -545,16 +590,19 @@ public sealed partial class ShipDetailControl : UserControl
         {
             if (_currentShip != null)
             {
-                _currentShip.Oath = OathCheckBox.IsChecked ?? false;
-                SaveShip();
+                bool newOath = OathCheckBox.IsChecked ?? false;
+                if (_currentShip.Oath != newOath)
+                {
+                    _currentShip.Oath = newOath;
+                    SaveShip();
+                    LogService.Operation("状态变更", $"舰船 {_currentShip.DisplayName} (ID:{_currentShip.Id}) 誓约状态改为 {_currentShip.Oath}");
+                }
             }
         }
         finally
         {
             _isUpdating = false;
         }
-        if (!_isUpdating)
-            LogService.Operation("状态变更", $"舰船 {_currentShip.Name} (ID:{_currentShip.Id}) 誓约状态改为 {_currentShip.Oath}");
     }
 
     private void OnLevel120Changed(object sender, RoutedEventArgs e)
@@ -565,16 +613,19 @@ public sealed partial class ShipDetailControl : UserControl
         {
             if (_currentShip != null)
             {
-                _currentShip.Level120 = Level120CheckBox.IsChecked ?? false;
-                SaveShip();
+                bool newLevel120 = Level120CheckBox.IsChecked ?? false;
+                if (_currentShip.Level120 != newLevel120)
+                {
+                    _currentShip.Level120 = newLevel120;
+                    SaveShip();
+                    LogService.Operation("状态变更", $"舰船 {_currentShip.DisplayName} (ID:{_currentShip.Id}) 等级状态改为 {_currentShip.Level120}");
+                }
             }
         }
         finally
         {
             _isUpdating = false;
         }
-        if (!_isUpdating)
-            LogService.Operation("状态变更", $"舰船 {_currentShip.Name} (ID:{_currentShip.Id}) 等级状态改为 {_currentShip.Level120}");
     }
 
     private void OnRemodeledChanged(object sender, RoutedEventArgs e)
@@ -586,14 +637,16 @@ public sealed partial class ShipDetailControl : UserControl
             if (_currentShip != null)
             {
                 bool wasRemodeled = _currentShip.Remodeled;
-                _currentShip.Remodeled = RemodeledCheckBox.IsChecked ?? false;
+                bool newRemodeled = RemodeledCheckBox.IsChecked ?? false;
                 SaveShip();
 
-                // 如果改造状态实际发生了变化，立即刷新名称、稀有度、头像
-                if (wasRemodeled != _currentShip.Remodeled)
+                if (wasRemodeled != newRemodeled)
                 {
+                    _currentShip.Remodeled = newRemodeled;
+                    SaveShip();
                     RefreshNameAndRarityDisplay();
                     RefreshAvatarForRemodel();
+                    LogService.Operation("状态变更", $"舰船 {_currentShip.DisplayName} (ID:{_currentShip.Id}) 改造状态改为 {_currentShip.Remodeled}");
                 }
             }
         }
@@ -601,8 +654,6 @@ public sealed partial class ShipDetailControl : UserControl
         {
             _isUpdating = false;
         }
-        if (!_isUpdating)
-            LogService.Operation("状态变更", $"舰船 {_currentShip.Name} (ID:{_currentShip.Id}) 改造状态改为 {_currentShip.Remodeled}");
     }
 
     private void RefreshNameAndRarityDisplay()
@@ -614,14 +665,13 @@ public sealed partial class ShipDetailControl : UserControl
 
     private void RefreshAvatarForRemodel()
     {
-        var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
         if (_currentShip == null) return;
         string avatarName = _currentShip.Remodeled && _currentShip.CanRemodel
-                            ? _currentShip.Name + "改"
-                            : _currentShip.Name;
+                            ? _currentShip.RawName + "改"
+                            : _currentShip.RawName;
         int token = ++_avatarLoadToken;
         ShipAvatarImage.Opacity = 0;
-        LoadAndFadeInAvatar(avatarName, _currentShip.Name, token);
+        LoadAndFadeInAvatar(avatarName, _currentShip.RawName, token);
     }
 
     private void OnSpecialGearObtainedChanged(object sender, RoutedEventArgs e)
@@ -630,18 +680,18 @@ public sealed partial class ShipDetailControl : UserControl
         _isUpdating = true;
         try
         {
+            bool newObtained = SpecialGearObtainedCheckBox.IsChecked ?? false;
             if (_currentShip != null)
             {
-                _currentShip.SpecialGearObtained = SpecialGearObtainedCheckBox.IsChecked ?? false;
+                _currentShip.SpecialGearObtained = newObtained;
                 SaveShip();
+                LogService.Operation("状态变更", $"舰船 {_currentShip.DisplayName} (ID:{_currentShip.Id}) 专属兵装状态改为 {_currentShip.SpecialGearObtained}");
             }
         }
         finally
         {
             _isUpdating = false;
         }
-        if (!_isUpdating)
-            LogService.Operation("状态变更", $"舰船 {_currentShip.Name} (ID:{_currentShip.Id}) 专属兵装状态改为 {_currentShip.SpecialGearObtained}");
     }
 
     private async void SaveShip()
@@ -650,6 +700,7 @@ public sealed partial class ShipDetailControl : UserControl
         var app = Application.Current as App;
         app?.ShipManager?.Save();
     }
+
     private async void EditShipButton_Click(object sender, RoutedEventArgs e)
     {
         if (_currentShip == null) return;
@@ -676,44 +727,80 @@ public sealed partial class ShipDetailControl : UserControl
         if (await editDialog.ShowAsync() == ContentDialogResult.Primary)
         {
             var updatedShip = editDialog.GetShip();
-            var manager = app?.ShipManager;
             app.ShipManager.UpdateShip(_currentShip.Id, updatedShip);
             var newVm = app.ShipManager.Ships.FirstOrDefault(s => s.Id == updatedShip.Id);
             if (newVm != null) SetShip(newVm);
         }
     }
-    // 判断是否为三艘特殊布里
+
     private bool IsSpecialBulin(ShipViewModel? ship)
     {
-        var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
         if (ship == null) return false;
-        return ship.Name == "泛用型布里"
-            || ship.Name == "试作型布里MKII"
-            || ship.Name == "特装型布里MKIII";
+        return ship.RawName == "泛用型布里"
+            || ship.RawName == "试作型布里MKII"
+            || ship.RawName == "特装型布里MKIII";
     }
 
-    // 根据当前舰船状态更新所有控件的启用/禁用状态
     private void UpdateControlStates()
     {
         if (_currentShip == null) return;
-
         bool owned = _currentShip.Owned;
         bool isBulin = IsSpecialBulin(_currentShip);
-
-        // 获得复选框：特殊布里是否允许取消获得？若不希望取消，可设置为 false，这里保持可操作
         OwnedCheckBox.IsEnabled = true;
         BreakthroughSlider.IsEnabled = owned && !isBulin;
         OathCheckBox.IsEnabled = owned;
         Level120CheckBox.IsEnabled = owned;
         RemodeledCheckBox.IsEnabled = owned && _currentShip.CanRemodel;
         SpecialGearObtainedCheckBox.IsEnabled = owned && _currentShip.CanSpecialGear;
-
-        // 特殊布里强制突破为3
         if (isBulin)
         {
             _currentShip.Breakthrough = 3;
             BreakthroughSlider.Value = 3;
             BreakthroughValueText.Text = "3";
         }
+    }
+    private string FormatAcquireEntry(AcquireEntry entry)
+    {
+        if (entry.Tag == "acquire_custom")
+        {
+            // 返回当前语言的本地化文本，若无则 fallback 到中文
+            return entry.CustomText.GetLocalized();
+        }
+        // 标准 Tag 处理
+        string template = GetTagTemplate(entry.Tag);
+        if (string.IsNullOrEmpty(template))
+            return "";
+        try
+        {
+            // 针对周年邀请函等需要转换中文数字的 Tag
+            var parameters = entry.Parameters.ToArray();
+            if (entry.Tag == "acquire_27" && parameters.Length > 0)
+            {
+                // 将第一个参数中的中文数字转为阿拉伯数字
+                parameters[0] = ChineseToArabic(parameters[0]);
+            }
+            // 其他需要转换的 Tag 可继续添加
+            return string.Format(template, parameters);
+        }
+        catch
+        {
+            return template;
+        }
+    }
+    private string ChineseToArabic(string chineseNum)
+    {
+        var map = new Dictionary<string, string>
+    {
+        {"一", "1"}, {"二", "2"}, {"三", "3"}, {"四", "4"}, {"五", "5"},
+        {"六", "6"}, {"七", "7"}, {"八", "8"}, {"九", "9"}, {"十", "10"}
+    };
+        if (map.ContainsKey(chineseNum))
+            return map[chineseNum];
+        return chineseNum; // 如果已经是数字，直接返回
+    }
+    private string GetTagTemplate(string tag)
+    {
+        var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
+        return loader.GetString($"{tag}") ?? "";
     }
 }

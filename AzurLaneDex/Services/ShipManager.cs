@@ -1,6 +1,5 @@
 ﻿using AzurLaneDex.Models;
 using AzurLaneDex.ViewModels;
-using Microsoft.UI.Xaml.Media.Animation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,6 +12,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using static AzurLaneDex.Models.ShipStatic;
+using static AzurLaneDex.Models.LocalizedString;
 
 namespace AzurLaneDex.Services;
 
@@ -30,98 +30,168 @@ public class ShipManager
     private readonly AccountManager _accountManager;
     private readonly string _staticPath;
     private string _userStatePath;
-    public string GetUserStatePath() => _userStatePath;
-    // ShipManager.cs
-    public event Action? DataStructureChanged;   // 增、删、改静态数据时触发
-    public event Action? StateChanged;           // 用户状态（收集进度）变化时触发
     private List<ShipStatic> _staticShips = new();
     private Dictionary<int, ShipState> _userStates = new();
 
     public ObservableCollection<ShipViewModel> Ships { get; private set; } = new();
     public string Version { get; private set; } = "0.0";
 
-    // 配置相关
+    public event Action? DataStructureChanged;
+    public event Action? StateChanged;
+    public event Action? data_changed;
+
     private readonly string _configPath;
     public Dictionary<string, object> Config { get; private set; }
 
+    // ========== 映射表（静态只读，供迁移和运行时使用） ==========
+    private static readonly Dictionary<string, int> FactionToId = new()
+    {
+        ["白鹰"] = (int)Faction.EagleUnion,
+        ["皇家"] = (int)Faction.RoyalNavy,
+        ["重樱"] = (int)Faction.SakuraEmpire,
+        ["铁血"] = (int)Faction.IronBlood,
+        ["东煌"] = (int)Faction.DragonEmpery,
+        ["撒丁帝国"] = (int)Faction.Sardegna,
+        ["北方联合"] = (int)Faction.NorthernUnion,
+        ["自由鸢尾"] = (int)Faction.FreeFrench,
+        ["维希教廷"] = (int)Faction.Vichya,
+        ["郁金王国"] = (int)Faction.Tulip,
+        ["飓风"] = (int)Faction.Tempesta,
+        ["其他"] = (int)Faction.Other,
+        ["超次元游戏海王星"] = (int)Faction.Collab_Nep,
+        ["哔哩哔哩"] = (int)Faction.Collab_Bilibili,
+        ["传颂之物"] = (int)Faction.Collab_Utawarerumono,
+        ["绊爱"] = (int)Faction.Collab_KizunaAI,
+        ["Hololive"] = (int)Faction.Collab_Hololive,
+        ["死或生沙滩排球"] = (int)Faction.Collab_DoAXVV,
+        ["偶像大师"] = (int)Faction.Collab_Idolmaster,
+        ["SSSS"] = (int)Faction.Collab_SSSS,
+        ["莱莎的炼金工房"] = (int)Faction.Collab_Ryza,
+        ["闪乱神乐"] = (int)Faction.Collab_Senran,
+        ["出包王女"] = (int)Faction.Collab_Toloveru,
+        ["黑岩射手"] = (int)Faction.Collab_BRS,
+        ["地城邂逅"] = (int)Faction.Collab_Danmachi,
+        ["优米雅的炼金工房"] = (int)Faction.Collab_Yumia,
+        ["约会大作战V"] = (int)Faction.Collab_DAL,
+        ["破敌之炬"] = (int)Faction.Meta_Flame,
+        ["湮烬之核"] = (int)Faction.Meta_Core,
+        ["构造之理"] = (int)Faction.Meta_Reason,
+        ["逐光之焰"] = (int)Faction.Meta_Light,
+        ["摇曳之火"] = (int)Faction.Meta_Fire,
+    };
+
+    private static readonly Dictionary<string, int> ShipClassToId = new()
+    {
+        ["驱逐"] = (int)ShipClass.DD,
+        ["轻巡"] = (int)ShipClass.CL,
+        ["重巡"] = (int)ShipClass.CA,
+        ["超巡"] = (int)ShipClass.CB,
+        ["重炮"] = (int)ShipClass.BM,
+        ["战巡"] = (int)ShipClass.BC,
+        ["战列"] = (int)ShipClass.BB,
+        ["航战"] = (int)ShipClass.BBV,
+        ["航母"] = (int)ShipClass.CV,
+        ["轻航"] = (int)ShipClass.CVL,
+        ["维修"] = (int)ShipClass.AR,
+        ["潜艇"] = (int)ShipClass.SS,
+        ["潜母"] = (int)ShipClass.SSV,
+        ["运输"] = (int)ShipClass.AE,
+        ["风帆"] = (int)ShipClass.Sail,
+    };
+
+    private static readonly Dictionary<string, int> RarityToId = new()
+    {
+        ["普通"] = (int)Rarity.N,
+        ["稀有"] = (int)Rarity.R,
+        ["精锐"] = (int)Rarity.SR,
+        ["超稀有"] = (int)Rarity.SSR,
+        ["海上传奇"] = (int)Rarity.UR,
+        ["最高方案"] = (int)Rarity.Decisive,
+        ["决战方案"] = (int)Rarity.Ultimate,
+    };
+
+    private static readonly Dictionary<string, int> AttributeToId = new()
+    {
+        ["无"] = (int)AttributeType.None,
+        ["耐久"] = (int)AttributeType.HP,
+        ["炮击"] = (int)AttributeType.FP,
+        ["雷击"] = (int)AttributeType.TRP,
+        ["防空"] = (int)AttributeType.AA,
+        ["航空"] = (int)AttributeType.AVI,
+        ["命中"] = (int)AttributeType.ACC,
+        ["装填"] = (int)AttributeType.RLD,
+        ["机动"] = (int)AttributeType.EVA,
+        ["反潜"] = (int)AttributeType.ASW,
+    };
+
+    // ========== 辅助方法 ==========
+    private static List<int> MapShipClassListStatic(List<string> chineseClasses)
+    {
+        if (chineseClasses == null) return new List<int>();
+        var ids = new List<int>();
+        foreach (var cls in chineseClasses)
+            if (ShipClassToId.TryGetValue(cls, out var id))
+                ids.Add(id);
+        return ids;
+    }
+
+    private List<int> MapShipClassList(List<string> chineseClasses) => MapShipClassListStatic(chineseClasses);
+
     public ShipManager(AccountManager accountManager)
     {
-        try
+        _accountManager = accountManager;
+        string dataRoot = App.DataRoot;
+        if (string.IsNullOrEmpty(dataRoot))
         {
-            _accountManager = accountManager;
-
-            string dataRoot = App.DataRoot;
-            if (string.IsNullOrEmpty(dataRoot))
-            {
-                dataRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                    "AzurLaneDex", "data");
-                Directory.CreateDirectory(dataRoot);
-            }
-
-            string staticDir = Path.Combine(dataRoot, "static");
-            Directory.CreateDirectory(staticDir);
-            _staticPath = Path.Combine(staticDir, "ships_static.json");
-
-            EnsureBuiltinStaticExists();
-
-            // 配置文件路径
-            _configPath = Path.Combine(App.DataRoot, "config.json");
-            LoadConfig();
-
-            EnsureStaticFileExists();
-            Load();
+            dataRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AzurLaneDex", "data");
+            Directory.CreateDirectory(dataRoot);
         }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"ShipManager constructor error: {ex}");
-            throw;
-        }
+        string staticDir = Path.Combine(dataRoot, "static");
+        Directory.CreateDirectory(staticDir);
+        _staticPath = Path.Combine(staticDir, "ships_static.json");
+
+        EnsureBuiltinStaticExists();
+        _configPath = Path.Combine(App.DataRoot, "config.json");
+        LoadConfig();
+        EnsureStaticFileExists();
+        Load();
     }
 
     private void EnsureBuiltinStaticExists()
     {
-        if (File.Exists(_staticPath))
-            return;
-
+        if (File.Exists(_staticPath)) return;
         string builtinPath = null;
-
-        // 开发环境（未打包）
         string devPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "ships_static.json");
         if (File.Exists(devPath))
             builtinPath = devPath;
         else
         {
-            // 打包环境（MSIX）
             try
             {
-                var installedPath = Windows.ApplicationModel.Package.Current.InstalledLocation.Path;
+                var installedPath = Package.Current.InstalledLocation.Path;
                 string packagedPath = Path.Combine(installedPath, "Assets", "ships_static.json");
                 if (File.Exists(packagedPath))
                     builtinPath = packagedPath;
             }
             catch { }
         }
-
         if (builtinPath != null)
         {
             Directory.CreateDirectory(Path.GetDirectoryName(_staticPath)!);
             File.Copy(builtinPath, _staticPath);
-            System.Diagnostics.Debug.WriteLine($"已从内置资源复制舰船数据: {builtinPath} -> {_staticPath}");
-            return;
         }
-
-        // 最后手段：创建空文件
-        var empty = new StaticData { Version = "0.0", Ships = new List<ShipStatic>() };
-        var json = JsonSerializer.Serialize(empty, new JsonSerializerOptions { WriteIndented = true });
-        File.WriteAllText(_staticPath, json);
-        System.Diagnostics.Debug.WriteLine("未找到内置舰船数据，已创建空文件");
+        else
+        {
+            var empty = new StaticData { Version = "0.0", Ships = new List<ShipStatic>() };
+            var json = JsonSerializer.Serialize(empty, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(_staticPath, json);
+        }
     }
 
     private void LoadConfig()
     {
         if (!Directory.Exists(Path.GetDirectoryName(_configPath)))
             Directory.CreateDirectory(Path.GetDirectoryName(_configPath));
-        System.Diagnostics.Debug.WriteLine($"Loading config from: {_configPath}");
         if (File.Exists(_configPath))
         {
             try
@@ -131,46 +201,21 @@ public class ShipManager
                 if (dict != null)
                 {
                     Config = dict;
-                    // 将 JsonElement 转换为基本类型（布尔、数字、字符串）
                     foreach (var key in Config.Keys.ToList())
-                    {
                         if (Config[key] is JsonElement elem)
-                        {
                             switch (elem.ValueKind)
                             {
-                                case JsonValueKind.True:
-                                    Config[key] = true;
-                                    break;
-                                case JsonValueKind.False:
-                                    Config[key] = false;
-                                    break;
-                                case JsonValueKind.Number:
-                                    Config[key] = elem.GetInt32();
-                                    break;
-                                case JsonValueKind.String:
-                                    Config[key] = elem.GetString();
-                                    break;
-                                    // 其他类型可忽略或添加
+                                case JsonValueKind.True: Config[key] = true; break;
+                                case JsonValueKind.False: Config[key] = false; break;
+                                case JsonValueKind.Number: Config[key] = elem.GetInt32(); break;
+                                case JsonValueKind.String: Config[key] = elem.GetString(); break;
                             }
-                        }
-                    }
                 }
-                else
-                {
-                    SetDefaultConfig();
-                }
+                else SetDefaultConfig();
             }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"LoadConfig error: {ex.Message}");
-                SetDefaultConfig();
-            }
+            catch { SetDefaultConfig(); }
         }
-        else
-        {
-            SetDefaultConfig();
-        }
-        System.Diagnostics.Debug.WriteLine($"Loaded ask_account_on_startup: {Config.GetValueOrDefault("ask_account_on_startup")}");
+        else SetDefaultConfig();
     }
 
     private void SetDefaultConfig()
@@ -188,133 +233,696 @@ public class ShipManager
     public void SaveConfig()
     {
         var json = JsonSerializer.Serialize(Config, new JsonSerializerOptions { WriteIndented = true });
-        System.Diagnostics.Debug.WriteLine($"Config file path: {_configPath}");
         File.WriteAllText(_configPath, json);
-        System.Diagnostics.Debug.WriteLine($"File exists after save: {File.Exists(_configPath)}");
-        System.Diagnostics.Debug.WriteLine($"Saved config to {_configPath}");
-    }
-    private void CopyBuiltinStaticIfNeeded()
-    {
-        if (File.Exists(_staticPath))
-            return;
-
-        // 尝试从应用包内的 BuiltinData 文件夹复制
-        string builtinPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "BuiltinData", "ships_static.json");
-        if (File.Exists(builtinPath))
-        {
-            File.Copy(builtinPath, _staticPath);
-            System.Diagnostics.Debug.WriteLine($"已从内置资源复制默认静态数据到 {_staticPath}");
-            return;
-        }
-
-        // 如果内置文件也不存在（例如开发环境未包含），则创建空模板
-        var emptyData = new StaticData { Version = "0.0", Ships = new List<ShipStatic>() };
-        var json = JsonSerializer.Serialize(emptyData, new JsonSerializerOptions { WriteIndented = true });
-        File.WriteAllText(_staticPath, json);
-        System.Diagnostics.Debug.WriteLine($"未找到内置文件，创建空静态文件: {_staticPath}");
     }
 
     private void EnsureStaticFileExists()
     {
         if (File.Exists(_staticPath)) return;
-
-        string sourceStatic = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", "static", "ships_static.json");
-        if (File.Exists(sourceStatic))
-        {
-            try
-            {
-                File.Copy(sourceStatic, _staticPath);
-                return;
-            }
-            catch { }
-        }
-
         var emptyStatic = new StaticData { Version = "0.1", Ships = new List<ShipStatic>() };
         var json = JsonSerializer.Serialize(emptyStatic, new JsonSerializerOptions { WriteIndented = true });
         File.WriteAllText(_staticPath, json);
     }
 
-    public void Load()
+    private bool IsOldFormatFile()
     {
-        // 1. 读取静态文件
-        if (!File.Exists(_staticPath)) return;
-        string rawJson = File.ReadAllText(_staticPath);
-        System.Diagnostics.Debug.WriteLine($"Load started, static path: {_staticPath}");
-        if (!File.Exists(_staticPath))
+        if (!File.Exists(_staticPath)) return false;
+        try
         {
-            System.Diagnostics.Debug.WriteLine("Static file does not exist!");
-            return;
+            string content = File.ReadAllText(_staticPath);
+            if (content.Contains("\"faction_id\"") || content.Contains("\"name\":{"))
+                return false;
+            return true;
         }
-        System.Diagnostics.Debug.WriteLine($"JSON length: {rawJson.Length}");
-        using var doc = JsonDocument.Parse(rawJson);
-        var root = doc.RootElement;
+        catch { return false; }
+    }
 
-        Version = root.TryGetProperty("version", out var ver) ? ver.GetString() ?? "0.0" : "0.0";
-
-        // 检查是否需要迁移
-        bool needMigration = false;
-        if (root.TryGetProperty("ships", out var shipsArray) && shipsArray.GetArrayLength() > 0)
+    private async Task<bool> MigrateToNewFormatAsync()
+    {
+        try
         {
-            var firstShip = shipsArray[0];
-            needMigration = !firstShip.TryGetProperty("obtain_bonus_attr", out _);
-        }
-
-        if (needMigration)
-        {
-            MigrateStaticFile(rawJson);
-            rawJson = File.ReadAllText(_staticPath);
-        }
-
-        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-        var staticData = JsonSerializer.Deserialize<StaticData>(rawJson, options);
-        if (staticData?.Ships != null)
-        {
-            var testShip = staticData.Ships.FirstOrDefault(s => s.Id == 20001);
-            if (testShip != null)
+            LogService.Info("开始迁移静态数据到新格式", "ShipManager");
+            var oldJson = await File.ReadAllTextAsync(_staticPath);
+            using var doc = JsonDocument.Parse(oldJson);
+            var root = doc.RootElement;
+            var shipsArray = root.GetProperty("ships");
+            var newShips = new List<ShipStatic>();
+            foreach (var oldShip in shipsArray.EnumerateArray())
             {
-                System.Diagnostics.Debug.WriteLine($"Test Ship: {testShip.Name}, Category = {testShip.Category}");
+                var newShip = MigrateSingleShipManual(oldShip);
+                newShips.Add(newShip);
+            }
+
+            newShips = newShips.OrderBy(s => s.Id).ToList();
+
+            var newStatic = new StaticData
+            {
+                Version = BuildVersion(newShips.Count, 0),
+                Ships = newShips
+            };
+
+            var newJson = JsonSerializer.Serialize(newStatic, new JsonSerializerOptions { WriteIndented = true });
+
+            var backupPath = _staticPath + ".bak";
+            if (File.Exists(backupPath)) File.Delete(backupPath);
+            File.Copy(_staticPath, backupPath);
+            await File.WriteAllTextAsync(_staticPath, newJson);
+
+            LogService.Info($"数据迁移完成，共转换 {newShips.Count} 条记录", "ShipManager");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            LogService.Error($"数据迁移失败: {ex.Message}", "ShipManager", ex);
+            return false;
+        }
+    }
+
+    // ========== 数据清洗辅助方法 ==========
+    private static List<string> SplitDropLocationString(string raw)
+    {
+        if (string.IsNullOrWhiteSpace(raw)) return new List<string>();
+        var parts = raw.Split(new[] { '、', '，', ',' }, StringSplitOptions.RemoveEmptyEntries);
+        return parts.Select(p => p.Trim()).Where(p => !string.IsNullOrEmpty(p)).ToList();
+    }
+
+    private class ArchiveInfo { public string ArchiveName; public string Stages; }
+
+    private static ArchiveInfo? ParseArchiveLocation(string loc)
+    {
+        if (!loc.StartsWith("作战档案")) return null;
+
+        // 标准格式：作战档案xxx：yyy
+        int colonIdx = loc.IndexOfAny(new[] { '：', ':' });
+        if (colonIdx > "作战档案".Length)
+        {
+            string archiveName = loc.Substring("作战档案".Length, colonIdx - "作战档案".Length).Trim();
+            string stages = loc.Substring(colonIdx + 1).Trim();
+            return new ArchiveInfo { ArchiveName = archiveName, Stages = stages };
+        }
+
+        // 彩蛋掉落格式：作战档案神圣的悲喜剧D1/D2彩蛋掉落
+        var eggMatch = Regex.Match(loc, @"作战档案(.+?)([A-Z]\d+/[A-Z]\d+)彩蛋掉落");
+        if (eggMatch.Success)
+        {
+            return new ArchiveInfo
+            {
+                ArchiveName = eggMatch.Groups[1].Value.Trim(),
+                Stages = eggMatch.Groups[2].Value.Trim()
+            };
+        }
+
+        // 图例格式：作战档案微层混合A图/C图彩蛋掉落
+        var mapMatch = Regex.Match(loc, @"作战档案(.+?)([A-Z]图/[A-Z]图)彩蛋掉落");
+        if (mapMatch.Success)
+        {
+            return new ArchiveInfo
+            {
+                ArchiveName = mapMatch.Groups[1].Value.Trim(),
+                Stages = mapMatch.Groups[2].Value.Trim()
+            };
+        }
+
+        return null;
+    }
+
+    private static void EnsureAcquire46Entry(List<AcquireEntry> entries, string archiveName, string stages)
+    {
+        if (entries == null) return;
+        bool exists = entries.Any(e => e.Tag == "acquire_46" &&
+                                       e.Parameters.Count >= 2 &&
+                                       e.Parameters[0] == archiveName &&
+                                       e.Parameters[1] == stages);
+        if (!exists)
+        {
+            entries.Add(new AcquireEntry
+            {
+                Tag = "acquire_46",
+                Parameters = new List<string> { archiveName, stages },
+                CustomText = new LocalizedString()
+            });
+        }
+    }
+
+    public static ShipStatic MigrateSingleShipManual(JsonElement old)
+    {
+        // ========== 辅助函数 ==========
+        string GetChineseString(JsonElement elem, string fallback = "")
+        {
+            if (elem.ValueKind == JsonValueKind.String)
+                return elem.GetString() ?? fallback;
+            if (elem.ValueKind == JsonValueKind.Object && elem.TryGetProperty("zh-Hans", out var zh))
+                return zh.GetString() ?? fallback;
+            return fallback;
+        }
+
+        string GetStringProp(string propName) =>
+            old.TryGetProperty(propName, out var elem) && elem.ValueKind == JsonValueKind.String ? elem.GetString() ?? "" : "";
+
+        string GetOldAcquireText(string propName)
+        {
+            if (!old.TryGetProperty(propName, out var elem)) return "";
+            if (elem.ValueKind == JsonValueKind.String)
+                return elem.GetString() ?? "";
+            if (elem.ValueKind == JsonValueKind.Object && elem.TryGetProperty("zh-Hans", out var zh))
+                return zh.GetString() ?? "";
+            return "";
+        }
+
+        List<string> SplitIntoSentences(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text)) return new List<string>();
+            var separators = new char[] { '、', '，', ',', '；', ';', '\n', '\r' };
+            var parts = text.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+            return parts.Select(p => p.Trim()).Where(p => !string.IsNullOrEmpty(p)).ToList();
+        }
+
+        void AddEntry(List<AcquireEntry> entries, string tag, List<string>? paramsList = null)
+        {
+            if (paramsList == null) paramsList = new List<string>();
+            if (entries.Any(e => e.Tag == tag)) return;
+            entries.Add(new AcquireEntry { Tag = tag, Parameters = paramsList, CustomText = new LocalizedString() });
+        }
+
+        int ExtractNumber(string text, string pattern)
+        {
+            var match = Regex.Match(text, pattern);
+            return match.Success && int.TryParse(match.Groups[1].Value, out int val) ? val : 0;
+        }
+
+        // ========== 解析旧字段 ==========
+        int id = old.GetProperty("id").GetInt32();
+        string nameChs = GetChineseString(old.GetProperty("name"));
+        string altNameChs = old.TryGetProperty("alt_name", out var altElem) ? GetChineseString(altElem) : "";
+        string factionChs = old.TryGetProperty("faction", out var facElem) ? GetChineseString(facElem) : "";
+        string shipClassChs = old.TryGetProperty("ship_class", out var scElem) ? GetChineseString(scElem) : "";
+        string rarityChs = old.TryGetProperty("rarity", out var raElem) ? GetChineseString(raElem) : "";
+
+        // 属性加成
+        int obtainAttrId = (int)AttributeType.None;
+        int obtainValue = 0;
+        if (old.TryGetProperty("obtain_bonus_attr", out var obAttrElem) && obAttrElem.ValueKind == JsonValueKind.String)
+        {
+            string obtainAttrStr = obAttrElem.GetString()?.Trim();
+            if (!string.IsNullOrEmpty(obtainAttrStr))
+            {
+                obtainAttrId = AttributeToId.GetValueOrDefault(obtainAttrStr, (int)AttributeType.None);
+                if (old.TryGetProperty("obtain_bonus_value", out var obValElem) && obValElem.ValueKind == JsonValueKind.Number)
+                    obtainValue = obValElem.GetInt32();
             }
         }
-        _staticShips = staticData?.Ships ?? new List<ShipStatic>();
-        Version = staticData?.Version ?? "0.0";
 
-        // 检测是否需要填充 CategoryOrder（如果第一条船的 CategoryOrder == 0 且 Category == Normal，说明可能未迁移）
-        bool needCategoryMigration = false;
-        if (_staticShips.Count > 0)
+        int level120AttrId = (int)AttributeType.None;
+        int level120Value = 0;
+        if (old.TryGetProperty("level120_bonus_attr", out var lvAttrElem) && lvAttrElem.ValueKind == JsonValueKind.String)
         {
-            var first = _staticShips[0];
-            // 判断是否需要迁移：CategoryOrder 为 0 且 Category 为 Normal（普通船），或者任意船的 Category 为 Normal 但 GameOrder 可能与 CategoryOrder 不同
-            // 更简单的判断：如果存在任何船 CategoryOrder == 0 且 (Category == Normal 且 GameOrder != 0) 或 (Category != Normal)
-            needCategoryMigration = _staticShips.Any(s => s.CategoryOrder == 0) ||
-                                    _staticShips.Any(s => s.Category == ShipCategory.Normal && s.CategoryOrder == 0 && s.GameOrder != 0) ||
-                                    _staticShips.Any(s => s.Category != ShipCategory.Normal && s.CategoryOrder == 0);
-        }
-
-        if (needCategoryMigration)
-        {
-            if (MigrateCategoriesAndOrders())
+            string level120AttrStr = lvAttrElem.GetString()?.Trim();
+            if (!string.IsNullOrEmpty(level120AttrStr))
             {
-                SaveStatic();  // 保存更新后的静态文件
-                               // 重新读取更新后的数据（确保 _staticShips 已更新）
-                var updatedJson = File.ReadAllText(_staticPath);
-                staticData = JsonSerializer.Deserialize<StaticData>(updatedJson, options);
-                _staticShips = staticData?.Ships ?? new List<ShipStatic>();
-                Version = staticData?.Version ?? "0.0";
+                level120AttrId = AttributeToId.GetValueOrDefault(level120AttrStr, (int)AttributeType.None);
+                if (old.TryGetProperty("level120_bonus_value", out var lvValElem) && lvValElem.ValueKind == JsonValueKind.Number)
+                    level120Value = lvValElem.GetInt32();
             }
         }
 
-        // 2. 读取用户状态        
+        // 适用舰种
+        List<int> obtainAffectIds = new List<int>();
+        if (old.TryGetProperty("obtain_affects", out var affectsElem) && affectsElem.ValueKind == JsonValueKind.Array)
+        {
+            var affects = affectsElem.EnumerateArray()
+                .Select(x => x.GetString()?.Trim())
+                .Where(s => !string.IsNullOrEmpty(s))
+                .ToList();
+            obtainAffectIds = MapShipClassListStatic(affects);
+        }
+        if (obtainAffectIds.Count == 0 && old.TryGetProperty("ship_class", out var shipClassElem) && shipClassElem.ValueKind == JsonValueKind.String)
+        {
+            string shipClass = shipClassElem.GetString()?.Trim();
+            if (!string.IsNullOrEmpty(shipClass))
+                obtainAffectIds = MapShipClassListStatic(new List<string> { shipClass });
+        }
+
+        List<int> level120AffectIds = new List<int>();
+        if (old.TryGetProperty("level120_affects", out var lvAffectsElem) && lvAffectsElem.ValueKind == JsonValueKind.Array)
+        {
+            var affects = lvAffectsElem.EnumerateArray()
+                .Select(x => x.GetString()?.Trim())
+                .Where(s => !string.IsNullOrEmpty(s))
+                .ToList();
+            level120AffectIds = MapShipClassListStatic(affects);
+        }
+        else
+        {
+            level120AffectIds = obtainAffectIds;
+        }
+
+        int factionId = FactionToId.GetValueOrDefault(factionChs, (int)Faction.Other);
+        int shipClassId = ShipClassToId.GetValueOrDefault(shipClassChs, (int)ShipClass.DD);
+        int rarityId = RarityToId.GetValueOrDefault(rarityChs, (int)Rarity.N);
+
+        ShipCategory category = ShipCategory.Normal;
+        if (old.TryGetProperty("category", out var catElem) && catElem.ValueKind == JsonValueKind.Number)
+            category = (ShipCategory)catElem.GetInt32();
+        else if (factionChs == "META" || nameChs.Contains("META"))
+            category = ShipCategory.META;
+
+        int categoryOrder = old.TryGetProperty("category_order", out var co) ? co.GetInt32() : 0;
+        int gameOrder = old.TryGetProperty("game_order", out var go) ? go.GetInt32() : 0;
+
+        string acquireMainText = GetOldAcquireText("acquire_main");
+        string acquireDetailText = GetOldAcquireText("acquire_detail");
+        string buildTimeRaw = GetStringProp("build_time");
+        string buildTime = CleanBuildTime(buildTimeRaw, id);
+        string shopExchange = GetStringProp("shop_exchange");
+        bool isPermanent = old.TryGetProperty("is_permanent", out var perm) && perm.ValueKind == JsonValueKind.True;
+        string debutEventChs = GetOldAcquireText("debut_event");
+        string releaseDate = GetStringProp("release_date");
+        string notesChs = GetOldAcquireText("notes");
+        bool canRemodel = old.TryGetProperty("can_remodel", out var cr) && cr.ValueKind == JsonValueKind.True;
+        string remodelDate = GetStringProp("remodel_date");
+        bool canSpecialGear = old.TryGetProperty("can_special_gear", out var csg) && csg.ValueKind == JsonValueKind.True;
+        string specialGearName = GetStringProp("special_gear_name");
+        string specialGearDate = GetStringProp("special_gear_date");
+        string specialGearAcquire = GetStringProp("special_gear_acquire");
+        int techPointsObtain = old.TryGetProperty("tech_points_obtain", out var tpO) && tpO.ValueKind == JsonValueKind.Number ? tpO.GetInt32() : 0;
+        int techPointsMax = old.TryGetProperty("tech_points_max", out var tpM) && tpM.ValueKind == JsonValueKind.Number ? tpM.GetInt32() : 0;
+        int techPoints120 = old.TryGetProperty("tech_points_120", out var tp120) && tp120.ValueKind == JsonValueKind.Number ? tp120.GetInt32() : 0;
+
+        // 打捞地点
+        List<string> dropLocations = new List<string>();
+        if (old.TryGetProperty("drop_locations", out var drops) && drops.ValueKind == JsonValueKind.Array)
+            dropLocations = drops.EnumerateArray().Select(x => x.GetString() ?? "").ToList();
+
+        // 初始化 acquireEntries 列表
+        List<AcquireEntry> acquireEntries = new List<AcquireEntry>();
+
+        // 拆分 drop_locations 并补充 acquire_46
+        var processedDrops = new List<string>();
+        foreach (var loc in dropLocations)
+        {
+            var parts = SplitDropLocationString(loc);
+            foreach (var part in parts)
+            {
+                if (string.IsNullOrEmpty(part)) continue;
+                processedDrops.Add(part);
+                if (part.StartsWith("作战档案"))
+                {
+                    var parsed = ParseArchiveLocation(part);
+                    if (parsed != null)
+                    {
+                        EnsureAcquire46Entry(acquireEntries, parsed.ArchiveName, parsed.Stages);
+                    }
+                }
+            }
+        }
+        dropLocations = processedDrops;
+
+        // ========== 构建 AcquireEntries ==========
+        string fullText = acquireMainText + "，" + acquireDetailText;
+
+        // ----- 1. 建造 -----
+        bool isUnbuildable = fullText.Contains("无法建造") || (buildTimeRaw != null && buildTimeRaw.Contains("无法建造"));
+        if (isUnbuildable)
+        {
+            AddEntry(acquireEntries, "acquire_11");
+        }
+        else
+        {
+            var match = Regex.Match(buildTimeRaw, @"[（(]([^）)]+)[）)]");
+            if (match.Success)
+            {
+                string pool = match.Groups[1].Value;
+                if (pool.Contains("轻型")) AddEntry(acquireEntries, "acquire_7");
+                else if (pool.Contains("重型")) AddEntry(acquireEntries, "acquire_8");
+                else if (pool.Contains("特型") || pool.Contains("特种")) AddEntry(acquireEntries, "acquire_9");
+                else if (pool.Contains("期间限定")) AddEntry(acquireEntries, "acquire_10");
+            }
+            else
+            {
+                if (fullText.Contains("轻型池建造")) AddEntry(acquireEntries, "acquire_7");
+                else if (fullText.Contains("重型池建造")) AddEntry(acquireEntries, "acquire_8");
+                else if (fullText.Contains("特型池建造") || fullText.Contains("特种池建造")) AddEntry(acquireEntries, "acquire_9");
+                else if (fullText.Contains("期间限定建造")) AddEntry(acquireEntries, "acquire_10");
+            }
+        }
+
+        // ----- 2. 打捞（包括 drop_locations 中的档案掉落）-----
+        bool hasDrop = dropLocations != null && dropLocations.Any();
+        bool isUndroppable = fullText.Contains("无法打捞") || fullText.Contains("不可打捞") ||
+                             (dropLocations != null && dropLocations.Any(loc => loc.Contains("无法打捞") || loc.Contains("不可打捞")));
+
+        if (isUndroppable)
+        {
+            AddEntry(acquireEntries, "acquire_50");
+        }
+        else if (hasDrop)
+        {
+            AddEntry(acquireEntries, "acquire_2");
+        }
+        else
+        {
+            AddEntry(acquireEntries, "acquire_50");
+        }
+
+        // 作战档案通关60次（acquire_47）
+        var archive60Match = Regex.Match(fullText, @"作战档案通关60次(.+?)(?:获得|：)(.+)");
+        if (archive60Match.Success)
+            AddEntry(acquireEntries, "acquire_47", new List<string> { archive60Match.Groups[1].Value, archive60Match.Groups[2].Value });
+
+        // 互斥清理：若有 acquire_50 则移除其他打捞标签
+        if (acquireEntries.Any(e => e.Tag == "acquire_50"))
+        {
+            acquireEntries.RemoveAll(e => e.Tag == "acquire_2" || e.Tag == "acquire_3" || e.Tag == "acquire_4" ||
+                                          e.Tag == "acquire_5" || e.Tag == "acquire_46" || e.Tag == "acquire_47");
+        }
+
+        // ----- 3. 商店兑换 -----
+        bool hasShop = !string.IsNullOrEmpty(shopExchange);
+        bool isUnexchangeable = fullText.Contains("无法兑换") || (hasShop && shopExchange.Contains("无法兑换"));
+        if (isUnexchangeable)
+        {
+            AddEntry(acquireEntries, "acquire_51");
+        }
+        else if (hasShop)
+        {
+            var coreMatch = Regex.Match(shopExchange, @"核心(?:月度兑换)?(?:商店)?(\d+)核心数据兑换");
+            if (coreMatch.Success)
+                AddEntry(acquireEntries, "acquire_17", new List<string> { coreMatch.Groups[1].Value });
+
+            var medalMatch = Regex.Match(shopExchange, @"勋章商店(\d+)荣誉勋章兑换");
+            if (medalMatch.Success)
+                AddEntry(acquireEntries, "acquire_18", new List<string> { medalMatch.Groups[1].Value });
+
+            var fleetMatch = Regex.Match(shopExchange, @"(\d+)舰队币");
+            if (fleetMatch.Success)
+                AddEntry(acquireEntries, "acquire_14", new List<string> { fleetMatch.Groups[1].Value });
+
+            var meritMatch = Regex.Match(shopExchange, @"(\d+)功勋");
+            if (meritMatch.Success)
+                AddEntry(acquireEntries, "acquire_15", new List<string> { meritMatch.Groups[1].Value });
+
+            if (shopExchange.StartsWith("结晶："))
+            {
+                string crystalName = shopExchange.Substring(3).Trim();
+                AddEntry(acquireEntries, "acquire_60", new List<string> { "", crystalName });
+            }
+            else
+            {
+                var metaCrystalMatch = Regex.Match(shopExchange, @"META商店(\d+)破碎结晶兑换结晶：(.+)");
+                if (metaCrystalMatch.Success)
+                    AddEntry(acquireEntries, "acquire_60", new List<string> { metaCrystalMatch.Groups[1].Value, metaCrystalMatch.Groups[2].Value });
+                else
+                {
+                    var metaMatch = Regex.Match(shopExchange, @"(\d+)破碎结晶");
+                    if (metaMatch.Success)
+                        AddEntry(acquireEntries, "acquire_16", new List<string> { metaMatch.Groups[1].Value });
+                }
+            }
+
+            if (shopExchange.Contains("原型商店"))
+                AddEntry(acquireEntries, "acquire_19");
+
+            var activityShopMatch = Regex.Match(fullText, @"(.+?)活动商店(.+?)兑换");
+            if (activityShopMatch.Success)
+            {
+                string eventName = activityShopMatch.Groups[1].Value;
+                string detail = activityShopMatch.Groups[2].Value;
+                int pt = ExtractNumber(detail, @"(\d+)");
+                AddEntry(acquireEntries, "acquire_20", new List<string> { eventName, pt.ToString(), "" });
+            }
+
+            if (!acquireEntries.Any(e => e.Tag.StartsWith("acquire_14") || e.Tag.StartsWith("acquire_15") ||
+                                         e.Tag == "acquire_18" || e.Tag == "acquire_19" || e.Tag == "acquire_17" ||
+                                         e.Tag == "acquire_16" || e.Tag == "acquire_20" || e.Tag == "acquire_60"))
+            {
+                if (shopExchange.Contains("兑换") || shopExchange.Contains("商店"))
+                    AddEntry(acquireEntries, "acquire_24");
+            }
+        }
+
+        // ----- 4. 任务奖励 / 活动赠送 -----
+        if (fullText.Contains("日/周常任务")) AddEntry(acquireEntries, "acquire_41");
+        if (fullText.Contains("月度签到")) AddEntry(acquireEntries, "acquire_42");
+        if (fullText.Contains("活动任务")) AddEntry(acquireEntries, "acquire_43");
+        if (fullText.Contains("主线普通关卡三星奖励")) AddEntry(acquireEntries, "acquire_44");
+        if (fullText.Contains("大型EX") || fullText.Contains("中型SP")) AddEntry(acquireEntries, "acquire_45");
+        if (fullText.Contains("世界巡游")) AddEntry(acquireEntries, "acquire_37");
+        if (fullText.Contains("布里支援计划")) AddEntry(acquireEntries, "acquire_39");
+        if (fullText.Contains("活动获取")) AddEntry(acquireEntries, "acquire_55");
+
+        // ----- 5. 邀请函 / 贺年卡 -----
+        var inviteMatches = Regex.Matches(fullText, @"(\d{4})年?(?:宴会|周年|庆典)邀请函");
+        foreach (Match m in inviteMatches)
+            AddEntry(acquireEntries, "acquire_27", new List<string> { m.Groups[1].Value });
+
+        var heMatch = Regex.Match(fullText, @"贺年卡（([甲乙丙丁戊己庚辛壬癸])([子丑寅卯辰巳午未申酉戌亥])）");
+        if (heMatch.Success)
+        {
+            string gan = heMatch.Groups[1].Value;
+            string zhi = heMatch.Groups[2].Value;
+            string year = "";
+            var yearMatch = Regex.Match(fullText, @"（(\d{4})）");
+            if (yearMatch.Success) year = yearMatch.Groups[1].Value;
+            AddEntry(acquireEntries, "acquire_25", new List<string> { gan, zhi, year });
+        }
+
+        // ----- 6. 科研 -----
+        var researchMatch = Regex.Match(fullText, @"科研(\d+)期");
+        if (researchMatch.Success)
+            AddEntry(acquireEntries, "acquire_22", new List<string> { researchMatch.Groups[1].Value });
+
+        // ----- 7. 礼包购买 -----
+        var giftMatch = Regex.Match(fullText, @"(.+?)礼包购买");
+        if (giftMatch.Success)
+            AddEntry(acquireEntries, "acquire_21", new List<string> { giftMatch.Groups[1].Value });
+
+        // ----- 8. 勋章支援 -----
+        if (fullText.Contains("勋章支援"))
+            AddEntry(acquireEntries, "acquire_12");
+
+        // ----- 9. 指挥官等级奖励 -----
+        var levelRewardMatch = Regex.Match(fullText, @"指挥官等级达到(\d+)级(?:获得|奖励)");
+        if (levelRewardMatch.Success)
+            AddEntry(acquireEntries, "acquire_59", new List<string> { levelRewardMatch.Groups[1].Value });
+
+        // ----- 10. 剩余未匹配文本 -----
+        var allSentences = SplitIntoSentences(fullText);
+        var standardTags = TagLibrary.GetAllTags().Where(t => t.MatchRegex != null && t.Tag != "acquire_custom").ToList();
+        foreach (var sentence in allSentences)
+        {
+            bool alreadyHandled = false;
+            if (acquireEntries.Any(e => e.Tag == "acquire_2" && sentence.Contains("打捞"))) alreadyHandled = true;
+            if (acquireEntries.Any(e => e.Tag == "acquire_7" && sentence.Contains("轻型"))) alreadyHandled = true;
+            if (acquireEntries.Any(e => e.Tag == "acquire_8" && sentence.Contains("重型"))) alreadyHandled = true;
+            if (acquireEntries.Any(e => e.Tag == "acquire_9" && sentence.Contains("特型"))) alreadyHandled = true;
+            if (acquireEntries.Any(e => e.Tag == "acquire_10" && sentence.Contains("期间限定"))) alreadyHandled = true;
+            if (acquireEntries.Any(e => e.Tag == "acquire_5" && sentence.Contains("仅限打捞"))) alreadyHandled = true;
+            if (acquireEntries.Any(e => e.Tag == "acquire_12" && sentence.Contains("勋章支援"))) alreadyHandled = true;
+            if (acquireEntries.Any(e => e.Tag == "acquire_41") && sentence.Contains("日常")) alreadyHandled = true;
+            if (acquireEntries.Any(e => e.Tag == "acquire_42") && sentence.Contains("签到")) alreadyHandled = true;
+            if (acquireEntries.Any(e => e.Tag == "acquire_43") && sentence.Contains("活动任务")) alreadyHandled = true;
+            if (acquireEntries.Any(e => e.Tag == "acquire_44") && sentence.Contains("三星")) alreadyHandled = true;
+            if (acquireEntries.Any(e => e.Tag == "acquire_24") && sentence.Contains("兑换")) alreadyHandled = true;
+            if (alreadyHandled) continue;
+
+            bool matched = false;
+            foreach (var tagDef in standardTags)
+            {
+                var match = tagDef.MatchRegex.Match(sentence);
+                if (match.Success)
+                {
+                    var entry = new AcquireEntry { Tag = tagDef.Tag };
+                    for (int i = 1; i <= tagDef.ParamCount && i < match.Groups.Count; i++)
+                        entry.Parameters.Add(match.Groups[i].Value);
+                    while (entry.Parameters.Count < tagDef.ParamCount)
+                        entry.Parameters.Add("");
+                    if (!acquireEntries.Any(e => e.Tag == entry.Tag))
+                        acquireEntries.Add(entry);
+                    matched = true;
+                    break;
+                }
+            }
+            if (!matched && !string.IsNullOrWhiteSpace(sentence) && !sentence.All(c => "，、。；".Contains(c)))
+            {
+                var customLoc = new LocalizedString();
+                customLoc["zh-Hans"] = sentence;
+                acquireEntries.Add(new AcquireEntry { Tag = "acquire_custom", CustomText = customLoc });
+            }
+        }
+
+        // ========== 互斥规则强制清理 ==========
+        if (acquireEntries.Any(e => e.Tag == "acquire_5"))
+        {
+            acquireEntries.RemoveAll(e => e.Tag.StartsWith("acquire_7") || e.Tag.StartsWith("acquire_8") ||
+                                          e.Tag.StartsWith("acquire_9") || e.Tag.StartsWith("acquire_10") ||
+                                          e.Tag.StartsWith("acquire_14") || e.Tag.StartsWith("acquire_15") ||
+                                          e.Tag == "acquire_19" || e.Tag == "acquire_24" || e.Tag == "acquire_20");
+        }
+        if (acquireEntries.Any(e => e.Tag == "acquire_11"))
+        {
+            acquireEntries.RemoveAll(e => e.Tag.StartsWith("acquire_7") || e.Tag.StartsWith("acquire_8") ||
+                                          e.Tag.StartsWith("acquire_9") || e.Tag.StartsWith("acquire_10"));
+        }
+        if (acquireEntries.Any(e => e.Tag == "acquire_50"))
+        {
+            acquireEntries.RemoveAll(e => e.Tag == "acquire_2" || e.Tag == "acquire_3" || e.Tag == "acquire_4" ||
+                                          e.Tag == "acquire_5" || e.Tag == "acquire_46" || e.Tag == "acquire_47");
+        }
+        if (acquireEntries.Any(e => e.Tag == "acquire_51"))
+        {
+            acquireEntries.RemoveAll(e => e.Tag.StartsWith("acquire_14") || e.Tag.StartsWith("acquire_15") ||
+                                          e.Tag == "acquire_19" || e.Tag == "acquire_24" || e.Tag == "acquire_20");
+        }
+        if (id == 1 || id == 2 || id == 3)
+        {
+            acquireEntries.RemoveAll(entry =>
+                entry.Tag == "acquire_21" &&
+                entry.Parameters.Count == 1 &&
+                (entry.Parameters[0].Contains("兑换、赠送") || entry.Parameters[0].Contains("日/周常任务"))
+            );
+        }
+
+        // ========== 构建多语言对象 ==========
+        LocalizedString CreateLoc(string chs, string chtFallback = null) => new LocalizedString
+        {
+            ["zh-Hans"] = chs ?? "",
+            ["zh-Hant"] = string.IsNullOrEmpty(chtFallback) ? (chs ?? "") : chtFallback,
+            ["en"] = "",
+            ["ja"] = ""
+        };
+
+        // ========== 解析专属兵装 ==========
+        List<SpecialGearEntry> gearEntries = new List<SpecialGearEntry>();
+        LocalizedString localizedGearName = new LocalizedString();
+        if (canSpecialGear && !string.IsNullOrEmpty(specialGearName))
+            localizedGearName["zh-Hans"] = specialGearName;
+
+        if (canSpecialGear && !string.IsNullOrEmpty(specialGearAcquire))
+        {
+            var gearTags = TagLibrary.GetAllGearTags();
+            bool matched = false;
+            foreach (var tagDef in gearTags)
+            {
+                if (tagDef.MatchRegex == null) continue;
+                var match = tagDef.MatchRegex.Match(specialGearAcquire);
+                if (match.Success)
+                {
+                    var entry = new SpecialGearEntry { Tag = tagDef.Tag };
+                    for (int i = 1; i <= tagDef.ParamCount && i < match.Groups.Count; i++)
+                        entry.Parameters.Add(match.Groups[i].Value);
+                    while (entry.Parameters.Count < tagDef.ParamCount)
+                        entry.Parameters.Add("");
+                    gearEntries.Add(entry);
+                    matched = true;
+                    break;
+                }
+            }
+            if (!matched)
+            {
+                var custom = new LocalizedString();
+                custom["zh-Hans"] = specialGearAcquire;
+                gearEntries.Add(new SpecialGearEntry { Tag = "gear_custom", CustomText = custom });
+            }
+        }
+
+        // ========== 返回新的 ShipStatic ==========
+        return new ShipStatic
+        {
+            Id = id,
+            Name = CreateLoc(nameChs, altNameChs),
+            AltName = CreateLoc(altNameChs, ""),
+            FactionId = factionId,
+            ShipClassId = shipClassId,
+            RarityId = rarityId,
+            GameOrder = gameOrder,
+            Category = category,
+            CategoryOrder = categoryOrder,
+            AcquireEntries = acquireEntries,
+            AcquireMainLegacy = CreateLoc(acquireMainText, ""),
+            AcquireDetailLegacy = CreateLoc(acquireDetailText, ""),
+            BuildTime = buildTime,
+            DropLocations = dropLocations,
+            ShopExchange = shopExchange,
+            IsPermanent = isPermanent,
+            DebutEvent = CreateLoc(debutEventChs, ""),
+            ReleaseDate = releaseDate,
+            Notes = CreateLoc(notesChs, ""),
+            CanRemodel = canRemodel,
+            RemodelDate = remodelDate,
+            CanSpecialGear = canSpecialGear,
+            SpecialGearName = localizedGearName,
+            SpecialGearDate = specialGearDate,
+            SpecialGearEntries = gearEntries,
+            SpecialGearAcquire = new LocalizedString(),
+            ObtainBonusAttrId = obtainAttrId,
+            ObtainBonusValue = obtainValue,
+            ObtainAffectClassIds = obtainAffectIds,
+            Level120BonusAttrId = level120AttrId,
+            Level120BonusValue = level120Value,
+            Level120AffectClassIds = level120AffectIds,
+            TechPointsObtain = techPointsObtain,
+            TechPointsMax = techPointsMax,
+            TechPoints120 = techPoints120
+        };
+    }
+
+    private LocalizedString CreateLocalizedString(string chs, string chtFallback = null)
+    {
+        var result = new LocalizedString();
+        result["zh-Hans"] = chs ?? "";
+        result["zh-Hant"] = string.IsNullOrEmpty(chtFallback) ? (chs ?? "") : chtFallback;
+        result["en"] = "";
+        result["ja"] = "";
+        return result;
+    }
+
+    // ========== 核心加载方法 ==========
+    public async void Load()
+    {
+        JsonSerializerOptions options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+        if (IsOldFormatFile())
+        {
+            bool success = await MigrateToNewFormatAsync();
+            if (!success)
+                throw new Exception("数据迁移失败，请检查日志");
+            string rawJson = File.ReadAllText(_staticPath);
+            var staticData = JsonSerializer.Deserialize<StaticData>(rawJson, options);
+            _staticShips = staticData?.Ships ?? new List<ShipStatic>();
+            CleanseStaticData();  // 迁移后清洗
+            Version = staticData?.Version ?? "0.0";
+        }
+        else
+        {
+            if (!File.Exists(_staticPath)) return;
+            string rawJson = File.ReadAllText(_staticPath);
+            var staticData = JsonSerializer.Deserialize<StaticData>(rawJson, options);
+            _staticShips = staticData?.Ships ?? new List<ShipStatic>();
+            if (_staticShips.Any())
+            {
+                var first = _staticShips.First();
+                System.Diagnostics.Debug.WriteLine($"First ship ID={first.Id}, AcquireEntries count={first.AcquireEntries?.Count ?? 0}");
+            }
+            Version = staticData?.Version ?? "0.0";
+            CleanseStaticData();
+        }
+
+        foreach (var ship in _staticShips)
+        {
+            if (ship.FactionId == 0) ship.FactionId = (int)Faction.Other;
+            if (ship.ShipClassId == 0) ship.ShipClassId = (int)ShipClass.DD;
+            if (ship.RarityId == 0) ship.RarityId = (int)Rarity.N;
+        }
+
         if (_accountManager != null && !string.IsNullOrEmpty(_accountManager.CurrentAccount))
         {
             string dataRoot = App.DataRoot;
             if (string.IsNullOrEmpty(dataRoot))
                 dataRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AzurLaneDex", "data");
-
             string usersDir = Path.Combine(dataRoot, "users");
             string userFolder = Path.Combine(usersDir, _accountManager.CurrentAccount);
             Directory.CreateDirectory(userFolder);
             _userStatePath = Path.Combine(userFolder, "ships_state.json");
-
             if (File.Exists(_userStatePath))
             {
                 try
@@ -322,19 +930,13 @@ public class ShipManager
                     var stateJson = File.ReadAllText(_userStatePath);
                     var stateList = JsonSerializer.Deserialize<StateList>(stateJson);
                     if (stateList?.States != null)
-                    {
                         foreach (var state in stateList.States)
                             _userStates[state.Id] = state;
-                    }
                 }
                 catch { }
             }
         }
 
-        // 添加 ID 迁移（一次性）
-        MigrateSpecialShipIds();
-
-        // 3. 生成 ViewModel
         Ships.Clear();
         foreach (var staticShip in _staticShips)
         {
@@ -342,242 +944,61 @@ public class ShipManager
                 state = new ShipState { Id = staticShip.Id };
             Ships.Add(new ShipViewModel(staticShip, state));
         }
+
         foreach (var ship in Ships)
         {
-            if (ship.Name == "泛用型布里" || ship.Name == "试作型布里MKII" || ship.Name == "特装型布里MKIII")
-            {
+            if (ship.RawName == "泛用型布里" || ship.RawName == "试作型布里MKII" || ship.RawName == "特装型布里MKIII")
                 ship.Breakthrough = 3;
-            }
         }
-        // 检查版本格式是否符合新标准，不符合则刷新一次版本号
-        if (ParseRevision(Version) < 0 || !Version.StartsWith("1.0."))
+
+        if (ParseRevision(Version) < 0)
         {
-            // 修订次数从0开始，避免误增
             Version = BuildVersion(_staticShips.Count, 0);
             SaveStatic();
         }
+
+        DataStructureChanged?.Invoke();
+        StateChanged?.Invoke();
     }
 
-    private void MigrateStaticFile(string oldJson)
+    private string BuildVersion(int shipCount, int revision)
     {
-        using var doc = JsonDocument.Parse(oldJson);
-        var root = doc.RootElement;
-        if (!root.TryGetProperty("ships", out var oldShips) || oldShips.ValueKind != JsonValueKind.Array)
-            return;
-
-        var newShips = new List<ShipStatic>();
-        foreach (var old in oldShips.EnumerateArray())
-        {
-            var newShip = MigrateSingleShip(old);
-            newShips.Add(newShip);
-        }
-
-        var newStatic = new StaticData
-        {
-            Version = root.TryGetProperty("version", out var v) ? v.GetString() ?? "0.0" : "0.0",
-            Ships = newShips
-        };
-        var newJson = JsonSerializer.Serialize(newStatic, new JsonSerializerOptions { WriteIndented = true });
-        File.WriteAllText(_staticPath, newJson);
+        string date = DateTime.Now.ToString("yyyyMMdd");
+        return $"2.0.{shipCount}.{revision}.{date}";
     }
 
-    public static ShipStatic MigrateSingleShip(JsonElement old)
+    private int ParseRevision(string version)
     {
-        var attrMap = new (string Display, string Base)[]
+        try
         {
-            ("耐久", "durability"), ("炮击", "firepower"), ("雷击", "torpedo"),
-            ("防空", "aa"), ("航空", "aviation"), ("命中", "accuracy"),
-            ("装填", "reload"), ("机动", "mobility"), ("反潜", "antisub")
-        };
-
-        string obtainAttr = "";
-        int obtainValue = 0;
-        foreach (var (display, baseKey) in attrMap)
-        {
-            if (old.TryGetProperty($"tech_{baseKey}_obtain", out var val) && val.ValueKind == JsonValueKind.Number && val.GetInt32() != 0)
-            {
-                obtainAttr = display;
-                obtainValue = val.GetInt32();
-                break;
-            }
+            var parts = version.Split('.');
+            if (parts.Length == 5 && int.TryParse(parts[3], out int rev))
+                return rev;
         }
-
-        string level120Attr = "";
-        int level120Value = 0;
-        foreach (var (display, baseKey) in attrMap)
-        {
-            if (old.TryGetProperty($"tech_{baseKey}_120", out var val) && val.ValueKind == JsonValueKind.Number && val.GetInt32() != 0)
-            {
-                level120Attr = display;
-                level120Value = val.GetInt32();
-                break;
-            }
-        }
-
-        var affects = new List<string>();
-        if (old.TryGetProperty("tech_affects", out var affectsElem) && affectsElem.ValueKind == JsonValueKind.Array)
-        {
-            affects = affectsElem.EnumerateArray().Select(x => x.GetString()).Where(s => !string.IsNullOrEmpty(s)).ToList();
-        }
-        if (affects.Count == 0 && old.TryGetProperty("ship_class", out var scElem) && scElem.ValueKind == JsonValueKind.String)
-        {
-            string sc = scElem.GetString();
-            if (!string.IsNullOrEmpty(sc)) affects.Add(sc);
-        }
-
-        var ship = new ShipStatic
-        {
-            Id = old.GetProperty("id").GetInt32(),
-            Name = old.GetProperty("name").GetString() ?? "",
-            AltName = old.TryGetProperty("alt_name", out var alt) ? alt.GetString() ?? "" : "",
-            Faction = old.GetProperty("faction").GetString() ?? "",
-            ShipClass = old.GetProperty("ship_class").GetString() ?? "",
-            Rarity = old.GetProperty("rarity").GetString() ?? "",
-            GameOrder = old.TryGetProperty("game_order", out var go) ? go.GetInt32() : 0,
-            AcquireMain = old.TryGetProperty("acquire_main", out var am) ? am.GetString() ?? "" : "",
-            AcquireDetail = old.TryGetProperty("acquire_detail", out var ad) ? ad.GetString() ?? "" : "",
-            BuildTime = old.TryGetProperty("build_time", out var bt) ? bt.GetString() ?? "" : "",
-            DropLocations = old.TryGetProperty("drop_locations", out var drops) && drops.ValueKind == JsonValueKind.Array
-                ? drops.EnumerateArray().Select(x => x.GetString() ?? "").ToList()
-                : new List<string>(),
-            ShopExchange = old.TryGetProperty("shop_exchange", out var se) ? se.GetString() ?? "" : "",
-            IsPermanent = old.TryGetProperty("is_permanent", out var perm) && perm.GetBoolean(),
-            DebutEvent = old.TryGetProperty("debut_event", out var de) ? de.GetString() ?? "" : "",
-            ReleaseDate = old.TryGetProperty("release_date", out var rd) ? rd.GetString() ?? "" : "",
-            Notes = old.TryGetProperty("notes", out var nt) ? nt.GetString() ?? "" : "",
-            CanRemodel = old.TryGetProperty("can_remodel", out var cr) && cr.GetBoolean(),
-            RemodelDate = old.TryGetProperty("remodel_date", out var rmd) ? rmd.GetString() ?? "" : "",
-            CanSpecialGear = old.TryGetProperty("can_special_gear", out var csg) && csg.GetBoolean(),
-            SpecialGearName = old.TryGetProperty("special_gear_name", out var sgn) ? sgn.GetString() ?? "" : "",
-            SpecialGearDate = old.TryGetProperty("special_gear_date", out var sgd) ? sgd.GetString() ?? "" : "",
-            SpecialGearAcquire = old.TryGetProperty("special_gear_acquire", out var sga) ? sga.GetString() ?? "" : "",
-            ImagePath = old.TryGetProperty("image_path", out var img) ? img.GetString() ?? "" : "",
-            TechPointsObtain = old.TryGetProperty("tech_points_obtain", out var tpO) ? tpO.GetInt32() : 0,
-            TechPointsMax = old.TryGetProperty("tech_points_max", out var tpM) ? tpM.GetInt32() : 0,
-            TechPoints120 = old.TryGetProperty("tech_points_120", out var tp120) ? tp120.GetInt32() : 0,
-            ObtainBonusAttr = obtainAttr,
-            ObtainBonusValue = obtainValue,
-            ObtainAffects = affects,
-            Level120BonusAttr = level120Attr,
-            Level120BonusValue = level120Value,
-            Level120Affects = affects
-        };
-        return ship;
+        catch { }
+        return -1;
     }
 
-    private void MigrateSpecialShipIds()
+    private void UpdateVersionBeforeSave()
     {
-        // 检查是否已经迁移过：如果存在任何特殊船的 ID 在对应范围内，则跳过
-        if (_staticShips.Any(s => s.Category == ShipCategory.META && s.Id >= ShipIdRanges.MetaStart && s.Id < ShipIdRanges.CollabStart))
-            return;
-        if (_staticShips.Any(s => s.Category == ShipCategory.Collab && s.Id >= ShipIdRanges.CollabStart && s.Id < ShipIdRanges.ResearchStart))
-            return;
-        if (_staticShips.Any(s => s.Category == ShipCategory.Research && s.Id >= ShipIdRanges.ResearchStart))
-            return;
-        // 记录每个类别的下一个可用 ID
-        int nextMetaId = ShipIdRanges.MetaStart;
-        int nextCollabId = ShipIdRanges.CollabStart;
-        int nextResearchId = ShipIdRanges.ResearchStart;
-
-        bool changed = false;
-        var idMapping = new Dictionary<int, int>(); // 旧ID -> 新ID
-
-        foreach (var ship in _staticShips)
-        {
-            int newId = ship.Id;
-            switch (ship.Category)
-            {
-                case ShipCategory.META:
-                    if (ship.Id < ShipIdRanges.MetaStart || ship.Id >= ShipIdRanges.CollabStart)
-                    {
-                        newId = nextMetaId++;
-                        idMapping[ship.Id] = newId;
-                        ship.Id = newId;
-                        changed = true;
-                    }
-                    else
-                    {
-                        nextMetaId = Math.Max(nextMetaId, ship.Id + 1);
-                    }
-                    break;
-                case ShipCategory.Collab:
-                    if (ship.Id < ShipIdRanges.CollabStart || ship.Id >= ShipIdRanges.ResearchStart)
-                    {
-                        newId = nextCollabId++;
-                        idMapping[ship.Id] = newId;
-                        ship.Id = newId;
-                        changed = true;
-                    }
-                    else
-                    {
-                        nextCollabId = Math.Max(nextCollabId, ship.Id + 1);
-                    }
-                    break;
-                case ShipCategory.Research:
-                    if (ship.Id < ShipIdRanges.ResearchStart)
-                    {
-                        newId = nextResearchId++;
-                        idMapping[ship.Id] = newId;
-                        ship.Id = newId;
-                        changed = true;
-                    }
-                    else
-                    {
-                        nextResearchId = Math.Max(nextResearchId, ship.Id + 1);
-                    }
-                    break;
-                default:
-                    // 普通船如果误入特殊段，也修正（可选）
-                    if (ship.Id >= ShipIdRanges.MetaStart)
-                    {
-                        // 重新分配一个普通段内的ID，简单处理：找最大普通ID+1
-                        int maxNormalId = _staticShips.Where(s => s.Category == ShipCategory.Normal).Max(s => s.Id);
-                        newId = maxNormalId + 1;
-                        idMapping[ship.Id] = newId;
-                        ship.Id = newId;
-                        changed = true;
-                    }
-                    break;
-            }
-        }
-
-        if (changed)
-        {
-            // 更新用户状态中的 ID
-            var newUserStates = new Dictionary<int, ShipState>();
-            foreach (var kv in _userStates)
-            {
-                if (idMapping.TryGetValue(kv.Key, out int newId))
-                    newUserStates[newId] = kv.Value;
-                else
-                    newUserStates[kv.Key] = kv.Value;
-            }
-            _userStates = newUserStates;
-
-            // 重新生成 Ships 集合中的 ViewModel（因为 ID 变了）
-            RebuildShips();
-
-            SaveStatic();
-            Save();
-            DataStructureChanged?.Invoke();
-        }
+        int shipCount = _staticShips.Count;
+        int revision = ParseRevision(Version);
+        if (revision < 0) revision = 0;
+        else revision++;
+        Version = BuildVersion(shipCount, revision);
     }
-    private void RebuildShips()
+
+    private void SaveStatic()
     {
-        Ships.Clear();
-        foreach (var staticShip in _staticShips)
-        {
-            if (!_userStates.TryGetValue(staticShip.Id, out var state))
-                state = new ShipState { Id = staticShip.Id };
-            var vm = new ShipViewModel(staticShip, state);
-            Ships.Add(vm);
-        }
+        UpdateVersionBeforeSave();
+        var data = new StaticData { Version = Version, Ships = _staticShips };
+        var json = JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
+        File.WriteAllText(_staticPath, json);
     }
 
     public void Save()
     {
         if (string.IsNullOrEmpty(_userStatePath)) return;
-
         var stateList = new StateList
         {
             States = Ships.Select(vm => vm.GetState()).ToList()
@@ -590,184 +1011,43 @@ public class ShipManager
 
     public void SwitchAccount(string accountName)
     {
-        _accountManager.SetCurrentAccount(accountName); // 如果调用者已经设置了，此行可省
+        _accountManager.SetCurrentAccount(accountName);
         _userStatePath = Path.Combine(App.DataRoot, "users", accountName, "ships_state.json");
-        Load(); // 重新加载数据
-        LogService.Operation("用户登录", $"{accountName}");
-        data_changed?.Invoke(); // 通知所有订阅者刷新
+        Load();
+        LogService.Operation("用户登录", accountName);
+        data_changed?.Invoke();
     }
 
-    public void ExportStatic(string filePath)
-    {
-        var data = new StaticData { Version = Version, Ships = _staticShips };
-        var json = JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
-        File.WriteAllText(filePath, json);
-    }
-
-    public Dictionary<string, CampTechData> CalculateCampTechPoints()
-    {
-        var result = new Dictionary<string, CampTechData>();
-        foreach (var ship in Ships.Where(s => s.Owned))
-        {
-            string faction = ship.Faction;
-            if (!result.ContainsKey(faction))
-                result[faction] = new CampTechData();
-            var data = result[faction];
-            data.Obtain += ship.TechPointsObtain;
-            if (ship.IsMaxBreakthrough)
-                data.Max += ship.TechPointsMax;
-            if (ship.Level120)
-                data.Level120 += ship.TechPoints120;
-        }
-        return result;
-    }
-
-    public int GetTotalTechPoints()
-    {
-        return Ships.Sum(s => s.TechPointsObtain + s.TechPointsMax + s.TechPoints120);
-    }
-
-    public class CampTechData
-    {
-        public int Obtain { get; set; }
-        public int Max { get; set; }
-        public int Level120 { get; set; }
-    }
-    public int GetOwnedTechPoints()
-    {
-        int total = 0;
-        foreach (var ship in Ships.Where(s => s.Owned))
-        {
-            total += ship.TechPointsObtain;
-            if (ship.IsMaxBreakthrough)
-                total += ship.TechPointsMax;
-            if (ship.Level120)
-                total += ship.TechPoints120;
-        }
-        return total;
-    }
-
-    public event Action data_changed;
-
-    public StatsData stats()
-    {
-        var shipsToCount = Ships.Where(s => s.Category != ShipCategory.Collab).ToList();
-        var stats = new StatsData();
-        stats.Total = shipsToCount.Count;
-        stats.Owned = shipsToCount.Count(s => s.Owned);
-        stats.NotOwned = stats.Total - stats.Owned;
-        stats.MaxBreakthrough = shipsToCount.Count(s => s.IsMaxBreakthrough);
-        stats.NotMaxBreakthrough = shipsToCount.Count(s => s.Owned && !s.IsMaxBreakthrough);
-        stats.Oath = shipsToCount.Count(s => s.Oath);
-        stats.Remodeled = shipsToCount.Count(s => s.Remodeled);
-        stats.CanRemodelNot = shipsToCount.Count(s => s.CanRemodel && !s.Remodeled);
-        stats.Level120 = shipsToCount.Count(s => s.Level120);
-        stats.SpecialGearObtained = shipsToCount.Count(s => s.SpecialGearObtained);
-        stats.SpecialGearNotObtained = shipsToCount.Count(s => s.CanSpecialGear && !s.SpecialGearObtained);
-        stats.CanRemodelTotal = shipsToCount.Count(s => s.CanRemodel);
-        return stats;
-    }
-
-    public Dictionary<(string ShipClass, string Attr), int> CalculateGlobalBonuses()
-    {
-        var bonuses = new Dictionary<(string, string), int>();
-        foreach (var ship in Ships.Where(s => s.Owned))
-        {
-            // 获得时加成
-            if (!string.IsNullOrEmpty(ship.ObtainBonusAttr) && ship.ObtainBonusValue != 0 && ship.ObtainAffects.Any())
-            {
-                foreach (var sc in ship.ObtainAffects)
-                {
-                    var key = (sc, ship.ObtainBonusAttr);
-                    bonuses[key] = bonuses.GetValueOrDefault(key) + ship.ObtainBonusValue;
-                }
-            }
-            // 120级加成
-            if (!string.IsNullOrEmpty(ship.Level120BonusAttr) && ship.Level120BonusValue != 0 && ship.Level120Affects.Any())
-            {
-                foreach (var sc in ship.Level120Affects)
-                {
-                    var key = (sc, ship.Level120BonusAttr);
-                    bonuses[key] = bonuses.GetValueOrDefault(key) + ship.Level120BonusValue;
-                }
-            }
-        }
-        return bonuses;
-    }
-    public class StatsData
-    {
-        public int Total { get; set; }
-        public int Owned { get; set; }
-        public int NotOwned { get; set; }
-        public int MaxBreakthrough { get; set; }
-        public int NotMaxBreakthrough { get; set; }
-        public int Oath { get; set; }
-        public int Remodeled { get; set; }
-        public int CanRemodelNot { get; set; }
-        public int Level120 { get; set; }
-        public int SpecialGearObtained { get; set; }
-        public int SpecialGearNotObtained { get; set; }
-        public int CanRemodelTotal { get; set; }
-    }
     public bool AddShip(ShipStatic newShip)
     {
-        // 1. 权限检查（需要 AccountManager 有 IsDeveloper 方法）
         if (!_accountManager.IsDeveloper())
             throw new InvalidOperationException("只有开发者账户才能新增舰船");
 
-        // 2. 处理 ID
         if (newShip.Id == 0)
-        {
-            int newId = GetNextIdForCategory(newShip.Category);
-            newShip.Id = newId;
-        }
-        else
-        {
-            if (!IsIdValidForCategory(newShip.Id, newShip.Category))
-            {
-                // ID 冲突，自动重新分配
-                newShip.Id = GetNextIdForCategory(newShip.Category);
-                // 可选：弹出提示告知用户 ID 被重新分配
-            }
-            else if (_staticShips.Any(s => s.Id == newShip.Id))
-            {
-                newShip.Id = GetNextIdForCategory(newShip.Category);
-            }
-                
-        }
+            newShip.Id = GetNextIdForCategory(newShip.Category);
+        else if (!IsIdValidForCategory(newShip.Id, newShip.Category) || _staticShips.Any(s => s.Id == newShip.Id))
+            newShip.Id = GetNextIdForCategory(newShip.Category);
 
-        // 3. 处理 game_order 冲突
         if (newShip.GameOrder == 0)
-        {
             newShip.GameOrder = _staticShips.Count > 0 ? _staticShips.Max(s => s.GameOrder) + 1 : 1;
-        }
         else
         {
-            // 如果指定的 game_order 已被占用，将该序号及之后的船向后顺移
             var conflict = _staticShips.FirstOrDefault(s => s.GameOrder == newShip.GameOrder);
             if (conflict != null)
             {
                 foreach (var ship in _staticShips.Where(s => s.GameOrder >= newShip.GameOrder))
                     ship.GameOrder++;
-                // 重新排序
                 _staticShips = _staticShips.OrderBy(s => s.GameOrder).ToList();
             }
         }
 
-        // 处理 CategoryOrder 自动分配
         if (newShip.CategoryOrder == 0)
         {
-            // 获取当前类别下最大的 CategoryOrder
-            int maxOrder = _staticShips
-                .Where(s => s.Category == newShip.Category)
-                .Select(s => s.CategoryOrder)
-                .DefaultIfEmpty(0)
-                .Max();
+            int maxOrder = _staticShips.Where(s => s.Category == newShip.Category).Select(s => s.CategoryOrder).DefaultIfEmpty(0).Max();
             newShip.CategoryOrder = maxOrder + 1;
         }
         else
         {
-            // 如果指定的 order 已被占用，将该 order 及之后的船向后顺移（仅限同一类别）
             var conflict = _staticShips.FirstOrDefault(s => s.Category == newShip.Category && s.CategoryOrder == newShip.CategoryOrder);
             if (conflict != null)
             {
@@ -776,25 +1056,74 @@ public class ShipManager
             }
         }
 
-        // 4. 添加到列表并排序
         _staticShips.Add(newShip);
         _staticShips = _staticShips.OrderBy(s => s.GameOrder).ToList();
-
-        // 5. 保存静态文件
         SaveStatic();
 
-        // 6. 为用户状态添加默认项
         var newState = new ShipState { Id = newShip.Id };
         _userStates[newShip.Id] = newState;
         var newViewModel = new ShipViewModel(newShip, newState);
         Ships.Add(newViewModel);
-
-        // 7. 保存用户状态
         Save();
+
         DataStructureChanged?.Invoke();
-        LogService.Operation("新增舰船", $"{newShip.Name} (ID: {newShip.Id})");
+        LogService.Operation("新增舰船", $"{newShip.Name.GetValueOrDefault("zh-Hans")} (ID: {newShip.Id})");
         return true;
     }
+
+    public void UpdateShip(int oldId, ShipStatic newShip)
+    {
+        if (!_accountManager.IsDeveloper())
+            throw new InvalidOperationException("只有开发者账户才能编辑舰船");
+
+        int index = _staticShips.FindIndex(s => s.Id == oldId);
+        if (index == -1) return;
+
+        if (newShip.Id != oldId && _staticShips.Any(s => s.Id == newShip.Id))
+            newShip.Id = _staticShips.Max(s => s.Id) + 1;
+
+        _staticShips.RemoveAt(index);
+        _staticShips.Add(newShip);
+        _staticShips = _staticShips.OrderBy(s => s.Category).ThenBy(s => s.CategoryOrder).ToList();
+        SaveStatic();
+
+        if (newShip.Id != oldId && _userStates.TryGetValue(oldId, out var state))
+        {
+            _userStates.Remove(oldId);
+            _userStates[newShip.Id] = state;
+        }
+
+        var oldVm = Ships.FirstOrDefault(vm => vm.Id == oldId);
+        if (oldVm != null)
+        {
+            var newVm = new ShipViewModel(newShip, oldVm.GetState());
+            int vmIndex = Ships.IndexOf(oldVm);
+            Ships[vmIndex] = newVm;
+        }
+
+        Save();
+        LogService.Operation("编辑舰船", $"{newShip.Name.GetValueOrDefault("zh-Hans")} (ID: {newShip.Id})");
+        DataStructureChanged?.Invoke();
+    }
+
+    public void DeleteShip(int shipId)
+    {
+        if (!_accountManager.IsDeveloper())
+            throw new InvalidOperationException("只有开发者账户才能删除舰船");
+
+        var removed = _staticShips.RemoveAll(s => s.Id == shipId) > 0;
+        if (!removed) return;
+
+        SaveStatic();
+        _userStates.Remove(shipId);
+        var vm = Ships.FirstOrDefault(v => v.Id == shipId);
+        if (vm != null) Ships.Remove(vm);
+        Save();
+
+        DataStructureChanged?.Invoke();
+        LogService.Operation("删除舰船", $"ID: {shipId}");
+    }
+
     private int GetNextIdForCategory(ShipCategory category)
     {
         int start, end;
@@ -819,10 +1148,8 @@ public class ShipManager
         }
         var existingIds = _staticShips.Where(s => s.Category == category).Select(s => s.Id).ToHashSet();
         for (int id = start; id <= end; id++)
-        {
             if (!existingIds.Contains(id))
                 return id;
-        }
         throw new InvalidOperationException($"No available ID in range for category {category}");
     }
 
@@ -837,259 +1164,131 @@ public class ShipManager
         };
     }
 
-    private void SaveStatic()
+    private static string CleanBuildTime(string buildTime, int shipId)
     {
-        UpdateVersionBeforeSave();
-        var data = new StaticData { Version = Version, Ships = _staticShips };
-        var json = JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
-        File.WriteAllText(_staticPath, json);
+        if (shipId == 103 && (buildTime == "吸血鬼" || string.IsNullOrEmpty(buildTime)))
+            return "00:26:00";
+        var match = Regex.Match(buildTime, @"\d{2}:\d{2}:\d{2}");
+        return match.Success ? match.Value : "";
     }
-    public void UpdateShip(int oldId, ShipStatic newShip)
+
+    private void CleanseStaticData()
     {
-        if (!_accountManager.IsDeveloper())
-            throw new InvalidOperationException("只有开发者账户才能编辑舰船");
-
-        int index = _staticShips.FindIndex(s => s.Id == oldId);
-        if (index == -1) return;
-
-        var oldShip = _staticShips[index];
-
-        // 1. 处理 ID 变更
-        if (newShip.Id != oldId && _staticShips.Any(s => s.Id == newShip.Id))
-        {
-            // ID 冲突，自动分配新 ID
-            int maxId = _staticShips.Max(s => s.Id);
-            newShip.Id = maxId + 1;
-        }
-
-        // 2. 处理 Category 和 CategoryOrder 变更
-        // 注意：如果类别或顺序发生变化，需要调整其他舰船的顺序
-        bool categoryChanged = oldShip.Category != newShip.Category;
-        bool orderChanged = oldShip.CategoryOrder != newShip.CategoryOrder;
-
-        if (categoryChanged || orderChanged)
-        {
-            // 2.1 先从旧类别中移除旧船的顺序（将大于旧顺序的船前移）
-            if (oldShip.CategoryOrder > 0)
-            {
-                foreach (var ship in _staticShips.Where(s => s.Category == oldShip.Category && s.CategoryOrder > oldShip.CategoryOrder))
-                {
-                    ship.CategoryOrder--;
-                }
-            }
-
-            // 2.2 处理新船的顺序值
-            if (newShip.CategoryOrder == 0)
-            {
-                // 自动分配：取当前类别中最大的 CategoryOrder + 1
-                int maxOrder = _staticShips
-                    .Where(s => s.Category == newShip.Category)
-                    .Select(s => s.CategoryOrder)
-                    .DefaultIfEmpty(0)
-                    .Max();
-                newShip.CategoryOrder = maxOrder + 1;
-            }
-            else
-            {
-                // 检查新顺序是否与同一类别下的其他船冲突（排除自身）
-                var conflict = _staticShips.FirstOrDefault(s => s.Id != oldId && s.Category == newShip.Category && s.CategoryOrder == newShip.CategoryOrder);
-                if (conflict != null)
-                {
-                    // 冲突：将该顺序及之后的船向后顺移
-                    foreach (var ship in _staticShips.Where(s => s.Id != oldId && s.Category == newShip.Category && s.CategoryOrder >= newShip.CategoryOrder))
-                    {
-                        ship.CategoryOrder++;
-                    }
-                }
-            }
-        }
-        else
-        {
-            // 类别和顺序都没变，但仍需确保 CategoryOrder 不为 0（如果是普通船且 GameOrder 可能为 0，此处可保留）
-            if (newShip.CategoryOrder == 0 && newShip.Category == ShipCategory.Normal)
-            {
-                newShip.CategoryOrder = newShip.GameOrder;
-            }
-        }
-
-        // 3. 替换原数据
-        _staticShips[index] = newShip;
-
-        // 4. 重新排序（按 GameOrder 和 CategoryOrder 混合排序？实际上内部顺序只需按 CategoryOrder 全局排序即可，因为不同类别不会混合）
-        // 但为了保持整体一致性，我们直接按 Id 重新排序（或者保留原有顺序）。这里只保存即可，不重新排序 List。
-        // 如果需要确保顺序正确，可以按 CategoryOrder 排序：
-        _staticShips = _staticShips.OrderBy(s => s.Category).ThenBy(s => s.CategoryOrder).ToList();
-
-        // 5. 保存静态文件
-        SaveStatic();
-
-        // 6. 更新用户状态映射（如果 ID 变化）
-        if (newShip.Id != oldId)
-        {
-            if (_userStates.TryGetValue(oldId, out var state))
-            {
-                _userStates.Remove(oldId);
-                _userStates[newShip.Id] = state;
-            }
-        }
-
-        // 7. 更新 Ships 集合中的 ViewModel
-        var oldVm = Ships.FirstOrDefault(vm => vm.Id == oldId);
-        if (oldVm != null)
-        {
-            var newVm = new ShipViewModel(newShip, oldVm.GetState());
-            int vmIndex = Ships.IndexOf(oldVm);
-            Ships[vmIndex] = newVm;
-        }
-
-        // 8. 保存用户状态（确保 ID 映射正确）
-        Save();
-        LogService.Operation("编辑舰船", $"{newShip.Name} (ID: {newShip.Id})");
-
-        // 9. 触发数据变更事件
-        DataStructureChanged?.Invoke();
-    }
-    private bool MigrateCategoriesAndOrders()
-    {
-        bool changed = false;
         foreach (var ship in _staticShips)
         {
-            // 跳过已经填充过的船（已有非零的 CategoryOrder 或者 Category 不为 Normal）
-            if (ship.Category != ShipCategory.Normal) continue;
+            // 1. 清理 build_time
+            ship.BuildTime = CleanBuildTime(ship.BuildTime, ship.Id);
 
-            ShipCategory? detectedCategory = null;
-            int order = 0;
-
-            // 1. 从 Name 或 AltName 中检测类别和编号
-            string nameToCheck = ship.Name ?? "";
-            string altNameToCheck = ship.AltName ?? "";
-
-            // 匹配 META: NO.METAxxx 或 META_xxx 或类似
-            var metaMatch = Regex.Match(nameToCheck, @"NO\.META(\d+)", RegexOptions.IgnoreCase);
-            if (!metaMatch.Success) metaMatch = Regex.Match(altNameToCheck, @"NO\.META(\d+)", RegexOptions.IgnoreCase);
-            if (metaMatch.Success)
+            // 2. 删除布里的异常 acquire_21
+            if (ship.Id == 1 || ship.Id == 2 || ship.Id == 3)
             {
-                detectedCategory = ShipCategory.META;
-                order = int.Parse(metaMatch.Groups[1].Value);
+                ship.AcquireEntries?.RemoveAll(entry =>
+                    entry.Tag == "acquire_21" &&
+                    entry.Parameters.Count == 1 &&
+                    (entry.Parameters[0].Contains("兑换、赠送") || entry.Parameters[0].Contains("日/周常任务"))
+                );
             }
 
-            // 匹配科研: NO.Planxxx 或 科研-xxx 等
-            if (!detectedCategory.HasValue)
+            // 3. 拆分 drop_locations 并补充 acquire_46
+            if (ship.DropLocations != null && ship.DropLocations.Any())
             {
-                var planMatch = Regex.Match(nameToCheck, @"NO\.Plan(\d+)", RegexOptions.IgnoreCase);
-                if (!planMatch.Success) planMatch = Regex.Match(altNameToCheck, @"NO\.Plan(\d+)", RegexOptions.IgnoreCase);
-                if (planMatch.Success)
+                var newDrops = new List<string>();
+                foreach (var loc in ship.DropLocations)
                 {
-                    detectedCategory = ShipCategory.Research;
-                    order = int.Parse(planMatch.Groups[1].Value);
+                    var split = SplitDropLocationString(loc);
+                    foreach (var single in split)
+                    {
+                        if (string.IsNullOrEmpty(single)) continue;
+                        newDrops.Add(single);
+
+                        if (single.StartsWith("作战档案"))
+                        {
+                            var parsed = ParseArchiveLocation(single);
+                            if (parsed != null)
+                            {
+                                EnsureAcquire46Entry(ship.AcquireEntries, parsed.ArchiveName, parsed.Stages);
+                            }
+                        }
+                    }
                 }
+                ship.DropLocations = newDrops;
             }
 
-            // 匹配联动: NO.Collabxxx 或 联动_xxx
-            if (!detectedCategory.HasValue)
+            // 4. 如果 acquire_entries 中存在 acquire_50，移除其他打捞标签
+            if (ship.AcquireEntries != null && ship.AcquireEntries.Any(e => e.Tag == "acquire_50"))
             {
-                var collabMatch = Regex.Match(nameToCheck, @"NO\.Collab(\d+)", RegexOptions.IgnoreCase);
-                if (!collabMatch.Success) collabMatch = Regex.Match(altNameToCheck, @"NO\.Collab(\d+)", RegexOptions.IgnoreCase);
-                if (collabMatch.Success)
-                {
-                    detectedCategory = ShipCategory.Collab;
-                    order = int.Parse(collabMatch.Groups[1].Value);
-                }
-            }
-
-            // 若仍未检测到，根据阵营 Faction == "META" 判定为 META
-            if (!detectedCategory.HasValue && ship.Faction == "META")
-            {
-                detectedCategory = ShipCategory.META;
-                // 尝试从名称中提取数字，否则使用 Id 作为顺序（临时）
-                var anyNumber = Regex.Match(nameToCheck, @"\d+");
-                order = anyNumber.Success ? int.Parse(anyNumber.Value) : ship.Id;
-            }
-
-            // 剩余归类为普通
-            if (!detectedCategory.HasValue)
-            {
-                detectedCategory = ShipCategory.Normal;
-                order = ship.GameOrder;
-            }
-
-            // 赋值
-            if (ship.Category != detectedCategory.Value)
-            {
-                ship.Category = detectedCategory.Value;
-                changed = true;
-            }
-            if (ship.CategoryOrder != order)
-            {
-                ship.CategoryOrder = order;
-                changed = true;
+                ship.AcquireEntries.RemoveAll(e => e.Tag == "acquire_2" || e.Tag == "acquire_46" || e.Tag == "acquire_47");
             }
         }
-
-        // 特别处理：如果科研船有特定的顺序（例如按开发顺序），可以手动调整个别船的 order
-        // 例如手动维护一个字典，覆盖科研船的顺序（如果需要）
-        // 这里留作扩展点
-
-        return changed;
-    }
-    public void DeleteShip(int shipId)
-    {
-        if (!_accountManager.IsDeveloper())
-            throw new InvalidOperationException("只有开发者账户才能删除舰船");
-
-        // 从静态列表中删除
-        var removed = _staticShips.RemoveAll(s => s.Id == shipId) > 0;
-        if (!removed) return;
-
-        SaveStatic();
-
-        // 从用户状态中删除
-        _userStates.Remove(shipId);
-
-        // 从 Ships 集合中删除 ViewModel
-        var vm = Ships.FirstOrDefault(v => v.Id == shipId);
-        if (vm != null) Ships.Remove(vm);
-
-        Save();
-        DataStructureChanged?.Invoke();
-        LogService.Operation("删除舰船", $"ID: {shipId}");
-    }
-    public void NotifyDataChanged()
-    {
-        data_changed?.Invoke();
-    }
-    // 舰船静态数据版本号
-    // 生成新版本字符串
-    private string BuildVersion(int shipCount, int revision)
-    {
-        string date = DateTime.Now.ToString("yyyyMMdd");
-        return $"1.0.{shipCount}.{revision}.{date}";
     }
 
-    // 从当前版本号尝试提取修订次数，若失败返回 -1
-    private int ParseRevision(string version)
+    // 以下为统计和工具方法
+    public Dictionary<string, CampTechData> CalculateCampTechPoints()
     {
-        try
+        var result = new Dictionary<string, CampTechData>();
+        foreach (var ship in Ships.Where(s => s.Owned))
         {
-            var parts = version.Split('.');
-            if (parts.Length == 5 && int.TryParse(parts[2], out _) && int.TryParse(parts[3], out int rev))
-                return rev;
+            string faction = ship.Faction;
+            if (!result.ContainsKey(faction))
+                result[faction] = new CampTechData();
+            var data = result[faction];
+            data.Obtain += ship.TechPointsObtain;
+            if (ship.IsMaxBreakthrough)
+                data.Max += ship.TechPointsMax;
+            if (ship.Level120)
+                data.Level120 += ship.TechPoints120;
         }
-        catch { }
-        return -1;
+        return result;
     }
 
-    // 更新版本号（在保存静态数据前调用）
-    private void UpdateVersionBeforeSave()
+    public int GetTotalTechPoints() => Ships.Sum(s => s.TechPointsObtain + s.TechPointsMax + s.TechPoints120);
+    public int GetOwnedTechPoints() => Ships.Where(s => s.Owned).Sum(s => s.TechPointsObtain + (s.IsMaxBreakthrough ? s.TechPointsMax : 0) + (s.Level120 ? s.TechPoints120 : 0));
+
+    public StatsData stats()
     {
-        int shipCount = _staticShips.Count;
-        int revision = ParseRevision(Version);
-        if (revision < 0) revision = 0;   // 无法解析则从0开始
-        else revision++;
-
-        Version = BuildVersion(shipCount, revision);
+        var shipsToCount = Ships.Where(s => s.Category != ShipCategory.Collab).ToList();
+        return new StatsData
+        {
+            Total = shipsToCount.Count,
+            Owned = shipsToCount.Count(s => s.Owned),
+            NotOwned = shipsToCount.Count - shipsToCount.Count(s => s.Owned),
+            MaxBreakthrough = shipsToCount.Count(s => s.IsMaxBreakthrough),
+            NotMaxBreakthrough = shipsToCount.Count(s => s.Owned && !s.IsMaxBreakthrough),
+            Oath = shipsToCount.Count(s => s.Oath),
+            Remodeled = shipsToCount.Count(s => s.Remodeled),
+            CanRemodelNot = shipsToCount.Count(s => s.CanRemodel && !s.Remodeled),
+            Level120 = shipsToCount.Count(s => s.Level120),
+            SpecialGearObtained = shipsToCount.Count(s => s.SpecialGearObtained),
+            SpecialGearNotObtained = shipsToCount.Count(s => s.CanSpecialGear && !s.SpecialGearObtained),
+            CanRemodelTotal = shipsToCount.Count(s => s.CanRemodel)
+        };
     }
-    // 获取程序版本号
+
+    public Dictionary<(string ShipClass, string Attr), int> CalculateGlobalBonuses()
+    {
+        var bonuses = new Dictionary<(string, string), int>();
+        foreach (var ship in Ships.Where(s => s.Owned))
+        {
+            if (ship.ObtainBonusValue != 0)
+            {
+                foreach (var sc in ship.ObtainAffectsDisplay.Split(',').Select(s => s.Trim()))
+                {
+                    var key = (sc, ship.ObtainBonusAttr);
+                    bonuses[key] = bonuses.GetValueOrDefault(key) + ship.ObtainBonusValue;
+                }
+            }
+            if (ship.Level120BonusValue != 0)
+            {
+                foreach (var sc in ship.Level120AffectsDisplay.Split(',').Select(s => s.Trim()))
+                {
+                    var key = (sc, ship.Level120BonusAttr);
+                    bonuses[key] = bonuses.GetValueOrDefault(key) + ship.Level120BonusValue;
+                }
+            }
+        }
+        return bonuses;
+    }
+
     public string GetCurrentAppVersion()
     {
         try
@@ -1099,13 +1298,11 @@ public class ShipManager
         }
         catch
         {
-            // 非打包运行时的回退
             var assemblyVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
             return assemblyVersion?.ToString() ?? "0.0.0.0";
         }
     }
 
-    // 获取远程数据版本
     public async Task<string> GetRemoteDataVersionAsync(string url, string proxy = "")
     {
         using var client = CreateHttpClient(proxy);
@@ -1114,7 +1311,6 @@ public class ShipManager
         return doc.RootElement.TryGetProperty("version", out var v) ? v.GetString() ?? "" : "";
     }
 
-    // 更新数据
     public async Task<bool> UpdateDataFromUrlAsync(string url, string proxy = "")
     {
         using var client = CreateHttpClient(proxy);
@@ -1129,18 +1325,7 @@ public class ShipManager
         LogService.Operation("数据更新", "结束");
         return true;
     }
-    public async Task<string> GetLatestAppVersionAsync(string proxy = "")
-    {
-        HttpClient client = CreateHttpClient(proxy);
-        using (client)
-        {
-            client.DefaultRequestHeaders.Add("User-Agent", "AzurLaneDex");
-            var response = await client.GetStringAsync("https://api.github.com/repos/xiwangzaiqianfang/AzurLane-Dex/releases/latest");
-            var json = JsonDocument.Parse(response);
-            var tag = json.RootElement.GetProperty("tag_name").GetString();
-            return tag?.TrimStart('v') ?? "0.0.0";
-        }
-    }
+
     public HttpClient CreateHttpClient(string proxy)
     {
         if (string.IsNullOrEmpty(proxy))
@@ -1152,9 +1337,17 @@ public class ShipManager
         };
         return new HttpClient(handler);
     }
+
     public async Task<string> DownloadStringAsync(string url, string proxy = "")
     {
         using var client = CreateHttpClient(proxy);
         return await client.GetStringAsync(url);
     }
+
+    public void NotifyDataChanged() => data_changed?.Invoke();
+
+    public class CampTechData { public int Obtain { get; set; } public int Max { get; set; } public int Level120 { get; set; } }
+    public class StatsData { public int Total, Owned, NotOwned, MaxBreakthrough, NotMaxBreakthrough, Oath, Remodeled, CanRemodelNot, Level120, SpecialGearObtained, SpecialGearNotObtained, CanRemodelTotal; }
+
+    public string GetUserStatePath() => _userStatePath;
 }

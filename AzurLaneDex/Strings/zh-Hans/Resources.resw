@@ -366,6 +366,9 @@
   <data name="ShipClass_DD1" xml:space="preserve">
     <value>驱逐</value>
   </data>
+  <data name="ShipClass_1" xml:space="preserve">
+    <value>驱逐</value>
+  </data>
   <data name="Class_CL.Content" xml:space="preserve">
     <value>轻巡</value>
   </data>
@@ -373,6 +376,9 @@
     <value>轻巡</value>
   </data>
   <data name="ShipClass_CL1" xml:space="preserve">
+    <value>轻巡</value>
+  </data>
+  <data name="ShipClass_2" xml:space="preserve">
     <value>轻巡</value>
   </data>
   <data name="Class_CA.Content" xml:space="preserve">
@@ -390,6 +396,9 @@
   <data name="ShipClass_BB1" xml:space="preserve">
     <value>战列</value>
   </data>
+  <data name="ShipClass_7" xml:space="preserve">
+    <value>战列</value>
+  </data>
   <data name="Class_BBV.Content" xml:space="preserve">
     <value>航战</value>
   </data>
@@ -397,6 +406,9 @@
     <value>航战</value>
   </data>
   <data name="ShipClass_BBV1" xml:space="preserve">
+    <value>航战</value>
+  </data>
+  <data name="ShipClass_8" xml:space="preserve">
     <value>航战</value>
   </data>
   <data name="Class_CV.Content" xml:space="preserve">
@@ -408,6 +420,9 @@
   <data name="ShipClass_CV1" xml:space="preserve">
     <value>航母</value>
   </data>
+  <data name="ShipClass_9" xml:space="preserve">
+    <value>航母</value>
+  </data>
   <data name="Class_CVL.Content" xml:space="preserve">
     <value>轻航</value>
   </data>
@@ -417,10 +432,16 @@
   <data name="ShipClass_CVL1" xml:space="preserve">
     <value>轻航</value>
   </data>
+  <data name="ShipClass_10" xml:space="preserve">
+    <value>轻航</value>
+  </data>
   <data name="Class_AR.Content" xml:space="preserve">
     <value>维修</value>
   </data>
   <data name="ShipClass_AR1" xml:space="preserve">
+    <value>维修</value>
+  </data>
+  <data name="ShipClass_11" xml:space="preserve">
     <value>维修</value>
   </data>
   <data name="Class_SS.Content" xml:space="preserve">
@@ -432,6 +453,9 @@
   <data name="ShipClass_SS1" xml:space="preserve">
     <value>潜艇</value>
   </data>
+  <data name="ShipClass_12" xml:space="preserve">
+    <value>潜艇</value>
+  </data>
   <data name="Class_SSV.Content" xml:space="preserve">
     <value>潜母</value>
   </data>
@@ -439,6 +463,9 @@
     <value>潜母</value>
   </data>
   <data name="ShipClass_SSV1" xml:space="preserve">
+    <value>潜母</value>
+  </data>
+  <data name="ShipClass_13" xml:space="preserve">
     <value>潜母</value>
   </data>
   <data name="Class_AE.Content" xml:space="preserve">
@@ -456,6 +483,9 @@
   <data name="ShipClass_Sail1" xml:space="preserve">
     <value>风帆</value>
   </data>
+  <data name="ShipClass_15" xml:space="preserve">
+    <value>风帆</value>
+  </data>
   <data name="BasicInfo_Rarity.Text" xml:space="preserve">
     <value>稀有度:</value>
   </data>
@@ -465,10 +495,16 @@
   <data name="Rarity_Normal" xml:space="preserve">
     <value>普通</value>
   </data>
+  <data name="Rarity_1" xml:space="preserve">
+    <value>普通</value>
+  </data>
   <data name="Rarity_R.Content" xml:space="preserve">
     <value>稀有</value>
   </data>
   <data name="Rarity_Rare" xml:space="preserve">
+    <value>稀有</value>
+  </data>
+  <data name="Rarity_2" xml:space="preserve">
     <value>稀有</value>
   </data>
   <data name="Rarity_SR.Content" xml:space="preserve">
@@ -477,16 +513,25 @@
   <data name="Rarity_Elite" xml:space="preserve">
     <value>精锐</value>
   </data>
+  <data name="Rarity_3" xml:space="preserve">
+    <value>精锐</value>
+  </data>
   <data name="Rarity_SSR.Content" xml:space="preserve">
     <value>超稀有</value>
   </data>
   <data name="Rarity_SuperRare" xml:space="preserve">
     <value>超稀有</value>
   </data>
+  <data name="Rarity_4" xml:space="preserve">
+    <value>超稀有</value>
+  </data>
   <data name="Rarity_UR.Content" xml:space="preserve">
     <value>海上传奇</value>
   </data>
   <data name="Rarity_Legendary" xml:space="preserve">
+    <value>海上传奇</value>
+  </data>
+  <data name="Rarity_5" xml:space="preserve">
     <value>海上传奇</value>
   </data>
   <data name="Category_Normal.Content" xml:space="preserve">
@@ -507,7 +552,7 @@
   <data name="CategoryTag_Research.Text" xml:space="preserve">
     <value>方案舰</value>
   </data>
-  <data name="Category_META.Content" xml:space="preserve">
+  <data name="Category_META1.Content" xml:space="preserve">
     <value>META</value>
   </data>
   <data name="CategoryTag_META.Text" xml:space="preserve">
@@ -531,7 +576,7 @@
   <data name="Acquisition_Main.Text" xml:space="preserve">
     <value>主要获取方式：</value>
   </data>
-  <data name="Acquisition_Detail.Text" xml:space="preserve">
+  <data name="AcquisitionDetail.Text" xml:space="preserve">
     <value>详细信息：</value>
   </data>
   <data name="Acquisition_BuildTime.Text" xml:space="preserve">
@@ -539,6 +584,12 @@
   </data>
   <data name="Acquisition_DropLocations.Text" xml:space="preserve">
     <value>打捞地点：</value>
+  </data>
+  <data name="AcquisitionDropLocations.Text" xml:space="preserve">
+    <value>打捞地点：</value>
+  </data>
+  <data name="DropLocations" xml:space="preserve">
+    <value>打捞地点：{0}</value>
   </data>
   <data name="Acquisition_ShopExchange.Text" xml:space="preserve">
     <value>商店兑换：</value>
@@ -627,6 +678,9 @@
   <data name="ExportImageButton.Content" xml:space="preserve">
     <value>导出为图片</value>
   </data>
+  <data name="Faction_1" xml:space="preserve">
+    <value>白鹰</value>
+  </data>
   <data name="Faction_EagleUnion" xml:space="preserve">
     <value>白鹰</value>
   </data>
@@ -636,10 +690,16 @@
   <data name="Faction_RoyalNavy" xml:space="preserve">
     <value>皇家</value>
   </data>
+  <data name="Faction_2" xml:space="preserve">
+    <value>皇家</value>
+  </data>
   <data name="Faction_RN.Content" xml:space="preserve">
     <value>皇家</value>
   </data>
   <data name="Faction_SakuraEmpire" xml:space="preserve">
+    <value>重樱</value>
+  </data>
+  <data name="Faction_3" xml:space="preserve">
     <value>重樱</value>
   </data>
   <data name="Faction_IJN.Content" xml:space="preserve">
@@ -648,10 +708,16 @@
   <data name="Faction_IronBlood" xml:space="preserve">
     <value>铁血</value>
   </data>
+  <data name="Faction_4" xml:space="preserve">
+    <value>铁血</value>
+  </data>
   <data name="Faction_KMS.Content" xml:space="preserve">
     <value>铁血</value>
   </data>
   <data name="Faction_DragonEmpery" xml:space="preserve">
+    <value>东煌</value>
+  </data>
+  <data name="Faction_5" xml:space="preserve">
     <value>东煌</value>
   </data>
   <data name="Faction_Dragon.Content" xml:space="preserve">
@@ -660,10 +726,16 @@
   <data name="Faction_Sardegna" xml:space="preserve">
     <value>撒丁帝国</value>
   </data>
+  <data name="Faction_6" xml:space="preserve">
+    <value>撒丁帝国</value>
+  </data>
   <data name="Faction_Sardegna1.Content" xml:space="preserve">
     <value>撒丁帝国</value>
   </data>
   <data name="Faction_NorthernUnion" xml:space="preserve">
+    <value>北方联合</value>
+  </data>
+  <data name="Faction_7" xml:space="preserve">
     <value>北方联合</value>
   </data>
   <data name="Faction_SN.Content" xml:space="preserve">
@@ -672,10 +744,16 @@
   <data name="Faction_FreeFrench" xml:space="preserve">
     <value>自由鸢尾</value>
   </data>
+  <data name="Faction_8" xml:space="preserve">
+    <value>自由鸢尾</value>
+  </data>
   <data name="Faction_FFNF.Content" xml:space="preserve">
     <value>自由鸢尾</value>
   </data>
   <data name="Faction_Vichya" xml:space="preserve">
+    <value>维希教廷</value>
+  </data>
+  <data name="Faction_9" xml:space="preserve">
     <value>维希教廷</value>
   </data>
   <data name="Faction_MNF.Content" xml:space="preserve">
@@ -684,10 +762,16 @@
   <data name="Faction_Tulip" xml:space="preserve">
     <value>郁金王国</value>
   </data>
+  <data name="Faction_10" xml:space="preserve">
+    <value>郁金王国</value>
+  </data>
   <data name="Faction_Tulip1.Content" xml:space="preserve">
     <value>郁金王国</value>
   </data>
   <data name="Faction_Tempesta" xml:space="preserve">
+    <value>飓风</value>
+  </data>
+  <data name="Faction_11" xml:space="preserve">
     <value>飓风</value>
   </data>
   <data name="Faction_Tempesta1.Content" xml:space="preserve">
@@ -696,10 +780,16 @@
   <data name="Faction_Other" xml:space="preserve">
     <value>其他</value>
   </data>
+  <data name="Faction_12" xml:space="preserve">
+    <value>其他</value>
+  </data>
   <data name="Faction_Other1.Content" xml:space="preserve">
     <value>其他</value>
   </data>
   <data name="Faction_Collab_Nep" xml:space="preserve">
+    <value>超次元游戏海王星</value>
+  </data>
+  <data name="Faction_100" xml:space="preserve">
     <value>超次元游戏海王星</value>
   </data>
   <data name="FactionCollab_Nep.Content" xml:space="preserve">
@@ -708,10 +798,16 @@
   <data name="Faction_Collab_Bilibili" xml:space="preserve">
     <value>哔哩哔哩</value>
   </data>
+  <data name="Faction_101" xml:space="preserve">
+    <value>哔哩哔哩</value>
+  </data>
   <data name="FactionCollab_Bilibili.Content" xml:space="preserve">
     <value>哔哩哔哩</value>
   </data>
   <data name="Faction_Collab_Utawarerumono" xml:space="preserve">
+    <value>传颂之物</value>
+  </data>
+  <data name="Faction_102" xml:space="preserve">
     <value>传颂之物</value>
   </data>
   <data name="FactionCollab_Utawarerumono.Content" xml:space="preserve">
@@ -720,10 +816,16 @@
   <data name="Faction_Collab_KizunaAI" xml:space="preserve">
     <value>绊爱</value>
   </data>
+  <data name="Faction_103" xml:space="preserve">
+    <value>绊爱</value>
+  </data>
   <data name="FactionCollab_KizunaAI.Content" xml:space="preserve">
     <value>绊爱</value>
   </data>
   <data name="Faction_Collab_Hololive" xml:space="preserve">
+    <value>Hololive</value>
+  </data>
+  <data name="Faction_104" xml:space="preserve">
     <value>Hololive</value>
   </data>
   <data name="FactionCollab_Hololive.Content" xml:space="preserve">
@@ -732,10 +834,16 @@
   <data name="Faction_Collab_DoAXVV" xml:space="preserve">
     <value>死或生沙滩排球</value>
   </data>
+  <data name="Faction_105" xml:space="preserve">
+    <value>死或生沙滩排球</value>
+  </data>
   <data name="FactionCollab_DoAXVV.Content" xml:space="preserve">
     <value>死或生沙滩排球</value>
   </data>
   <data name="Faction_Collab_Idolmaster" xml:space="preserve">
+    <value>偶像大师</value>
+  </data>
+  <data name="Faction_106" xml:space="preserve">
     <value>偶像大师</value>
   </data>
   <data name="FactionCollab_Idolmaster.Content" xml:space="preserve">
@@ -744,10 +852,16 @@
   <data name="Faction_Collab_SSSS" xml:space="preserve">
     <value>SSSS</value>
   </data>
+  <data name="Faction_107" xml:space="preserve">
+    <value>SSSS</value>
+  </data>
   <data name="FactionCollab_SSSS.Content" xml:space="preserve">
     <value>SSSS</value>
   </data>
   <data name="Faction_Collab_Ryza" xml:space="preserve">
+    <value>莱莎的炼金工房</value>
+  </data>
+  <data name="Faction_108" xml:space="preserve">
     <value>莱莎的炼金工房</value>
   </data>
   <data name="FactionCollab_Ryza.Content" xml:space="preserve">
@@ -756,10 +870,16 @@
   <data name="Faction_Collab_Senran" xml:space="preserve">
     <value>闪乱神乐</value>
   </data>
+  <data name="Faction_109" xml:space="preserve">
+    <value>闪乱神乐</value>
+  </data>
   <data name="FactionCollab_Senran.Content" xml:space="preserve">
     <value>闪乱神乐</value>
   </data>
   <data name="Faction_Collab_Toloveru" xml:space="preserve">
+    <value>出包王女</value>
+  </data>
+  <data name="Faction_110" xml:space="preserve">
     <value>出包王女</value>
   </data>
   <data name="FactionCollab_Toloveru.Content" xml:space="preserve">
@@ -768,10 +888,16 @@
   <data name="Faction_Collab_BRS" xml:space="preserve">
     <value>黑岩射手</value>
   </data>
+  <data name="Faction_111" xml:space="preserve">
+    <value>黑岩射手</value>
+  </data>
   <data name="FactionCollab_BRS.Content" xml:space="preserve">
     <value>黑岩射手</value>
   </data>
   <data name="Faction_Collab_Danmachi" xml:space="preserve">
+    <value>地城邂逅</value>
+  </data>
+  <data name="Faction_112" xml:space="preserve">
     <value>地城邂逅</value>
   </data>
   <data name="FactionCollab_Danmachi.Content" xml:space="preserve">
@@ -780,16 +906,25 @@
   <data name="Faction_Collab_Yumia" xml:space="preserve">
     <value>优米雅的炼金工房</value>
   </data>
+  <data name="Faction_113" xml:space="preserve">
+    <value>优米雅的炼金工房</value>
+  </data>
   <data name="FactionCollab_Yumia.Content" xml:space="preserve">
     <value>优米雅的炼金工房</value>
   </data>
   <data name="Faction_Collab_DAL" xml:space="preserve">
     <value>约会大作战V</value>
   </data>
+  <data name="Faction_114" xml:space="preserve">
+    <value>约会大作战V</value>
+  </data>
   <data name="FactionCollab_DAL.Content" xml:space="preserve">
     <value>约会大作战V</value>
   </data>
   <data name="Faction_Meta_Core" xml:space="preserve">
+    <value>湮烬之核</value>
+  </data>
+  <data name="Faction_201" xml:space="preserve">
     <value>湮烬之核</value>
   </data>
   <data name="FactionMeta_Core.Content" xml:space="preserve">
@@ -801,10 +936,16 @@
   <data name="Faction_Meta_Reason" xml:space="preserve">
     <value>构造之理</value>
   </data>
+  <data name="Faction_202" xml:space="preserve">
+    <value>构造之理</value>
+  </data>
   <data name="FactionMeta_Reason.Content" xml:space="preserve">
     <value>构造之理</value>
   </data>
   <data name="Faction_Meta_Light" xml:space="preserve">
+    <value>逐光之焰</value>
+  </data>
+  <data name="Faction_203" xml:space="preserve">
     <value>逐光之焰</value>
   </data>
   <data name="FactionMeta_Light.Content" xml:space="preserve">
@@ -813,10 +954,16 @@
   <data name="Faction_Meta_Fire" xml:space="preserve">
     <value>摇曳之火</value>
   </data>
+  <data name="Faction_204" xml:space="preserve">
+    <value>摇曳之火</value>
+  </data>
   <data name="FactionMeta_Fire.Content" xml:space="preserve">
     <value>摇曳之火</value>
   </data>
   <data name="Faction_Meta_Flame" xml:space="preserve">
+    <value>破敌之炬</value>
+  </data>
+  <data name="Faction_200" xml:space="preserve">
     <value>破敌之炬</value>
   </data>
   <data name="FactionMeta_Flame.Content" xml:space="preserve">
@@ -831,10 +978,16 @@
   <data name="Rarity_Decisive1" xml:space="preserve">
     <value>最高方案</value>
   </data>
+  <data name="Rarity_6" xml:space="preserve">
+    <value>最高方案</value>
+  </data>
   <data name="Rarity_Ultimate.Content" xml:space="preserve">
     <value>决战方案</value>
   </data>
   <data name="Rarity_Ultimate1" xml:space="preserve">
+    <value>决战方案</value>
+  </data>
+  <data name="Rarity_7" xml:space="preserve">
     <value>决战方案</value>
   </data>
   <data name="FilterTitle_Faction.Header" xml:space="preserve">
@@ -846,7 +999,13 @@
   <data name="ShipClass_BC1" xml:space="preserve">
     <value>战巡</value>
   </data>
+  <data name="ShipClass_6" xml:space="preserve">
+    <value>战巡</value>
+  </data>
   <data name="ShipClass_BM1" xml:space="preserve">
+    <value>重炮</value>
+  </data>
+  <data name="ShipClass_5" xml:space="preserve">
     <value>重炮</value>
   </data>
   <data name="ShipClass_CB.Content" xml:space="preserve">
@@ -855,7 +1014,13 @@
   <data name="ShipClass_CB1" xml:space="preserve">
     <value>超巡</value>
   </data>
+  <data name="ShipClass_4" xml:space="preserve">
+    <value>超巡</value>
+  </data>
   <data name="ShipClass_CA1" xml:space="preserve">
+    <value>重巡</value>
+  </data>
+  <data name="ShipClass_3" xml:space="preserve">
     <value>重巡</value>
   </data>
   <data name="BatchOperationButton.Label" xml:space="preserve">
@@ -972,10 +1137,16 @@
   <data name="Attr1_HP" xml:space="preserve">
     <value>耐久</value>
   </data>
+  <data name="Attr_1" xml:space="preserve">
+    <value>耐久</value>
+  </data>
   <data name="Attr_HP.Content" xml:space="preserve">
     <value>耐久</value>
   </data>
   <data name="Attr1_FP" xml:space="preserve">
+    <value>炮击</value>
+  </data>
+  <data name="Attr_2" xml:space="preserve">
     <value>炮击</value>
   </data>
   <data name="Attr_FP.Content" xml:space="preserve">
@@ -984,10 +1155,16 @@
   <data name="Attr1_TRP" xml:space="preserve">
     <value>雷击</value>
   </data>
+  <data name="Attr_3" xml:space="preserve">
+    <value>雷击</value>
+  </data>
   <data name="Attr_TRP.Content" xml:space="preserve">
     <value>雷击</value>
   </data>
   <data name="Attr1_AVI" xml:space="preserve">
+    <value>航空</value>
+  </data>
+  <data name="Attr_5" xml:space="preserve">
     <value>航空</value>
   </data>
   <data name="Attr_AVI.Content" xml:space="preserve">
@@ -996,10 +1173,16 @@
   <data name="Attr1_RLD" xml:space="preserve">
     <value>装填</value>
   </data>
+  <data name="Attr_7" xml:space="preserve">
+    <value>装填</value>
+  </data>
   <data name="Attr_RLD.Content" xml:space="preserve">
     <value>装填</value>
   </data>
   <data name="Attr1_EVA" xml:space="preserve">
+    <value>机动</value>
+  </data>
+  <data name="Attr_8" xml:space="preserve">
     <value>机动</value>
   </data>
   <data name="Attr_EVA.Content" xml:space="preserve">
@@ -1008,10 +1191,16 @@
   <data name="Attr1_LCK" xml:space="preserve">
     <value>幸运</value>
   </data>
+  <data name="Attr_101" xml:space="preserve">
+    <value>幸运</value>
+  </data>
   <data name="Attr_LCK.Content" xml:space="preserve">
     <value>幸运</value>
   </data>
   <data name="Attr1_SPD" xml:space="preserve">
+    <value>航速</value>
+  </data>
+  <data name="Attr_100" xml:space="preserve">
     <value>航速</value>
   </data>
   <data name="Attr_SPD.Content" xml:space="preserve">
@@ -1020,10 +1209,16 @@
   <data name="Attr1_Cost" xml:space="preserve">
     <value>消耗</value>
   </data>
+  <data name="Attr_102" xml:space="preserve">
+    <value>消耗</value>
+  </data>
   <data name="Attr_Cost.Content" xml:space="preserve">
     <value>消耗</value>
   </data>
   <data name="Attr1_ASW" xml:space="preserve">
+    <value>反潜</value>
+  </data>
+  <data name="Attr_9" xml:space="preserve">
     <value>反潜</value>
   </data>
   <data name="Attr_ASW.Content" xml:space="preserve">
@@ -1032,16 +1227,25 @@
   <data name="Attr1_Armor" xml:space="preserve">
     <value>装甲</value>
   </data>
+  <data name="Attr_103" xml:space="preserve">
+    <value>装甲</value>
+  </data>
   <data name="Attr_Armor.Content" xml:space="preserve">
     <value>装甲</value>
   </data>
   <data name="Attr1_ACC" xml:space="preserve">
     <value>命中</value>
   </data>
+  <data name="Attr_6" xml:space="preserve">
+    <value>命中</value>
+  </data>
   <data name="Attr_ACC.Content" xml:space="preserve">
     <value>命中</value>
   </data>
   <data name="Attr1_AA" xml:space="preserve">
+    <value>防空</value>
+  </data>
+  <data name="Attr_4" xml:space="preserve">
     <value>防空</value>
   </data>
   <data name="Attr_AA.Content" xml:space="preserve">
@@ -1066,6 +1270,9 @@
     <value>获得</value>
   </data>
   <data name="CampTechPage_Max.Text" xml:space="preserve">
+    <value>满破</value>
+  </data>
+  <data name="MaxBreak" xml:space="preserve">
     <value>满破</value>
   </data>
   <data name="CampTechPage_Level120.Text" xml:space="preserve">
@@ -1284,6 +1491,9 @@
   <data name="MainPage_SortCombo_Item8.Content" xml:space="preserve">
     <value>按突破状态排序</value>
   </data>
+  <data name="BatchOp_BreakthroughSub" xml:space="preserve">
+    <value>突破状态</value>
+  </data>
   <data name="MainPage_SortCombo_Item7.Content" xml:space="preserve">
     <value>按改造状态排序</value>
   </data>
@@ -1486,6 +1696,9 @@
     <value>维修</value>
   </data>
   <data name="ShipClass_AE1" xml:space="preserve">
+    <value>运输</value>
+  </data>
+  <data name="ShipClass_14" xml:space="preserve">
     <value>运输</value>
   </data>
   <data name="ShipClass_CA.Content" xml:space="preserve">
@@ -1820,5 +2033,302 @@
   </data>
   <data name="FirstRunDialog.CloseButtonText" xml:space="preserve">
     <value>退出</value>
+  </data>
+  <data name="Attr_0" xml:space="preserve">
+    <value>无</value>
+  </data>
+  <data name="acquire_1" xml:space="preserve">
+    <value>打捞获得</value>
+  </data>
+  <data name="acquire_2" xml:space="preserve">
+    <value>普通掉落点</value>
+  </data>
+  <data name="acquire_3" xml:space="preserve">
+    <value>档案掉落点</value>
+  </data>
+  <data name="acquire_4" xml:space="preserve">
+    <value>活动掉落点</value>
+  </data>
+  <data name="acquire_5" xml:space="preserve">
+    <value>仅限打捞</value>
+  </data>
+  <data name="acquire_6" xml:space="preserve">
+    <value>建造获得</value>
+  </data>
+  <data name="acquire_7" xml:space="preserve">
+    <value>轻型池建造</value>
+  </data>
+  <data name="acquire_8" xml:space="preserve">
+    <value>重型池建造</value>
+  </data>
+  <data name="acquire_9" xml:space="preserve">
+    <value>特种池建造</value>
+  </data>
+  <data name="acquire_10" xml:space="preserve">
+    <value>期间限定建造</value>
+  </data>
+  <data name="acquire_11" xml:space="preserve">
+    <value>无法建造</value>
+  </data>
+  <data name="acquire_12" xml:space="preserve">
+    <value>勋章支援概率获得</value>
+  </data>
+  <data name="acquire_13" xml:space="preserve">
+    <value>商店兑换</value>
+  </data>
+  <data name="acquire_14" xml:space="preserve">
+    <value>舰队商店{0}舰队币兑换获得</value>
+  </data>
+  <data name="acquire_15" xml:space="preserve">
+    <value>军需商店{0}功勋兑换</value>
+  </data>
+  <data name="acquire_16" xml:space="preserve">
+    <value>META商店{0}破碎结晶兑换</value>
+  </data>
+  <data name="acquire_17" xml:space="preserve">
+    <value>核心月度兑换商店{0}核心数据兑换</value>
+  </data>
+  <data name="acquire_18" xml:space="preserve">
+    <value>勋章商店{0}勋章兑换</value>
+  </data>
+  <data name="acquire_19" xml:space="preserve">
+    <value>原型商店4000特装原型兑换</value>
+  </data>
+  <data name="acquire_20" xml:space="preserve">
+    <value>{0}活动商店{1}{2}兑换获得</value>
+  </data>
+  <data name="acquire_21" xml:space="preserve">
+    <value>{0}礼包购买获得</value>
+  </data>
+  <data name="acquire_22" xml:space="preserve">
+    <value>科研{0}期获得</value>
+  </data>
+  <data name="acquire_23" xml:space="preserve">
+    <value>作战补给兑换</value>
+  </data>
+  <data name="acquire_24" xml:space="preserve">
+    <value>兑换</value>
+  </data>
+  <data name="acquire_25" xml:space="preserve">
+    <value>「贺年卡（{0}{1}）」（{2}）可选</value>
+  </data>
+  <data name="acquire_26" xml:space="preserve">
+    <value>{0}年年贺状可选</value>
+  </data>
+  <data name="acquire_27" xml:space="preserve">
+    <value>{0}周年邀请函可选</value>
+  </data>
+  <data name="acquire_28" xml:space="preserve">
+    <value>{0}年庆典邀请函可选</value>
+  </data>
+  <data name="acquire_29" xml:space="preserve">
+    <value>{0}年宴会邀请函可选</value>
+  </data>
+  <data name="acquire_30" xml:space="preserve">
+    <value>圣夜的赠礼</value>
+  </data>
+  <data name="acquire_31" xml:space="preserve">
+    <value>「{0}」角色自选可选</value>
+  </data>
+  <data name="acquire_32" xml:space="preserve">
+    <value>{0} th庆典邀请函</value>
+  </data>
+  <data name="acquire_33" xml:space="preserve">
+    <value>心愿卡</value>
+  </data>
+  <data name="acquire_34" xml:space="preserve">
+    <value>{0}年{1}月新晋指挥官·新服开服庆典活动-新服庆典PT任务</value>
+  </data>
+  <data name="acquire_35" xml:space="preserve">
+    <value>META 信标档案信标解析</value>
+  </data>
+  <data name="acquire_36" xml:space="preserve">
+    <value>META 研究室资讯同步解析</value>
+  </data>
+  <data name="acquire_37" xml:space="preserve">
+    <value>世界巡游赠送</value>
+  </data>
+  <data name="acquire_38" xml:space="preserve">
+    <value>推出海上传奇品质舰船的大型 EX 活动累计 PT 获取</value>
+  </data>
+  <data name="acquire_39" xml:space="preserve">
+    <value>布里支援计划</value>
+  </data>
+  <data name="acquire_40" xml:space="preserve">
+    <value>下方仅列出普通掉落点</value>
+  </data>
+  <data name="acquire_41" xml:space="preserve">
+    <value>日常/周常任务奖励</value>
+  </data>
+  <data name="acquire_42" xml:space="preserve">
+    <value>月度签到奖励</value>
+  </data>
+  <data name="acquire_43" xml:space="preserve">
+    <value>活动任务奖励</value>
+  </data>
+  <data name="acquire_44" xml:space="preserve">
+    <value>主线普通关卡三星奖励</value>
+  </data>
+  <data name="acquire_45" xml:space="preserve">
+    <value>大型 EX 和中型 SP 活动关卡三星奖励</value>
+  </data>
+  <data name="acquire_46" xml:space="preserve">
+    <value>作战档案{0}：{1}</value>
+  </data>
+  <data name="acquire_47" xml:space="preserve">
+    <value>作战档案通关60次{0}{1}获得</value>
+  </data>
+  <data name="acquire_48" xml:space="preserve">
+    <value>在{0}、{1}活动中作为临时NPC，累计1000点友好度获得</value>
+  </data>
+  <data name="acquire_49" xml:space="preserve">
+    <value>限时活动{0}；累计登录{1}天获取</value>
+  </data>
+  <data name="acquire_50" xml:space="preserve">
+    <value>无法打捞</value>
+  </data>
+  <data name="acquire_51" xml:space="preserve">
+    <value>无法兑换</value>
+  </data>
+  <data name="acquire_custom" xml:space="preserve">
+    <value>其他：自定义文本</value>
+  </data>
+  <data name="Acquisition_Detail" xml:space="preserve">
+    <value>获取详细:</value>
+  </data>
+  <data name="Category_建造" xml:space="preserve">
+    <value>建造获得</value>
+  </data>
+  <data name="Category_META" xml:space="preserve">
+    <value>META</value>
+  </data>
+  <data name="Category_其他" xml:space="preserve">
+    <value>其他</value>
+  </data>
+  <data name="Category_科研" xml:space="preserve">
+    <value>科研</value>
+  </data>
+  <data name="Category_勋章支援" xml:space="preserve">
+    <value>勋章支援概率获得</value>
+  </data>
+  <data name="Category_任务奖励" xml:space="preserve">
+    <value>任务奖励</value>
+  </data>
+  <data name="Category_兑换" xml:space="preserve">
+    <value>兑换</value>
+  </data>
+  <data name="Category_商店兑换" xml:space="preserve">
+    <value>商店兑换</value>
+  </data>
+  <data name="Category_打捞" xml:space="preserve">
+    <value>打捞获得</value>
+  </data>
+  <data name="acquire_52" xml:space="preserve">
+    <value>建造</value>
+  </data>
+  <data name="acquire_54" xml:space="preserve">
+    <value>累计 PT 获取</value>
+  </data>
+  <data name="acquire_55" xml:space="preserve">
+    <value>活动赠送</value>
+  </data>
+  <data name="acquire_56" xml:space="preserve">
+    <value>新兵训练任务</value>
+  </data>
+  <data name="acquire_57" xml:space="preserve">
+    <value>收藏奖励</value>
+  </data>
+  <data name="Category_收藏奖励" xml:space="preserve">
+    <value>收藏奖励</value>
+  </data>
+  <data name="acquire_58" xml:space="preserve">
+    <value>初始舰</value>
+  </data>
+  <data name="Category_初始" xml:space="preserve">
+    <value>初始舰</value>
+  </data>
+  <data name="acquire_59" xml:space="preserve">
+    <value>活动内指挥官等级奖励</value>
+  </data>
+  <data name="acquire_60" xml:space="preserve">
+    <value>META商店{0}破碎结晶兑换结晶：{1}</value>
+  </data>
+  <data name="acquire_61" xml:space="preserve">
+    <value>作战档案{0}掉落{1}</value>
+  </data>
+  <data name="acquire_62" xml:space="preserve">
+    <value>打捞</value>
+  </data>
+  <data name="acquire_63" xml:space="preserve">
+    <value>贺年卡可选</value>
+  </data>
+  <data name="acquire_64" xml:space="preserve">
+    <value>邀请函可选</value>
+  </data>
+  <data name="acquire_65" xml:space="preserve">
+    <value>（预留）</value>
+  </data>
+  <data name="Category_活动赠送" xml:space="preserve">
+    <value>活动赠送</value>
+  </data>
+  <data name="acquire_66" xml:space="preserve">
+    <value>下方仅列出常驻掉落点</value>
+  </data>
+  <data name="gear_1" xml:space="preserve">
+    <value>兵装制造</value>
+  </data>
+  <data name="gear_2" xml:space="preserve">
+    <value>{0}活动获取</value>
+  </data>
+  <data name="gear_3" xml:space="preserve">
+    <value>限时建造</value>
+  </data>
+  <data name="gear_4" xml:space="preserve">
+    <value>{0}商店{1} PT 兑换</value>
+  </data>
+  <data name="gear_5" xml:space="preserve">
+    <value>活动任务奖励</value>
+  </data>
+  <data name="gear_custom" xml:space="preserve">
+    <value>自定义文本</value>
+  </data>
+  <data name="ShipName_RemodelSuffix" xml:space="preserve">
+    <value>改</value>
+  </data>
+  <data name="ContextMenu_MarkSubMenu.Text" xml:space="preserve">
+    <value>标记状态</value>
+  </data>
+  <data name="ContextMenuOwnedToggle.Text" xml:space="preserve">
+    <value>已获得</value>
+  </data>
+  <data name="ContextMenuMaxBreak.Text" xml:space="preserve">
+    <value>满破</value>
+  </data>
+  <data name="ContextMenuLevel120.Text" xml:space="preserve">
+    <value>120级</value>
+  </data>
+  <data name="ContextMenuOath.Text" xml:space="preserve">
+    <value>誓约</value>
+  </data>
+  <data name="ContextMenuRemodeled.Text" xml:space="preserve">
+    <value>改造</value>
+  </data>
+  <data name="ContextMenuSpecialGear.Text" xml:space="preserve">
+    <value>专属兵装</value>
+  </data>
+  <data name="ContextMenuDelete.Text" xml:space="preserve">
+    <value>删除舰船</value>
+  </data>
+  <data name="ContextMenuOwnedItem_Add" xml:space="preserve">
+    <value>已获得</value>
+  </data>
+  <data name="ContextMenuOwnedItem_Remove" xml:space="preserve">
+    <value>未获得</value>
+  </data>
+  <data name="ConfirmClear_Title" xml:space="preserve">
+    <value>确认清除</value>
+  </data>
+  <data name="ConfirmClearOwned_Message" xml:space="preserve">
+    <value>标记为未获得将同时清除该舰船的满破、120级、誓约、改造和兵装状态。是否继续？</value>
   </data>
 </root>

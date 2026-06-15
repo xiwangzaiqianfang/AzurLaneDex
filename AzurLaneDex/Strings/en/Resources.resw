@@ -136,7 +136,7 @@
     <value>Attribute Bonus</value>
   </data>
   <data name="NavCamp.Content" xml:space="preserve">
-    <value>Camp Tech</value>
+    <value>Fleet Technology</value>
   </data>
   <data name="Common_Confirm" xml:space="preserve">
     <value>OK</value>
@@ -352,10 +352,10 @@
     <value>Censored name:</value>
   </data>
   <data name="BasicInfo_Faction.Text" xml:space="preserve">
-    <value>Faction:</value>
+    <value>Nationality:</value>
   </data>
   <data name="BasicInfo_ShipClass.Text" xml:space="preserve">
-    <value>Ship Class:</value>
+    <value>Hull:</value>
   </data>
   <data name="Class_DD.Content" xml:space="preserve">
     <value>Destroyer</value>
@@ -366,6 +366,9 @@
   <data name="ShipClass_DD1" xml:space="preserve">
     <value>Destroyer</value>
   </data>
+  <data name="ShipClass_1" xml:space="preserve">
+    <value>Destroyer</value>
+  </data>
   <data name="Class_CL.Content" xml:space="preserve">
     <value>Light Cruiser</value>
   </data>
@@ -373,6 +376,9 @@
     <value>Light Cruiser</value>
   </data>
   <data name="ShipClass_CL1" xml:space="preserve">
+    <value>Light Cruiser</value>
+  </data>
+  <data name="ShipClass_2" xml:space="preserve">
     <value>Light Cruiser</value>
   </data>
   <data name="Class_CA.Content" xml:space="preserve">
@@ -390,6 +396,9 @@
   <data name="ShipClass_BB1" xml:space="preserve">
     <value>Battleship</value>
   </data>
+  <data name="ShipClass_7" xml:space="preserve">
+    <value>Battleship</value>
+  </data>
   <data name="Class_BBV.Content" xml:space="preserve">
     <value>Aviation Battleship</value>
   </data>
@@ -397,6 +406,9 @@
     <value>Aviation Battleship</value>
   </data>
   <data name="ShipClass_BBV1" xml:space="preserve">
+    <value>Aviation Battleship</value>
+  </data>
+  <data name="ShipClass_8" xml:space="preserve">
     <value>Aviation Battleship</value>
   </data>
   <data name="Class_CV.Content" xml:space="preserve">
@@ -408,6 +420,9 @@
   <data name="ShipClass_CV1" xml:space="preserve">
     <value>Aircraft Carrier</value>
   </data>
+  <data name="ShipClass_9" xml:space="preserve">
+    <value>Aircraft Carrier</value>
+  </data>
   <data name="Class_CVL.Content" xml:space="preserve">
     <value>Light Carrier</value>
   </data>
@@ -417,10 +432,16 @@
   <data name="ShipClass_CVL1" xml:space="preserve">
     <value>Light Carrier</value>
   </data>
+  <data name="ShipClass_10" xml:space="preserve">
+    <value>Light Carrier</value>
+  </data>
   <data name="Class_AR.Content" xml:space="preserve">
     <value>Repair Ship</value>
   </data>
   <data name="ShipClass_AR1" xml:space="preserve">
+    <value>Repair Ship</value>
+  </data>
+  <data name="ShipClass_11" xml:space="preserve">
     <value>Repair Ship</value>
   </data>
   <data name="Class_SS.Content" xml:space="preserve">
@@ -432,6 +453,9 @@
   <data name="ShipClass_SS1" xml:space="preserve">
     <value>Submarine</value>
   </data>
+  <data name="ShipClass_12" xml:space="preserve">
+    <value>Submarine</value>
+  </data>
   <data name="Class_SSV.Content" xml:space="preserve">
     <value>Submarine Carrier</value>
   </data>
@@ -439,6 +463,9 @@
     <value>Submarine Carrier</value>
   </data>
   <data name="ShipClass_SSV1" xml:space="preserve">
+    <value>Submarine Carrier</value>
+  </data>
+  <data name="ShipClass_13" xml:space="preserve">
     <value>Submarine Carrier</value>
   </data>
   <data name="Class_AE.Content" xml:space="preserve">
@@ -456,6 +483,9 @@
   <data name="ShipClass_Sail1" xml:space="preserve">
     <value>Sail</value>
   </data>
+  <data name="ShipClass_15" xml:space="preserve">
+    <value>Sail</value>
+  </data>
   <data name="BasicInfo_Rarity.Text" xml:space="preserve">
     <value>Rarity:</value>
   </data>
@@ -465,10 +495,16 @@
   <data name="Rarity_Normal" xml:space="preserve">
     <value>N</value>
   </data>
+  <data name="Rarity_1" xml:space="preserve">
+    <value>N</value>
+  </data>
   <data name="Rarity_R.Content" xml:space="preserve">
     <value>R</value>
   </data>
   <data name="Rarity_Rare" xml:space="preserve">
+    <value>R</value>
+  </data>
+  <data name="Rarity_2" xml:space="preserve">
     <value>R</value>
   </data>
   <data name="Rarity_SR.Content" xml:space="preserve">
@@ -477,16 +513,25 @@
   <data name="Rarity_Elite" xml:space="preserve">
     <value>SR</value>
   </data>
+  <data name="Rarity_3" xml:space="preserve">
+    <value>SR</value>
+  </data>
   <data name="Rarity_SSR.Content" xml:space="preserve">
     <value>SSR</value>
   </data>
   <data name="Rarity_SuperRare" xml:space="preserve">
     <value>SSR</value>
   </data>
+  <data name="Rarity_4" xml:space="preserve">
+    <value>SSR</value>
+  </data>
   <data name="Rarity_UR.Content" xml:space="preserve">
     <value>UR</value>
   </data>
   <data name="Rarity_Legendary" xml:space="preserve">
+    <value>UR</value>
+  </data>
+  <data name="Rarity_5" xml:space="preserve">
     <value>UR</value>
   </data>
   <data name="Category_Normal.Content" xml:space="preserve">
@@ -507,7 +552,7 @@
   <data name="CategoryTag_Research.Text" xml:space="preserve">
     <value>Priority Ship</value>
   </data>
-  <data name="Category_META.Content" xml:space="preserve">
+  <data name="Category_META1.Content" xml:space="preserve">
     <value>META</value>
   </data>
   <data name="CategoryTag_META.Text" xml:space="preserve">
@@ -523,7 +568,7 @@
     <value>Retrofittable:</value>
   </data>
   <data name="BasicInfo_RemodelDate.Text" xml:space="preserve">
-    <value>Retrofit Date:</value>
+    <value>Retro Released:</value>
   </data>
   <data name="Acquisition_Header.Text" xml:space="preserve">
     <value>Acquisition</value>
@@ -531,14 +576,20 @@
   <data name="Acquisition_Main.Text" xml:space="preserve">
     <value>Main Acquisition:</value>
   </data>
-  <data name="Acquisition_Detail.Text" xml:space="preserve">
+  <data name="AcquisitionDetail.Text" xml:space="preserve">
     <value>Details:</value>
   </data>
   <data name="Acquisition_BuildTime.Text" xml:space="preserve">
-    <value>Construction Time:</value>
+    <value>Timer:</value>
   </data>
   <data name="Acquisition_DropLocations.Text" xml:space="preserve">
     <value>Drop Locations:</value>
+  </data>
+  <data name="AcquisitionDropLocations.Text" xml:space="preserve">
+    <value>Drop Locations:</value>
+  </data>
+  <data name="DropLocations" xml:space="preserve">
+    <value>Drop Locations: {0}</value>
   </data>
   <data name="Acquisition_ShopExchange.Text" xml:space="preserve">
     <value>Shop Exchange:</value>
@@ -574,7 +625,7 @@
     <value>Value:</value>
   </data>
   <data name="AttributeBonus_AffectShips.Text" xml:space="preserve">
-    <value>Affected Classes:</value>
+    <value>Affected Hull:</value>
   </data>
   <data name="AttributeBonus_Level120.Text" xml:space="preserve">
     <value>Level 120 Bonus</value>
@@ -583,19 +634,19 @@
     <value>Level 120</value>
   </data>
   <data name="FleetTech_Header.Text" xml:space="preserve">
-    <value>Fleet Tech</value>
+    <value>Fleet Technology</value>
   </data>
   <data name="FleetTech_ObtainPoints.Text" xml:space="preserve">
-    <value>Obtain Points:</value>
+    <value>Collect Points:</value>
   </data>
   <data name="FleetTech_Obtain.Text" xml:space="preserve">
-    <value>Obtain:</value>
+    <value>Collect:</value>
   </data>
   <data name="FleetTech_MaxPoints.Text" xml:space="preserve">
-    <value>Max Breakthrough Points:</value>
+    <value>MLB Points:</value>
   </data>
   <data name="FleetTech_Max.Text" xml:space="preserve">
-    <value>Max Breakthrough:</value>
+    <value>MLB:</value>
   </data>
   <data name="FleetTech_Level120Points.Text" xml:space="preserve">
     <value>Level 120 Points:</value>
@@ -622,10 +673,13 @@
     <value>Attribute Bonus</value>
   </data>
   <data name="AttrBonusPage_FilterLabel.Text" xml:space="preserve">
-    <value>Filter by Class:</value>
+    <value>Filter by Hull:</value>
   </data>
   <data name="ExportImageButton.Content" xml:space="preserve">
     <value>Export as Image</value>
+  </data>
+  <data name="Faction_1" xml:space="preserve">
+    <value>Eagle Union</value>
   </data>
   <data name="Faction_EagleUnion" xml:space="preserve">
     <value>Eagle Union</value>
@@ -636,10 +690,16 @@
   <data name="Faction_RoyalNavy" xml:space="preserve">
     <value>Royal Navy</value>
   </data>
+  <data name="Faction_2" xml:space="preserve">
+    <value>Royal Navy</value>
+  </data>
   <data name="Faction_RN.Content" xml:space="preserve">
     <value>Royal Navy</value>
   </data>
   <data name="Faction_SakuraEmpire" xml:space="preserve">
+    <value>Sakura Empire</value>
+  </data>
+  <data name="Faction_3" xml:space="preserve">
     <value>Sakura Empire</value>
   </data>
   <data name="Faction_IJN.Content" xml:space="preserve">
@@ -648,10 +708,16 @@
   <data name="Faction_IronBlood" xml:space="preserve">
     <value>Iron Blood</value>
   </data>
+  <data name="Faction_4" xml:space="preserve">
+    <value>Iron Blood</value>
+  </data>
   <data name="Faction_KMS.Content" xml:space="preserve">
     <value>Iron Blood</value>
   </data>
   <data name="Faction_DragonEmpery" xml:space="preserve">
+    <value>Dragon Empery</value>
+  </data>
+  <data name="Faction_5" xml:space="preserve">
     <value>Dragon Empery</value>
   </data>
   <data name="Faction_Dragon.Content" xml:space="preserve">
@@ -660,10 +726,16 @@
   <data name="Faction_Sardegna" xml:space="preserve">
     <value>Sardegna Empire</value>
   </data>
+  <data name="Faction_6" xml:space="preserve">
+    <value>Sardegna Empire</value>
+  </data>
   <data name="Faction_Sardegna1.Content" xml:space="preserve">
     <value>Sardegna Empire</value>
   </data>
   <data name="Faction_NorthernUnion" xml:space="preserve">
+    <value>Northern Union</value>
+  </data>
+  <data name="Faction_7" xml:space="preserve">
     <value>Northern Union</value>
   </data>
   <data name="Faction_SN.Content" xml:space="preserve">
@@ -672,10 +744,16 @@
   <data name="Faction_FreeFrench" xml:space="preserve">
     <value>Free French</value>
   </data>
+  <data name="Faction_8" xml:space="preserve">
+    <value>Free French</value>
+  </data>
   <data name="Faction_FFNF.Content" xml:space="preserve">
     <value>Free French</value>
   </data>
   <data name="Faction_Vichya" xml:space="preserve">
+    <value>Vichya Dominion</value>
+  </data>
+  <data name="Faction_9" xml:space="preserve">
     <value>Vichya Dominion</value>
   </data>
   <data name="Faction_MNF.Content" xml:space="preserve">
@@ -684,10 +762,16 @@
   <data name="Faction_Tulip" xml:space="preserve">
     <value>Tulip Kingdom</value>
   </data>
+  <data name="Faction_10" xml:space="preserve">
+    <value>Tulip Kingdom</value>
+  </data>
   <data name="Faction_Tulip1.Content" xml:space="preserve">
     <value>Tulip Kingdom</value>
   </data>
   <data name="Faction_Tempesta" xml:space="preserve">
+    <value>Tempesta</value>
+  </data>
+  <data name="Faction_11" xml:space="preserve">
     <value>Tempesta</value>
   </data>
   <data name="Faction_Tempesta1.Content" xml:space="preserve">
@@ -696,10 +780,16 @@
   <data name="Faction_Other" xml:space="preserve">
     <value>Other</value>
   </data>
+  <data name="Faction_12" xml:space="preserve">
+    <value>Other</value>
+  </data>
   <data name="Faction_Other1.Content" xml:space="preserve">
     <value>Other</value>
   </data>
   <data name="Faction_Collab_Nep" xml:space="preserve">
+    <value>Hyperdimension Neptunia</value>
+  </data>
+  <data name="Faction_100" xml:space="preserve">
     <value>Hyperdimension Neptunia</value>
   </data>
   <data name="FactionCollab_Nep.Content" xml:space="preserve">
@@ -708,10 +798,16 @@
   <data name="Faction_Collab_Bilibili" xml:space="preserve">
     <value>Bilibili</value>
   </data>
+  <data name="Faction_101" xml:space="preserve">
+    <value>Bilibili</value>
+  </data>
   <data name="FactionCollab_Bilibili.Content" xml:space="preserve">
     <value>Bilibili</value>
   </data>
   <data name="Faction_Collab_Utawarerumono" xml:space="preserve">
+    <value>Utawarerumono</value>
+  </data>
+  <data name="Faction_102" xml:space="preserve">
     <value>Utawarerumono</value>
   </data>
   <data name="FactionCollab_Utawarerumono.Content" xml:space="preserve">
@@ -720,10 +816,16 @@
   <data name="Faction_Collab_KizunaAI" xml:space="preserve">
     <value>Kizuna AI</value>
   </data>
+  <data name="Faction_103" xml:space="preserve">
+    <value>Kizuna AI</value>
+  </data>
   <data name="FactionCollab_KizunaAI.Content" xml:space="preserve">
     <value>Kizuna AI</value>
   </data>
   <data name="Faction_Collab_Hololive" xml:space="preserve">
+    <value>Hololive</value>
+  </data>
+  <data name="Faction_104" xml:space="preserve">
     <value>Hololive</value>
   </data>
   <data name="FactionCollab_Hololive.Content" xml:space="preserve">
@@ -732,10 +834,16 @@
   <data name="Faction_Collab_DoAXVV" xml:space="preserve">
     <value>Dead or Alive Xtreme Venus Vacation</value>
   </data>
+  <data name="Faction_105" xml:space="preserve">
+    <value>Dead or Alive Xtreme Venus Vacation</value>
+  </data>
   <data name="FactionCollab_DoAXVV.Content" xml:space="preserve">
     <value>Dead or Alive Xtreme Venus Vacation</value>
   </data>
   <data name="Faction_Collab_Idolmaster" xml:space="preserve">
+    <value>THE iDOLM@STER</value>
+  </data>
+  <data name="Faction_106" xml:space="preserve">
     <value>THE iDOLM@STER</value>
   </data>
   <data name="FactionCollab_Idolmaster.Content" xml:space="preserve">
@@ -744,10 +852,16 @@
   <data name="Faction_Collab_SSSS" xml:space="preserve">
     <value>SSSS</value>
   </data>
+  <data name="Faction_107" xml:space="preserve">
+    <value>SSSS</value>
+  </data>
   <data name="FactionCollab_SSSS.Content" xml:space="preserve">
     <value>SSSS</value>
   </data>
   <data name="Faction_Collab_Ryza" xml:space="preserve">
+    <value>Atelier Ryza</value>
+  </data>
+  <data name="Faction_108" xml:space="preserve">
     <value>Atelier Ryza</value>
   </data>
   <data name="FactionCollab_Ryza.Content" xml:space="preserve">
@@ -756,10 +870,16 @@
   <data name="Faction_Collab_Senran" xml:space="preserve">
     <value>Senran Kagura</value>
   </data>
+  <data name="Faction_109" xml:space="preserve">
+    <value>Senran Kagura</value>
+  </data>
   <data name="FactionCollab_Senran.Content" xml:space="preserve">
     <value>Senran Kagura</value>
   </data>
   <data name="Faction_Collab_Toloveru" xml:space="preserve">
+    <value>To LOVE-Ru</value>
+  </data>
+  <data name="Faction_110" xml:space="preserve">
     <value>To LOVE-Ru</value>
   </data>
   <data name="FactionCollab_Toloveru.Content" xml:space="preserve">
@@ -768,10 +888,16 @@
   <data name="Faction_Collab_BRS" xml:space="preserve">
     <value>Black★Rock Shooter</value>
   </data>
+  <data name="Faction_111" xml:space="preserve">
+    <value>Black★Rock Shooter</value>
+  </data>
   <data name="FactionCollab_BRS.Content" xml:space="preserve">
     <value>Black★Rock Shooter</value>
   </data>
   <data name="Faction_Collab_Danmachi" xml:space="preserve">
+    <value>DanMachi</value>
+  </data>
+  <data name="Faction_112" xml:space="preserve">
     <value>DanMachi</value>
   </data>
   <data name="FactionCollab_Danmachi.Content" xml:space="preserve">
@@ -780,16 +906,25 @@
   <data name="Faction_Collab_Yumia" xml:space="preserve">
     <value>Atelier Yumia</value>
   </data>
+  <data name="Faction_113" xml:space="preserve">
+    <value>Atelier Yumia</value>
+  </data>
   <data name="FactionCollab_Yumia.Content" xml:space="preserve">
     <value>Atelier Yumia</value>
   </data>
   <data name="Faction_Collab_DAL" xml:space="preserve">
     <value>Date A Live V</value>
   </data>
+  <data name="Faction_114" xml:space="preserve">
+    <value>Date A Live V</value>
+  </data>
   <data name="FactionCollab_DAL.Content" xml:space="preserve">
     <value>Date A Live V</value>
   </data>
   <data name="Faction_Meta_Core" xml:space="preserve">
+    <value>Ash Core</value>
+  </data>
+  <data name="Faction_201" xml:space="preserve">
     <value>Ash Core</value>
   </data>
   <data name="FactionMeta_Core.Content" xml:space="preserve">
@@ -801,10 +936,16 @@
   <data name="Faction_Meta_Reason" xml:space="preserve">
     <value>Principle of Structure</value>
   </data>
+  <data name="Faction_202" xml:space="preserve">
+    <value>Principle of Structure</value>
+  </data>
   <data name="FactionMeta_Reason.Content" xml:space="preserve">
     <value>Principle of Structure</value>
   </data>
   <data name="Faction_Meta_Light" xml:space="preserve">
+    <value>Flame of Pursuit</value>
+  </data>
+  <data name="Faction_203" xml:space="preserve">
     <value>Flame of Pursuit</value>
   </data>
   <data name="FactionMeta_Light.Content" xml:space="preserve">
@@ -813,10 +954,16 @@
   <data name="Faction_Meta_Fire" xml:space="preserve">
     <value>Flickering Fire</value>
   </data>
+  <data name="Faction_204" xml:space="preserve">
+    <value>Flickering Fire</value>
+  </data>
   <data name="FactionMeta_Fire.Content" xml:space="preserve">
     <value>Flickering Fire</value>
   </data>
   <data name="Faction_Meta_Flame" xml:space="preserve">
+    <value>Flame of Destruction</value>
+  </data>
+  <data name="Faction_200" xml:space="preserve">
     <value>Flame of Destruction</value>
   </data>
   <data name="FactionMeta_Flame.Content" xml:space="preserve">
@@ -831,22 +978,34 @@
   <data name="Rarity_Decisive1" xml:space="preserve">
     <value>Decisive</value>
   </data>
+  <data name="Rarity_6" xml:space="preserve">
+    <value>Decisive</value>
+  </data>
   <data name="Rarity_Ultimate.Content" xml:space="preserve">
     <value>Ultimate</value>
   </data>
   <data name="Rarity_Ultimate1" xml:space="preserve">
     <value>Ultimate</value>
   </data>
+  <data name="Rarity_7" xml:space="preserve">
+    <value>Ultimate</value>
+  </data>
   <data name="FilterTitle_Faction.Header" xml:space="preserve">
-    <value>Faction</value>
+    <value>Nationality</value>
   </data>
   <data name="FilterTitle_Class.Header" xml:space="preserve">
-    <value>Ship Class</value>
+    <value>Hull</value>
   </data>
   <data name="ShipClass_BC1" xml:space="preserve">
     <value>Battlecruiser</value>
   </data>
+  <data name="ShipClass_6" xml:space="preserve">
+    <value>Battlecruiser</value>
+  </data>
   <data name="ShipClass_BM1" xml:space="preserve">
+    <value>Monitor</value>
+  </data>
+  <data name="ShipClass_5" xml:space="preserve">
     <value>Monitor</value>
   </data>
   <data name="ShipClass_CB.Content" xml:space="preserve">
@@ -855,7 +1014,13 @@
   <data name="ShipClass_CB1" xml:space="preserve">
     <value>Large Cruiser</value>
   </data>
+  <data name="ShipClass_4" xml:space="preserve">
+    <value>Large Cruiser</value>
+  </data>
   <data name="ShipClass_CA1" xml:space="preserve">
+    <value>Heavy Cruiser</value>
+  </data>
+  <data name="ShipClass_3" xml:space="preserve">
     <value>Heavy Cruiser</value>
   </data>
   <data name="BatchOperationButton.Label" xml:space="preserve">
@@ -972,10 +1137,16 @@
   <data name="Attr1_HP" xml:space="preserve">
     <value>Hit Point</value>
   </data>
+  <data name="Attr_1" xml:space="preserve">
+    <value>Hit Point</value>
+  </data>
   <data name="Attr_HP.Content" xml:space="preserve">
     <value>Hit Point</value>
   </data>
   <data name="Attr1_FP" xml:space="preserve">
+    <value>Fire Power</value>
+  </data>
+  <data name="Attr_2" xml:space="preserve">
     <value>Fire Power</value>
   </data>
   <data name="Attr_FP.Content" xml:space="preserve">
@@ -984,10 +1155,16 @@
   <data name="Attr1_TRP" xml:space="preserve">
     <value>Torpedo</value>
   </data>
+  <data name="Attr_3" xml:space="preserve">
+    <value>Torpedo</value>
+  </data>
   <data name="Attr_TRP.Content" xml:space="preserve">
     <value>Torpedo</value>
   </data>
   <data name="Attr1_AVI" xml:space="preserve">
+    <value>Aviation</value>
+  </data>
+  <data name="Attr_5" xml:space="preserve">
     <value>Aviation</value>
   </data>
   <data name="Attr_AVI.Content" xml:space="preserve">
@@ -996,10 +1173,16 @@
   <data name="Attr1_RLD" xml:space="preserve">
     <value>Reload</value>
   </data>
+  <data name="Attr_7" xml:space="preserve">
+    <value>Reload</value>
+  </data>
   <data name="Attr_RLD.Content" xml:space="preserve">
     <value>Reload</value>
   </data>
   <data name="Attr1_EVA" xml:space="preserve">
+    <value>Evasion</value>
+  </data>
+  <data name="Attr_8" xml:space="preserve">
     <value>Evasion</value>
   </data>
   <data name="Attr_EVA.Content" xml:space="preserve">
@@ -1008,10 +1191,16 @@
   <data name="Attr1_LCK" xml:space="preserve">
     <value>Luck</value>
   </data>
+  <data name="Attr_101" xml:space="preserve">
+    <value>Luck</value>
+  </data>
   <data name="Attr_LCK.Content" xml:space="preserve">
     <value>Luck</value>
   </data>
   <data name="Attr1_SPD" xml:space="preserve">
+    <value>Speed</value>
+  </data>
+  <data name="Attr_100" xml:space="preserve">
     <value>Speed</value>
   </data>
   <data name="Attr_SPD.Content" xml:space="preserve">
@@ -1020,10 +1209,16 @@
   <data name="Attr1_Cost" xml:space="preserve">
     <value>Oil Cost</value>
   </data>
+  <data name="Attr_102" xml:space="preserve">
+    <value>Oil Cost</value>
+  </data>
   <data name="Attr_Cost.Content" xml:space="preserve">
     <value>Oil Cost</value>
   </data>
   <data name="Attr1_ASW" xml:space="preserve">
+    <value>Anti-Submarine Warefare</value>
+  </data>
+  <data name="Attr_9" xml:space="preserve">
     <value>Anti-Submarine Warefare</value>
   </data>
   <data name="Attr_ASW.Content" xml:space="preserve">
@@ -1032,16 +1227,25 @@
   <data name="Attr1_Armor" xml:space="preserve">
     <value>Armor</value>
   </data>
+  <data name="Attr_103" xml:space="preserve">
+    <value>Armor</value>
+  </data>
   <data name="Attr_Armor.Content" xml:space="preserve">
     <value>Armor</value>
   </data>
   <data name="Attr1_ACC" xml:space="preserve">
     <value>Accuracy</value>
   </data>
+  <data name="Attr_6" xml:space="preserve">
+    <value>Accuracy</value>
+  </data>
   <data name="Attr_ACC.Content" xml:space="preserve">
     <value>Accuracy</value>
   </data>
   <data name="Attr1_AA" xml:space="preserve">
+    <value>Anti-Air</value>
+  </data>
+  <data name="Attr_4" xml:space="preserve">
     <value>Anti-Air</value>
   </data>
   <data name="Attr_AA.Content" xml:space="preserve">
@@ -1060,13 +1264,16 @@
     <value>Semicolon-separated</value>
   </data>
   <data name="CampTechPage_Title.Text" xml:space="preserve">
-    <value>Camp Tech Points</value>
+    <value>Fleet Technology Points</value>
   </data>
   <data name="CampTechPage_Obtain.Text" xml:space="preserve">
-    <value>Obtain</value>
+    <value>Collect</value>
   </data>
   <data name="CampTechPage_Max.Text" xml:space="preserve">
-    <value>Max Break</value>
+    <value>MLB</value>
+  </data>
+  <data name="MaxBreak" xml:space="preserve">
+    <value>MLB</value>
   </data>
   <data name="CampTechPage_Level120.Text" xml:space="preserve">
     <value>Level 120</value>
@@ -1270,7 +1477,7 @@
     <value>Sort by Rarity</value>
   </data>
   <data name="MainPage_SortCombo_Item4.Content" xml:space="preserve">
-    <value>Sort by Retrofit Date</value>
+    <value>Sort by Retro Released Date</value>
   </data>
   <data name="MainPage_SortCombo_Item11.Content" xml:space="preserve">
     <value>Sort by Exclusive Gear Obtained</value>
@@ -1283,6 +1490,9 @@
   </data>
   <data name="MainPage_SortCombo_Item8.Content" xml:space="preserve">
     <value>Sort by Breakthrough</value>
+  </data>
+  <data name="BatchOp_BreakthroughSub" xml:space="preserve">
+    <value>Breakthrough</value>
   </data>
   <data name="MainPage_SortCombo_Item7.Content" xml:space="preserve">
     <value>Sort by Retrofit</value>
@@ -1318,7 +1528,7 @@
     <value>Lv120</value>
   </data>
   <data name="MainPage_Header_Remodel.Text" xml:space="preserve">
-    <value>RT</value>
+    <value>Retro</value>
   </data>
   <data name="MainPage_Header_SpecialGear.Text" xml:space="preserve">
     <value>EG</value>
@@ -1468,10 +1678,10 @@
     <value>Ship name cannot be empty</value>
   </data>
   <data name="PleaseSelectFaction_Message" xml:space="preserve">
-    <value>Please select a faction</value>
+    <value>Please select a nationality</value>
   </data>
   <data name="PleaseSelectShipClass_Message" xml:space="preserve">
-    <value>Please select ship type</value>
+    <value>Please select hull</value>
   </data>
   <data name="PleaseSelectRarity_Message" xml:space="preserve">
     <value>Please select rarity</value>
@@ -1488,6 +1698,9 @@
   <data name="ShipClass_AE1" xml:space="preserve">
     <value>Transport</value>
   </data>
+  <data name="ShipClass_14" xml:space="preserve">
+    <value>Transport</value>
+  </data>
   <data name="ShipClass_CA.Content" xml:space="preserve">
     <value>Heavy Cruiser</value>
   </data>
@@ -1498,7 +1711,7 @@
     <value>Monitor</value>
   </data>
   <data name="ShipClass_All" xml:space="preserve">
-    <value>All Ship Types</value>
+    <value>All Hull</value>
   </data>
   <data name="Picture_Save_Message" xml:space="preserve">
     <value>Image saved to {0}</value>
@@ -1820,5 +2033,302 @@
   </data>
   <data name="FirstRunDialog.CloseButtonText" xml:space="preserve">
     <value>Exit</value>
+  </data>
+  <data name="Attr_0" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="acquire_1" xml:space="preserve">
+    <value>Obtained from salvage</value>
+  </data>
+  <data name="acquire_2" xml:space="preserve">
+    <value>Normal drop location</value>
+  </data>
+  <data name="acquire_3" xml:space="preserve">
+    <value>Archive drop location</value>
+  </data>
+  <data name="acquire_4" xml:space="preserve">
+    <value>Event drop location</value>
+  </data>
+  <data name="acquire_5" xml:space="preserve">
+    <value>Salvage only</value>
+  </data>
+  <data name="acquire_6" xml:space="preserve">
+    <value>Obtained from construction</value>
+  </data>
+  <data name="acquire_7" xml:space="preserve">
+    <value>Light ship construction pool</value>
+  </data>
+  <data name="acquire_8" xml:space="preserve">
+    <value>Heavy ship construction pool</value>
+  </data>
+  <data name="acquire_9" xml:space="preserve">
+    <value>Special ship construction pool</value>
+  </data>
+  <data name="acquire_10" xml:space="preserve">
+    <value>Time-limited construction</value>
+  </data>
+  <data name="acquire_11" xml:space="preserve">
+    <value>Cannot be constructed</value>
+  </data>
+  <data name="acquire_12" xml:space="preserve">
+    <value>Obtained from Medal Support (probability)</value>
+  </data>
+  <data name="acquire_13" xml:space="preserve">
+    <value>Store exchange</value>
+  </data>
+  <data name="acquire_14" xml:space="preserve">
+    <value>Exchange in Fleet Store for {0} Fleet Coins</value>
+  </data>
+  <data name="acquire_15" xml:space="preserve">
+    <value>Exchange in Supply Shop for {0} Merit</value>
+  </data>
+  <data name="acquire_16" xml:space="preserve">
+    <value>Exchange in META Shop for {0} Fractured Crystals</value>
+  </data>
+  <data name="acquire_17" xml:space="preserve">
+    <value>Exchange in Core Monthly Shop for {0} Core Data</value>
+  </data>
+  <data name="acquire_18" xml:space="preserve">
+    <value>Exchange in Medal Shop for {0} Medals</value>
+  </data>
+  <data name="acquire_19" xml:space="preserve">
+    <value>Exchange in Prototype Shop for 4000 Special Prototype Cores</value>
+  </data>
+  <data name="acquire_20" xml:space="preserve">
+    <value>Exchange in {0} event shop for {1} {2}</value>
+  </data>
+  <data name="acquire_21" xml:space="preserve">
+    <value>Obtained by purchasing {0} pack</value>
+  </data>
+  <data name="acquire_22" xml:space="preserve">
+    <value>Obtained from Research {0}</value>
+  </data>
+  <data name="acquire_23" xml:space="preserve">
+    <value>Exchange in Combat Supply</value>
+  </data>
+  <data name="acquire_24" xml:space="preserve">
+    <value>Exchange</value>
+  </data>
+  <data name="acquire_25" xml:space="preserve">
+    <value>Available from "New Year's Card ({0}{1})" ({2})</value>
+  </data>
+  <data name="acquire_26" xml:space="preserve">
+    <value>Available from New Year's Card ({0})</value>
+  </data>
+  <data name="acquire_27" xml:space="preserve">
+    <value>Available from {0}th Anniversary Invitation</value>
+  </data>
+  <data name="acquire_28" xml:space="preserve">
+    <value>Available from {0} Year Anniversary Celebration Invitation</value>
+  </data>
+  <data name="acquire_29" xml:space="preserve">
+    <value>Available from {0} Year Banquet Invitation</value>
+  </data>
+  <data name="acquire_30" xml:space="preserve">
+    <value>Holy Night's Gift</value>
+  </data>
+  <data name="acquire_31" xml:space="preserve">
+    <value>Available from "{0}" character selection ticket</value>
+  </data>
+  <data name="acquire_32" xml:space="preserve">
+    <value>{0}th Celebration Invitation</value>
+  </data>
+  <data name="acquire_33" xml:space="preserve">
+    <value>Wish Card</value>
+  </data>
+  <data name="acquire_34" xml:space="preserve">
+    <value>{0}/{1} New Commander · New Server Launch Celebration Event - New Server Celebration PT Mission</value>
+  </data>
+  <data name="acquire_35" xml:space="preserve">
+    <value>META Beacon Archive Beacon Analysis</value>
+  </data>
+  <data name="acquire_36" xml:space="preserve">
+    <value>META Lab Information Synchronization Analysis</value>
+  </data>
+  <data name="acquire_37" xml:space="preserve">
+    <value>World Tour Reward</value>
+  </data>
+  <data name="acquire_38" xml:space="preserve">
+    <value>Obtain by accumulating PT in large EX events featuring UR ships</value>
+  </data>
+  <data name="acquire_39" xml:space="preserve">
+    <value>Bulins Support Plan</value>
+  </data>
+  <data name="acquire_40" xml:space="preserve">
+    <value>Only normal drop points are listed below</value>
+  </data>
+  <data name="acquire_41" xml:space="preserve">
+    <value>Daily/Weekly Mission Rewards</value>
+  </data>
+  <data name="acquire_42" xml:space="preserve">
+    <value>Monthly Login Reward</value>
+  </data>
+  <data name="acquire_43" xml:space="preserve">
+    <value>Event Mission Rewards</value>
+  </data>
+  <data name="acquire_44" xml:space="preserve">
+    <value>Main Story Normal Stage 3-Star Reward</value>
+  </data>
+  <data name="acquire_45" xml:space="preserve">
+    <value>Large EX and Medium SP Event Stage 3-Star Reward</value>
+  </data>
+  <data name="acquire_46" xml:space="preserve">
+    <value>Operation Archive {0}: {1}</value>
+  </data>
+  <data name="acquire_47" xml:space="preserve">
+    <value>Obtained by clearing {0} {1} 60 times in Operation Archive</value>
+  </data>
+  <data name="acquire_48" xml:space="preserve">
+    <value>Obtain by accumulating 1000 affinity points as a temporary NPC in the {0} (and {1}) event(s)</value>
+  </data>
+  <data name="acquire_49" xml:space="preserve">
+    <value>Obtain by logging in {1} days during the limited-time event {0}</value>
+  </data>
+  <data name="acquire_50" xml:space="preserve">
+    <value>Cannot be salvaged</value>
+  </data>
+  <data name="acquire_51" xml:space="preserve">
+    <value>Cannot be exchanged</value>
+  </data>
+  <data name="acquire_custom" xml:space="preserve">
+    <value>Other: Custom Text</value>
+  </data>
+  <data name="Acquisition_Detail" xml:space="preserve">
+    <value>Get details:</value>
+  </data>
+  <data name="Category_建造" xml:space="preserve">
+    <value>Obtained from construction</value>
+  </data>
+  <data name="Category_META" xml:space="preserve">
+    <value>META</value>
+  </data>
+  <data name="Category_其他" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="Category_科研" xml:space="preserve">
+    <value>Research</value>
+  </data>
+  <data name="Category_勋章支援" xml:space="preserve">
+    <value>Obtained from Medal Support (probability)</value>
+  </data>
+  <data name="Category_任务奖励" xml:space="preserve">
+    <value>Mission Reward</value>
+  </data>
+  <data name="Category_兑换" xml:space="preserve">
+    <value>Exchange</value>
+  </data>
+  <data name="Category_商店兑换" xml:space="preserve">
+    <value>Store exchange</value>
+  </data>
+  <data name="Category_打捞" xml:space="preserve">
+    <value>Obtained from salvage</value>
+  </data>
+  <data name="acquire_52" xml:space="preserve">
+    <value>Construction</value>
+  </data>
+  <data name="acquire_54" xml:space="preserve">
+    <value>Cumulative PT Reward</value>
+  </data>
+  <data name="acquire_55" xml:space="preserve">
+    <value>Event Gift</value>
+  </data>
+  <data name="acquire_56" xml:space="preserve">
+    <value>Cadet Training Mission</value>
+  </data>
+  <data name="acquire_57" xml:space="preserve">
+    <value>Collection Reward</value>
+  </data>
+  <data name="Category_收藏奖励" xml:space="preserve">
+    <value>Collection Reward</value>
+  </data>
+  <data name="acquire_58" xml:space="preserve">
+    <value>Starter Ship</value>
+  </data>
+  <data name="Category_初始" xml:space="preserve">
+    <value>Starter Ship</value>
+  </data>
+  <data name="acquire_59" xml:space="preserve">
+    <value>In-event Commander Level Reward</value>
+  </data>
+  <data name="acquire_60" xml:space="preserve">
+    <value>META Shop {0} Fractured Crystal Exchange → Crystal: {1}</value>
+  </data>
+  <data name="acquire_61" xml:space="preserve">
+    <value>War Archive {0} Drop {1}</value>
+  </data>
+  <data name="acquire_62" xml:space="preserve">
+    <value>Salvage</value>
+  </data>
+  <data name="acquire_63" xml:space="preserve">
+    <value>New Year's Card Option</value>
+  </data>
+  <data name="acquire_64" xml:space="preserve">
+    <value>Invitation Option</value>
+  </data>
+  <data name="acquire_65" xml:space="preserve">
+    <value>（Reserved）</value>
+  </data>
+  <data name="Category_活动赠送" xml:space="preserve">
+    <value>Event Giveaway</value>
+  </data>
+  <data name="acquire_66" xml:space="preserve">
+    <value>Permanent drop locations are listed below</value>
+  </data>
+  <data name="gear_1" xml:space="preserve">
+    <value>Equipment Crafting</value>
+  </data>
+  <data name="gear_2" xml:space="preserve">
+    <value>Obtained from {0} event</value>
+  </data>
+  <data name="gear_3" xml:space="preserve">
+    <value>Time-limited Construction</value>
+  </data>
+  <data name="gear_4" xml:space="preserve">
+    <value>Exchange {1} PT at {0} shop</value>
+  </data>
+  <data name="gear_5" xml:space="preserve">
+    <value>Event Mission Rewards</value>
+  </data>
+  <data name="gear_custom" xml:space="preserve">
+    <value>Custom Text</value>
+  </data>
+  <data name="ShipName_RemodelSuffix" xml:space="preserve">
+    <value> Retro</value>
+  </data>
+  <data name="ContextMenu_MarkSubMenu.Text" xml:space="preserve">
+    <value>Mark Status</value>
+  </data>
+  <data name="ContextMenuOwnedToggle.Text" xml:space="preserve">
+    <value>Owned</value>
+  </data>
+  <data name="ContextMenuMaxBreak.Text" xml:space="preserve">
+    <value>Max Limit Break</value>
+  </data>
+  <data name="ContextMenuLevel120.Text" xml:space="preserve">
+    <value>Level 120</value>
+  </data>
+  <data name="ContextMenuOath.Text" xml:space="preserve">
+    <value>Oathed</value>
+  </data>
+  <data name="ContextMenuRemodeled.Text" xml:space="preserve">
+    <value>Retrofit</value>
+  </data>
+  <data name="ContextMenuSpecialGear.Text" xml:space="preserve">
+    <value>Special Gear</value>
+  </data>
+  <data name="ContextMenuDelete.Text" xml:space="preserve">
+    <value>Delete Ship</value>
+  </data>
+  <data name="ContextMenuOwnedItem_Add" xml:space="preserve">
+    <value>Owned</value>
+  </data>
+  <data name="ContextMenuOwnedItem_Remove" xml:space="preserve">
+    <value>Not Owned</value>
+  </data>
+  <data name="ConfirmClear_Title" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ConfirmClearOwned_Message" xml:space="preserve">
+    <value />
   </data>
 </root>

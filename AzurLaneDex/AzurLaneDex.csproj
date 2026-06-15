@@ -17,6 +17,7 @@
     <Content Include="Assets\**" />
     <None Remove="AzurLaneDex.pfx" />
     <None Remove="MainWindow.xaml" />
+    <None Remove="Models\StaticData_bak" />
     <None Remove="Strings\Resources_en.txt" />
     <None Remove="Strings\Resources_ja.txt" />
     <None Remove="Strings\Resources_zh-Hans.txt" />
@@ -24,6 +25,7 @@
     <None Remove="Views\AccountBackupPage.xaml" />
     <None Remove="Views\AccountLoginDialog.xaml" />
     <None Remove="Views\AccountPage.xaml" />
+    <None Remove="Views\AcquireEntryControl.xaml" />
     <None Remove="Views\AddShipDialog.xaml" />
     <None Remove="Views\FirstRunDialog.xaml" />
     <None Remove="Views\HelpPage.xaml" />
@@ -87,6 +89,9 @@
     <Page Update="Views\AccountBackupPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Update="Views\AcquireEntryControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <None Update="Views\AttrBonusPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -135,6 +140,7 @@
   <ItemGroup>
     <Folder Include="BuiltinData\" />
     <Folder Include="Release\" />
+    <Folder Include="Views\Controls\" />
   </ItemGroup>
 
   <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">

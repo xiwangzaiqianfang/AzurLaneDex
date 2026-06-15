@@ -38,10 +38,14 @@ namespace AzurLaneDex
 
             this.UnhandledException += (sender, e) =>
             {
+                System.Diagnostics.Debug.WriteLine($"Unhandled Exception: {e.Exception}");
+                System.Diagnostics.Debug.WriteLine($"Message: {e.Exception.Message}");
+                System.Diagnostics.Debug.WriteLine($"Stack Trace: {e.Exception.StackTrace}");
                 var ex = e.Exception;
                 System.Diagnostics.Debug.WriteLine("=== 未处理异常 ===");
                 while (ex != null)
                 {
+                    System.Diagnostics.Debug.WriteLine($"Inner Exception: {e.Exception.InnerException}");
                     System.Diagnostics.Debug.WriteLine($"Type: {ex.GetType()}");
                     System.Diagnostics.Debug.WriteLine($"Message: {ex.Message}");
                     System.Diagnostics.Debug.WriteLine($"StackTrace: {ex.StackTrace}");

@@ -15,15 +15,38 @@ namespace AzurLaneDex.Converters
             => throw new NotImplementedException();
     }
 
+    public class BreakthroughToDisplayConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            if (value is int breakthrough)
+            {
+                // 满破显示实心星
+                if (breakthrough >= 3)
+                    return "⭐";
+                else
+                    return breakthrough.ToString();
+            }
+            return "0";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    /*
     public class BoolToBreakthroughTextConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            return (value is bool b && b) ? "满破" : "";
+            return (value is bool b && b) ? "⭐" : "";
         }
         public object ConvertBack(object value, Type targetType, object parameter, string language)
             => throw new NotImplementedException();
     }
+    */
 
     public class BoolToStarConverter : IValueConverter
     {

@@ -219,7 +219,7 @@ namespace AzurLaneDex.Views
             var list = new List<ShipStatic>();
             foreach (var old in array.EnumerateArray())
             {
-                var newShip = ShipManager.MigrateSingleShip(old);
+                var newShip = ShipManager.MigrateSingleShipManual(old);
                 list.Add(newShip);
             }
             return list;
