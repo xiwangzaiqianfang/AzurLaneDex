@@ -237,54 +237,106 @@ public class ShipManager
     public void Load()
     {
         // 1. 读取静态文件
-        if (!File.Exists(_staticPath)) return;
-        string rawJson = File.ReadAllText(_staticPath);
-        System.Diagnostics.Debug.WriteLine($"Load started, static path: {_staticPath}");
         if (!File.Exists(_staticPath))
         {
-            System.Diagnostics.Debug.WriteLine("Static file does not exist!");
+            System.Diagnostics.Debug.WriteLine($"静态文件不存在：{_staticPath}");
             return;
         }
+
+        string rawJson = File.ReadAllText(_staticPath);
+        System.Diagnostics.Debug.WriteLine($"Load started, static path: {_staticPath}");
         System.Diagnostics.Debug.WriteLine($"JSON length: {rawJson.Length}");
-        using var doc = JsonDocument.Parse(rawJson);
-        var root = doc.RootElement;
 
-        Version = root.TryGetProperty("version", out var ver) ? ver.GetString() ?? "0.0" : "0.0";
-
-        // 检查是否需要迁移
-        bool needMigration = false;
-        if (root.TryGetProperty("ships", out var shipsArray) && shipsArray.GetArrayLength() > 0)
+        // 初步解析版本号和检查是否需要迁移（此部分不依赖完整反序列化，可以保留）
+        using (var doc = JsonDocument.Parse(rawJson))
         {
-            var firstShip = shipsArray[0];
-            needMigration = !firstShip.TryGetProperty("obtain_bonus_attr", out _);
-        }
+            var root = doc.RootElement;
+            Version = root.TryGetProperty("version", out var ver) ? ver.GetString() ?? "0.0" : "0.0";
 
-        if (needMigration)
-        {
-            MigrateStaticFile(rawJson);
-            rawJson = File.ReadAllText(_staticPath);
-        }
-
-        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-        var staticData = JsonSerializer.Deserialize<StaticData>(rawJson, options);
-        if (staticData?.Ships != null)
-        {
-            var testShip = staticData.Ships.FirstOrDefault(s => s.Id == 20001);
-            if (testShip != null)
+            // 检查是否需要迁移（旧格式字段不存在）
+            bool needMigration = false;
+            if (root.TryGetProperty("ships", out var shipsArray) && shipsArray.GetArrayLength() > 0)
             {
-                System.Diagnostics.Debug.WriteLine($"Test Ship: {testShip.Name}, Category = {testShip.Category}");
+                var firstShip = shipsArray[0];
+                needMigration = !firstShip.TryGetProperty("obtain_bonus_attr", out _);
+            }
+
+            if (needMigration)
+            {
+                MigrateStaticFile(rawJson);
+                rawJson = File.ReadAllText(_staticPath);
             }
         }
+
+        // 2. 完整反序列化（增加异常处理）
+        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        StaticData? staticData = null;
+
+        try
+        {
+            staticData = JsonSerializer.Deserialize<StaticData>(rawJson, options);
+            if (staticData?.Ships == null)
+            {
+                throw new JsonException("反序列化结果 Ships 为空");
+            }
+        }
+        catch (JsonException jsonEx)
+        {
+            LogService.Error($"静态文件 JSON 解析失败，尝试从备份恢复", "ShipManager", jsonEx);
+            // 尝试从 .bak 文件恢复
+            string bakPath = _staticPath + ".bak";
+            if (File.Exists(bakPath))
+            {
+                try
+                {
+                    string bakJson = File.ReadAllText(bakPath);
+                    var backupData = JsonSerializer.Deserialize<StaticData>(bakJson, options);
+                    if (backupData?.Ships != null)
+                    {
+                        // 恢复成功，覆盖原文件
+                        File.Copy(bakPath, _staticPath, true);
+                        staticData = backupData;
+                        LogService.Info("已从备份文件恢复静态数据", "ShipManager");
+                    }
+                    else
+                    {
+                        throw new Exception("备份文件也无效");
+                    }
+                }
+                catch (Exception bakEx)
+                {
+                    LogService.Error($"备份文件恢复失败，使用内置默认数据", "ShipManager", bakEx);
+                    // 最后手段：复制内置默认数据或创建空文件
+                    EnsureBuiltinStaticExists();
+                    string defaultJson = File.ReadAllText(_staticPath);
+                    staticData = JsonSerializer.Deserialize<StaticData>(defaultJson, options);
+                    if (staticData?.Ships == null)
+                    {
+                        // 彻底失败：创建空列表
+                        staticData = new StaticData { Version = "0.0", Ships = new List<ShipStatic>() };
+                    }
+                }
+            }
+            else
+            {
+                // 无备份，使用内置默认
+                EnsureBuiltinStaticExists();
+                string defaultJson = File.ReadAllText(_staticPath);
+                staticData = JsonSerializer.Deserialize<StaticData>(defaultJson, options);
+                if (staticData?.Ships == null)
+                {
+                    staticData = new StaticData { Version = "0.0", Ships = new List<ShipStatic>() };
+                }
+            }
+        }
+
         _staticShips = staticData?.Ships ?? new List<ShipStatic>();
         Version = staticData?.Version ?? "0.0";
 
-        // 检测是否需要填充 CategoryOrder（如果第一条船的 CategoryOrder == 0 且 Category == Normal，说明可能未迁移）
+        // 3. 检测是否需要填充 CategoryOrder（如果第一条船的 CategoryOrder == 0 且 Category == Normal，说明可能未迁移）
         bool needCategoryMigration = false;
         if (_staticShips.Count > 0)
         {
-            var first = _staticShips[0];
-            // 判断是否需要迁移：CategoryOrder 为 0 且 Category 为 Normal（普通船），或者任意船的 Category 为 Normal 但 GameOrder 可能与 CategoryOrder 不同
-            // 更简单的判断：如果存在任何船 CategoryOrder == 0 且 (Category == Normal 且 GameOrder != 0) 或 (Category != Normal)
             needCategoryMigration = _staticShips.Any(s => s.CategoryOrder == 0) ||
                                     _staticShips.Any(s => s.Category == ShipCategory.Normal && s.CategoryOrder == 0 && s.GameOrder != 0) ||
                                     _staticShips.Any(s => s.Category != ShipCategory.Normal && s.CategoryOrder == 0);
@@ -297,13 +349,20 @@ public class ShipManager
                 SaveStatic();  // 保存更新后的静态文件
                                // 重新读取更新后的数据（确保 _staticShips 已更新）
                 var updatedJson = File.ReadAllText(_staticPath);
-                staticData = JsonSerializer.Deserialize<StaticData>(updatedJson, options);
-                _staticShips = staticData?.Ships ?? new List<ShipStatic>();
-                Version = staticData?.Version ?? "0.0";
+                try
+                {
+                    staticData = JsonSerializer.Deserialize<StaticData>(updatedJson, options);
+                    _staticShips = staticData?.Ships ?? new List<ShipStatic>();
+                    Version = staticData?.Version ?? "0.0";
+                }
+                catch (JsonException)
+                {
+                    // 迁移后再次解析失败，忽略，使用当前内存中的数据
+                }
             }
         }
 
-        // 2. 读取用户状态        
+        // 4. 读取用户状态
         if (_accountManager != null && !string.IsNullOrEmpty(_accountManager.CurrentAccount))
         {
             string dataRoot = App.DataRoot;
@@ -327,14 +386,18 @@ public class ShipManager
                             _userStates[state.Id] = state;
                     }
                 }
-                catch { }
+                catch (JsonException ex)
+                {
+                    LogService.Error($"用户状态文件解析失败，将使用空白状态", "ShipManager", ex);
+                    _userStates.Clear();
+                }
             }
         }
 
-        // 添加 ID 迁移（一次性）
+        // 5. 添加 ID 迁移（一次性）
         MigrateSpecialShipIds();
 
-        // 3. 生成 ViewModel
+        // 6. 生成 ViewModel
         Ships.Clear();
         foreach (var staticShip in _staticShips)
         {
@@ -342,6 +405,8 @@ public class ShipManager
                 state = new ShipState { Id = staticShip.Id };
             Ships.Add(new ShipViewModel(staticShip, state));
         }
+
+        // 特殊处理：三艘布里强制满破
         foreach (var ship in Ships)
         {
             if (ship.Name == "泛用型布里" || ship.Name == "试作型布里MKII" || ship.Name == "特装型布里MKIII")
@@ -349,10 +414,10 @@ public class ShipManager
                 ship.Breakthrough = 3;
             }
         }
-        // 检查版本格式是否符合新标准，不符合则刷新一次版本号
+
+        // 7. 检查版本格式是否符合新标准，不符合则刷新一次版本号
         if (ParseRevision(Version) < 0 || !Version.StartsWith("1.0."))
         {
-            // 修订次数从0开始，避免误增
             Version = BuildVersion(_staticShips.Count, 0);
             SaveStatic();
         }

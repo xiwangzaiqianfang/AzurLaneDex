@@ -45,12 +45,25 @@ namespace AzurLaneDex.Services
         {
             if (File.Exists(_accountsFile))
             {
-                var json = File.ReadAllText(_accountsFile);
-                var data = JsonSerializer.Deserialize<AccountsData>(json);
-                if (data != null)
+                try
                 {
-                    Accounts = data.Accounts ?? new List<Account>();
-                    CurrentAccount = data.CurrentAccount ?? "";
+                    var json = File.ReadAllText(_accountsFile);
+                    var data = JsonSerializer.Deserialize<AccountsData>(json);
+                    if (data != null)
+                    {
+                        Accounts = data.Accounts ?? new List<Account>();
+                        CurrentAccount = data.CurrentAccount ?? "";
+                        _defaultAccount = data.DefaultAccount ?? "";
+                    }
+                }
+                catch (JsonException ex)
+                {
+                    LogService.Error($"账户文件解析失败，将使用默认账户", "AccountManager", ex);
+                    // 备份损坏的账户文件
+                    string backupFile = _accountsFile + ".corrupted";
+                    File.Copy(_accountsFile, backupFile, true);
+                    Accounts.Clear();
+                    CurrentAccount = "";
                 }
             }
             if (Accounts.Count == 0)
@@ -109,6 +122,20 @@ namespace AzurLaneDex.Services
             if (acc == null) return false;
             if (acc.IsSystem) return false; // 不能删除系统账户
 
+            string userDataDir = Path.Combine(App.DataRoot, "users", accountName);
+            if (Directory.Exists(userDataDir))
+            {
+                try
+                {
+                    Directory.Delete(userDataDir, true); // 递归删除
+                    LogService.Operation("账户操作", $"已删除账户数据文件夹：{userDataDir}");
+                }
+                catch (Exception ex)
+                {
+                    LogService.Error($"删除账户数据文件夹失败：{ex.Message}", "AccountManager", ex);
+                    // 不阻止账户删除，继续执行
+                }
+            }
             Accounts.Remove(acc);
             if (CurrentAccount == accountName)
             {
