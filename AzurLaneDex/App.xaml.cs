@@ -34,7 +34,16 @@ namespace AzurLaneDex
                 InitializeComponent();
                 LogService.Info("应用程序已启动", "App");
                 // 显示系统默认启动画面（图片已在 Package.appxmanifest 中配置）
-                _simpleSplashScreen = SimpleSplashScreen.ShowDefaultSplashScreen();
+                try
+                {
+                    _simpleSplashScreen = SimpleSplashScreen.ShowDefaultSplashScreen();
+                }
+                catch (Exception ex)
+                {
+                    // 非打包环境或无法获取 Package，跳过启动画面
+                    LogService.Warning($"无法显示启动画面: {ex.Message}", "App");
+                    _simpleSplashScreen = null;
+                }
 
                 this.UnhandledException += (sender, e) =>
                 {
@@ -53,14 +62,10 @@ namespace AzurLaneDex
             catch (Exception ex)
             {
                 LogCrash(ex, "App Constructor");
-                throw; // 仍然抛出，但日志已记录
+                LogService.Error($"App 构造函数异常: {ex.Message}", "App", ex);
             }
         }
 
-        /// <summary>
-        /// Invoked when the application is launched.
-        /// </summary>
-        /// <param name="args">Details about the launch request and process.</param>
         protected override async void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
             try
