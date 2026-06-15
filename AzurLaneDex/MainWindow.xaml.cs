@@ -48,8 +48,18 @@ public sealed partial class MainWindow : Window
         this.Activated -= OnWindowActivated;
 
         // 等待 XamlRoot 就绪
-        while (this.Content?.XamlRoot == null)
+        int timeoutMs = 5000;
+        int elapsedMs = 0;
+        while (this.Content?.XamlRoot == null && elapsedMs < timeoutMs)
+        {
             await Task.Delay(50);
+            elapsedMs += 50;
+        }
+        if (this.Content?.XamlRoot == null)
+        {
+            // 超时后仍无 XamlRoot，记录错误并尝试继续（部分控件可能无法正常弹窗）
+            System.Diagnostics.Debug.WriteLine("警告：XamlRoot 在超时后仍未就绪，部分对话框可能无法显示。");
+        }
 
         var app = (App)Application.Current;
 
@@ -156,12 +166,15 @@ public sealed partial class MainWindow : Window
             app.AccountManager.SetCurrentAccount(regularAccounts[0]);
         }
 
+        // 所有初始化完成，隐藏启动画面
+        app.HideSplashScreen();
         // 恢复侧边栏展开状态
         if (app.ShipManager != null)
         {
             bool savedOpen = LoadPaneOpenState();
             MainNavView.IsPaneOpen = savedOpen;
         }
+        // 最后确保导航到正确页面
         if (ContentFrame.Content == null || ContentFrame.Content.GetType() != typeof(MainPage))
         {
             ContentFrame.Navigate(typeof(MainPage));

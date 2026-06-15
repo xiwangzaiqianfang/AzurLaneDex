@@ -1,5 +1,6 @@
 ﻿using AzurLaneDex.Models;
 using AzurLaneDex.ViewModels;
+using Microsoft.UI.Xaml.Media.Animation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -881,22 +882,72 @@ public class ShipManager
     {
         JsonSerializerOptions options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
+        // ========== 1. 检查旧格式并迁移 ==========
         if (IsOldFormatFile())
         {
             bool success = await MigrateToNewFormatAsync();
             if (!success)
                 throw new Exception("数据迁移失败，请检查日志");
+            // 迁移完成后重新读取
             string rawJson = File.ReadAllText(_staticPath);
-            var staticData = JsonSerializer.Deserialize<StaticData>(rawJson, options);
+            StaticData? staticData = null;
+            try
+            {
+                staticData = JsonSerializer.Deserialize<StaticData>(rawJson, options);
+            }
+            catch (JsonException ex)
+            {
+                LogService.Error($"迁移后 JSON 解析失败: {ex.Message}", "ShipManager", ex);
+                // 尝试从备份恢复
+                if (await TryRestoreFromBackup())
+                {
+                    rawJson = File.ReadAllText(_staticPath);
+                    staticData = JsonSerializer.Deserialize<StaticData>(rawJson, options);
+                }
+            }
             _staticShips = staticData?.Ships ?? new List<ShipStatic>();
             CleanseStaticData();  // 迁移后清洗
             Version = staticData?.Version ?? "0.0";
         }
         else
         {
-            if (!File.Exists(_staticPath)) return;
+            // ========== 2. 新格式文件：正常加载 + 异常处理 ==========
+            if (!File.Exists(_staticPath))
+            {
+                System.Diagnostics.Debug.WriteLine($"静态文件不存在：{_staticPath}");
+                return;
+            }
+
             string rawJson = File.ReadAllText(_staticPath);
-            var staticData = JsonSerializer.Deserialize<StaticData>(rawJson, options);
+            System.Diagnostics.Debug.WriteLine($"Load started, static path: {_staticPath}");
+            System.Diagnostics.Debug.WriteLine($"JSON length: {rawJson.Length}");
+
+            StaticData? staticData = null;
+            try
+            {
+                staticData = JsonSerializer.Deserialize<StaticData>(rawJson, options);
+                if (staticData?.Ships == null)
+                    throw new JsonException("反序列化结果 Ships 为空");
+            }
+            catch (JsonException jsonEx)
+            {
+                LogService.Error($"静态文件 JSON 解析失败，尝试从备份恢复", "ShipManager", jsonEx);
+                if (await TryRestoreFromBackup())
+                {
+                    // 重新读取备份文件
+                    rawJson = File.ReadAllText(_staticPath);
+                    staticData = JsonSerializer.Deserialize<StaticData>(rawJson, options);
+                    if (staticData?.Ships == null)
+                    {
+                        LogService.Error("备份文件也无法解析，使用内置默认数据", "ShipManager");
+                        staticData = await GetDefaultStaticData();
+                    }
+                }
+                else
+                {
+                    staticData = await GetDefaultStaticData();
+                }
+            }
             _staticShips = staticData?.Ships ?? new List<ShipStatic>();
             if (_staticShips.Any())
             {
@@ -904,9 +955,10 @@ public class ShipManager
                 System.Diagnostics.Debug.WriteLine($"First ship ID={first.Id}, AcquireEntries count={first.AcquireEntries?.Count ?? 0}");
             }
             Version = staticData?.Version ?? "0.0";
-            CleanseStaticData();
+            CleanseStaticData();  // 清洗数据
         }
 
+        // ========== 3. 补齐缺失的枚举默认值 ==========
         foreach (var ship in _staticShips)
         {
             if (ship.FactionId == 0) ship.FactionId = (int)Faction.Other;
@@ -914,6 +966,7 @@ public class ShipManager
             if (ship.RarityId == 0) ship.RarityId = (int)Rarity.N;
         }
 
+        // ========== 4. 读取用户状态 ==========
         if (_accountManager != null && !string.IsNullOrEmpty(_accountManager.CurrentAccount))
         {
             string dataRoot = App.DataRoot;
@@ -933,10 +986,15 @@ public class ShipManager
                         foreach (var state in stateList.States)
                             _userStates[state.Id] = state;
                 }
-                catch { }
+                catch (JsonException ex)
+                {
+                    LogService.Error($"用户状态文件解析失败，将使用空白状态", "ShipManager", ex);
+                    _userStates.Clear();
+                }
             }
         }
 
+        // ========== 5. 生成 ViewModel ==========
         Ships.Clear();
         foreach (var staticShip in _staticShips)
         {
@@ -945,12 +1003,14 @@ public class ShipManager
             Ships.Add(new ShipViewModel(staticShip, state));
         }
 
+        // 特殊处理：三艘布里强制满破
         foreach (var ship in Ships)
         {
             if (ship.RawName == "泛用型布里" || ship.RawName == "试作型布里MKII" || ship.RawName == "特装型布里MKIII")
                 ship.Breakthrough = 3;
         }
 
+        // ========== 6. 版本号修正（新版本号以 2.0 开头） ==========
         if (ParseRevision(Version) < 0)
         {
             Version = BuildVersion(_staticShips.Count, 0);
@@ -1350,4 +1410,37 @@ public class ShipManager
     public class StatsData { public int Total, Owned, NotOwned, MaxBreakthrough, NotMaxBreakthrough, Oath, Remodeled, CanRemodelNot, Level120, SpecialGearObtained, SpecialGearNotObtained, CanRemodelTotal; }
 
     public string GetUserStatePath() => _userStatePath;
+
+    private async Task<bool> TryRestoreFromBackup()
+    {
+        string bakPath = _staticPath + ".bak";
+        if (!File.Exists(bakPath))
+            return false;
+
+        try
+        {
+            string bakJson = await File.ReadAllTextAsync(bakPath);
+            var backupData = JsonSerializer.Deserialize<StaticData>(bakJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            if (backupData?.Ships != null)
+            {
+                File.Copy(bakPath, _staticPath, true);
+                LogService.Info("已从备份文件恢复静态数据", "ShipManager");
+                return true;
+            }
+        }
+        catch (Exception ex)
+        {
+            LogService.Error($"备份文件恢复失败: {ex.Message}", "ShipManager", ex);
+        }
+        return false;
+    }
+
+    // 辅助方法：获取内置默认静态数据（最后兜底）
+    private async Task<StaticData> GetDefaultStaticData()
+    {
+        EnsureBuiltinStaticExists();  // 确保内置文件存在
+        string defaultJson = await File.ReadAllTextAsync(_staticPath);
+        var defaultData = JsonSerializer.Deserialize<StaticData>(defaultJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        return defaultData ?? new StaticData { Version = "0.0", Ships = new List<ShipStatic>() };
+    }
 }
