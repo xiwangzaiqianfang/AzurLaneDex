@@ -7,8 +7,9 @@ using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Windows.UI.Core;
 using Windows.Globalization;
+using Windows.UI.Core;
+using WinUIEx;
 
 namespace AzurLaneDex;
 
