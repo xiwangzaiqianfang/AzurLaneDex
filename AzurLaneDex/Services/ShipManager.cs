@@ -99,7 +99,10 @@ public class ShipManager
                 if (File.Exists(packagedPath))
                     builtinPath = packagedPath;
             }
-            catch { }
+            catch (Exception ex)
+            {
+                LogService.Warning($"无法获取包安装路径：{ex.Message}", "ShipManager");
+            }
         }
 
         if (builtinPath != null)
