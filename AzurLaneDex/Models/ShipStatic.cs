@@ -3,14 +3,6 @@ using System.Text.Json.Serialization;
 
 namespace AzurLaneDex.Models
 {
-    public static class ShipIdRanges
-    {
-        public const int NormalStart = 1;
-        public const int NormalEnd = 9999;
-        public const int MetaStart = 10001;
-        public const int CollabStart = 20001;
-        public const int ResearchStart = 30001;
-    }
 
     public class ShipStatic
     {
@@ -47,15 +39,6 @@ namespace AzurLaneDex.Models
         [JsonPropertyName("can_special_gear")] public bool CanSpecialGear { get; set; }
         [JsonPropertyName("special_gear_entries")]
         public List<SpecialGearEntry> SpecialGearEntries { get; set; } = new();
-        public class SpecialGearEntry
-        {
-            [JsonPropertyName("tag")]
-            public string Tag { get; set; } = "";          // 例如 "gear_1", "gear_2"
-            [JsonPropertyName("params")]
-            public List<string> Parameters { get; set; } = new();
-            [JsonPropertyName("custom_text")]
-            public LocalizedString CustomText { get; set; } = new();
-        }
         [JsonPropertyName("special_gear_name")]
         public LocalizedString SpecialGearName { get; set; } = new();
         [JsonPropertyName("special_gear_date")] public string SpecialGearDate { get; set; } = "";
@@ -68,6 +51,16 @@ namespace AzurLaneDex.Models
         [JsonPropertyName("tech_points_obtain")] public int TechPointsObtain { get; set; }
         [JsonPropertyName("tech_points_max")] public int TechPointsMax { get; set; }
         [JsonPropertyName("tech_points_120")] public int TechPoints120 { get; set; }
+    }
+
+    public class SpecialGearEntry
+    {
+        [JsonPropertyName("tag")]
+        public string Tag { get; set; } = "";          // 例如 "gear_1", "gear_2"
+        [JsonPropertyName("params")]
+        public List<string> Parameters { get; set; } = new();
+        [JsonPropertyName("custom_text")]
+        public LocalizedString CustomText { get; set; } = new();
     }
 
     public class StaticData

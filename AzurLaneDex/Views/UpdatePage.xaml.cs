@@ -1,20 +1,22 @@
-﻿using AzurLaneDex.Services;
+﻿using AzurLaneDex.Models;
+using AzurLaneDex.Services;
+using AzurLaneDex.Services.Interfaces;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using static System.Net.WebRequestMethods;
 
 namespace AzurLaneDex.Views
 {
     public sealed partial class UpdatePage : Page
     {
+        private IUpdateService _updateService;
         private ShipManager _shipManager;
         private string _currentAppVersion;
         private string? _latestAppVersion;
@@ -22,19 +24,7 @@ namespace AzurLaneDex.Views
         private string? _latestDataUrl;
         private string? _remoteDataVersion;
 
-        // GitHub Pages MSIX 地址
-        private const string GitHubPagesMsixUrl = "https://xiwangzaiqianfang.github.io/AzurLaneDex/Release/AzurLaneDex.msixbundle";
-
-        // version.json 地址 (GitHub)
-        private const string AppVersionJsonRawUrl = "https://raw.githubusercontent.com/xiwangzaiqianfang/AzurLaneDex/main/version.json";
-        private const string AppVersionJsonCdnUrl = "https://cdn.jsdelivr.net/gh/xiwangzaiqianfang/AzurLaneDex@main/version.json";
-
-        // Gitee Pages 配置（请替换为你的实际 Pages 地址和文件名）\
-        private const string GiteeRawBaseUrl = "https://gitee.com/fmlg/AzurLaneDex/raw/main/";
-        private const string GiteeVersionJsonUrl = "https://gitee.com/fmlg/AzurLaneDex/raw/main/version.json";
-        private const string GiteeInstallerBaseUrl = "https://gitee.com/fmlg/AzurLaneDex/releases/download/{version}/AzurLaneDex_{version}.msixbundle";
-
-        // 舰船数据硬编码地址
+        // 数据更新硬编码地址（不变）
         private const string DataGitHubRawUrl = "https://raw.githubusercontent.com/xiwangzaiqianfang/AzurLaneDex/main/AzurLaneDex/Assets/ships_static.json";
         private const string DataGitHubCdnUrl = "https://cdn.jsdelivr.net/gh/xiwangzaiqianfang/AzurLaneDex@main/AzurLaneDex/Assets/ships_static.json";
         private const string DataGiteeRawUrl = "https://gitee.com/fmlg/AzurLaneDex/raw/main/AzurLaneDex/Assets/ships_static.json";
@@ -42,30 +32,131 @@ namespace AzurLaneDex.Views
         public UpdatePage()
         {
             this.InitializeComponent();
-            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
-            Loaded += UpdatePage_Loaded;
         }
 
-        private void UpdatePage_Loaded(object sender, RoutedEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            base.OnNavigatedTo(e);
             var app = (App)Application.Current;
+            if (app.ShipManager == null)
+            {
+                StatusText.Text = "ShipManager 未就绪，请返回重试";
+                CheckAppUpdateButton.IsEnabled = false;
+                CheckDataUpdateButton.IsEnabled = false;
+                DownloadAppButton.Visibility = Visibility.Collapsed;
+                DownloadDataButton.IsEnabled = false;
+                return;
+            }
+
             _shipManager = app.ShipManager;
+            _updateService = new UpdateService(_shipManager);
+
+            // 加载版本信息
             _currentAppVersion = _shipManager.GetCurrentAppVersion();
             CurrentVersionText.Text = _currentAppVersion;
 
-            // 从配置恢复自定义数据 URL
-            var config = _shipManager.Config;
-            if (config != null && config.TryGetValue("data_custom_url", out var dc) && dc is string dUrl)
+            // 加载通道设置（自动检测开发版）
+            LoadChannelSetting();
+
+            // 加载源设置
+            LoadSourceSetting();
+
+            // 根据当前通道控制源下拉框启用状态
+            UpdateAppSourceState();
+
+            // 恢复自定义数据 URL
+            if (_shipManager.Config.TryGetValue("data_custom_url", out var dc) && dc is string dUrl)
                 DataCustomUrlBox.Text = dUrl;
 
+            // 启用按钮
+            CheckAppUpdateButton.IsEnabled = true;
+            CheckDataUpdateButton.IsEnabled = true;
+            DownloadDataButton.IsEnabled = true;
             DownloadAppButton.Visibility = Visibility.Collapsed;
+        }
+
+        private void LoadChannelSetting()
+        {
+            var channel = _updateService.CurrentChannel;
+            // 如果从未保存过通道设置，且当前版本包含 "dev"（不区分大小写），则自动设为 Dev 通道
+            if (!_shipManager.Config.ContainsKey("update_channel") &&
+                _currentAppVersion?.Contains("dev", StringComparison.OrdinalIgnoreCase) == true)
+            {
+                channel = UpdateChannel.Dev;
+                _updateService.CurrentChannel = channel;
+            }
+
+            foreach (ComboBoxItem item in UpdateChannelComboBox.Items)
+            {
+                if (item.Tag?.ToString() == channel.ToString())
+                {
+                    UpdateChannelComboBox.SelectedItem = item;
+                    break;
+                }
+            }
+        }
+
+        private void LoadSourceSetting()
+        {
+            var source = _updateService.CurrentSource;
+            foreach (ComboBoxItem item in AppDataSourceCombo.Items)
+            {
+                if ((source == UpdateSource.GitHub && item.Tag?.ToString() == "GitHub") ||
+                    (source == UpdateSource.Gitee && item.Tag?.ToString() == "Gitee"))
+                {
+                    AppDataSourceCombo.SelectedItem = item;
+                    break;
+                }
+            }
+        }
+
+        private void UpdateAppSourceState()
+        {
+            var channel = _updateService.CurrentChannel;
+            bool isStable = channel == UpdateChannel.Stable;
+            AppDataSourceCombo.IsEnabled = isStable;
+            if (!isStable)
+            {
+                // 非正式版强制显示 GitHub，但不改变保存的值
+                AppDataSourceCombo.SelectedItem = AppDataSourceCombo.Items.FirstOrDefault(i => (i as ComboBoxItem)?.Tag?.ToString() == "GitHub");
+            }
+            StatusText.Text = $"当前通道: {channel}，更新源: {_updateService.CurrentSource}";
+        }
+
+        private void UpdateChannelComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (UpdateChannelComboBox.SelectedItem is ComboBoxItem selected && selected.Tag is string tag)
+            {
+                if (Enum.TryParse<UpdateChannel>(tag, out var channel))
+                {
+                    _updateService.CurrentChannel = channel;
+                    LogService.Operation("更新通道变更", $"切换到 {channel}", (Application.Current as App)?.AccountManager?.CurrentAccount);
+
+                    // 更新源状态
+                    UpdateAppSourceState();
+
+                    // 重置应用更新状态
+                    _latestAppVersion = null;
+                    _latestAppDownloadUrl = null;
+                    DownloadAppButton.Visibility = Visibility.Collapsed;
+                    StatusText.Text = $"已切换到 {channel} 通道";
+                }
+            }
         }
 
         private void AppDataSourceCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            _latestAppVersion = null;
-            _latestAppDownloadUrl = null;
-            DownloadAppButton.Visibility = Visibility.Collapsed;
+            if (AppDataSourceCombo.SelectedItem is ComboBoxItem selected && selected.Tag is string tag)
+            {
+                var source = tag == "GitHub" ? UpdateSource.GitHub : UpdateSource.Gitee;
+                _updateService.CurrentSource = source;
+                LogService.Operation("应用更新源变更", $"切换到 {source}", (Application.Current as App)?.AccountManager?.CurrentAccount);
+                // 重置应用更新状态
+                _latestAppVersion = null;
+                _latestAppDownloadUrl = null;
+                DownloadAppButton.Visibility = Visibility.Collapsed;
+                StatusText.Text = $"已切换到 {source} 源";
+            }
         }
 
         private async void CheckAppUpdate_Click(object sender, RoutedEventArgs e)
@@ -73,61 +164,20 @@ namespace AzurLaneDex.Views
             var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             StatusText.Text = loader.GetString("CheckingAppUpdate");
             DownloadAppButton.Visibility = Visibility.Collapsed;
-            _latestAppVersion = null;
-            _latestAppDownloadUrl = null;
 
             try
             {
-                if (AppDataSourceCombo.SelectedIndex == 0) // GitHub Pages
+                var updateInfo = await _updateService.CheckForUpdateAsync();
+                if (updateInfo.HasUpdate)
                 {
-                    string versionUrl = DataDataSourceCombo.SelectedIndex == 1
-                        ? AppVersionJsonCdnUrl
-                        : AppVersionJsonRawUrl;
-
-                    using var client = CreateHttpClient(ProxyBox.Text.Trim());
-                    string json = await client.GetStringAsync(versionUrl);
-                    using var doc = JsonDocument.Parse(json);
-                    string? remoteVersion = doc.RootElement.GetProperty("version").GetString();
-
-                    if (string.IsNullOrEmpty(remoteVersion))
-                    {
-                        StatusText.Text = loader.GetString("VersionJsonFormatError");
-                        return;
-                    }
-
-                    _latestAppVersion = remoteVersion;
-                    _latestAppDownloadUrl = GitHubPagesMsixUrl;
+                    StatusText.Text = $"发现新版本 {updateInfo.LatestVersion}（{updateInfo.Channel}）";
+                    DownloadAppButton.Visibility = Visibility.Visible;
+                    _latestAppVersion = updateInfo.LatestVersion;
+                    _latestAppDownloadUrl = updateInfo.DownloadUrl;
                 }
-                else if (AppDataSourceCombo.SelectedIndex == 1) // Gitee (Raw + Releases)
+                else
                 {
-                    using var client = CreateHttpClient(ProxyBox.Text.Trim());
-                    string json = await client.GetStringAsync(GiteeVersionJsonUrl);
-                    using var doc = JsonDocument.Parse(json);
-
-                    string? remoteVersion = doc.RootElement.GetProperty("version").GetString();
-                    if (string.IsNullOrEmpty(remoteVersion))
-                    {
-                        StatusText.Text = "Gitee version.json 格式错误：缺少 version 字段";
-                        return;
-                    }
-
-                    _latestAppVersion = remoteVersion;
-                    // 拼接下载链接，将 {version} 替换为实际版本号
-                    _latestAppDownloadUrl = GiteeInstallerBaseUrl.Replace("{version}", _latestAppVersion);
-                }
-
-                // 后续版本比较及显示逻辑（与 GitHub 共用，无需修改）
-                if (!string.IsNullOrEmpty(_latestAppVersion) && !string.IsNullOrEmpty(_latestAppDownloadUrl))
-                {
-                    if (CompareVersion(_latestAppVersion, _currentAppVersion) > 0)
-                    {
-                        StatusText.Text = string.Format(loader.GetString("NewVersionAvailable"), _latestAppVersion);
-                        DownloadAppButton.Visibility = Visibility.Visible;
-                    }
-                    else
-                    {
-                        StatusText.Text = loader.GetString("AlreadyLatestVersion");
-                    }
+                    StatusText.Text = loader.GetString("AlreadyLatestVersion");
                 }
             }
             catch (Exception ex)
@@ -211,6 +261,8 @@ namespace AzurLaneDex.Views
             }
         }
 
+        // === 数据更新相关方法（基本不变） ===
+
         private async Task<bool> DownloadWithProgressAsync(string downloadUrl, string destinationPath, string proxy, IProgress<double> progress)
         {
             using var client = CreateHttpClient(proxy);
@@ -273,10 +325,12 @@ namespace AzurLaneDex.Views
                 if (CompareVersion(_remoteDataVersion, _shipManager.Version) > 0)
                 {
                     StatusText.Text = string.Format(loader.GetString("NewDataVersionAvailable"), _remoteDataVersion);
+                    DownloadDataButton.Visibility = Visibility.Visible;
                 }
                 else
                 {
                     StatusText.Text = loader.GetString("DataAlreadyLatest");
+                    DownloadDataButton.Visibility = Visibility.Collapsed;
                 }
             }
             catch (Exception ex)
@@ -321,15 +375,9 @@ namespace AzurLaneDex.Views
             };
         }
 
-        private string? ExtractVersionFromFileName(string fileName)
-        {
-            var match = Regex.Match(fileName, @"(\d+\.\d+\.\d+\.\d+)");
-            return match.Success ? match.Value : null;
-        }
-
         private int CompareVersion(string versionA, string versionB)
         {
-            if (Version.TryParse(versionA, out Version? vA) && Version.TryParse(versionB, out Version? vB))
+            if (Version.TryParse(versionA, out var vA) && Version.TryParse(versionB, out var vB))
                 return vA.CompareTo(vB);
             return string.Compare(versionA, versionB, StringComparison.OrdinalIgnoreCase);
         }

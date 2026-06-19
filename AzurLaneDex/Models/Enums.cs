@@ -87,4 +87,17 @@
         EVA,
         ASW
     }
+
+    public enum UpdateChannel
+    {
+        Stable = 0,   // 正式版
+        Preview = 1,   // 预览版
+        Dev = 2
+    }
+
+    public enum UpdateSource
+    {
+        GitHub,
+        Gitee
+    }
 }

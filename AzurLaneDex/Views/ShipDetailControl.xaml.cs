@@ -378,6 +378,31 @@ public sealed partial class ShipDetailControl : UserControl
         if (token != _avatarLoadToken) return;
         ShipAvatarImage.Opacity = 0;
 
+        // 1. 尝试加载本地文件
+        if (_currentShip != null)
+        {
+            string localPath = _currentShip.LocalAvatarPath;
+            if (File.Exists(localPath))
+            {
+                try
+                {
+                    var file = await StorageFile.GetFileFromPathAsync(localPath);
+                    using (var stream = await file.OpenReadAsync())
+                    {
+                        var bitmap = new BitmapImage();
+                        await bitmap.SetSourceAsync(stream);
+                        if (token == _avatarLoadToken)
+                        {
+                            ShipAvatarImage.Source = bitmap;
+                            StartAvatarFadeIn();
+                            return;
+                        }
+                    }
+                }
+                catch { /* 本地加载失败，继续尝试内置资源 */ }
+            }
+        }
+
         string jpgUri = $"ms-appx:///Assets/Ship/{shipName}.jpg";
         TryLoadImage(jpgUri, token, success =>
         {
@@ -543,7 +568,7 @@ public sealed partial class ShipDetailControl : UserControl
                     RemodeledCheckBox.IsEnabled = _currentShip.CanRemodel && _currentShip.Owned;
                     SaveShip();
                     UpdateControlStates();
-                    LogService.Operation("状态变更", $"舰船 {_currentShip.DisplayName} (ID:{_currentShip.Id}) 获得状态改为 {_currentShip.Owned}");
+                    LogService.Operation("状态变更", $"舰船 {_currentShip.DisplayName} (ID:{_currentShip.Id}) 获得状态改为 {_currentShip.Owned}", (Application.Current as App)?.AccountManager?.CurrentAccount);
                 }
             }
         }
@@ -698,7 +723,7 @@ public sealed partial class ShipDetailControl : UserControl
     {
         if (_currentShip == null) return;
         var app = Application.Current as App;
-        app?.ShipManager?.Save();
+        await app?.ShipManager?.SaveAsync();
     }
 
     private async void EditShipButton_Click(object sender, RoutedEventArgs e)
@@ -727,7 +752,7 @@ public sealed partial class ShipDetailControl : UserControl
         if (await editDialog.ShowAsync() == ContentDialogResult.Primary)
         {
             var updatedShip = editDialog.GetShip();
-            app.ShipManager.UpdateShip(_currentShip.Id, updatedShip);
+            await app.ShipManager.UpdateShip(_currentShip.Id, updatedShip);
             var newVm = app.ShipManager.Ships.FirstOrDefault(s => s.Id == updatedShip.Id);
             if (newVm != null) SetShip(newVm);
         }

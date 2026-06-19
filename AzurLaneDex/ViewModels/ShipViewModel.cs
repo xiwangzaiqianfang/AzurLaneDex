@@ -1,12 +1,13 @@
 ﻿using AzurLaneDex.Helpers;
 using AzurLaneDex.Models;
+using AzurLaneDex.Services;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Windows.ApplicationModel.Resources;
-using static AzurLaneDex.Models.ShipStatic;
 
 namespace AzurLaneDex.ViewModels
 {
@@ -231,5 +232,19 @@ namespace AzurLaneDex.ViewModels
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string? name = null) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+        public string LocalAvatarPath
+        {
+            get
+            {
+                string factionId = this.Faction ?? "other";
+                string avatarFileName = this.Remodeled && this.CanRemodel ? $"{this.RawName}改.jpg" : $"{this.RawName}.jpg";
+                string localPath = Path.Combine(App.DataRoot, "avatars", factionId, avatarFileName);
+                if (File.Exists(localPath))
+                    return localPath;
+                // 后备：返回空字符串或默认路径（如 ms-appx 路径）
+                return string.Empty;
+            }
+        }
     }
 }

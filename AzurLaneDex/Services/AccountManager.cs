@@ -83,12 +83,25 @@ namespace AzurLaneDex.Services
         public bool VerifyPassword(string name, string password)
         {
             var acc = Accounts.Find(a => a.Name == name);
-            return acc != null && acc.PasswordHash == HashHelper.Hash(password);
+            var result = acc != null && acc.PasswordHash == HashHelper.Hash(password);
+            if (!result)
+            {
+                LogService.Warning($"账户 {name} 密码验证失败", nameof(AccountManager));
+            }
+            else
+            {
+                LogService.Info($"账户 {name} 登录成功", nameof(AccountManager));
+            }
+            return result;
         }
 
         public bool AddAccount(string name, string password, string avatarPath = "", bool isDeveloper = false)
         {
-            if (Accounts.Exists(a => a.Name == name)) return false;
+            if (Accounts.Exists(a => a.Name == name))
+            {
+                LogService.Warning($"尝试添加已存在的账户: {name}", nameof(AccountManager));
+                return false;
+            }
             var acc = new Account
             {
                 Name = name,
@@ -98,7 +111,7 @@ namespace AzurLaneDex.Services
             };
             Accounts.Add(acc);
             Save();
-            LogService.Operation("账户操作", $"添加账户 {name}");
+            LogService.Operation("添加账户", name, name);
             return true;
         }
         public bool IsSystemAccount(string name) => Accounts.FirstOrDefault(a => a.Name == name)?.IsSystem ?? false;
@@ -106,8 +119,16 @@ namespace AzurLaneDex.Services
         public bool DeleteAccount(string accountName)
         {
             var acc = Accounts.FirstOrDefault(a => a.Name == accountName);
-            if (acc == null) return false;
-            if (acc.IsSystem) return false; // 不能删除系统账户
+            if (acc == null)
+            {
+                LogService.Warning($"尝试删除不存在的账户: {accountName}", nameof(AccountManager));
+                return false;
+            }
+            if (acc.IsSystem)
+            {
+                LogService.Warning($"尝试删除系统账户: {accountName}", nameof(AccountManager));
+                return false;
+            }
 
             Accounts.Remove(acc);
             if (CurrentAccount == accountName)
@@ -116,7 +137,7 @@ namespace AzurLaneDex.Services
                 CurrentAccount = fallback?.Name ?? "";
             }
             Save();
-            LogService.Operation("账户操作", $"删除账户 {accountName}");
+            LogService.Operation("删除账户", accountName, CurrentAccount);
             return true;
         }
 
@@ -124,28 +145,29 @@ namespace AzurLaneDex.Services
         {
             var acc = Accounts.FirstOrDefault(a => a.Name == accountName);
             System.Diagnostics.Debug.WriteLine($"SetCurrentAccount called for {accountName}, found: {acc != null}");
-            if (acc == null) return;
+            if (acc == null)
+            {
+                LogService.Warning($"尝试设置不存在的当前账户: {accountName}", nameof(AccountManager));
+                return;
+            }
             CurrentAccount = accountName;
             acc.LastLogin = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             Save();
-            LogService.Operation("账户操作", $"默认账户 {accountName}");
+            LogService.Operation("切换账户", accountName, accountName);
         }
+
         public bool IsDeveloper(string? name = null)
         {
             string accountName = name ?? CurrentAccount;
             var acc = Accounts.FirstOrDefault(a => a.Name == accountName);
             return acc?.IsDeveloper ?? false;
         }
-        /// <summary>
-        /// 获取所有普通账户名称列表（排除系统账户）
-        /// </summary>
+
         public List<string> GetAccountList()
         {
             return Accounts.Where(a => !a.IsSystem).Select(a => a.Name).ToList();
         }
-        /// <summary>
-        /// 获取账户信息（包含 is_system, is_developer 等）
-        /// </summary>
+
         public Dictionary<string, object> GetAccountInfo(string accountName)
         {
             var acc = Accounts.FirstOrDefault(a => a.Name == accountName);

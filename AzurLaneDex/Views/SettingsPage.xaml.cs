@@ -77,7 +77,7 @@ namespace AzurLaneDex.Views
                 {
                     await src.CopyToAsync(dest);
                 }
-                _app.ShipManager?.Load();
+                _app.ShipManager?.LoadAsync();
                 await ShowDialog(loader.GetString("Dialog_Success_Title"), loader.GetString("MigrationSuccess_Message"));
                 LogService.Operation("数据迁移操作", "迁移成功");
             }
@@ -124,7 +124,7 @@ namespace AzurLaneDex.Views
                 File.WriteAllText(targetPath, newJson);
 
                 // 重新加载 ShipManager
-                _app.ShipManager?.Load();
+                await _app.ShipManager?.LoadAsync();
                 await ShowDialog(loader.GetString("Dialog_Success_Title"), loader.GetString("MigrationAndOverwrite_Message"));
                 LogService.Operation("数据迁移操作", "数据已成功迁移并覆盖");
             }
@@ -219,7 +219,7 @@ namespace AzurLaneDex.Views
             var list = new List<ShipStatic>();
             foreach (var old in array.EnumerateArray())
             {
-                var newShip = ShipManager.MigrateSingleShipManual(old);
+                var newShip = _app.ShipManager.MigrateSingleShip(old);
                 list.Add(newShip);
             }
             return list;

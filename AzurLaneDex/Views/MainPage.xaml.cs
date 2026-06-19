@@ -544,6 +544,7 @@ public sealed partial class MainPage : Page
         var selectedShips = _currentShips.Where(s => s.IsSelected).ToList();
         if (selectedShips.Count == 0)
         {
+            LogService.Warning("批量操作: 未选中任何舰船", nameof(MainPage));
             var dialog = new ContentDialog
             {
                 Title = loader.GetString("BatchOperation_Title"),
@@ -826,7 +827,8 @@ public sealed partial class MainPage : Page
             var newShip = dialog.GetShip();
             if (newShip != null)
             {
-                _shipManager.AddShip(newShip);
+                await _shipManager.AddShip(newShip);
+                LogService.Operation("添加舰船", $"用户通过界面新增舰船: {newShip.Name.GetValueOrDefault("zh-Hans")}", (Application.Current as App)?.AccountManager?.CurrentAccount);
                 RefreshShipList();
             }
         }
@@ -982,6 +984,7 @@ public sealed partial class MainPage : Page
         }, requireConfirm: willBeNotOwned,   // 仅当变为未获得时需要确认
           confirmTitle: loader.GetString("ConfirmClear_Title"),
           confirmContent: loader.GetString("ConfirmClearOwned_Message"));
+        LogService.Operation("右键菜单", $"切换获得状态: {_contextShip.DisplayName} 变为 {_contextShip.Owned}", (Application.Current as App)?.AccountManager?.CurrentAccount);
     }
 
     private async void CtxMenu_ToggleLevel120_Click(object sender, RoutedEventArgs e)
@@ -1039,7 +1042,7 @@ public sealed partial class MainPage : Page
         if (await dialog.ShowAsync() == ContentDialogResult.Primary)
         {
             int deletedId = _contextShip.Id;
-            _shipManager.DeleteShip(deletedId);
+            await _shipManager.DeleteShip(deletedId);
             // 删除后直接刷新，无需恢复选中（因为舰船已不存在）
             RefreshShipList();
             ShipDetailControl.SetShip(null);
@@ -1076,7 +1079,7 @@ public sealed partial class MainPage : Page
         updateAction(_contextShip);
 
         // 保存数据
-        _shipManager.Save();
+        await _shipManager.SaveAsync();
 
         // 刷新列表（保留选中和滚动）
         RefreshShipList();
@@ -1124,7 +1127,7 @@ public sealed partial class MainPage : Page
         {
             foreach (var ship in ships)
                 operation(ship);
-            _shipManager.Save();
+            _shipManager.SaveAsync();
         });
     }
     private async Task RefreshAndRestoreSelectionAsync(Action updateAction = null)
@@ -1209,7 +1212,7 @@ public sealed partial class MainPage : Page
         {
             operation(ship);
         }
-        _shipManager.Save();
+        await _shipManager.SaveAsync();
 
         // 刷新列表
         RefreshShipList();

@@ -111,7 +111,7 @@ namespace AzurLaneDex.Views
                     await src.CopyToAsync(dest);
                 }
 
-                _shipManager.Load();
+                await _shipManager.LoadAsync();
                 _shipManager.NotifyDataChanged();
 
                 await ShowSuccess(loader.GetString("Dialog_Success_Title"), loader.GetString("ImportSuccess_Message")); 

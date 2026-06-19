@@ -32,7 +32,6 @@
                         CompactPaneLength="48"
                         OpenPaneLength="320"
                         CompactModeThresholdWidth="800"
-                        SelectionFollowsFocus="Enabled"
                         ItemInvoked="MainNavView_ItemInvoked"
                         IsTabStop="True">
             <NavigationView.MenuItems>

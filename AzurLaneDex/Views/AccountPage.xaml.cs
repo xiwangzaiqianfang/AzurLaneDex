@@ -138,6 +138,7 @@ namespace AzurLaneDex.Views
             }
             if (await app.SwitchAccountAsync())
             {
+                LogService.Operation("切换账户", $"切换到账户 {app.AccountManager.CurrentAccount}", app.AccountManager.CurrentAccount);
                 await ShowInfo(loader.GetString("Dialog_Success_Title"), loader.GetString("SwitchAccountSuccess_Message"));
             }
         }

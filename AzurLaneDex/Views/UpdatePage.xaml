@@ -51,27 +51,48 @@
                     </Grid>
                 </Border>
 
-                <!-- 应用更新源设置卡片 -->
+                <!-- 更新通道卡片 -->
                 <Border Style="{StaticResource SettingsCardStyle}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <FontIcon Grid.Column="0" Glyph="&#xE72B;" FontFamily="Segoe Fluent Icons" FontSize="22" Margin="0,0,14,0"/>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock x:Uid="UpdatePage_Channel_Title" Text="更新通道" FontSize="14" FontWeight="SemiBold"/>
+                            <TextBlock x:Uid="UpdatePage_Channel_Description" Text="选择接收更新的版本类型，不同通道的更新频率和稳定性不同" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        </StackPanel>
+                        <ComboBox x:Name="UpdateChannelComboBox" Grid.Column="2" Width="150" VerticalAlignment="Center" SelectionChanged="UpdateChannelComboBox_SelectionChanged">
+                            <ComboBoxItem x:Uid="Channel_Stable" Tag="Stable">正式版（推荐）</ComboBoxItem>
+                            <ComboBoxItem x:Uid="Channel_Preview" Tag="Preview">预览版</ComboBoxItem>
+                            <ComboBoxItem x:Uid="Channel_Dev" Tag="Dev">开发版</ComboBoxItem>
+                        </ComboBox>
+                    </Grid>
+                </Border>
+
+                <!-- 应用更新源卡片（整合到右侧） -->
+                <Border Style="{StaticResource SettingsCardStyle}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <FontIcon Grid.Column="0" Glyph="&#xE730;" FontFamily="Segoe Fluent Icons" FontSize="22" Margin="0,0,14,0"/>
                         <StackPanel Grid.Column="1">
                             <TextBlock x:Uid="UpdatePage_AppSource_Title" Text="应用更新源" FontSize="14" FontWeight="SemiBold"/>
-                            <TextBlock x:Uid="UpdatePage_AppSource_Description" Text="选择检查应用更新的方式" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Margin="0,4,0,0"/>
-                            <ComboBox x:Name="AppDataSourceCombo" Margin="0,8,0,0" SelectedIndex="0"
-                                      SelectionChanged="AppDataSourceCombo_SelectionChanged">
-                                <ComboBoxItem x:Uid="UpdatePage_AppSource_GitHubPages">GitHub Pages</ComboBoxItem>
-                                <ComboBoxItem x:Uid="UpdatePage_AppSource_Gitee">Gitee Releases</ComboBoxItem>
-                            </ComboBox>
+                            <TextBlock x:Uid="UpdatePage_AppSource_Description" Text="选择应用更新包来源（仅正式版可用）" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Margin="0,4,0,0"/>
                         </StackPanel>
+                        <ComboBox x:Name="AppDataSourceCombo" Grid.Column="2" Width="150" VerticalAlignment="Center" SelectionChanged="AppDataSourceCombo_SelectionChanged">
+                            <ComboBoxItem x:Uid="UpdatePage_AppSource_GitHubPages" Tag="GitHub">GitHub Pages</ComboBoxItem>
+                            <ComboBoxItem x:Uid="UpdatePage_AppSource_Gitee" Tag="Gitee">Gitee Releases</ComboBoxItem>
+                        </ComboBox>
                     </Grid>
                 </Border>
 
-                <!-- 数据更新卡片 -->
+                <!-- 数据更新卡片（原样） -->
                 <Border Style="{StaticResource SettingsCardStyle}">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -86,33 +107,34 @@
                         </StackPanel>
                         <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="12">
                             <Button x:Uid="UpdatePage_DataUpdate_CheckButton" x:Name="CheckDataUpdateButton" Content="检查更新" Click="CheckDataUpdate_Click"/>
-                            <Button x:Uid="UpdatePage_DataUpdate_DownloadButton" x:Name="DownloadDataButton" Content="下载并安装" Click="DownloadData_Click"/>
+                            <Button x:Uid="UpdatePage_DataUpdate_DownloadButton" x:Name="DownloadDataButton" Content="下载并安装" Click="DownloadData_Click" Visibility="Collapsed"/>
                         </StackPanel>
                     </Grid>
                 </Border>
 
-                <!-- 数据更新源设置卡片 -->
+                <!-- 数据更新源设置卡片（原样，未改动） -->
                 <Border Style="{StaticResource SettingsCardStyle}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <FontIcon Grid.Column="0" Glyph="&#xE730;" FontFamily="Segoe Fluent Icons" FontSize="22" Margin="0,0,14,0"/>
                         <StackPanel Grid.Column="1">
                             <TextBlock x:Uid="UpdatePage_DataSource_Title" Text="数据更新源" FontSize="14" FontWeight="SemiBold"/>
                             <TextBlock x:Uid="UpdatePage_DataSource_Description" Text="选择数据文件的来源及代理（可选）" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Margin="0,4,0,0"/>
-                            <ComboBox x:Name="DataDataSourceCombo" Margin="0,8,0,0" SelectedIndex="0"
-                                      SelectionChanged="DataDataSourceCombo_SelectionChanged">
-                                <ComboBoxItem x:Uid="UpdatePage_DataSource_GitHubRaw">GitHub (raw)</ComboBoxItem>
-                                <ComboBoxItem x:Uid="UpdatePage_DataSource_GitHubCDN">GitHub (CDN)</ComboBoxItem>
-                                <ComboBoxItem x:Uid="UpdatePage_DataSource_GiteeRaw">Gitee (raw)</ComboBoxItem>
-                                <ComboBoxItem x:Uid="UpdatePage_DataSource_Custom">自定义URL</ComboBoxItem>
-                            </ComboBox>
                             <TextBox x:Uid="UpdatePage_DataSource_Custom_Placeholder" x:Name="DataCustomUrlBox" PlaceholderText="自定义 ships_static.json 文件 URL" Margin="0,8,0,0"
                                      Visibility="Collapsed"/>
                             <TextBox x:Uid="UpdatePage_Proxy_Placeholder" x:Name="ProxyBox" PlaceholderText="代理地址（例如 http://127.0.0.1:7890）" Margin="0,8,0,0"/>
                         </StackPanel>
+                        <ComboBox Grid.Column="2" x:Name="DataDataSourceCombo" Margin="0,8,0,0" SelectedIndex="0"
+                                      SelectionChanged="DataDataSourceCombo_SelectionChanged">
+                                <ComboBoxItem x:Uid="UpdatePage_DataSource_GitHubRaw" Tag="GitHubRaw">GitHub (raw)</ComboBoxItem>
+                                <ComboBoxItem x:Uid="UpdatePage_DataSource_GitHubCDN" Tag="GitHubCDN">GitHub (CDN)</ComboBoxItem>
+                                <ComboBoxItem x:Uid="UpdatePage_DataSource_GiteeRaw" Tag="GiteeRaw">Gitee (raw)</ComboBoxItem>
+                                <ComboBoxItem x:Uid="UpdatePage_DataSource_Custom" Tag="Custom">自定义URL</ComboBoxItem>
+                            </ComboBox>
                     </Grid>
                 </Border>
 

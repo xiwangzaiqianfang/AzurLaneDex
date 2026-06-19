@@ -16,6 +16,7 @@ namespace AzurLaneDex;
 public sealed partial class MainWindow : Window
 {
     private bool _initialized = false;
+    private bool _isNavigatingByUser = false;
     public Frame AppContentFrame => ContentFrame;
 
     public MainWindow()
@@ -110,7 +111,9 @@ public sealed partial class MainWindow : Window
         }
 
         // === 2. 加载舰船数据 ===
-        app.ShipManager = new ShipManager(app.AccountManager);
+        var shipManager = new ShipManager(app.AccountManager);
+        app.ShipManager = shipManager;
+        await shipManager.LoadAsync();
 
         if (app.ShipManager?.Config != null)
         {
@@ -124,6 +127,70 @@ public sealed partial class MainWindow : Window
         var resourceManager = new ImageResourceManager(App.DataRoot);
         resourceManager.MigrateLegacyAvatarFolders();
 
+        var avatarManager = new FactionAvatarManager();
+        app.FactionAvatarManager = avatarManager;
+
+        avatarManager.FactionAvatarUpdated += (factionId, version) =>
+        {
+            // 头像更新完成后，可以通知MainPage或ShipDetailControl刷新特定阵营的头像
+            _ = DispatcherQueue.TryEnqueue(() =>
+            {
+                // 发送一个全局消息或调用刷新方法
+            });
+        };
+
+        // _ = Task.Run(async () => await avatarManager.UpdateAllFactionAvatarsAsync());
+        /*
+        var avatarUpdateResult = await avatarManager.UpdateAllFactionAvatarsAsync();
+        switch (avatarUpdateResult.Result)
+        {
+            case AvatarUpdateResult.NetworkError:
+                await ShowMessageDialog("网络错误", avatarUpdateResult.Message);
+                break;
+            case AvatarUpdateResult.ServerError:
+                await ShowMessageDialog("服务器错误", avatarUpdateResult.Message);
+                break;
+            case AvatarUpdateResult.OtherError:
+                await ShowMessageDialog("更新失败", avatarUpdateResult.Message);
+                break;
+            case AvatarUpdateResult.UpdateAvailable:
+                // 弹出询问是否下载的对话框
+                var dialog = new ContentDialog
+                {
+                    Title = "头像更新可用",
+                    Content = $"发现有 {avatarUpdateResult.AvailableFactions.Count} 个阵营的头像可以更新。是否现在下载？\n\n（头像文件较大，请在网络良好时进行）",
+                    PrimaryButtonText = "下载",
+                    CloseButtonText = "稍后",
+                    XamlRoot = this.Content.XamlRoot,
+                    Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
+                };
+                var result = await dialog.ShowAsync();
+                if (result == ContentDialogResult.Primary)
+                {
+                    // 用户确认下载
+                    var progressDialog = new ContentDialog
+                    {
+                        Title = "正在下载头像...",
+                        Content = new ProgressBar { IsIndeterminate = true, Margin = new Thickness(0, 10, 0, 0) },
+                        CloseButtonText = "取消",
+                        XamlRoot = this.Content.XamlRoot
+                    };
+                    // 显示进度对话框（注意：无法同时进行多个对话框，需要异步处理）
+                    // 这里简单实现：实际可显示进度条
+                    var downloadTask = avatarManager.DownloadFactionUpdatesAsync(avatarUpdateResult.AvailableFactions);
+                    // 此处可以添加进度回调更新进度条
+                    var success = await downloadTask;
+                    await ShowMessageDialog("下载完成", success ? "头像更新成功。" : "部分头像下载失败，请检查网络。");
+                }
+                break;
+            case AvatarUpdateResult.NoUpdate:
+                // 无需提示，静默即可
+                break;
+            case AvatarUpdateResult.Success:
+                // 成功更新（但此情况不会单独出现，因为更新由用户触发）
+                break;
+        }
+        */
         // 加载日志配置
         if (app.ShipManager != null && app.ShipManager.Config.TryGetValue("log_enabled", out var enabledObj))
         {
@@ -175,25 +242,23 @@ public sealed partial class MainWindow : Window
             bool savedOpen = LoadPaneOpenState();
             MainNavView.IsPaneOpen = savedOpen;
         }
-        // 最后确保导航到正确页面
-        if (ContentFrame.Content == null || ContentFrame.Content.GetType() != typeof(MainPage))
-        {
-            ContentFrame.Navigate(typeof(MainPage));
-        }
     }
 
-    // 导航栏事件（原有）
+    // 导航栏事件
     private void MainNavView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
     {
         if (args.IsSettingsInvoked)
         {
             ContentFrame.Navigate(typeof(SettingsPage));
+            _isNavigatingByUser = true;
             return;
         }
 
-        if (args.InvokedItemContainer.Tag is string tag)
+        if (args.InvokedItemContainer is NavigationViewItem item &&
+                item.Tag is string tag &&
+                !string.IsNullOrEmpty(tag))
         {
-            ContentFrame.Navigate(tag switch
+            Type? pageType = tag switch
             {
                 "MainPage" => typeof(MainPage),
                 "CampTechPage" => typeof(CampTechPage),
@@ -202,9 +267,20 @@ public sealed partial class MainWindow : Window
                 "SettingsPage" => typeof(SettingsPage),
                 "AccountPage" => typeof(AccountPage),
                 "HelpPage" => typeof(HelpPage),
-                _ => typeof(MainPage)
-            });
+                _ => null
+            };
+
+            if (pageType != null)
+            {
+                ContentFrame.Navigate(pageType);
+            }
         }
+    }
+    private void MainNavView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+    {
+        // 如果不是用户主动点击，则忽略
+        if (!_isNavigatingByUser)
+            return;
     }
 
     private void TitleBar_BackRequested(Microsoft.UI.Xaml.Controls.TitleBar sender, object args)
@@ -221,6 +297,7 @@ public sealed partial class MainWindow : Window
 
     public void NavigateTo(Type pageType, object parameter = null)
     {
+        _isNavigatingByUser = true;
         ContentFrame.Navigate(pageType, parameter);
     }
     private void OnBackRequested(object sender, BackRequestedEventArgs e)
@@ -249,6 +326,7 @@ public sealed partial class MainWindow : Window
     }
     private void ContentFrame_Navigated(object sender, NavigationEventArgs e)
     {
+        _isNavigatingByUser = false;
         // 根据导航到的页面类型，高亮侧边栏对应的菜单项
         string tag = e.SourcePageType.Name switch
         {
@@ -258,7 +336,6 @@ public sealed partial class MainWindow : Window
             nameof(StatsPage) => "StatsPage",
             nameof(SettingsPage) => "SettingsPage",
             nameof(AccountPage) => "AccountPage",
-            // 如果有其他二级页面但不属于主菜单，可以选择不改变高亮或回到默认
             _ => null
         };
         if (tag != null)
@@ -284,5 +361,18 @@ public sealed partial class MainWindow : Window
             return savedState;
         }
         return true; // 默认展开
+    }
+
+    private async Task ShowMessageDialog(string title, string content)
+    {
+        var dialog = new ContentDialog
+        {
+            Title = title,
+            Content = content,
+            CloseButtonText = "确定",
+            XamlRoot = this.Content.XamlRoot,
+            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
+        };
+        await dialog.ShowAsync();
     }
 }
