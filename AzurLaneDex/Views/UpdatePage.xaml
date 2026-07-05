@@ -59,7 +59,7 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <FontIcon Grid.Column="0" Glyph="&#xE72B;" FontFamily="Segoe Fluent Icons" FontSize="22" Margin="0,0,14,0"/>
+                        <FontIcon Grid.Column="0" Glyph="&#xF1AD;" FontFamily="Segoe Fluent Icons" FontSize="22" Margin="0,0,14,0"/>
                         <StackPanel Grid.Column="1">
                             <TextBlock x:Uid="UpdatePage_Channel_Title" Text="更新通道" FontSize="14" FontWeight="SemiBold"/>
                             <TextBlock x:Uid="UpdatePage_Channel_Description" Text="选择接收更新的版本类型，不同通道的更新频率和稳定性不同" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>

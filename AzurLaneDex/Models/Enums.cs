@@ -22,6 +22,7 @@
         Tulip,
         Tempesta,
         Other,
+        CrystalLeague,
         Collab_Nep = 100,
         Collab_Bilibili,
         Collab_Utawarerumono,

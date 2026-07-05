@@ -38,9 +38,10 @@ namespace AzurLaneDex.Views
         {
             base.OnNavigatedTo(e);
             var app = (App)Application.Current;
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             if (app.ShipManager == null)
             {
-                StatusText.Text = "ShipManager 未就绪，请返回重试";
+                StatusText.Text = loader.GetString("Status_1"); // 1
                 CheckAppUpdateButton.IsEnabled = false;
                 CheckDataUpdateButton.IsEnabled = false;
                 DownloadAppButton.Visibility = Visibility.Collapsed;
@@ -112,6 +113,7 @@ namespace AzurLaneDex.Views
 
         private void UpdateAppSourceState()
         {
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             var channel = _updateService.CurrentChannel;
             bool isStable = channel == UpdateChannel.Stable;
             AppDataSourceCombo.IsEnabled = isStable;
@@ -120,11 +122,12 @@ namespace AzurLaneDex.Views
                 // 非正式版强制显示 GitHub，但不改变保存的值
                 AppDataSourceCombo.SelectedItem = AppDataSourceCombo.Items.FirstOrDefault(i => (i as ComboBoxItem)?.Tag?.ToString() == "GitHub");
             }
-            StatusText.Text = $"当前通道: {channel}，更新源: {_updateService.CurrentSource}";
+            StatusText.Text = $"当前通道: {channel}，更新源: {_updateService.CurrentSource}"; // 2
         }
 
         private void UpdateChannelComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             if (UpdateChannelComboBox.SelectedItem is ComboBoxItem selected && selected.Tag is string tag)
             {
                 if (Enum.TryParse<UpdateChannel>(tag, out var channel))
@@ -139,13 +142,14 @@ namespace AzurLaneDex.Views
                     _latestAppVersion = null;
                     _latestAppDownloadUrl = null;
                     DownloadAppButton.Visibility = Visibility.Collapsed;
-                    StatusText.Text = $"已切换到 {channel} 通道";
+                    StatusText.Text = $"已切换到 {channel} 通道"; // 3
                 }
             }
         }
 
         private void AppDataSourceCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             if (AppDataSourceCombo.SelectedItem is ComboBoxItem selected && selected.Tag is string tag)
             {
                 var source = tag == "GitHub" ? UpdateSource.GitHub : UpdateSource.Gitee;
@@ -155,7 +159,7 @@ namespace AzurLaneDex.Views
                 _latestAppVersion = null;
                 _latestAppDownloadUrl = null;
                 DownloadAppButton.Visibility = Visibility.Collapsed;
-                StatusText.Text = $"已切换到 {source} 源";
+                StatusText.Text = $"已切换到 {source} 源"; // 4
             }
         }
 
@@ -170,7 +174,7 @@ namespace AzurLaneDex.Views
                 var updateInfo = await _updateService.CheckForUpdateAsync();
                 if (updateInfo.HasUpdate)
                 {
-                    StatusText.Text = $"发现新版本 {updateInfo.LatestVersion}（{updateInfo.Channel}）";
+                    StatusText.Text = $"发现新版本 {updateInfo.LatestVersion}（{updateInfo.Channel}）"; // 5
                     DownloadAppButton.Visibility = Visibility.Visible;
                     _latestAppVersion = updateInfo.LatestVersion;
                     _latestAppDownloadUrl = updateInfo.DownloadUrl;
@@ -211,12 +215,12 @@ namespace AzurLaneDex.Views
                         if (percent >= 0)
                         {
                             DownloadProgressBar.Value = percent;
-                            DownloadStatusText.Text = $"下载进度: {percent:F1}%";
+                            DownloadStatusText.Text = $"下载进度: {percent:F1}%"; // 6
                         }
                         else
                         {
                             DownloadProgressBar.IsIndeterminate = true;
-                            DownloadStatusText.Text = "正在下载... (大小未知)";
+                            DownloadStatusText.Text = loader.GetString("Status_7"); // 7
                         }
                     });
                 });
@@ -228,8 +232,8 @@ namespace AzurLaneDex.Views
                     return;
                 }
 
-                StatusText.Text = loader.GetString("DownloadCompleteStartingInstall");
-                DownloadStatusText.Text = "安装包已就绪，正在启动安装程序...";
+                StatusText.Text = loader.GetString("DownloadCompleteStartingInstall"); // 9
+                DownloadStatusText.Text = loader.GetString("Status_10"); // 10
 
                 var psi = new ProcessStartInfo
                 {
@@ -359,7 +363,7 @@ namespace AzurLaneDex.Views
             }
             catch (Exception ex)
             {
-                StatusText.Text = $"下载失败: {ex.Message}";
+                StatusText.Text = $"下载失败: {ex.Message}"; // 11
             }
         }
 

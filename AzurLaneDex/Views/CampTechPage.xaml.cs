@@ -18,7 +18,7 @@ namespace AzurLaneDex.Views
 
         private ShipManager _manager;
 
-        // 所有阵营列表（按常见顺序）
+        // 所有阵营列表
         private List<string> AllFactions()
         {
             return new List<string>
@@ -33,8 +33,9 @@ namespace AzurLaneDex.Views
                 _loader.GetString("Faction_FreeFrench"),
                 _loader.GetString("Faction_Vichya"),
                 _loader.GetString("Faction_Tulip"),
+                _loader.GetString("Faction_CrystalLeague"),
                 _loader.GetString("Faction_Tempesta"),
-                _loader.GetString("Faction_Other")
+                _loader.GetString("Faction_Other"),
             };
         }
 

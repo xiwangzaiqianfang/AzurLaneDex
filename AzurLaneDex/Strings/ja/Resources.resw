@@ -750,6 +750,12 @@
   <data name="Faction_FFNF.Content" xml:space="preserve">
     <value>自由フランス</value>
   </data>
+  <data name="Faction_CrystalLeague1.Content" xml:space="preserve">
+    <value>リガ・デ・ペドレリーア</value>
+  </data>
+  <data name="Faction_CrystalLeague" xml:space="preserve">
+    <value>リガ・デ・ペドレリーア</value>
+  </data>
   <data name="Faction_Vichya" xml:space="preserve">
     <value>ヴィシア</value>
   </data>
@@ -782,6 +788,9 @@
   </data>
   <data name="Faction_12" xml:space="preserve">
     <value>その他</value>
+  </data>
+  <data name="Faction_13" xml:space="preserve">
+    <value>リガ・デ・ペドレリーア</value>
   </data>
   <data name="Faction_Other1.Content" xml:space="preserve">
     <value>その他</value>
@@ -2330,5 +2339,47 @@
   </data>
   <data name="ConfirmClearOwned_Message" xml:space="preserve">
     <value />
+  </data>
+  <data name="Channel_Stable.Content" xml:space="preserve">
+    <value>正式版（推奨）</value>
+  </data>
+  <data name="Channel_Preview.Content" xml:space="preserve">
+    <value>プレビュー版</value>
+  </data>
+  <data name="Channel_Dev.Content" xml:space="preserve">
+    <value>開発版</value>
+  </data>
+  <data name="UpdatePage_Channel_Description.Text" xml:space="preserve">
+    <value>アップデートを受け取るバージョンタイプを選択してください。チャンネルによって更新頻度と安定性が異なります</value>
+  </data>
+  <data name="UpdatePage_Channel_Title.Text" xml:space="preserve">
+    <value>アップデートチャンネル</value>
+  </data>
+  <data name="Status_1" xml:space="preserve">
+    <value>ShipManager は準備ができていません。戻って再試行してください</value>
+  </data>
+  <data name="Status_2" xml:space="preserve">
+    <value>現在のチャンネル: {0}、更新元: {1}</value>
+  </data>
+  <data name="Status_3" xml:space="preserve">
+    <value>{0} チャンネルに切り替えました</value>
+  </data>
+  <data name="Status_4" xml:space="preserve">
+    <value>{0} ソースに切り替えました</value>
+  </data>
+  <data name="Status_5" xml:space="preserve">
+    <value>新しいバージョン {0}（{1}）が見つかりました。</value>
+  </data>
+  <data name="Status_7" xml:space="preserve">
+    <value>ダウンロード中... (サイズ不明)</value>
+  </data>
+  <data name="Status_6" xml:space="preserve">
+    <value>ダウンロード進捗: {0}%</value>
+  </data>
+  <data name="Status_11" xml:space="preserve">
+    <value>ダウンロードに失敗しました: {0}</value>
+  </data>
+  <data name="Status_10" xml:space="preserve">
+    <value>インストールパッケージの準備ができました。インストーラーを起動しています...</value>
   </data>
 </root>

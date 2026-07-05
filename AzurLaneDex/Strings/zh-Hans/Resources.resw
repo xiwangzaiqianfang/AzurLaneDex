@@ -750,6 +750,12 @@
   <data name="Faction_FFNF.Content" xml:space="preserve">
     <value>自由鸢尾</value>
   </data>
+  <data name="Faction_CrystalLeague1.Content" xml:space="preserve">
+    <value>晶环联盟</value>
+  </data>
+  <data name="Faction_CrystalLeague" xml:space="preserve">
+    <value>晶环联盟</value>
+  </data>
   <data name="Faction_Vichya" xml:space="preserve">
     <value>维希教廷</value>
   </data>
@@ -782,6 +788,9 @@
   </data>
   <data name="Faction_12" xml:space="preserve">
     <value>其他</value>
+  </data>
+  <data name="Faction_13" xml:space="preserve">
+    <value>晶环联盟</value>
   </data>
   <data name="Faction_Other1.Content" xml:space="preserve">
     <value>其他</value>
@@ -2330,5 +2339,47 @@
   </data>
   <data name="ConfirmClearOwned_Message" xml:space="preserve">
     <value>标记为未获得将同时清除该舰船的满破、120级、誓约、改造和兵装状态。是否继续？</value>
+  </data>
+  <data name="Channel_Stable.Content" xml:space="preserve">
+    <value>正式版（推荐）</value>
+  </data>
+  <data name="Channel_Preview.Content" xml:space="preserve">
+    <value>预览版</value>
+  </data>
+  <data name="Channel_Dev.Content" xml:space="preserve">
+    <value>开发版</value>
+  </data>
+  <data name="UpdatePage_Channel_Description.Text" xml:space="preserve">
+    <value>选择接收更新的版本类型，不同通道的更新频率和稳定性不同</value>
+  </data>
+  <data name="UpdatePage_Channel_Title.Text" xml:space="preserve">
+    <value>更新通道</value>
+  </data>
+  <data name="Status_1" xml:space="preserve">
+    <value>ShipManager 未就绪，请返回重试</value>
+  </data>
+  <data name="Status_2" xml:space="preserve">
+    <value>当前通道: {0}，更新源: {1}</value>
+  </data>
+  <data name="Status_3" xml:space="preserve">
+    <value>已切换到 {0} 通道</value>
+  </data>
+  <data name="Status_4" xml:space="preserve">
+    <value>已切换到 {0} 源</value>
+  </data>
+  <data name="Status_5" xml:space="preserve">
+    <value>发现新版本 {0}（{1}）</value>
+  </data>
+  <data name="Status_7" xml:space="preserve">
+    <value>正在下载... (大小未知)</value>
+  </data>
+  <data name="Status_6" xml:space="preserve">
+    <value>下载进度: {0}%</value>
+  </data>
+  <data name="Status_11" xml:space="preserve">
+    <value>下载失败: {0}</value>
+  </data>
+  <data name="Status_10" xml:space="preserve">
+    <value>安装包已就绪，正在启动安装程序...</value>
   </data>
 </root>

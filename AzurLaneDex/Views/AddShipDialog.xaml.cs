@@ -30,6 +30,24 @@ namespace AzurLaneDex.Views
         private List<KeyValuePair<int, string>> _shipClassList;
         private List<KeyValuePair<int, string>> _attributeList;
 
+        // 阵营顺序自定义
+        private static readonly Dictionary<int, int> FactionDisplayOrder = new()
+        {
+            [(int)Faction.EagleUnion] = 1,
+            [(int)Faction.RoyalNavy] = 2,
+            [(int)Faction.SakuraEmpire] = 3,
+            [(int)Faction.IronBlood] = 4,
+            [(int)Faction.DragonEmpery] = 5,
+            [(int)Faction.Sardegna] = 6,
+            [(int)Faction.NorthernUnion] = 7,
+            [(int)Faction.FreeFrench] = 8,
+            [(int)Faction.Vichya] = 9,
+            [(int)Faction.Tulip] = 10,
+            [(int)Faction.CrystalLeague] = 11,
+            [(int)Faction.Tempesta] = 98,   // 排在最后
+            [(int)Faction.Other] = 99,
+        };
+
         public ObservableCollection<AcquireEntry> AcquireEntries { get; set; } = new();
 
         public AddShipDialog(ShipStatic editShip = null)
@@ -95,7 +113,7 @@ namespace AzurLaneDex.Views
                 .Select(f => new KeyValuePair<int, string>((int)f, LocalizationHelper.GetEnumString("Faction", (int)f)))
                 .ToList();
 
-            _normalFactionList = allFactions.Where(kv => kv.Key >= 1 && kv.Key < 100).ToList();   // 普通阵营 1-99
+            _normalFactionList = allFactions.Where(kv => kv.Key >= 1 && kv.Key < 100).OrderBy(kv => FactionDisplayOrder.ContainsKey(kv.Key) ? FactionDisplayOrder[kv.Key] : 100 + kv.Key).ToList();   // 普通阵营 1-99
             _collabFactionList = allFactions.Where(kv => kv.Key >= 100 && kv.Key < 200).ToList(); // 联动阵营 100-199
             _metaFactionList = allFactions.Where(kv => kv.Key >= 200 && kv.Key < 300).ToList();   // META阵营 200-299
 

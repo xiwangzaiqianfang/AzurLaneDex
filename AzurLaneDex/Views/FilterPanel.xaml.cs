@@ -74,6 +74,8 @@ namespace AzurLaneDex.Views
                 if (FactionFFNF.IsChecked == true) factions.Add("自由鸢尾");
                 if (FactionMNF.IsChecked == true) factions.Add("维希教廷");
                 if (FactionSardegna.IsChecked == true) factions.Add("撒丁帝国");
+                if (FactionTulip.IsChecked == true) factions.Add("郁金王国");
+                if (FactionCrystalLeague.IsChecked == true) factions.Add("晶环联盟");
                 if (FactionMETA.IsChecked == true) factions.Add("META");
                 if (FactionTempesta.IsChecked == true) factions.Add("飓风");
                 if (FactionOther.IsChecked == true) factions.Add("其他");
@@ -176,6 +178,8 @@ namespace AzurLaneDex.Views
                 FactionFFNF.IsChecked = criteria.Factions.Contains("自由鸢尾");
                 FactionMNF.IsChecked = criteria.Factions.Contains("维希教廷");
                 FactionSardegna.IsChecked = criteria.Factions.Contains("撒丁帝国");
+                FactionTulip.IsChecked = criteria.Factions.Contains("郁金王国");
+                FactionCrystalLeague.IsChecked = criteria.Factions.Contains("晶环联盟");
                 FactionMETA.IsChecked = criteria.Factions.Contains("META");
                 FactionTempesta.IsChecked = criteria.Factions.Contains("飓风");
                 FactionOther.IsChecked = criteria.Factions.Contains("其他");

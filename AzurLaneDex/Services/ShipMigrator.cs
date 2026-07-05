@@ -27,6 +27,7 @@ namespace AzurLaneDex.Services
             ["自由鸢尾"] = (int)Faction.FreeFrench,
             ["维希教廷"] = (int)Faction.Vichya,
             ["郁金王国"] = (int)Faction.Tulip,
+            ["晶环联盟"] = (int)Faction.CrystalLeague,
             ["飓风"] = (int)Faction.Tempesta,
             ["其他"] = (int)Faction.Other,
             ["超次元游戏海王星"] = (int)Faction.Collab_Nep,
