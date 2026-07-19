@@ -84,17 +84,19 @@
                                     <CheckBox x:Uid="Faction_Sardegna1" x:Name="FactionSardegna" Content="撒丁帝国" Margin="8,4,6,4" Width="80"/>
                                 </StackPanel>
                                 <StackPanel Grid.Row="3" Orientation="Horizontal">
-                                    <CheckBox x:Uid="Faction_META" x:Name="FactionMETA" Content="META" Margin="8,4,6,4" Width="80"/>
-                                    <CheckBox x:Uid="Faction_Tempesta1" x:Name="FactionTempesta" Content="飓风" Margin="8,4,6,4" Width="80"/>
                                     <CheckBox x:Uid="Faction_Tulip1" x:Name="FactionTulip" Content="郁金王国" Margin="8,4,6,4" Width="80"/>
+                                    <CheckBox x:Uid="Faction_CrystalLeague1" x:Name="FactionCrystalLeague" Content="晶环联盟" Margin="8,4,6,4" Width="80"/>
+                                    <CheckBox x:Uid="Faction_Tempesta1" x:Name="FactionTempesta" Content="飓风" Margin="8,4,6,4" Width="80"/>
+                                    
                                 </StackPanel>
                                 <StackPanel Grid.Row="4" Orientation="Horizontal">
-                                    <CheckBox x:Uid="Faction_CrystalLeague1" x:Name="FactionCrystalLeague" Content="晶环联盟" Margin="8,4,6,4" Width="80"/>
+                                    <CheckBox x:Uid="Faction_META" x:Name="FactionMETA" Content="META" Margin="8,4,6,4" Width="80"/>
                                     <CheckBox x:Uid="Faction_Other1" x:Name="FactionOther" Content="其他" Margin="8,4,6,4" Width="80"/>
                                 </StackPanel>
                             </Grid>
                             <Grid x:Name="CollabFactionPanel" Visibility="Collapsed">
                                 <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
@@ -125,6 +127,9 @@
                                     <CheckBox x:Uid="FactionCollab_Danmachi" x:Name="FactionCollab_Danmachi" Content="地城邂逅" Margin="6,4,6,4" Width="110"/>
                                     <CheckBox x:Uid="FactionCollab_Yumia" x:Name="FactionCollab_Yumia" Content="优米雅的炼金工房" Margin="6,4,6,4" Width="110"/>
                                     <CheckBox x:Uid="FactionCollab_DAL" x:Name="FactionCollab_DAL" Content="约会大作战V" Margin="6,4,6,4" Width="110"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="5" Orientation="Horizontal">
+                                    <CheckBox x:Uid="FactonCollab_NieR" x:Name="FactionCollab_NieR" Content="尼尔：机械纪元" Margin="6,4,6,4" Width="110"/>
                                 </StackPanel>
                             </Grid>
                             <!-- META阵营面板（初始隐藏） -->

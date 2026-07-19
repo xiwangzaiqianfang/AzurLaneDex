@@ -10,6 +10,7 @@
 
     public enum Faction
     {
+        Universal = 0,
         EagleUnion = 1,
         RoyalNavy,
         SakuraEmpire,
@@ -20,9 +21,10 @@
         FreeFrench,
         Vichya,
         Tulip,
-        Tempesta,
-        Other,
         CrystalLeague,
+        French = 97,
+        Tempesta = 98,
+        Other = 99,
         Collab_Nep = 100,
         Collab_Bilibili,
         Collab_Utawarerumono,
@@ -38,15 +40,22 @@
         Collab_Danmachi,
         Collab_Yumia,
         Collab_DAL,
+        Collab_NieR,
         Meta_Flame = 200,
         Meta_Core,
         Meta_Reason,
         Meta_Light,
-        Meta_Fire
+        Meta_Fire,
+        META = 299,
+        Council = 300,
+        X = 400,
+        Siren = 500,
+        Unknown = 999
     }
 
     public enum ShipClass
     {
+        UNKNOWN = 0,
         DD = 1,
         CL,
         CA,
@@ -61,18 +70,28 @@
         SS,
         SSV,
         AE,
-        Sail
+        Sail,
+        CAV,
+        CT,
+        TRP,
+        CARGO,
+        BOMB,
+        DDG,
+        IX,
+        SP
     }
 
     public enum Rarity
     {
+        T1 = 0,
         N = 1,
         R,
         SR,
         SSR,
         UR,
         Decisive,
-        Ultimate
+        Ultimate,
+        Unknown
     }
 
     public enum AttributeType
@@ -85,8 +104,63 @@
         AVI,
         ACC,
         RLD,
+        HIT,
         EVA,
-        ASW
+        SPD,
+        LUCK,
+        ASW,
+        OIL
+    }
+
+    public enum ArmorType
+    {
+        Light = 0,
+        Medium,
+        Heavy
+    }
+
+    public enum ItemType
+    {
+        Unknown = 0,
+        GeneralPartT1 = 101,
+        GeneralPartT2,
+        GeneralPartT3,
+        GeneralPartT4,
+        MainGunPartT1 = 111,
+        MainGunPartT2,
+        MainGunPartT3,
+        MainGunPartT4,
+        TorpedoPartT1 = 121,
+        TorpedoPartT2,
+        TorpedoPartT3,
+        TorpedoPartT4,
+        AAGunPartT1 = 131,
+        AAGunPartT2,
+        AAGunPartT3,
+        AAGunPartT4,
+        AircraftPartT1 = 141,
+        AircraftPartT2,
+        AircraftPartT3,
+        AircraftPartT4,
+        DDRetrofitBlueprintT1 = 201,
+        DDRetrofitBlueprintT2,
+        DDRetrofitBlueprintT3,
+        CLRetrofitBlueprintT1 = 211,
+        CLRetrofitBlueprintT2,
+        CLRetrofitBlueprintT3,
+        BBRetrofitBlueprintT1 = 221,
+        BBRetrofitBlueprintT2,
+        BBRetrofitBlueprintT3,
+        CVRetrofitBlueprintT1 = 231,
+        CVRetrofitBlueprintT2,
+        CVRetrofitBlueprintT3,
+    }
+
+    public enum SkillType
+    { 
+        Attack = 1,
+        Defense,
+        Support
     }
 
     public enum UpdateChannel

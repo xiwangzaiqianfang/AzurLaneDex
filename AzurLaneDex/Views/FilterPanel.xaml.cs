@@ -97,6 +97,7 @@ namespace AzurLaneDex.Views
                 if (FactionCollab_Danmachi.IsChecked == true) factions.Add("地城邂逅");
                 if (FactionCollab_Yumia.IsChecked == true) factions.Add("优米雅的炼金工房");
                 if (FactionCollab_DAL.IsChecked == true) factions.Add("约会大作战V");
+                if (FactionCollab_NieR.IsChecked == true) factions.Add("尼尔：机械纪元");
             }
             else if (MetaFactionPanel.Visibility == Visibility.Visible)
             {
@@ -201,6 +202,7 @@ namespace AzurLaneDex.Views
                 FactionCollab_Danmachi.IsChecked = criteria.Factions.Contains("地城邂逅");
                 FactionCollab_Yumia.IsChecked = criteria.Factions.Contains("优米雅的炼金工房");
                 FactionCollab_DAL.IsChecked = criteria.Factions.Contains("约会大作战V");
+                FactionCollab_NieR.IsChecked = criteria.Factions.Contains("尼尔：机械纪元");
 
             }
             else if (MetaFactionPanel.Visibility == Visibility.Visible)

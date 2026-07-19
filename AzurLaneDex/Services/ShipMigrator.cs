@@ -45,6 +45,7 @@ namespace AzurLaneDex.Services
             ["地城邂逅"] = (int)Faction.Collab_Danmachi,
             ["优米雅的炼金工房"] = (int)Faction.Collab_Yumia,
             ["约会大作战V"] = (int)Faction.Collab_DAL,
+            ["尼尔：机械纪元"] = (int)Faction.Collab_NieR,
             ["破敌之炬"] = (int)Faction.Meta_Flame,
             ["湮烬之核"] = (int)Faction.Meta_Core,
             ["构造之理"] = (int)Faction.Meta_Reason,

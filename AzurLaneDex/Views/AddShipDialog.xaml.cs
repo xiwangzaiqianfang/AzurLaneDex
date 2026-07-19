@@ -115,7 +115,7 @@ namespace AzurLaneDex.Views
 
             _normalFactionList = allFactions.Where(kv => kv.Key >= 1 && kv.Key < 100).OrderBy(kv => FactionDisplayOrder.ContainsKey(kv.Key) ? FactionDisplayOrder[kv.Key] : 100 + kv.Key).ToList();   // 普通阵营 1-99
             _collabFactionList = allFactions.Where(kv => kv.Key >= 100 && kv.Key < 200).ToList(); // 联动阵营 100-199
-            _metaFactionList = allFactions.Where(kv => kv.Key >= 200 && kv.Key < 300).ToList();   // META阵营 200-299
+            _metaFactionList = allFactions.Where(kv => kv.Key >= 200 && kv.Key < 299).ToList();   // META阵营 200-299
 
             // 获取所有稀有度枚举
             var allRarities = Enum.GetValues(typeof(Rarity))
