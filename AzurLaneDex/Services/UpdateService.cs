@@ -10,13 +10,16 @@ namespace AzurLaneDex.Services
     public class UpdateService : IUpdateService
     {
         private readonly ShipManager _shipManager;
+        private readonly IShipDataUpdater _dataUpdater;
+        private readonly IShipDataStore _dataStore;
         private readonly HttpClient _httpClient;
 
-        public UpdateService(ShipManager shipManager)
+        public UpdateService(ShipManager shipManager, IShipDataUpdater dataUpdater, IShipDataStore dataStore)
         {
             _shipManager = shipManager ?? throw new ArgumentNullException(nameof(shipManager));
-            _httpClient = new HttpClient();
-            _httpClient.Timeout = TimeSpan.FromSeconds(30);
+            _dataUpdater = dataUpdater ?? throw new ArgumentNullException(nameof(dataUpdater));
+            _dataStore = dataStore ?? throw new ArgumentNullException(nameof(dataStore));
+            _httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(30) };
         }
 
         public UpdateChannel CurrentChannel
@@ -167,6 +170,23 @@ namespace AzurLaneDex.Services
                 LogService.Error($"下载并安装更新失败: {ex.Message}", nameof(UpdateService), ex);
                 return false;
             }
+        }
+        // ========== 数据更新方法 ==========
+        public async Task<string> GetRemoteDataVersionAsync(string url, string proxy = "")
+        {
+            return await _dataUpdater.GetRemoteVersionAsync(url, proxy);
+        }
+
+        public async Task<bool> UpdateDataFromUrlAsync(string url, string proxy = "")
+        {
+            bool result = await _dataUpdater.DownloadAndApplyUpdateAsync(url, proxy, async (newData) =>
+            {
+                await _dataStore.SaveStaticAsync(newData);
+                await _shipManager.LoadAsync(); // 重新加载
+                _shipManager.NotifyDataChanged(); // 触发刷新
+                LogService.Operation("数据更新", "完成");
+            });
+            return result;
         }
 
         private string GetVersionUrl(UpdateChannel channel, UpdateSource source)

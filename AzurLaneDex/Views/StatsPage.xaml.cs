@@ -37,7 +37,7 @@ namespace AzurLaneDex.Views
         private void LoadStats()
         {
             var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
-            var stats = _manager.stats();
+            var stats = _manager.GetStats();
 
             var cards = new List<StatCardData>
             {

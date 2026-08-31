@@ -6,12 +6,12 @@
 
     <Page.Resources>
         <converters:BoolToCheckMarkConverter x:Key="BoolToCheckMark"/>
-        <!--converters:BoolToBreakthroughTextConverter x:Key="BoolToBreakthroughText"/-->
         <converters:BreakthroughToDisplayConverter x:Key="BreakthroughToDisplay"/>
         <converters:BoolToHeartConverter x:Key="BoolToHeart"/>
         <converters:BoolToStarConverter x:Key="BoolToStar"/>
+        <converters:StringToImageSourceConverter x:Key="StringToImageSource"/>
 
-        <!-- 完整模板：显示所有列 -->
+        <!-- 完整模板：复选框 + 头像 + 编号 + 名称 + 稀有度 + 获得 + 誓约 + 突破 + 120级 -->
         <DataTemplate x:Key="FullTemplate">
             <Grid>
                 <Grid.ContextFlyout>
@@ -19,28 +19,30 @@
                 </Grid.ContextFlyout>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="40"/>
-                    <ColumnDefinition Width="100"/>
-                    <ColumnDefinition Width="160"/>
-                    <ColumnDefinition Width="40"/>
-                    <ColumnDefinition Width="40"/>
-                    <ColumnDefinition Width="40"/>
-                    <ColumnDefinition Width="40"/>
-                    <ColumnDefinition Width="40"/>
-                    <ColumnDefinition Width="40"/>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="80"/>
+                    <ColumnDefinition Width="130"/>
+                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="45"/>
+                    <ColumnDefinition Width="45"/>
+                    <ColumnDefinition Width="45"/>
+                    <ColumnDefinition Width="45"/>
                 </Grid.ColumnDefinitions>
-                <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected, Mode=TwoWay}"/>
-                <TextBlock Grid.Column="1" Text="{Binding DisplayId}" VerticalAlignment="Center"/>
-                <TextBlock Grid.Column="2" Text="{Binding DisplayName}" FontWeight="SemiBold" VerticalAlignment="Center"/>
-                <TextBlock Grid.Column="3" Text="{Binding Owned, Converter={StaticResource BoolToCheckMark}}" VerticalAlignment="Center"/>
-                <TextBlock Grid.Column="4" Text="{Binding Oath, Converter={StaticResource BoolToHeart}}" VerticalAlignment="Center"/>
-                <TextBlock Grid.Column="5" Text="{Binding Breakthrough, Converter={StaticResource BreakthroughToDisplay}}" VerticalAlignment="Center"/>
-                <TextBlock Grid.Column="6" Text="{Binding Level120, Converter={StaticResource BoolToStar}}" VerticalAlignment="Center"/>
-                <TextBlock Grid.Column="7" Text="{Binding Remodeled, Converter={StaticResource BoolToCheckMark}}" VerticalAlignment="Center"/>
-                <TextBlock Grid.Column="8" Text="{Binding SpecialGearObtained, Converter={StaticResource BoolToCheckMark}}" VerticalAlignment="Center"/>
+                <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected, Mode=TwoWay}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <Border Grid.Column="1" Width="36" Height="36" CornerRadius="4" Margin="2">
+                    <Image Source="{Binding AvatarUri, Converter={StaticResource StringToImageSource}}" Stretch="UniformToFill"/>
+                </Border>
+                <TextBlock Grid.Column="2" Text="{Binding DisplayId}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="3" Text="{Binding DisplayName}" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                <TextBlock Grid.Column="4" Text="{Binding Rarity}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="5" Text="{Binding Owned, Converter={StaticResource BoolToCheckMark}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="6" Text="{Binding Oath, Converter={StaticResource BoolToHeart}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="7" Text="{Binding Breakthrough, Converter={StaticResource BreakthroughToDisplay}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="8" Text="{Binding Level120, Converter={StaticResource BoolToStar}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Grid>
         </DataTemplate>
 
-        <!-- 紧凑模板：隐藏突破、120级、兵装 -->
+        <!-- 紧凑模板：复选框 + 头像 + 编号 + 名称 + 稀有度 + 获得 + 誓约（无突破和120级） -->
         <DataTemplate x:Key="CompactTemplate">
             <Grid>
                 <Grid.ContextFlyout>
@@ -48,43 +50,48 @@
                 </Grid.ContextFlyout>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="40"/>
-                    <ColumnDefinition Width="100"/>
-                    <ColumnDefinition Width="160"/>
-                    <ColumnDefinition Width="40"/>
-                    <ColumnDefinition Width="40"/>
-                    <ColumnDefinition Width="40"/>
-                    <ColumnDefinition Width="40"/>
+                    <ColumnDefinition Width="44"/>
+                    <ColumnDefinition Width="70"/>
+                    <ColumnDefinition Width="120"/>
+                    <ColumnDefinition Width="55"/>
+                    <ColumnDefinition Width="45"/>
+                    <ColumnDefinition Width="45"/>
                 </Grid.ColumnDefinitions>
-                <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected, Mode=TwoWay}"/>
-                <TextBlock Grid.Column="1" Text="{Binding DisplayId}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                <TextBlock Grid.Column="2" Text="{Binding DisplayName}" FontWeight="SemiBold" VerticalAlignment="Center"/>
-                <TextBlock Grid.Column="3" Text="{Binding Owned, Converter={StaticResource BoolToCheckMark}}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                <TextBlock Grid.Column="4" Text="{Binding Oath, Converter={StaticResource BoolToHeart}}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                <TextBlock Grid.Column="5" Text="{Binding Remodeled, Converter={StaticResource BoolToCheckMark}}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected, Mode=TwoWay}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <Border Grid.Column="1" Width="32" Height="32" CornerRadius="4" Margin="2">
+                    <Image Source="{Binding AvatarUri, Converter={StaticResource StringToImageSource}}" Stretch="UniformToFill"/>
+                </Border>
+                <TextBlock Grid.Column="2" Text="{Binding DisplayId}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="3" Text="{Binding DisplayName}" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                <TextBlock Grid.Column="4" Text="{Binding Rarity}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="5" Text="{Binding Owned, Converter={StaticResource BoolToCheckMark}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="6" Text="{Binding Oath, Converter={StaticResource BoolToHeart}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Grid>
         </DataTemplate>
 
-        <!-- 极简模板：仅复选框、编号、名称 -->
+        <!-- 极简模板：复选框 + 头像 + 编号 + 名称 -->
         <DataTemplate x:Key="MinimalTemplate">
             <Grid>
                 <Grid.ContextFlyout>
                     <StaticResource ResourceKey="ShipContextMenu"/>
                 </Grid.ContextFlyout>
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="36"/>
                     <ColumnDefinition Width="40"/>
-                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="60"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected, Mode=TwoWay}"/>
-                <TextBlock Grid.Column="1" Text="{Binding DisplayId}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                <TextBlock Grid.Column="2" Text="{Binding DisplayName}" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected, Mode=TwoWay}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <Border Grid.Column="1" Width="28" Height="28" CornerRadius="4" Margin="2">
+                    <Image Source="{Binding AvatarUri, Converter={StaticResource StringToImageSource}}" Stretch="UniformToFill"/>
+                </Border>
+                <TextBlock Grid.Column="2" Text="{Binding DisplayId}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="3" Text="{Binding DisplayName}" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
             </Grid>
         </DataTemplate>
-        
-        <!-- 右键菜单资源项 -->
-        <!-- 统一右键菜单（Windows 11 风格分组） -->
+
+        <!-- 右键菜单（与之前相同，但可根据需要调整项） -->
         <MenuFlyout x:Key="ShipContextMenu">
-            <!-- 第一组：最常用指令（获得、120级、满破、改造） -->
             <MenuFlyoutItem x:Name="CtxMenu_ToggleOwned" Click="CtxMenu_ToggleOwned_Click">
                 <MenuFlyoutItem.Icon>
                     <FontIcon x:Name="CtxMenu_OwnedIcon" Glyph="&#xE10B;"/>
@@ -100,27 +107,12 @@
                     <FontIcon x:Name="CtxMenu_MaxBreakIcon" Glyph="&#xE734;"/>
                 </MenuFlyoutItem.Icon>
             </MenuFlyoutItem>
-            <MenuFlyoutItem x:Name="CtxMenu_ToggleRemodel" Click="CtxMenu_ToggleRemodel_Click">
-                <MenuFlyoutItem.Icon>
-                    <FontIcon x:Name="CtxMenu_RemodelIcon" Glyph="&#xE794;"/>
-                </MenuFlyoutItem.Icon>
-            </MenuFlyoutItem>
-
-            <MenuFlyoutSeparator/>
-
-            <!-- 第二组：常用指令（誓约、兵装） + 突破子菜单 -->
             <MenuFlyoutItem x:Name="CtxMenu_ToggleOath" Click="CtxMenu_ToggleOath_Click">
                 <MenuFlyoutItem.Icon>
                     <FontIcon x:Name="CtxMenu_OathIcon" Glyph="&#xEB51;"/>
                 </MenuFlyoutItem.Icon>
             </MenuFlyoutItem>
-            <MenuFlyoutItem x:Name="CtxMenu_ToggleSpecialGear" Click="CtxMenu_ToggleSpecialGear_Click">
-                <MenuFlyoutItem.Icon>
-                    <FontIcon x:Name="CtxMenu_SpecialGearIcon" Glyph="&#xE157;"/>
-                </MenuFlyoutItem.Icon>
-            </MenuFlyoutItem>
-
-            <!-- 突破子菜单（突破一次、两次、三次） -->
+            <MenuFlyoutSeparator/>
             <MenuFlyoutSubItem x:Name="CtxMenu_BreakthroughSub" Text="突破状态">
                 <MenuFlyoutSubItem.Icon>
                     <FontIcon Glyph="&#xE734;"/>
@@ -144,11 +136,8 @@
                     <MenuFlyoutItem.Text>满破（三次）</MenuFlyoutItem.Text>
                 </MenuFlyoutItem>
             </MenuFlyoutSubItem>
-
             <MenuFlyoutSeparator/>
-
-            <!-- 第三组：删除（仅开发者可见） -->
-            <MenuFlyoutItem x:Name="CtxMenu_Delete" Foreground="Red" Click="CtxMenu_Delete_Click">
+            <MenuFlyoutItem x:Name="CtxMenu_Delete" Foreground="Red" Click="CtxMenu_Delete_Click" Visibility="Collapsed">
                 <MenuFlyoutItem.Icon>
                     <SymbolIcon Symbol="Delete"/>
                 </MenuFlyoutItem.Icon>
@@ -165,7 +154,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- ===== InfoBar 容器 ===== -->
+        <!-- InfoBar 容器 -->
         <StackPanel Grid.Row="0" Margin="12,12,12,-6" Spacing="8">
             <InfoBar x:Name="BetaInfoBar"
                      x:Uid="BetaInfoBar"
@@ -189,7 +178,7 @@
             </InfoBar>
         </StackPanel>
 
-        <!-- 分类选择器（SelectorBar）单独一行 -->
+        <!-- 分类选择器 -->
         <SelectorBar x:Name="CategorySelector" Grid.Row="1" Margin="12,0,12,0"
                      SelectionChanged="CategorySelector_SelectionChanged">
             <SelectorBarItem x:Uid="CategoryTag_Normal" Text="角色" Tag="Normal" />
@@ -198,7 +187,7 @@
             <SelectorBarItem x:Uid="CategoryTag_META" Text="META" Tag="META" />
         </SelectorBar>
 
-        <!-- CommandBar 功能区 -->
+        <!-- CommandBar -->
         <CommandBar Grid.Row="2" Margin="12,4,12,4" DefaultLabelPosition="Right">
             <CommandBar.Content>
                 <Grid>
@@ -230,32 +219,25 @@
                         <ComboBoxItem x:Uid="MainPage_SortCombo_Item1">按图鉴排序</ComboBoxItem>
                         <ComboBoxItem x:Uid="MainPage_SortCombo_Item2">按名称排序</ComboBoxItem>
                         <ComboBoxItem x:Uid="MainPage_SortCombo_Item3">按稀有度排序</ComboBoxItem>
-                        <ComboBoxItem x:Uid="MainPage_SortCombo_Item4">按改造日期排序</ComboBoxItem>
-                        <ComboBoxItem x:Uid="MainPage_SortCombo_Item5">按兵装日期排序</ComboBoxItem>
                         <ComboBoxItem x:Uid="MainPage_SortCombo_Item6">按获得状态排序</ComboBoxItem>
-                        <ComboBoxItem x:Uid="MainPage_SortCombo_Item7">按改造状态排序</ComboBoxItem>
                         <ComboBoxItem x:Uid="MainPage_SortCombo_Item8">按突破状态排序</ComboBoxItem>
                         <ComboBoxItem x:Uid="MainPage_SortCombo_Item9">按誓约状态排序</ComboBoxItem>
                         <ComboBoxItem x:Uid="MainPage_SortCombo_Item10">按120级状态排序</ComboBoxItem>
-                        <ComboBoxItem x:Uid="MainPage_SortCombo_Item11">按兵装获得状态排序</ComboBoxItem>
                     </ComboBox>
                     <ToggleButton x:Uid="MainPage_SortToggle" x:Name="SortOrderToggle" Grid.Column="2" Content="升序" Margin="0,8,8,0"
                                   Checked="SortOrderToggle_Checked" Unchecked="SortOrderToggle_Unchecked" VerticalAlignment="Center"/>
                 </Grid>
             </CommandBar.Content>
 
-            <!-- 主要命令 -->
             <AppBarButton Icon="Filter" Label="筛选" x:Uid="FilterButton" Click="FilterButton_Click" VerticalAlignment="Center"/>
             <AppBarButton x:Name="BatchOperationButton" x:Uid="BatchOperationButton" Icon="SelectAll" Label="批量操作" Click="BatchOperation_Click" VerticalAlignment="Center"/>
             <AppBarButton x:Name="AddShipButton" Icon="Add" x:Uid="AddShipButton" Label="新建舰船" Click="AddShipButton_Click" Visibility="Collapsed" VerticalAlignment="Center"/>
-
-            <!-- 辅助命令 -->
             <CommandBar.SecondaryCommands>
                 <AppBarButton x:Uid="ResetAndRefreshButton" Label="重置并刷新" Click="ResetAndRefresh_Click" />
             </CommandBar.SecondaryCommands>
         </CommandBar>
 
-        <!-- 主体区域：左右两列 + GridSplitter -->
+        <!-- 主体区域 -->
         <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition x:Name="LeftColumn" Width="2*" MinWidth="370" MaxWidth="580"/>
@@ -269,62 +251,66 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
+
                 <!-- 完整表头 (9列) -->
                 <Grid x:Name="FullHeader" Grid.Row="0" Height="32" CornerRadius="4" Background="{ThemeResource CardBackgroundFillColorDefault}" Margin="12,0,12,0" Visibility="Visible">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="40"/>
-                        <ColumnDefinition Width="100"/>
-                        <ColumnDefinition Width="160"/>
-                        <ColumnDefinition Width="40"/>
-                        <ColumnDefinition Width="40"/>
-                        <ColumnDefinition Width="40"/>
-                        <ColumnDefinition Width="40"/>
-                        <ColumnDefinition Width="40"/>
-                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="130"/>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="45"/>
+                        <ColumnDefinition Width="45"/>
+                        <ColumnDefinition Width="45"/>
+                        <ColumnDefinition Width="45"/>
                     </Grid.ColumnDefinitions>
                     <CheckBox x:Name="SelectAllCheckBox" Grid.Column="0" VerticalAlignment="Center" Margin="16,0,0,0" Padding="0"
-              Checked="SelectAll_Checked" Unchecked="SelectAll_Unchecked"/>
-                    <TextBlock x:Uid="MainPage_Header_ID"  Grid.Column="1" Text="编号" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    <TextBlock x:Uid="MainPage_Header_Name" Grid.Column="2" Text="名称" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    <TextBlock x:Uid="MainPage_Header_Owned" Grid.Column="3" Text="获得" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    <TextBlock x:Uid="MainPage_Header_Oath" Grid.Column="4" Text="誓约" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    <TextBlock x:Uid="MainPage_Header_Breakthrough" Grid.Column="5" Text="突破" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    <TextBlock x:Uid="MainPage_Header_Level120" Grid.Column="6" Text="120级" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    <TextBlock x:Uid="MainPage_Header_Remodel" Grid.Column="7" Text="改造" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    <TextBlock x:Uid="MainPage_Header_SpecialGear" Grid.Column="8" Text="兵装" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                              Checked="SelectAll_Checked" Unchecked="SelectAll_Unchecked"/>
+                    <TextBlock Grid.Column="1" Text="头像" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock x:Uid="MainPage_Header_ID" Grid.Column="2" Text="编号" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock x:Uid="MainPage_Header_Name" Grid.Column="3" Text="名称" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock x:Uid="MainPage_Header_Rarity" Grid.Column="4" Text="稀有度" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock x:Uid="MainPage_Header_Owned" Grid.Column="5" Text="获得" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock x:Uid="MainPage_Header_Oath" Grid.Column="6" Text="誓约" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock x:Uid="MainPage_Header_Breakthrough" Grid.Column="7" Text="突破" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock x:Uid="MainPage_Header_Level120" Grid.Column="8" Text="120级" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Grid>
 
                 <!-- 紧凑表头 (7列) -->
                 <Grid x:Name="CompactHeader" Grid.Row="0" Height="32" CornerRadius="4" Background="{ThemeResource CardBackgroundFillColorDefault}" Margin="12,0,12,0" Visibility="Collapsed">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="40"/>
-                        <ColumnDefinition Width="100"/>
-                        <ColumnDefinition Width="160"/>
-                        <ColumnDefinition Width="40"/>
-                        <ColumnDefinition Width="40"/>
-                        <ColumnDefinition Width="40"/>
-                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="44"/>
+                        <ColumnDefinition Width="70"/>
+                        <ColumnDefinition Width="120"/>
+                        <ColumnDefinition Width="55"/>
+                        <ColumnDefinition Width="45"/>
+                        <ColumnDefinition Width="45"/>
                     </Grid.ColumnDefinitions>
                     <CheckBox x:Name="CompactSelectAllCheckBox" Grid.Column="0" VerticalAlignment="Center" Margin="16,0,0,0" Padding="0"
-              Checked="SelectAll_Checked" Unchecked="SelectAll_Unchecked"/>
-                    <TextBlock x:Uid="MainPage_Header_ID"  Grid.Column="1" Text="编号" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    <TextBlock x:Uid="MainPage_Header_Name" Grid.Column="2" Text="名称" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    <TextBlock x:Uid="MainPage_Header_Owned" Grid.Column="3" Text="获得" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    <TextBlock x:Uid="MainPage_Header_Oath" Grid.Column="4" Text="誓约" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    <TextBlock x:Uid="MainPage_Header_Remodel" Grid.Column="5" Text="改造" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                              Checked="SelectAll_Checked" Unchecked="SelectAll_Unchecked"/>
+                    <TextBlock Grid.Column="1" Text="头像" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock x:Uid="MainPage_Header_ID" Grid.Column="2" Text="编号" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock x:Uid="MainPage_Header_Name" Grid.Column="3" Text="名称" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock x:Uid="MainPage_Header_Rarity" Grid.Column="4" Text="稀有度" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock x:Uid="MainPage_Header_Owned" Grid.Column="5" Text="获得" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock x:Uid="MainPage_Header_Oath" Grid.Column="6" Text="誓约" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Grid>
 
-                <!-- 极简表头 (3列) -->
+                <!-- 极简表头 (4列) -->
                 <Grid x:Name="MinimalHeader" Grid.Row="0" Height="32" CornerRadius="4" Background="{ThemeResource CardBackgroundFillColorDefault}" Margin="12,0,12,0" Visibility="Collapsed">
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="36"/>
                         <ColumnDefinition Width="40"/>
-                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="60"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <CheckBox x:Name="MinimalSelectAllCheckBox" Grid.Column="0" VerticalAlignment="Center" Margin="16,0,0,0" Padding="0"
-              Checked="SelectAll_Checked" Unchecked="SelectAll_Unchecked"/>
-                    <TextBlock x:Uid="MainPage_Header_ID"  Grid.Column="1" Text="编号" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    <TextBlock x:Uid="MainPage_Header_Name" Grid.Column="2" Text="名称" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                              Checked="SelectAll_Checked" Unchecked="SelectAll_Unchecked"/>
+                    <TextBlock Grid.Column="1" Text="头像" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock x:Uid="MainPage_Header_ID" Grid.Column="2" Text="编号" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock x:Uid="MainPage_Header_Name" Grid.Column="3" Text="名称" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Grid>
 
                 <!-- 舰船列表 -->

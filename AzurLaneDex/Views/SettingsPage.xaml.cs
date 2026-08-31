@@ -47,7 +47,7 @@ namespace AzurLaneDex.Views
                 WindowSizeLabel.Text = string.Format(format, bounds.Width, bounds.Height);
             }
         }
-
+        /*
         private async void MigrateOldData_Click(object sender, RoutedEventArgs e)
         {
             var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
@@ -134,6 +134,7 @@ namespace AzurLaneDex.Views
                 LogService.Operation("数据迁移操作", $"迁移失败：{ex.Message}");
             }
         }
+        */
 
         // 添加私有方法：加载已保存的语言设置
         private void LoadLanguageSetting()
@@ -192,6 +193,7 @@ namespace AzurLaneDex.Views
             }
         }
 
+        /*
         private StaticData MigrateOldStaticJson(string oldJson)
         {
             using var doc = JsonDocument.Parse(oldJson);
@@ -224,6 +226,7 @@ namespace AzurLaneDex.Views
             }
             return list;
         }
+        */
 
         private async void ResetWindowClick(object sender, RoutedEventArgs e)
         {

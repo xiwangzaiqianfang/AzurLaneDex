@@ -1,4 +1,5 @@
-﻿using AzurLaneDex.Services;
+﻿using AzurLaneDex.Helpers;
+using AzurLaneDex.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -15,7 +16,7 @@ namespace AzurLaneDex.Views
     public sealed partial class AttrBonusPage : Page
     {
         private ShipManager _manager;
-        private Dictionary<string, int> _currentAttrTotals = new(); // 属性名称 -> 总值
+        private Dictionary<string, int> _currentAttrTotals = new();
         private readonly ResourceLoader _loader = ResourceLoader.GetForViewIndependentUse();
 
         private List<string> GetAttrNames()
@@ -37,7 +38,6 @@ namespace AzurLaneDex.Views
         public AttrBonusPage()
         {
             this.InitializeComponent();
-            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             Loaded += AttrBonusPage_Loaded;
         }
 
@@ -47,66 +47,65 @@ namespace AzurLaneDex.Views
             _manager = app?.ShipManager;
             if (_manager != null)
             {
-                // 初始化下拉框
                 ShipClassFilter.ItemsSource = new List<string>
-                    {
-                _loader.GetString("ShipClass_All"),
-                _loader.GetString("ShipClass_DD1"),
-                _loader.GetString("ShipClass_CL1"),
-                _loader.GetString("ShipClass_CA1"),
-                _loader.GetString("ShipClass_CB1"),
-                _loader.GetString("ShipClass_BC1"),
-                _loader.GetString("ShipClass_BB1"),
-                _loader.GetString("ShipClass_BBV1"),
-                _loader.GetString("ShipClass_CV1"),
-                _loader.GetString("ShipClass_CVL1"),
-                _loader.GetString("ShipClass_AR1"),
-                _loader.GetString("ShipClass_SS1"),
-                _loader.GetString("ShipClass_SSV1"),
-                _loader.GetString("ShipClass_AE1"),
-                _loader.GetString("ShipClass_Sail1"),
-                _loader.GetString("ShipClass_BM1")
-            };
-                ShipClassFilter.SelectedIndex = 0; // "全舰种"
+                {
+                    _loader.GetString("ShipClass_All"),
+                    _loader.GetString("ShipClass_DD1"),
+                    _loader.GetString("ShipClass_CL1"),
+                    _loader.GetString("ShipClass_CA1"),
+                    _loader.GetString("ShipClass_CB1"),
+                    _loader.GetString("ShipClass_BC1"),
+                    _loader.GetString("ShipClass_BB1"),
+                    _loader.GetString("ShipClass_BBV1"),
+                    _loader.GetString("ShipClass_CV1"),
+                    _loader.GetString("ShipClass_CVL1"),
+                    _loader.GetString("ShipClass_AR1"),
+                    _loader.GetString("ShipClass_SS1"),
+                    _loader.GetString("ShipClass_SSV1"),
+                    _loader.GetString("ShipClass_AE1"),
+                    _loader.GetString("ShipClass_Sail1"),
+                    _loader.GetString("ShipClass_BM1")
+                };
+                ShipClassFilter.SelectedIndex = 0;
 
                 LoadData();
-
-                // 监听数据变化
                 _manager.data_changed += () => LoadData();
             }
         }
 
         private void LoadData()
         {
-            // 计算全局加成
-            var globalBonuses = _manager.CalculateGlobalBonuses();
+            var rawBonuses = _manager.CalculateGlobalBonuses();
 
-            // 根据当前选择的舰种计算总计
+            // 转换为本地化字符串键
+            var globalBonuses = new Dictionary<(string ShipClass, string Attr), int>();
+            foreach (var kvp in rawBonuses)
+            {
+                string shipClass = LocalizationHelper.GetEnumString("ShipType", (int)kvp.Key.ShipType);
+                string attr = LocalizationHelper.GetEnumString("Attr", (int)kvp.Key.Attr);
+                var key = (shipClass, attr);
+                globalBonuses[key] = globalBonuses.GetValueOrDefault(key) + kvp.Value;
+            }
+
             string selectedClass = ShipClassFilter.SelectedItem as string;
             var attrNames = GetAttrNames();
 
             _currentAttrTotals.Clear();
             foreach (var attr in attrNames)
-            {
                 _currentAttrTotals[attr] = 0;
-            }
 
             string allShipsLabel = _loader.GetString("ShipClass_All");
             if (selectedClass == allShipsLabel)
-                {
-                // 对所有舰种求和
+            {
                 foreach (var kvp in globalBonuses)
                 {
-                    string shipClass = kvp.Key.ShipClass;
                     string attr = kvp.Key.Attr;
-                    int value = kvp.Value;
                     if (_currentAttrTotals.ContainsKey(attr))
-                        _currentAttrTotals[attr] += value;
+                        _currentAttrTotals[attr] += kvp.Value;
                 }
             }
             else
             {
-                // 只取指定舰种
                 foreach (var attr in attrNames)
                 {
                     int total = 0;
@@ -116,7 +115,6 @@ namespace AzurLaneDex.Views
                 }
             }
 
-            // 生成卡片数据
             var cards = attrNames.Select(attr => new AttrCardData
             {
                 AttrName = attr,

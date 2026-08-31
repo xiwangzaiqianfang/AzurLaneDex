@@ -31,19 +31,59 @@ namespace AzurLaneDex.Services
             {
                 if (!File.Exists(StaticPath))
                 {
-                    LogService.Info($"静态文件不存在，返回空数据: {StaticPath}", nameof(ShipFileStore));
-                    return new StaticData { Version = "0.0", Ships = new List<ShipStatic>() };
+                    LogService.Info($"静态文件不存在，将创建空数据文件: {StaticPath}", nameof(ShipFileStore));
+                    var emptyData = CreateEmptyStaticData();
+                    await SaveStaticAsync(emptyData);
+                    return emptyData;
                 }
+
                 var json = await File.ReadAllTextAsync(StaticPath);
-                var data = JsonSerializer.Deserialize<StaticData>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                LogService.Info($"加载静态文件成功: {StaticPath}, 舰船数: {data?.Ships?.Count ?? 0}", nameof(ShipFileStore));
-                return data ?? new StaticData { Version = "0.0", Ships = new List<ShipStatic>() };
+                LogService.Info($"加载静态文件: {StaticPath}, 文件大小: {json.Length} 字节", nameof(ShipFileStore));
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                try
+                {
+                    var data = JsonSerializer.Deserialize<StaticData>(json, options);
+                    if (data == null)
+                    {
+                        LogService.Error("反序列化得到 null，将覆盖为空白数据", nameof(ShipFileStore));
+                        var emptyData = CreateEmptyStaticData();
+                        await SaveStaticAsync(emptyData);
+                        return emptyData;
+                    }
+                    LogService.Info($"加载静态文件成功: {StaticPath}, 舰船数: {data.Ships?.Count ?? 0}", nameof(ShipFileStore));
+                    return data;
+                }
+                catch (JsonException ex)
+                {
+                    LogService.Error($"JSON反序列化失败: {ex.Message}，将覆盖为空白数据", nameof(ShipFileStore), ex);
+                    // 输出前200个字符以便调试
+                    string backup = StaticPath + ".backup";
+                    if (File.Exists(StaticPath))
+                        File.Copy(StaticPath, backup, true);
+                    var emptyData = CreateEmptyStaticData();
+                    await SaveStaticAsync(emptyData);
+                    return emptyData;
+                }
             }
             catch (Exception ex)
             {
                 LogService.Error($"加载静态文件失败: {StaticPath}", nameof(ShipFileStore), ex);
                 throw;
             }
+        }
+
+        private StaticData CreateEmptyStaticData()
+        {
+            return new StaticData
+            {
+                VersionInfo = new DataVersionInfo
+                {
+                    AppVersion = "1.0.0",
+                    GameVersions = new Dictionary<string, string>(),
+                    DataVersion = "1.0.0.0.0"
+                },
+                Ships = new List<ShipStatic>()
+            };
         }
 
         public async Task SaveStaticAsync(StaticData data)

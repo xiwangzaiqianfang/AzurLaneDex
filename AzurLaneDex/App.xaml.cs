@@ -49,10 +49,13 @@ namespace AzurLaneDex
 
                 var services = new ServiceCollection();
                 services.AddSingleton<IShipDataStore, ShipFileStore>();
-                services.AddSingleton<IShipMigrator, ShipMigrator>();
+                // services.AddSingleton<IShipMigrator, ShipMigrator>();
                 services.AddSingleton<IShipDataUpdater, ShipDataUpdater>();
+                services.AddSingleton<IUpdateService, UpdateService>();
                 services.AddSingleton<IShipStatsCalculator, ShipStatsCalculator>();
                 services.AddSingleton<ShipManager>();
+                services.AddSingleton<AccountManager>();
+                services.AddSingleton<FactionAvatarManager>();
                 _serviceProvider = services.BuildServiceProvider();
 
                 // 4. 记录启动信息
@@ -133,6 +136,9 @@ namespace AzurLaneDex
             {
                 // 初始化数据目录（包含静态文件复制）
                 InitializeDataDirectories();
+
+                AccountManager = _serviceProvider.GetRequiredService<AccountManager>();
+                FactionAvatarManager = _serviceProvider.GetRequiredService<FactionAvatarManager>();
 
                 // 创建主窗口
                 _window = new MainWindow();

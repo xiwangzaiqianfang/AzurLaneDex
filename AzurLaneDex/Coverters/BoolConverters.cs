@@ -1,4 +1,6 @@
-﻿using Microsoft.UI.Xaml;
+﻿using AzurLaneDex.Helpers;
+using AzurLaneDex.Models;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System;
@@ -115,6 +117,88 @@ namespace AzurLaneDex.Converters
             return (value is bool b && b) ? Visibility.Visible : Visibility.Collapsed;
         }
 
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class EnumToDisplayStringConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            if (value == null) return "";
+            var enumType = value.GetType();
+            if (!enumType.IsEnum) return value.ToString();
+            return LocalizationHelper.GetEnumString(enumType.Name, (int)value);
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class DoublePercentageConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            if (value == null) return "0.00%";
+            try
+            {
+                double d = System.Convert.ToDouble(value);
+                return d.ToString("F2") + "%";
+            }
+            catch
+            {
+                return "0.00%";
+            }
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class AcquisitionMethodTypeToTemplateConverter : IValueConverter
+    {
+        public DataTemplate ConstructionTemplate { get; set; }
+        public DataTemplate DropTemplate { get; set; }
+        public DataTemplate ExchangeTemplate { get; set; }
+        public DataTemplate ResearchTemplate { get; set; }
+        public DataTemplate OtherTemplate { get; set; }
+
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            if (value is AcquisitionMethodType type)
+            {
+                return type switch
+                {
+                    AcquisitionMethodType.Construction => ConstructionTemplate,
+                    AcquisitionMethodType.Drop => DropTemplate,
+                    AcquisitionMethodType.Exchange => ExchangeTemplate,
+                    AcquisitionMethodType.Research => ResearchTemplate,
+                    AcquisitionMethodType.Other => OtherTemplate,
+                    _ => ConstructionTemplate
+                };
+            }
+            return ConstructionTemplate;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+            => throw new NotImplementedException();
+    }
+
+    public class EnumToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            if (value != null && parameter is string expected)
+            {
+                return value.ToString().Equals(expected, StringComparison.OrdinalIgnoreCase)
+                       ? Visibility.Visible
+                       : Visibility.Collapsed;
+            }
+            return Visibility.Collapsed;
+        }
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             throw new NotImplementedException();

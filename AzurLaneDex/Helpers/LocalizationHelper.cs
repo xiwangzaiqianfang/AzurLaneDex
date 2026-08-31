@@ -57,7 +57,7 @@ namespace AzurLaneDex.Helpers
 
         public static string GetEnumString(string prefix, int id)
         {
-            if (id == 0) return "未知"; // 防御
+            if (id == 0) return "未知";
             var key = $"{prefix}_{id}";
             try
             {
@@ -68,6 +68,13 @@ namespace AzurLaneDex.Helpers
             {
                 return $"{prefix}_{id}";
             }
+        }
+
+
+        // 扩展：支持枚举类型直接传入
+        public static string GetEnumString<TEnum>(TEnum value) where TEnum : Enum
+        {
+            return GetEnumString(typeof(TEnum).Name, Convert.ToInt32(value));
         }
     }
 }

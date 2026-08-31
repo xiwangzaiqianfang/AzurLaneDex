@@ -14,7 +14,7 @@ namespace AzurLaneDex.Views
         }
 
         /// <summary>
-        /// 获取当前用户选择的筛选条件
+        /// 根据舰船类别切换阵营面板
         /// </summary>
         public void SetCategory(ShipCategory category)
         {
@@ -38,89 +38,93 @@ namespace AzurLaneDex.Views
                     break;
             }
         }
+
+        /// <summary>
+        /// 获取用户当前选择的筛选条件（枚举类型）
+        /// </summary>
         public FilterCriteria GetFilterCriteria()
         {
             var criteria = new FilterCriteria();
 
-            // 舰种
-            var shipClasses = new List<string>();
-            if (ClassDD.IsChecked == true) shipClasses.Add("驱逐");
-            if (ClassCL.IsChecked == true) shipClasses.Add("轻巡");
-            if (ClassCA.IsChecked == true) shipClasses.Add("重巡");
-            if (ClassCB.IsChecked == true) shipClasses.Add("超巡");
-            if (ClassBM.IsChecked == true) shipClasses.Add("重炮");
-            if (ClassBC.IsChecked == true) shipClasses.Add("战巡");
-            if (ClassBB.IsChecked == true) shipClasses.Add("战列");
-            if (ClassBBV.IsChecked == true) shipClasses.Add("航战");
-            if (ClassCV.IsChecked == true) shipClasses.Add("航母");
-            if (ClassCVL.IsChecked == true) shipClasses.Add("轻航");
-            if (ClassAR.IsChecked == true) shipClasses.Add("维修");
-            if (ClassSS.IsChecked == true) shipClasses.Add("潜艇");
-            if (ClassSSV.IsChecked == true) shipClasses.Add("潜母");
-            if (ClassAE.IsChecked == true) shipClasses.Add("运输");
-            if (ClassSail.IsChecked == true) shipClasses.Add("风帆");
-            criteria.ShipClasses = shipClasses;
+            // 舰种（ShipType）
+            var shipTypes = new List<ShipType>();
+            if (ShipTypeDD.IsChecked == true) shipTypes.Add(ShipType.DD);
+            if (ShipTypeCL.IsChecked == true) shipTypes.Add(ShipType.CL);
+            if (ShipTypeCA.IsChecked == true) shipTypes.Add(ShipType.CA);
+            if (ShipTypeCB.IsChecked == true) shipTypes.Add(ShipType.CB);
+            if (ShipTypeBM.IsChecked == true) shipTypes.Add(ShipType.BM);
+            if (ShipTypeBC.IsChecked == true) shipTypes.Add(ShipType.BC);
+            if (ShipTypeBB.IsChecked == true) shipTypes.Add(ShipType.BB);
+            if (ShipTypeBBV.IsChecked == true) shipTypes.Add(ShipType.BBV);
+            if (ShipTypeCV.IsChecked == true) shipTypes.Add(ShipType.CV);
+            if (ShipTypeCVL.IsChecked == true) shipTypes.Add(ShipType.CVL);
+            if (ShipTypeAR.IsChecked == true) shipTypes.Add(ShipType.AR);
+            if (ShipTypeSS.IsChecked == true) shipTypes.Add(ShipType.SS);
+            if (ShipTypeSSV.IsChecked == true) shipTypes.Add(ShipType.SSV);
+            if (ShipTypeAE.IsChecked == true) shipTypes.Add(ShipType.AE);
+            if (ShipTypeSail.IsChecked == true) shipTypes.Add(ShipType.Sail);
+            criteria.ShipTypes = shipTypes;
 
-            // 阵营
-            var factions = new List<string>();
+            // 阵营（Faction）
+            var factions = new List<Faction>();
             if (NormalFactionPanel.Visibility == Visibility.Visible)
             {
-                if (FactionEU.IsChecked == true) factions.Add("白鹰");
-                if (FactionRN.IsChecked == true) factions.Add("皇家");
-                if (FactionIJN.IsChecked == true) factions.Add("重樱");
-                if (FactionKMS.IsChecked == true) factions.Add("铁血");
-                if (FactionDragon.IsChecked == true) factions.Add("东煌");
-                if (FactionSN.IsChecked == true) factions.Add("北方联合");
-                if (FactionFFNF.IsChecked == true) factions.Add("自由鸢尾");
-                if (FactionMNF.IsChecked == true) factions.Add("维希教廷");
-                if (FactionSardegna.IsChecked == true) factions.Add("撒丁帝国");
-                if (FactionTulip.IsChecked == true) factions.Add("郁金王国");
-                if (FactionCrystalLeague.IsChecked == true) factions.Add("晶环联盟");
-                if (FactionMETA.IsChecked == true) factions.Add("META");
-                if (FactionTempesta.IsChecked == true) factions.Add("飓风");
-                if (FactionOther.IsChecked == true) factions.Add("其他");
+                if (FactionEU.IsChecked == true) factions.Add(Faction.EagleUnion);
+                if (FactionRN.IsChecked == true) factions.Add(Faction.RoyalNavy);
+                if (FactionIJN.IsChecked == true) factions.Add(Faction.SakuraEmpire);
+                if (FactionKMS.IsChecked == true) factions.Add(Faction.IronBlood);
+                if (FactionDragon.IsChecked == true) factions.Add(Faction.DragonEmpery);
+                if (FactionSN.IsChecked == true) factions.Add(Faction.NorthernUnion);
+                if (FactionFFNF.IsChecked == true) factions.Add(Faction.FreeFrench);
+                if (FactionMNF.IsChecked == true) factions.Add(Faction.Vichya);
+                if (FactionSardegna.IsChecked == true) factions.Add(Faction.Sardegna);
+                if (FactionTulip.IsChecked == true) factions.Add(Faction.Tulip);
+                if (FactionCrystalLeague.IsChecked == true) factions.Add(Faction.CrystalLeague);
+                if (FactionMETA.IsChecked == true) factions.Add(Faction.META);
+                if (FactionTempesta.IsChecked == true) factions.Add(Faction.Tempesta);
+                if (FactionOther.IsChecked == true) factions.Add(Faction.Other);
             }
             else if (CollabFactionPanel.Visibility == Visibility.Visible)
             {
-                if (FactionCollab_Nep.IsChecked == true) factions.Add("超次元游戏海王星");
-                if (FactionCollab_Bilibili.IsChecked == true) factions.Add("哔哩哔哩");
-                if (FactionCollab_Utawarerumono.IsChecked == true) factions.Add("传颂之物");
-                if (FactionCollab_KizunaAI.IsChecked == true) factions.Add("绊爱");
-                if (FactionCollab_Hololive.IsChecked == true) factions.Add("Hololive");
-                if (FactionCollab_DoAXVV.IsChecked == true) factions.Add("死或生沙滩排球");
-                if (FactionCollab_Idolmaster.IsChecked == true) factions.Add("偶像大师");
-                if (FactionCollab_SSSS.IsChecked == true) factions.Add("SSSS");
-                if (FactionCollab_Ryza.IsChecked == true) factions.Add("莱莎的炼金工房");
-                if (FactionCollab_Senran.IsChecked == true) factions.Add("闪乱神乐");
-                if (FactionCollab_Toloveru.IsChecked == true) factions.Add("出包王女");
-                if (FactionCollab_BRS.IsChecked == true) factions.Add("黑岩射手");
-                if (FactionCollab_Danmachi.IsChecked == true) factions.Add("地城邂逅");
-                if (FactionCollab_Yumia.IsChecked == true) factions.Add("优米雅的炼金工房");
-                if (FactionCollab_DAL.IsChecked == true) factions.Add("约会大作战V");
-                if (FactionCollab_NieR.IsChecked == true) factions.Add("尼尔：机械纪元");
+                if (FactionCollab_Nep.IsChecked == true) factions.Add(Faction.Collab_Nep);
+                if (FactionCollab_Bilibili.IsChecked == true) factions.Add(Faction.Collab_Bilibili);
+                if (FactionCollab_Utawarerumono.IsChecked == true) factions.Add(Faction.Collab_Utawarerumono);
+                if (FactionCollab_KizunaAI.IsChecked == true) factions.Add(Faction.Collab_KizunaAI);
+                if (FactionCollab_Hololive.IsChecked == true) factions.Add(Faction.Collab_Hololive);
+                if (FactionCollab_DoAXVV.IsChecked == true) factions.Add(Faction.Collab_DoAXVV);
+                if (FactionCollab_Idolmaster.IsChecked == true) factions.Add(Faction.Collab_Idolmaster);
+                if (FactionCollab_SSSS.IsChecked == true) factions.Add(Faction.Collab_SSSS);
+                if (FactionCollab_Ryza.IsChecked == true) factions.Add(Faction.Collab_Ryza);
+                if (FactionCollab_Senran.IsChecked == true) factions.Add(Faction.Collab_Senran);
+                if (FactionCollab_Toloveru.IsChecked == true) factions.Add(Faction.Collab_Toloveru);
+                if (FactionCollab_BRS.IsChecked == true) factions.Add(Faction.Collab_BRS);
+                if (FactionCollab_Danmachi.IsChecked == true) factions.Add(Faction.Collab_Danmachi);
+                if (FactionCollab_Yumia.IsChecked == true) factions.Add(Faction.Collab_Yumia);
+                if (FactionCollab_DAL.IsChecked == true) factions.Add(Faction.Collab_DAL);
+                if (FactionCollab_NieR.IsChecked == true) factions.Add(Faction.Collab_NieR);
             }
             else if (MetaFactionPanel.Visibility == Visibility.Visible)
             {
-                if (FactionMeta_Flame.IsChecked == true) factions.Add("破敌之炬");
-                if (FactionMeta_Core.IsChecked == true) factions.Add("湮烬之核");
-                if (FactionMeta_Reason.IsChecked == true) factions.Add("构造之理");
-                if (FactionMeta_Light.IsChecked == true) factions.Add("逐光之焰");
-                if (FactionMeta_Fire.IsChecked == true) factions.Add("摇曳之火");
+                if (FactionMeta_Flame.IsChecked == true) factions.Add(Faction.Meta_Flame);
+                if (FactionMeta_Core.IsChecked == true) factions.Add(Faction.Meta_Core);
+                if (FactionMeta_Reason.IsChecked == true) factions.Add(Faction.Meta_Reason);
+                if (FactionMeta_Light.IsChecked == true) factions.Add(Faction.Meta_Light);
+                if (FactionMeta_Fire.IsChecked == true) factions.Add(Faction.Meta_Fire);
             }
             criteria.Factions = factions;
 
-            // 稀有度
-            var rarities = new List<string>();
-            if (RarityNormal.IsChecked == true) rarities.Add("普通");
-            if (RarityRare.IsChecked == true) rarities.Add("稀有");
-            if (RarityElite.IsChecked == true) rarities.Add("精锐");
-            if (RaritySuperRare.IsChecked == true) rarities.Add("超稀有");
-            if (RarityLegendary.IsChecked == true) rarities.Add("海上传奇");
-            if (RarityDecisive.IsChecked == true) rarities.Add("最高方案");
-            if (RarityUltimate.IsChecked == true) rarities.Add("决战方案");
+            // 稀有度（Rarity）
+            var rarities = new List<Rarity>();
+            if (RarityNormal.IsChecked == true) rarities.Add(Rarity.N);
+            if (RarityRare.IsChecked == true) rarities.Add(Rarity.R);
+            if (RarityElite.IsChecked == true) rarities.Add(Rarity.SR);
+            if (RaritySuperRare.IsChecked == true) rarities.Add(Rarity.SSR);
+            if (RarityLegendary.IsChecked == true) rarities.Add(Rarity.UR);
+            if (RarityDecisive.IsChecked == true) rarities.Add(Rarity.Decisive);
+            if (RarityUltimate.IsChecked == true) rarities.Add(Rarity.Ultimate);
             criteria.Rarities = rarities;
 
-            // 附加状态
+            // 附加状态（布尔值）
             criteria.CanRemodel = ExtraCanRemodel.IsChecked == true;
             criteria.Remodeled = ExtraRemodeled.IsChecked == true;
             criteria.MaxBreakthrough = ExtraMaxBreak.IsChecked == true;
@@ -132,96 +136,99 @@ namespace AzurLaneDex.Views
             criteria.CanSpecialGear = ExtraCanSpecial.IsChecked == true;
             criteria.SpecialGearObtained = ExtraSpecialObtained.IsChecked == true;
 
-            // 属性加成
-            var attrs = new List<string>();
-            if (AttrFirepower.IsChecked == true) attrs.Add("炮击");
-            if (AttrAviation.IsChecked == true) attrs.Add("航空");
-            if (AttrMobility.IsChecked == true) attrs.Add("机动");
-            if (AttrAA.IsChecked == true) attrs.Add("防空");
-            if (AttrTorpedo.IsChecked == true) attrs.Add("雷击");
-            if (AttrReload.IsChecked == true) attrs.Add("装填");
-            if (AttrDurability.IsChecked == true) attrs.Add("耐久");
-            if (AttrAntiSub.IsChecked == true) attrs.Add("反潜");
-            criteria.AttributeBonuses = attrs;
+            // 属性加成（AttributeType）
+            var attrTypes = new List<AttributeType>();
+            if (AttrFirepower.IsChecked == true) attrTypes.Add(AttributeType.FP);
+            if (AttrAviation.IsChecked == true) attrTypes.Add(AttributeType.AVI);
+            if (AttrMobility.IsChecked == true) attrTypes.Add(AttributeType.EVA);
+            if (AttrAA.IsChecked == true) attrTypes.Add(AttributeType.AA);
+            if (AttrTorpedo.IsChecked == true) attrTypes.Add(AttributeType.TRP);
+            if (AttrReload.IsChecked == true) attrTypes.Add(AttributeType.RLD);
+            if (AttrDurability.IsChecked == true) attrTypes.Add(AttributeType.HP);
+            if (AttrAntiSub.IsChecked == true) attrTypes.Add(AttributeType.ASW);
+            criteria.AttributeBonuses = attrTypes;
 
             return criteria;
         }
 
+        /// <summary>
+        /// 从已有的筛选条件恢复UI状态
+        /// </summary>
         public void SetCriteria(FilterCriteria criteria)
         {
             if (criteria == null) return;
 
             // 舰种
-            ClassDD.IsChecked = criteria.ShipClasses.Contains("驱逐");
-            ClassCL.IsChecked = criteria.ShipClasses.Contains("轻巡");
-            ClassCA.IsChecked = criteria.ShipClasses.Contains("重巡");
-            ClassCB.IsChecked = criteria.ShipClasses.Contains("超巡");
-            ClassBM.IsChecked = criteria.ShipClasses.Contains("重炮");
-            ClassBC.IsChecked = criteria.ShipClasses.Contains("战巡");
-            ClassBB.IsChecked = criteria.ShipClasses.Contains("战列");
-            ClassBBV.IsChecked = criteria.ShipClasses.Contains("航战");
-            ClassCV.IsChecked = criteria.ShipClasses.Contains("航母");
-            ClassCVL.IsChecked = criteria.ShipClasses.Contains("轻航");
-            ClassAR.IsChecked = criteria.ShipClasses.Contains("维修");
-            ClassSS.IsChecked = criteria.ShipClasses.Contains("潜艇");
-            ClassSSV.IsChecked = criteria.ShipClasses.Contains("潜母");
-            ClassAE.IsChecked = criteria.ShipClasses.Contains("运输");
-            ClassSail.IsChecked = criteria.ShipClasses.Contains("风帆");
+            ShipTypeDD.IsChecked = criteria.ShipTypes.Contains(ShipType.DD);
+            ShipTypeCL.IsChecked = criteria.ShipTypes.Contains(ShipType.CL);
+            ShipTypeCA.IsChecked = criteria.ShipTypes.Contains(ShipType.CA);
+            ShipTypeCB.IsChecked = criteria.ShipTypes.Contains(ShipType.CB);
+            ShipTypeBM.IsChecked = criteria.ShipTypes.Contains(ShipType.BM);
+            ShipTypeBC.IsChecked = criteria.ShipTypes.Contains(ShipType.BC);
+            ShipTypeBB.IsChecked = criteria.ShipTypes.Contains(ShipType.BB);
+            ShipTypeBBV.IsChecked = criteria.ShipTypes.Contains(ShipType.BBV);
+            ShipTypeCV.IsChecked = criteria.ShipTypes.Contains(ShipType.CV);
+            ShipTypeCVL.IsChecked = criteria.ShipTypes.Contains(ShipType.CVL);
+            ShipTypeAR.IsChecked = criteria.ShipTypes.Contains(ShipType.AR);
+            ShipTypeSS.IsChecked = criteria.ShipTypes.Contains(ShipType.SS);
+            ShipTypeSSV.IsChecked = criteria.ShipTypes.Contains(ShipType.SSV);
+            ShipTypeAE.IsChecked = criteria.ShipTypes.Contains(ShipType.AE);
+            ShipTypeSail.IsChecked = criteria.ShipTypes.Contains(ShipType.Sail);
+
             // 阵营
             if (NormalFactionPanel.Visibility == Visibility.Visible)
             {
-                FactionEU.IsChecked = criteria.Factions.Contains("白鹰");
-                FactionRN.IsChecked = criteria.Factions.Contains("皇家");
-                FactionIJN.IsChecked = criteria.Factions.Contains("重樱");
-                FactionKMS.IsChecked = criteria.Factions.Contains("铁血");
-                FactionDragon.IsChecked = criteria.Factions.Contains("东煌");
-                FactionSN.IsChecked = criteria.Factions.Contains("北方联合");
-                FactionFFNF.IsChecked = criteria.Factions.Contains("自由鸢尾");
-                FactionMNF.IsChecked = criteria.Factions.Contains("维希教廷");
-                FactionSardegna.IsChecked = criteria.Factions.Contains("撒丁帝国");
-                FactionTulip.IsChecked = criteria.Factions.Contains("郁金王国");
-                FactionCrystalLeague.IsChecked = criteria.Factions.Contains("晶环联盟");
-                FactionMETA.IsChecked = criteria.Factions.Contains("META");
-                FactionTempesta.IsChecked = criteria.Factions.Contains("飓风");
-                FactionOther.IsChecked = criteria.Factions.Contains("其他");
+                FactionEU.IsChecked = criteria.Factions.Contains(Faction.EagleUnion);
+                FactionRN.IsChecked = criteria.Factions.Contains(Faction.RoyalNavy);
+                FactionIJN.IsChecked = criteria.Factions.Contains(Faction.SakuraEmpire);
+                FactionKMS.IsChecked = criteria.Factions.Contains(Faction.IronBlood);
+                FactionDragon.IsChecked = criteria.Factions.Contains(Faction.DragonEmpery);
+                FactionSN.IsChecked = criteria.Factions.Contains(Faction.NorthernUnion);
+                FactionFFNF.IsChecked = criteria.Factions.Contains(Faction.FreeFrench);
+                FactionMNF.IsChecked = criteria.Factions.Contains(Faction.Vichya);
+                FactionSardegna.IsChecked = criteria.Factions.Contains(Faction.Sardegna);
+                FactionTulip.IsChecked = criteria.Factions.Contains(Faction.Tulip);
+                FactionCrystalLeague.IsChecked = criteria.Factions.Contains(Faction.CrystalLeague);
+                FactionMETA.IsChecked = criteria.Factions.Contains(Faction.META);
+                FactionTempesta.IsChecked = criteria.Factions.Contains(Faction.Tempesta);
+                FactionOther.IsChecked = criteria.Factions.Contains(Faction.Other);
             }
             else if (CollabFactionPanel.Visibility == Visibility.Visible)
             {
-                FactionCollab_Nep.IsChecked = criteria.Factions.Contains("超次元游戏海王星");
-                FactionCollab_Bilibili.IsChecked = criteria.Factions.Contains("哔哩哔哩");
-                FactionCollab_Utawarerumono.IsChecked = criteria.Factions.Contains("传颂之物");
-                FactionCollab_KizunaAI.IsChecked = criteria.Factions.Contains("绊爱");
-                FactionCollab_Hololive.IsChecked = criteria.Factions.Contains("Hololive");
-                FactionCollab_DoAXVV.IsChecked = criteria.Factions.Contains("死或生沙滩排球");
-                FactionCollab_Idolmaster.IsChecked = criteria.Factions.Contains("偶像大师");
-                FactionCollab_SSSS.IsChecked = criteria.Factions.Contains("SSSS");
-                FactionCollab_Ryza.IsChecked = criteria.Factions.Contains("莱莎的炼金工房");
-                FactionCollab_Senran.IsChecked = criteria.Factions.Contains("闪乱神乐");
-                FactionCollab_Toloveru.IsChecked = criteria.Factions.Contains("出包王女");
-                FactionCollab_BRS.IsChecked = criteria.Factions.Contains("黑岩射手");
-                FactionCollab_Danmachi.IsChecked = criteria.Factions.Contains("地城邂逅");
-                FactionCollab_Yumia.IsChecked = criteria.Factions.Contains("优米雅的炼金工房");
-                FactionCollab_DAL.IsChecked = criteria.Factions.Contains("约会大作战V");
-                FactionCollab_NieR.IsChecked = criteria.Factions.Contains("尼尔：机械纪元");
-
+                FactionCollab_Nep.IsChecked = criteria.Factions.Contains(Faction.Collab_Nep);
+                FactionCollab_Bilibili.IsChecked = criteria.Factions.Contains(Faction.Collab_Bilibili);
+                FactionCollab_Utawarerumono.IsChecked = criteria.Factions.Contains(Faction.Collab_Utawarerumono);
+                FactionCollab_KizunaAI.IsChecked = criteria.Factions.Contains(Faction.Collab_KizunaAI);
+                FactionCollab_Hololive.IsChecked = criteria.Factions.Contains(Faction.Collab_Hololive);
+                FactionCollab_DoAXVV.IsChecked = criteria.Factions.Contains(Faction.Collab_DoAXVV);
+                FactionCollab_Idolmaster.IsChecked = criteria.Factions.Contains(Faction.Collab_Idolmaster);
+                FactionCollab_SSSS.IsChecked = criteria.Factions.Contains(Faction.Collab_SSSS);
+                FactionCollab_Ryza.IsChecked = criteria.Factions.Contains(Faction.Collab_Ryza);
+                FactionCollab_Senran.IsChecked = criteria.Factions.Contains(Faction.Collab_Senran);
+                FactionCollab_Toloveru.IsChecked = criteria.Factions.Contains(Faction.Collab_Toloveru);
+                FactionCollab_BRS.IsChecked = criteria.Factions.Contains(Faction.Collab_BRS);
+                FactionCollab_Danmachi.IsChecked = criteria.Factions.Contains(Faction.Collab_Danmachi);
+                FactionCollab_Yumia.IsChecked = criteria.Factions.Contains(Faction.Collab_Yumia);
+                FactionCollab_DAL.IsChecked = criteria.Factions.Contains(Faction.Collab_DAL);
+                FactionCollab_NieR.IsChecked = criteria.Factions.Contains(Faction.Collab_NieR);
             }
             else if (MetaFactionPanel.Visibility == Visibility.Visible)
             {
-                FactionMeta_Flame.IsChecked = criteria.Factions.Contains("破敌之炬");
-                FactionMeta_Core.IsChecked = criteria.Factions.Contains("湮烬之核");
-                FactionMeta_Reason.IsChecked = criteria.Factions.Contains("构造之理");
-                FactionMeta_Light.IsChecked = criteria.Factions.Contains("逐光之焰");
-                FactionMeta_Fire.IsChecked = criteria.Factions.Contains("摇曳之火");
+                FactionMeta_Flame.IsChecked = criteria.Factions.Contains(Faction.Meta_Flame);
+                FactionMeta_Core.IsChecked = criteria.Factions.Contains(Faction.Meta_Core);
+                FactionMeta_Reason.IsChecked = criteria.Factions.Contains(Faction.Meta_Reason);
+                FactionMeta_Light.IsChecked = criteria.Factions.Contains(Faction.Meta_Light);
+                FactionMeta_Fire.IsChecked = criteria.Factions.Contains(Faction.Meta_Fire);
             }
 
             // 稀有度
-            RarityNormal.IsChecked = criteria.Rarities.Contains("普通");
-            RarityRare.IsChecked = criteria.Rarities.Contains("稀有");
-            RarityElite.IsChecked = criteria.Rarities.Contains("精锐");
-            RaritySuperRare.IsChecked = criteria.Rarities.Contains("超稀有");
-            RarityLegendary.IsChecked = criteria.Rarities.Contains("海上传奇");
-            RarityDecisive.IsChecked = criteria.Rarities.Contains("最高方案");
-            RarityUltimate.IsChecked = criteria.Rarities.Contains("决战方案");
+            RarityNormal.IsChecked = criteria.Rarities.Contains(Rarity.N);
+            RarityRare.IsChecked = criteria.Rarities.Contains(Rarity.R);
+            RarityElite.IsChecked = criteria.Rarities.Contains(Rarity.SR);
+            RaritySuperRare.IsChecked = criteria.Rarities.Contains(Rarity.SSR);
+            RarityLegendary.IsChecked = criteria.Rarities.Contains(Rarity.UR);
+            RarityDecisive.IsChecked = criteria.Rarities.Contains(Rarity.Decisive);
+            RarityUltimate.IsChecked = criteria.Rarities.Contains(Rarity.Ultimate);
 
             // 附加状态
             ExtraCanRemodel.IsChecked = criteria.CanRemodel;
@@ -236,22 +243,23 @@ namespace AzurLaneDex.Views
             ExtraSpecialObtained.IsChecked = criteria.SpecialGearObtained;
 
             // 属性加成
-            AttrFirepower.IsChecked = criteria.AttributeBonuses.Contains("炮击");
-            AttrAviation.IsChecked = criteria.AttributeBonuses.Contains("航空");
-            AttrMobility.IsChecked = criteria.AttributeBonuses.Contains("机动");
-            AttrAA.IsChecked = criteria.AttributeBonuses.Contains("防空");
-            AttrTorpedo.IsChecked = criteria.AttributeBonuses.Contains("雷击");
-            AttrReload.IsChecked = criteria.AttributeBonuses.Contains("装填");
-            AttrDurability.IsChecked = criteria.AttributeBonuses.Contains("耐久");
-            AttrAntiSub.IsChecked = criteria.AttributeBonuses.Contains("反潜");
+            AttrFirepower.IsChecked = criteria.AttributeBonuses.Contains(AttributeType.FP);
+            AttrAviation.IsChecked = criteria.AttributeBonuses.Contains(AttributeType.AVI);
+            AttrMobility.IsChecked = criteria.AttributeBonuses.Contains(AttributeType.EVA);
+            AttrAA.IsChecked = criteria.AttributeBonuses.Contains(AttributeType.AA);
+            AttrTorpedo.IsChecked = criteria.AttributeBonuses.Contains(AttributeType.TRP);
+            AttrReload.IsChecked = criteria.AttributeBonuses.Contains(AttributeType.RLD);
+            AttrDurability.IsChecked = criteria.AttributeBonuses.Contains(AttributeType.HP);
+            AttrAntiSub.IsChecked = criteria.AttributeBonuses.Contains(AttributeType.ASW);
         }
     }
 
+    /// 筛选条件类（使用枚举类型）
     public class FilterCriteria
     {
-        public List<string> ShipClasses { get; set; } = new();
-        public List<string> Factions { get; set; } = new();
-        public List<string> Rarities { get; set; } = new();
+        public List<ShipType> ShipTypes { get; set; } = new();
+        public List<Faction> Factions { get; set; } = new();
+        public List<Rarity> Rarities { get; set; } = new();
         public bool CanRemodel { get; set; }
         public bool Remodeled { get; set; }
         public bool MaxBreakthrough { get; set; }
@@ -262,6 +270,6 @@ namespace AzurLaneDex.Views
         public bool NotOath { get; set; }
         public bool CanSpecialGear { get; set; }
         public bool SpecialGearObtained { get; set; }
-        public List<string> AttributeBonuses { get; set; } = new();
+        public List<AttributeType> AttributeBonuses { get; set; } = new();
     }
 }

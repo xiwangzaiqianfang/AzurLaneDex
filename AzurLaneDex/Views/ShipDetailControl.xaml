@@ -1,56 +1,157 @@
-<UserControl
-    x:Class="AzurLaneDex.Views.ShipDetailControl"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="using:Microsoft.UI.Xaml.Controls">
+<UserControl x:Class="AzurLaneDex.Views.ShipDetailControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="using:Microsoft.UI.Xaml.Controls"
+             xmlns:converters="using:AzurLaneDex.Converters"
+             xmlns:selectors="using:AzurLaneDex.Selectors">
 
     <UserControl.Resources>
+        <Style x:Key="DetailCardStyle" TargetType="Border">
+            <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefault}"/>
+            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalAlignment" Value="Stretch"/>
+        </Style>
         <Storyboard x:Name="AvatarFadeInStoryboard">
-            <DoubleAnimation
-            Storyboard.TargetName="ShipAvatarImage"
-            Storyboard.TargetProperty="Opacity"
-            From="0.0" To="1.0" Duration="0:0:0.1"
-            EnableDependentAnimation="True" />
+            <DoubleAnimation Storyboard.TargetName="ShipAvatarImage"
+                             Storyboard.TargetProperty="Opacity"
+                             From="0.0" To="1.0" Duration="0:0:0.1"
+                             EnableDependentAnimation="True" />
         </Storyboard>
         <Storyboard x:Name="GearFadeInStoryboard">
             <DoubleAnimation Storyboard.TargetName="SpecialGearImage"
-                         Storyboard.TargetProperty="Opacity"
-                         From="0.0" To="1.0" Duration="0:0:0.1"
-                         EnableDependentAnimation="True" />
+                             Storyboard.TargetProperty="Opacity"
+                             From="0.0" To="1.0" Duration="0:0:0.1"
+                             EnableDependentAnimation="True" />
         </Storyboard>
+        <converters:EnumToDisplayStringConverter x:Key="EnumToDisplayString"/>
+        <converters:BoolToTextConverter x:Key="BoolToText"/>
+        <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
+        <converters:DoublePercentageConverter x:Key="DoublePercentage"/>
+
+        <DataTemplate x:Key="ConstructionDetail">
+            <StackPanel>
+                <TextBlock Text="{Binding Pool, Converter={StaticResource EnumToDisplayString}}"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="{Binding CostCube}"/>
+                    <TextBlock Text="魔方 + "/>
+                    <TextBlock Text="{Binding CostGold}"/>
+                    <TextBlock Text="金币"/>
+                </StackPanel>
+                <TextBlock Text="{Binding BuildTime}"/>
+                <TextBlock Text="{Binding IsLimited, Converter={StaticResource BoolToText}}"/>
+                <TextBlock Text="{Binding Probability, Converter={StaticResource DoublePercentage}}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="DropDetail">
+            <StackPanel>
+                <ItemsControl ItemsSource="{Binding Locations}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Map}" Margin="0,0,8,0"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ExchangeDetail">
+            <StackPanel>
+                <ItemsControl ItemsSource="{Binding Shops}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Shop, Converter={StaticResource EnumToDisplayString}}"/>
+                                <TextBlock Text=" - "/>
+                                <TextBlock Text="{Binding Currency}"/>
+                                <TextBlock Text=" "/>
+                                <TextBlock Text="{Binding Cost}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ResearchDetail">
+            <StackPanel>
+                <TextBlock>
+                <Run Text="科研期数: "/>
+                <Run Text="{Binding Series}"/>
+                </TextBlock>
+                <TextBlock Text="{Binding ResearchRarity}"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="{Binding Faction, Converter={StaticResource EnumToDisplayString}}"/>
+                    <TextBlock Text=" 科技点数 "/>
+                    <TextBlock Text="{Binding TechPoints}"/>
+                </StackPanel>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="OtherDetail">
+            <StackPanel>
+                <TextBlock Text="{Binding MethodName}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <!-- 显示选择器 -->
+        <selectors:AcquisitionMethodDisplayTemplateSelector x:Key="MethodDisplaySelector"
+                                                            ConstructionTemplate="{StaticResource ConstructionDetail}"
+                                                            DropTemplate="{StaticResource DropDetail}"
+                                                            ExchangeTemplate="{StaticResource ExchangeDetail}"
+                                                            ResearchTemplate="{StaticResource ResearchDetail}"
+                                                            OtherTemplate="{StaticResource OtherDetail}" />
     </UserControl.Resources>
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Spacing="12" Margin="12">
+        <StackPanel Spacing="8" Margin="12">
 
-            <!-- 基本信息卡片 -->
-            <Border x:Name="BasicBorder"
-                    Background="{ThemeResource CardBackgroundFillColorDefault}"
+            <!-- ========== 头像与基本信息 ========== -->
+            <Border Background="{ThemeResource CardBackgroundFillColorDefault}"
                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                    BorderThickness="1"
-                    CornerRadius="8"
-                    Margin="0,0,0,12"
-                    Padding="12">
+                    BorderThickness="1" CornerRadius="8" Padding="12">
                 <StackPanel>
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <StackPanel Orientation="Horizontal" Grid.Column="0">
-                            <FontIcon Glyph="&#xE946;" FontFamily="Segoe Fluent Icons" FontSize="18" Margin="0,-4,8,0" VerticalAlignment="Center"/>
-                            <TextBlock x:Uid="BasicInfo_Header" Text="基本信息" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,6" VerticalAlignment="Center"/>
+                            <FontIcon Glyph="&#xE946;" FontFamily="Segoe Fluent Icons" FontSize="18" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="基本信息" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
                         </StackPanel>
                         <Button x:Name="EditShipButton" Grid.Column="1"
-                                    Background="Transparent" BorderBrush="{ThemeResource ButtonBorderBrush}"
-                                    BorderThickness="1" CornerRadius="4" Padding="8,4"
-                                    Click="EditShipButton_Click"  ToolTipService.ToolTip="编辑舰船">
-                            <FontIcon Glyph="&#xE70F;" FontFamily="Segoe MDL2 Assets" FontSize="16"/>
+                                Background="Transparent" BorderBrush="{ThemeResource ButtonBorderBrush}"
+                                BorderThickness="1" CornerRadius="4" Padding="8,4"
+                                Click="EditShipButton_Click" ToolTipService.ToolTip="编辑舰船"
+                                Visibility="Collapsed">
+                            <FontIcon Glyph="&#xE70F;" FontFamily="Segoe MDL2 Assets" FontSize="16" />
                         </Button>
                     </Grid>
 
-                    <Grid ColumnSpacing="12" RowSpacing="8">
+                    <!-- 头像与名称 -->
+                    <Grid Margin="0,8,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0" Width="60" Height="60" CornerRadius="6" Background="Transparent" Margin="0,0,12,0">
+                            <Image x:Name="ShipAvatarImage" Stretch="UniformToFill" Opacity="1" />
+                        </Border>
+                        <TextBlock x:Name="ShipNameText" Grid.Column="1" FontSize="26" FontWeight="SemiBold" VerticalAlignment="Center" />
+                    </Grid>
+
+                    <!-- 基本信息 -->
+                    <Grid ColumnSpacing="8" RowSpacing="4">
                         <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
@@ -60,129 +161,85 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="60" />
+                            <ColumnDefinition Width="200" />
+                            <ColumnDefinition Width="60" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <Grid Grid.Row="0" Grid.ColumnSpan="2" Margin="0,0,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Border Grid.Column="0" Width="40" Height="40" CornerRadius="6" Background="Transparent" Margin="0,0,12,0">
-                                <Image x:Name="ShipAvatarImage" Stretch="UniformToFill" Opacity="1"/>
-                            </Border>
-                            <TextBlock x:Name="ShipNameText" Grid.Column="1" FontSize="26" FontWeight="SemiBold" Margin="0,0,0,4"/>
-                        </Grid>
-                        <TextBlock x:Uid="BasicInfo_Id" Text="编号:" Grid.Row="1" Grid.Column="0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        <TextBlock x:Name="ShipIdText" Grid.Row="1" Grid.Column="1"/>
-                        <TextBlock x:Uid="BasicInfo_Faction" Text="阵营:" Grid.Row="2" Grid.Column="0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        <TextBlock x:Name="FactionText" Grid.Row="2" Grid.Column="1"/>
-                        <TextBlock x:Uid="BasicInfo_ShipClass" Text="舰种:" Grid.Row="3" Grid.Column="0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        <TextBlock x:Name="ShipClassText" Grid.Row="3" Grid.Column="1"/>
-                        <TextBlock x:Uid="BasicInfo_Rarity" Text="稀有度:" Grid.Row="4" Grid.Column="0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        <TextBlock x:Name="RarityText" Grid.Row="4" Grid.Column="1"/>
-                        <TextBlock x:Uid="BasicInfo_CanRemodel_Text" Text="能否改造:" Grid.Row="5" Grid.Column="0" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        <TextBlock x:Name="CanRemodelText" Grid.Row="5" Grid.Column="1" Margin="8,0,0,0" VerticalAlignment="Center"/>
-                        <TextBlock x:Uid="BasicInfo_RemodelDate" Text="改造日期:" Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        <TextBlock x:Name="RemodelDateText" Grid.Row="6" Grid.Column="1" Margin="8,0,0,0"/>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="编号：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="ShipIdText" Grid.Row="0" Grid.Column="1"/>
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="和谐名：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="AltNameText" Grid.Row="0" Grid.Column="3"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="别名：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="AliasText" Grid.Row="1" Grid.Column="1"/>
+                        <TextBlock Grid.Row="1" Grid.Column="2" Text="舰级：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="ClassText" Grid.Row="1" Grid.Column="3"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="分类：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="CategoryText" Grid.Row="2" Grid.Column="1"/>
+                        <TextBlock Grid.Row="2" Grid.Column="2" Text="舰种：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="ShipTypeText" Grid.Row="2" Grid.Column="3"/>
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="稀有度：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="RarityText" Grid.Row="3" Grid.Column="1"/>
+                        <TextBlock Grid.Row="3" Grid.Column="2" Text="阵营：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="FactionText" Grid.Row="3" Grid.Column="3"/>
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="实装日期：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="ReleaseDateText" Grid.Row="4" Grid.Column="1"/>
+                        <TextBlock Grid.Row="4" Grid.Column="2" Text="实装活动：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="RelatedEventText" Grid.Row="4" Grid.Column="3"/>
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="常驻：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="IsPermanentText" Grid.Row="5" Grid.Column="1"/>
+                        <TextBlock Grid.Row="5" Grid.Column="2" Text="声优：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="CvText" Grid.Row="5" Grid.Column="3"/>
+                        <TextBlock Grid.Row="6" Grid.Column="0" Text="画师：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="ArtistText" Grid.Row="6" Grid.Column="1" TextWrapping="Wrap"/>
+                        <TextBlock Grid.Row="7" Grid.Column="0" Text="备注：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="RemarksText" Grid.Row="7" Grid.Column="1" TextWrapping="Wrap"/>
+                        <TextBlock Grid.Row="8" Grid.Column="0" Text="注释：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="NotesText" Grid.Row="8" Grid.Column="1" TextWrapping="Wrap"/>
                     </Grid>
                 </StackPanel>
             </Border>
 
-            <!-- 状态操作卡片 -->
-            <Border x:Name="StateBorder"
-                    Background="{ThemeResource CardBackgroundFillColorDefault}"
+            <!-- ========== 状态操作卡片 ========== -->
+            <Border Background="{ThemeResource CardBackgroundFillColorDefault}"
                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                    BorderThickness="1"
-                    CornerRadius="8"
-                    Margin="0,0,0,12"
-                    Padding="12">
+                    BorderThickness="1" CornerRadius="8" Padding="12">
                 <StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
-                        <FontIcon Glyph="&#xE835;" FontFamily="Segoe Fluent Icons" FontSize="18" Margin="0,-4,8,0" VerticalAlignment="Center"/>
-                        <TextBlock x:Uid="Status_Header" Text="状态" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,6"/>
-                    </StackPanel>
-                    <CheckBox x:Uid="Status_Owned" x:Name="OwnedCheckBox" Content="已获得" Checked="OnOwnedChanged" Unchecked="OnOwnedChanged"/>
-
+                    <TextBlock Text="状态" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,8" />
+                    <CheckBox x:Name="OwnedCheckBox" Content="已获得" Checked="OnOwnedChanged" Unchecked="OnOwnedChanged" />
                     <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,4,0,0">
-                        <TextBlock x:Uid="Status_Breakthrough_Text" Text="突破:" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        <Slider x:Name="BreakthroughSlider" Minimum="0" Maximum="3" TickFrequency="1" TickPlacement="BottomRight" 
-                                Width="200" ValueChanged="OnBreakthroughChanged"/>
-                        <TextBlock x:Name="BreakthroughValueText" VerticalAlignment="Center" Width="40"/>
+                        <TextBlock Text="突破：" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                        <Slider x:Name="BreakthroughSlider" Minimum="0" Maximum="3" TickFrequency="1" TickPlacement="BottomRight"
+                                Width="200" ValueChanged="OnBreakthroughChanged" />
+                        <TextBlock x:Name="BreakthroughValueText" VerticalAlignment="Center" Width="30" />
                     </StackPanel>
-
-                    <CheckBox x:Uid="Status_Oath" x:Name="OathCheckBox" Content="已誓约" Margin="0,4,0,0" Checked="OnOathChanged" Unchecked="OnOathChanged"/>
-                    <CheckBox x:Uid="Status_Level120" x:Name="Level120CheckBox" Content="120级" Margin="0,4,0,0" Checked="OnLevel120Changed" Unchecked="OnLevel120Changed"/>
-                    <CheckBox x:Uid="Status_Remodeled" x:Name="RemodeledCheckBox" Content="已改造" Margin="0,4,0,0" Checked="OnRemodeledChanged" Unchecked="OnRemodeledChanged"/>
-                    <CheckBox x:Uid="Status_SpecialGearObtained" x:Name="SpecialGearObtainedCheckBox" Content="已获得专属兵装" Margin="0,4,0,0" Visibility="Collapsed"
-                              Checked="OnSpecialGearObtainedChanged" Unchecked="OnSpecialGearObtainedChanged"/>
+                    <CheckBox x:Name="AffectionMaxCheckBox" Content="好感度已满" Margin="0,4,0,0" Checked="OnAffectionChanged" Unchecked="OnAffectionChanged" />
+                    <CheckBox x:Name="OathCheckBox" Content="已誓约" Margin="0,4,0,0" Checked="OnOathChanged" Unchecked="OnOathChanged" />
+                    <CheckBox x:Name="Level120CheckBox" Content="120级" Margin="0,4,0,0" Checked="OnLevel120Changed" Unchecked="OnLevel120Changed" />
+                    <CheckBox x:Name="Level125CheckBox" Content="125级" Margin="0,4,0,0" Checked="OnLevel125Changed" Unchecked="OnLevel125Changed" />
+                    <CheckBox x:Name="RemodeledCheckBox" Content="已改造" Margin="0,4,0,0" Checked="OnRemodeledChanged" Unchecked="OnRemodeledChanged" />
+                    <CheckBox x:Name="SpecialGearObtainedCheckBox" Content="已获得专属兵装" Margin="0,4,0,0"
+                              Checked="OnSpecialGearObtainedChanged" Unchecked="OnSpecialGearObtainedChanged" Visibility="Collapsed" />
+                    <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,8,0,0">
+                        <TextBlock Text="科研等级：" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                        <Slider x:Name="ResearchLevelSlider" Minimum="0" Maximum="30" TickFrequency="1" TickPlacement="BottomRight"
+                                Width="200" ValueChanged="OnResearchLevelChanged" />
+                        <TextBlock x:Name="ResearchLevelText" VerticalAlignment="Center" Width="40" />
+                    </StackPanel>
+                    <!-- 天运拟合等级 -->
+                    <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,4,0,0">
+                        <TextBlock Text="天运拟合：" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                        <Slider x:Name="FateLevelSlider" Minimum="0" Maximum="5" TickFrequency="1" TickPlacement="BottomRight"
+                                Width="200" ValueChanged="OnFateLevelChanged" />
+                        <TextBlock x:Name="FateLevelText" VerticalAlignment="Center" Width="40" />
+                    </StackPanel>
                 </StackPanel>
             </Border>
 
-            <!-- 获取方式卡片 -->
-            <Border x:Name="AcquireBorder"
-                    Background="{ThemeResource CardBackgroundFillColorDefault}"
-                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                    BorderThickness="1"
-                    CornerRadius="8"
-                    Margin="0,0,0,12"
-                    Padding="12">
-                <StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
-                        <FontIcon Glyph="&#xE82E;" FontFamily="Segoe Fluent Icons" FontSize="18" Margin="0,-4,8,0" VerticalAlignment="Center"/>
-                        <TextBlock x:Uid="Acquisition_Header" Text="获取方式" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,6"/>
-                    </StackPanel>
-                    <TextBlock x:Uid="Acquisition_Main" Text="主要获取:" Grid.Row="0" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                    <TextBlock x:Name="AcquireMainText" Grid.Row="0" Grid.Column="1" TextWrapping="Wrap" Margin="0,4,0,0"/>
-                    <TextBlock x:Uid="AcquisitionDetail" Text="获取详细:" Grid.Row="1" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                    <TextBlock x:Name="AcquireDetailText" Grid.Row="1" Grid.Column="1" TextWrapping="Wrap" Margin="0,4,0,0"/>
-                    <TextBlock x:Uid="AcquisitionDropLocations" Text="打捞地点:" Grid.Row="1" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                    <TextBlock x:Name="DropLocationsText" Grid.Row="2" Grid.Column="0" TextWrapping="Wrap" Margin="0,4,0,0"/>
-                    <TextBlock x:Uid="Acquisition_BuildTime" Text="建造时间:" Grid.Row="3" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                    <TextBlock x:Name="BuildTimeText" Grid.Row="3" Grid.Column="1" TextWrapping="Wrap" Margin="0,4,0,0"/>
-                    <TextBlock x:Uid="Acquisition_ShopExchange" Text="商店兑换:" Grid.Row="4" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                    <TextBlock x:Name="ShopExchangeText" Grid.Row="4" Grid.Column="1" TextWrapping="Wrap" Margin="0,4,0,0"/>
-                    <TextBlock x:Uid="Acquisition_IsPermanent_Status" Text="常驻状态:" Grid.Row="5" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                    <TextBlock x:Name="IsPermanentText" Grid.Row="5" Grid.Column="1" TextWrapping="Wrap" Margin="0,4,0,0"/>
-                </StackPanel>
-            </Border>
-
-            <!-- 实装活动卡片 -->
-            <Border x:Name="EventBorder"
-                    Background="{ThemeResource CardBackgroundFillColorDefault}"
-                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                    BorderThickness="1"
-                    CornerRadius="8"
-                    Margin="0,0,0,12"
-                    Padding="12">
-                <StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
-                        <FontIcon Glyph="&#xE7E7;" FontFamily="Segoe Fluent Icons" FontSize="18" Margin="0,-4,8,0" VerticalAlignment="Center"/>
-                        <TextBlock x:Uid="DebutEvent_Header" Text="实装活动" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,6"/>
-                    </StackPanel>
-                    <TextBlock x:Uid="DebutEvent_Name_Text" Text="活动名称:" Grid.Row="0" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                    <TextBlock x:Name="DebutEventText" TextWrapping="Wrap" Margin="0,4,0,0"/>
-                    <TextBlock x:Uid="DebutEvent_Date" Text="实装日期:" Grid.Row="0" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                    <TextBlock x:Name="ReleaseDateText" TextWrapping="Wrap" Margin="0,4,0,0"/>
-                    <TextBlock x:Uid="DebutEvent_Notes" Text="备注:" Grid.Row="0" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                    <TextBlock x:Name="NotesText" TextWrapping="Wrap" Margin="0,4,0,0"/>
-                </StackPanel>
-            </Border>
-
-            <!-- 专属兵装卡片 -->
-            <Border x:Name="SpecialGearBorder"
-                    Background="{ThemeResource CardBackgroundFillColorDefault}"
-                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                    BorderThickness="1"
-                    CornerRadius="8"
-                    Margin="0,0,0,12"
-                    Padding="12">
-                <StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
-                        <FontIcon Glyph="&#xF54C;" FontFamily="Segoe Fluent Icons" FontSize="18" Margin="0,-4,8,0" VerticalAlignment="Center"/>
-                        <TextBlock x:Uid="SpecialGear_Header_Text" Text="专属兵装" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,6"/>
-                    </StackPanel>
-                    <Grid>
+            <!-- 属性 -->
+            <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" CornerRadius="8" Padding="0">
+                <Expander Header="属性"  HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="20,20,20,20" MinHeight="64">
+                    <Grid ColumnSpacing="8" RowSpacing="4">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
@@ -192,87 +249,428 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid Grid.Row="0" Grid.ColumnSpan="2" Margin="0,4,0,4">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Border Grid.Column="0" Width="35" Height="35" CornerRadius="6" Background="Transparent" Margin="0,0,12,0">
-                                <Image x:Name="SpecialGearImage" Stretch="UniformToFill"/>
-                            </Border>
-                            <TextBlock x:Name="SpecialGearNameText" Grid.Column="1" FontSize="20" TextWrapping="Wrap" Margin="0,2,0,0"/>
-                        </Grid>
-                        <TextBlock x:Uid="SpecialGear_Date" Text="实装日期：" Grid.Row="2" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        <TextBlock x:Name="SpecialGearDateText" Grid.Row="2" Grid.Column="1" TextWrapping="Wrap" Margin="0,4,0,0"/>
-                        <TextBlock x:Uid="SpecialGear_Acquire" Text="获取方式：" Grid.Row="3" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        <TextBlock x:Name="SpecialGearAcquireText" Grid.Row="3" Grid.Column="1" TextWrapping="Wrap" Margin="0,4,0,0"/>
-                    </Grid>
-                </StackPanel>
-            </Border>
-            
-            <!-- 属性加成卡片 -->
-            <Border x:Name="BonusBorder"
-                    Background="{ThemeResource CardBackgroundFillColorDefault}"
-                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                    BorderThickness="1"
-                    CornerRadius="8"
-                    Margin="0,0,0,12"
-                    Padding="12">
-                <StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
-                        <FontIcon Glyph="&#xEABC;" FontFamily="Segoe Fluent Icons" FontSize="18" Margin="0,-4,8,0" VerticalAlignment="Center"/>
-                        <TextBlock x:Uid="AttrBonusPage_Title" Text="属性加成" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,5"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Spacing="20">
-                        <StackPanel>
-                            <TextBlock x:Uid="AttributeBonus_Obtain_Text" Text="获得时" FontSize="17" FontWeight="Bold" Margin="0,4,0,0"/>
-                            <TextBlock x:Name="ObtainBonusText" FontSize="16" Margin="0,4,0,0"/>
-                            <TextBlock x:Uid="AttributeBonus_AffectShips" Text="适用舰种:" Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontSize="12" Margin="0,4,0,0"/>
-                            <TextBlock x:Name="ObtainAffectsText" FontSize="14" TextWrapping="Wrap" Margin="0,4,0,0"/>
-                        </StackPanel>
-                        <StackPanel>
-                            <TextBlock x:Uid="AttributeBonus_Level120_Text" Text="120级" FontSize="17" FontWeight="Bold" Margin="0,4,0,0"/>
-                            <TextBlock x:Name="Level120BonusText" FontSize="16" Margin="0,4,0,0"/>
-                            <TextBlock x:Uid="AttributeBonus_AffectShips" Text="适用舰种:" Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontSize="12" Margin="0,4,0,0"/>
-                            <TextBlock x:Name="Level120AffectsText" FontSize="14" TextWrapping="Wrap" Margin="0,4,0,0"/>
-                        </StackPanel>
-                    </StackPanel>
-                </StackPanel>
-            </Border>
-
-            <!-- 舰队科技卡片 -->
-            <Border x:Name="TechBorder"
-                    Background="{ThemeResource CardBackgroundFillColorDefault}"
-                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                    BorderThickness="1"
-                    CornerRadius="8"
-                    Margin="0,0,0,12"
-                    Padding="12">
-                <StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
-                        <FontIcon Glyph="&#xE81E;" FontFamily="Segoe Fluent Icons" FontSize="18" Margin="0,-4,8,0" VerticalAlignment="Center"/>
-                        <TextBlock x:Uid="FleetTech_Header" Text="舰队科技" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,8"/>
-                    </StackPanel>
-                    <Grid ColumnSpacing="12" RowSpacing="6">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="60"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="耐久：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="HpText" Grid.Row="0" Grid.Column="1"/>
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="装甲：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="ArmorText" Grid.Row="0" Grid.Column="3"/>
+                        <TextBlock Grid.Row="0" Grid.Column="4" Text="炮击：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="FpText" Grid.Row="0" Grid.Column="5"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="雷击：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="TrpText" Grid.Row="1" Grid.Column="1"/>
+                        <TextBlock Grid.Row="1" Grid.Column="2" Text="防空：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="AaText" Grid.Row="1" Grid.Column="3"/>
+                        <TextBlock Grid.Row="1" Grid.Column="4" Text="航空：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="AviText" Grid.Row="1" Grid.Column="5"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="命中：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="HitText" Grid.Row="2" Grid.Column="1"/>
+                        <TextBlock Grid.Row="2" Grid.Column="2" Text="机动：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="EvaText" Grid.Row="2" Grid.Column="3"/>
+                        <TextBlock Grid.Row="2" Grid.Column="4" Text="反潜：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="AswText" Grid.Row="2" Grid.Column="5"/>
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="幸运：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="LuckText" Grid.Row="3" Grid.Column="1"/>
+                        <TextBlock Grid.Row="3" Grid.Column="2" Text="油耗：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="OilText" Grid.Row="3" Grid.Column="3"/>
+                        <TextBlock Grid.Row="3" Grid.Column="4" Text="航速：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="SpeedText" Grid.Row="3" Grid.Column="5"/>
+                    </Grid>
+                </Expander>
+            </Border>
+
+            <!-- 性能评级 -->
+            <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" CornerRadius="8" Padding="0">
+                <Expander Header="性能评级" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="20,20,20,20" MinHeight="64">
+                    <Grid ColumnSpacing="8" RowSpacing="4">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <TextBlock x:Uid="FleetTech_Obtain" Text="获得:" Grid.Row="0" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        <TextBlock x:Name="TechPointsObtainText" Grid.Row="0" Grid.Column="1" Margin="0,4,0,0"/>
-                        <TextBlock x:Uid="FleetTech_Max" Text="满破:" Grid.Row="1" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        <TextBlock x:Name="TechPointsMaxText" Grid.Row="1" Grid.Column="1" Margin="0,4,0,0"/>
-                        <TextBlock x:Uid="FleetTech_Level120" Text="120级:" Grid.Row="2" Grid.Column="0" Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        <TextBlock x:Name="TechPoints120Text" Grid.Row="2" Grid.Column="1" Margin="0,4,0,0"/>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="HP：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="HpGradeText" Grid.Row="0" Grid.Column="1"/>
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="AA：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="AaGradeText" Grid.Row="0" Grid.Column="3"/>
+                        <TextBlock Grid.Row="0" Grid.Column="4" Text="EVA：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="EvaGradeText" Grid.Row="0" Grid.Column="5"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="AVI：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="AviGradeText" Grid.Row="1" Grid.Column="1"/>
+                        <TextBlock Grid.Row="1" Grid.Column="2" Text="TRP：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="TrpGradeText" Grid.Row="1" Grid.Column="3"/>
+                        <TextBlock Grid.Row="1" Grid.Column="4" Text="FP：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="FpGradeText" Grid.Row="1" Grid.Column="5"/>
                     </Grid>
-                </StackPanel>
+                </Expander>
             </Border>
+
+            <!-- 舰队科技 -->
+            <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" CornerRadius="8" Padding="0">
+                <Expander Header="舰队科技" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="20,20,20,20" MinHeight="64">
+                    <Grid ColumnSpacing="8" RowSpacing="4">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="收集点数：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="CollectPointsText" Grid.Row="0" Grid.Column="1"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="满破点数：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="LimitBreakPointsText" Grid.Row="1" Grid.Column="1"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="120级点数：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="Level120PointsText" Grid.Row="2" Grid.Column="1"/>
+                    </Grid>
+                </Expander>
+            </Border>
+
+            <!-- ============ 获取方式 ============ -->
+            <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" CornerRadius="8" Padding="0">
+                <Expander Header="获取方式" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="20,20,20,20" MinHeight="64">
+                    <ItemsControl x:Name="AcquisitionMethodsItemsControl">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="0,0,0,1" Padding="4" Margin="0,2">
+                                    <StackPanel>
+                                        <TextBlock FontWeight="SemiBold">
+                                            <Run Text="{Binding Type, Converter={StaticResource EnumToDisplayString}}"/>
+                                            <Run Text=" (" />
+                                            <Run Text="{Binding IsPrimary, Converter={StaticResource BoolToText}}" />
+                                            <Run Text="主要)" />
+                                        </TextBlock>
+                                        <!-- 根据类型显示不同细节 -->
+                                        <ContentControl Content="{Binding}" 
+                                                        ContentTemplateSelector="{StaticResource MethodDisplaySelector}"
+                                                        HorizontalContentAlignment="Stretch"/>
+                                        <TextBlock Text="{Binding Notes}" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Expander>
+            </Border>
+
+            <!-- 装备槽 -->
+            <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" CornerRadius="8" Padding="0">
+                <Expander Header="装备槽" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="20,20,20,20" MinHeight="64">
+                    <ItemsControl x:Name="EquipmentSlotsItemsControl">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="0,0,0,1" Padding="4">
+                                    <Grid ColumnSpacing="8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="槽位：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                        <TextBlock Text="{Binding SlotIndex}" Grid.Column="1"/>
+                                        <TextBlock Text="类型：" Grid.Column="2" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                        <TextBlock Text="{Binding EquipType}" Grid.Column="3"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Expander>
+            </Border>
+
+            <!-- 初始装备 -->
+            <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" CornerRadius="8" Padding="0">
+                <Expander Header="初始装备" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="20,20,20,20" MinHeight="64">
+                    <ItemsControl x:Name="InitialEquipmentItemsControl">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="0,0,0,1" Padding="4">
+                                    <Grid ColumnSpacing="8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="槽位：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                        <TextBlock Text="{Binding SlotIndex}" Grid.Column="1"/>
+                                        <TextBlock Text="装备ID：" Grid.Column="2" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                        <TextBlock Text="{Binding EquipmentId}" Grid.Column="3"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Expander>
+            </Border>
+
+            <!-- 专属兵装 -->
+            <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" CornerRadius="8" Padding="0">
+                <Expander x:Name="SpecialGearExpander" Header="专属兵装" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="20,20,20,20" MinHeight="64">
+                    <StackPanel>
+                        <TextBlock x:Name="HasSpecialGearText"/>
+                        <Grid ColumnSpacing="8" RowSpacing="4" Visibility="{Binding ElementName=HasSpecialGearText, Path=Text, Converter={StaticResource StringToVisibilityConverter}}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <!-- 图标行 -->
+                            <Border Grid.Row="0" Grid.ColumnSpan="2" Width="50" Height="50" CornerRadius="6" Background="Transparent" Margin="0,0,0,8">
+                                <Image x:Name="SpecialGearImage" Stretch="UniformToFill" Opacity="0"/>
+                            </Border>
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="名称：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock x:Name="GearNameText" Grid.Row="1" Grid.Column="1"/>
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="实装日期：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock x:Name="GearDateText" Grid.Row="2" Grid.Column="1"/>
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="ID：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock x:Name="GearIdText" Grid.Row="3" Grid.Column="1"/>
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="获取方式：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock x:Name="GearAcquireText" Grid.Row="4" Grid.Column="1" TextWrapping="Wrap"/>
+                        </Grid>
+                    </StackPanel>
+                </Expander>
+            </Border>
+
+            <!-- 技能 -->
+            <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" CornerRadius="8" Padding="0">
+                <Expander Header="技能" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="20,20,20,20" MinHeight="64">
+                    <ItemsControl x:Name="SkillsItemsControl">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="0,0,0,1" Padding="4">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
+                                        <TextBlock Text="{Binding Description}" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Expander>
+            </Border>
+
+            <!-- 改造 -->
+            <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" CornerRadius="8" Padding="0">
+                <Expander Header="改造" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="20,20,20,20" MinHeight="64">
+                    <StackPanel>
+                        <TextBlock x:Name="CanRetrofitText"/>
+                        <TextBlock x:Name="RetrofitShipTypeChangedText" Margin="0,4,0,4"/>
+                        <TextBlock x:Name="TargetShipTypeText"/>
+                        <TextBlock Text="改造节点：" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Margin="0,8,0,4"/>
+                        <ItemsControl x:Name="RetrofitNodesItemsControl">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="0,0,0,1" Padding="4">
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
+                                            <TextBlock Text="属性加成：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                            <TextBlock Text="{Binding AttributeBonus}" TextWrapping="Wrap"/>
+                                            <TextBlock Text="所需物品：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                            <TextBlock Text="{Binding RequiredItems}"/>
+                                            <TextBlock Text="金币：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                            <TextBlock Text="{Binding RequiredCoins}"/>
+                                            <TextBlock Text="等级要求：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                            <TextBlock Text="{Binding RequiredLevel}"/>
+                                            <TextBlock Text="星级要求：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                            <TextBlock Text="{Binding RequiredStars}"/>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Expander>
+            </Border>
+
+            <!-- 科研 -->
+            <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" CornerRadius="8" Padding="0">
+                <Expander Header="科研" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="20,20,20,20" MinHeight="64">
+                    <StackPanel>
+                        <TextBlock Text="前置阵营：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="PreReqFactionsText"/>
+                        <TextBlock Text="科技点数：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="TechPointsText"/>
+                        <TextBlock Text="任务列表：" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Margin="0,8,0,4"/>
+                        <ItemsControl x:Name="ResearchTasksItemsControl">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="0,0,0,1" Padding="4">
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
+                                            <TextBlock Text="{Binding Description}" TextWrapping="Wrap"/>
+                                            <TextBlock Text="要求：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                            <TextBlock Text="{Binding Requirement}" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <TextBlock Text="蓝图需求：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="BlueprintRequiredText"/>
+                        <TextBlock Text="开发奖励：" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Margin="0,8,0,4"/>
+                        <ItemsControl x:Name="DevelopBonusItemsControl">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Key}" Margin="0,0,0,2"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <TextBlock Text="开发蓝图需求：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="DevelopBlueprintRequiredText"/>
+                        <TextBlock Text="天运拟合：" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Margin="0,8,0,4"/>
+                        <StackPanel x:Name="FateSimPanel">
+                            <TextBlock Text="等级：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock x:Name="FateSimLevelText" />
+                            <TextBlock Text="描述：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock x:Name="FateDescText" TextWrapping="Wrap"/>
+                            <TextBlock Text="蓝图需求：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock x:Name="FateBlueprintRequiredText"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Expander>
+            </Border>
+
+            <!-- 皮肤 -->
+            <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" CornerRadius="8" Padding="0">
+                <Expander Header="皮肤" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="20,20,20,20" MinHeight="64">
+                    <ItemsControl x:Name="SkinsItemsControl">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="0,0,0,1" Padding="4">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
+                                        <TextBlock Text="实装日期：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                        <TextBlock Text="{Binding ReleaseDate}"/>
+                                        <TextBlock Text="类型：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                        <TextBlock Text="{Binding Type}"/>
+                                        <TextBlock Text="誓约可用：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                        <TextBlock Text="{Binding IsOathEnabled}"/>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Expander>
+            </Border>
+
+            <!-- 台词 -->
+            <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" CornerRadius="8" Padding="0">
+                <Expander Header="台词" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="20,20,20,20" MinHeight="64">
+                    <ItemsControl x:Name="LinesItemsControl">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="0,0,0,1" Padding="4">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
+                                        <TextBlock Text="{Binding Content}" TextWrapping="Wrap"/>
+                                        <TextBlock Text="触发条件：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                        <TextBlock Text="{Binding TriggerCondition}" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Expander>
+            </Border>
+
+            <!-- 礼物偏好 -->
+            <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" CornerRadius="8" Padding="0">
+                <Expander Header="礼物偏好" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="20,20,20,20" MinHeight="64">
+                    <ItemsControl x:Name="GiftPreferencesItemsControl">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="0,0,0,1" Padding="4">
+                                    <Grid ColumnSpacing="8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="礼物ID：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                        <TextBlock Text="{Binding GiftId}" Grid.Column="1"/>
+                                        <TextBlock Text="偏好：" Grid.Column="2" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                        <TextBlock Text="{Binding Preference}" Grid.Column="3"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Expander>
+            </Border>
+
+            <!-- 强化/退役 -->
+            <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" CornerRadius="8" Padding="0">
+                <Expander Header="强化与退役" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="20,20,20,20" MinHeight="64">
+                    <StackPanel>
+                        <TextBlock Text="可作强化材料：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="CanBeEnhanceMaterialText"/>
+                        <TextBlock Text="强化价值：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="EnhanceValueText"/>
+                        <TextBlock Text="可退役：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="CanRetireText"/>
+                        <TextBlock Text="退役奖励：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="RetirementRewardText"/>
+                        <TextBlock Text="强化经验：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <Grid ColumnSpacing="8" Margin="0,4,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="炮击：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                <TextBlock x:Name="EnhanceExpFpText"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="雷击：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                <TextBlock x:Name="EnhanceExpTrpText"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="航空：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                <TextBlock x:Name="EnhanceExpAviText"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="3">
+                                <TextBlock Text="装填：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                <TextBlock x:Name="EnhanceExpRldText"/>
+                            </StackPanel>
+                        </Grid>
+                        <TextBlock Text="强化道具：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="EnhanceItemsText" TextWrapping="Wrap"/>
+                        <TextBlock Text="额外强化：" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="ExtraEnhanceText"/>
+                    </StackPanel>
+                </Expander>
+            </Border>
+
+            <!-- 参考Markdown -->
+            <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" CornerRadius="8" Padding="0">
+                <Expander Header="参考资料" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="20,20,20,20" MinHeight="64">
+                    <TextBlock x:Name="ReferenceMarkdownText" TextWrapping="Wrap"/>
+                </Expander>
+            </Border>
+
         </StackPanel>
     </ScrollViewer>
 </UserControl>

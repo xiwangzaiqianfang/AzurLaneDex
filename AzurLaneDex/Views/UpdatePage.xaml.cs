@@ -50,7 +50,7 @@ namespace AzurLaneDex.Views
             }
 
             _shipManager = app.ShipManager;
-            _updateService = new UpdateService(_shipManager);
+            _updateService = app.GetService<IUpdateService>();
 
             // 加载版本信息
             _currentAppVersion = _shipManager.GetCurrentAppVersion();
@@ -317,7 +317,7 @@ namespace AzurLaneDex.Views
                     return;
                 }
 
-                _remoteDataVersion = await _shipManager.GetRemoteDataVersionAsync(url, ProxyBox.Text.Trim());
+                _remoteDataVersion = await _updateService.GetRemoteDataVersionAsync(url, ProxyBox.Text.Trim());
                 _latestDataUrl = url;
 
                 if (string.IsNullOrEmpty(_remoteDataVersion))
@@ -326,7 +326,7 @@ namespace AzurLaneDex.Views
                     return;
                 }
 
-                if (CompareVersion(_remoteDataVersion, _shipManager.Version) > 0)
+                if (CompareVersion(_remoteDataVersion, _shipManager.DataVersion) > 0)
                 {
                     StatusText.Text = string.Format(loader.GetString("NewDataVersionAvailable"), _remoteDataVersion);
                     DownloadDataButton.Visibility = Visibility.Visible;
@@ -355,7 +355,7 @@ namespace AzurLaneDex.Views
             StatusText.Text = loader.GetString("DownloadingData");
             try
             {
-                bool success = await _shipManager.UpdateDataFromUrlAsync(_latestDataUrl, ProxyBox.Text.Trim());
+                bool success = await _updateService.UpdateDataFromUrlAsync(_latestDataUrl, ProxyBox.Text.Trim());
                 if (success)
                     StatusText.Text = string.Format(loader.GetString("DataUpdatedToVersion"), _remoteDataVersion);
                 else

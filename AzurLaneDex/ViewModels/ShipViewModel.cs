@@ -1,10 +1,9 @@
 ﻿using AzurLaneDex.Helpers;
 using AzurLaneDex.Models;
-using AzurLaneDex.Services;
 using System;
-using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Windows.ApplicationModel.Resources;
@@ -24,78 +23,178 @@ namespace AzurLaneDex.ViewModels
             _state = state;
         }
 
-        // 本地化显示属性
+        // ========== 基础标识 ==========
+        public int Id => _static.Id;
+        public int GameOrder => _static.GameOrder;
+        public string RawName => _static.GlobalName;
+
+        public string DisplayId
+        {
+            get
+            {
+                // 可根据 Category 自定义显示格式
+                return $"NO.{Id:D3}";
+            }
+        }
+
+        // ========== 多语言显示属性 ==========
         public string DisplayName
         {
             get
             {
-                string baseName = _static.Name.GetLocalized(_static.Name.GetValueOrDefault("zh-Hans"));
-                if (Remodeled && CanRemodel && !baseName.EndsWith(_loader.GetString("ShipName_RemodelSuffix")))
+                string baseName = _static.Name.GetLocalized();
+                if (Retrofitted && Retrofit.CanRetrofit && !baseName.EndsWith(_loader.GetString("ShipName_RemodelSuffix")))
                 {
                     return baseName + _loader.GetString("ShipName_RemodelSuffix");
                 }
                 return baseName;
             }
         }
-        public string DisplayAltName => _static.AltName.GetLocalized();
-        public string Faction => LocalizationHelper.GetEnumString("Faction", _static.FactionId);
-        public string ShipClass => LocalizationHelper.GetEnumString("ShipClass", _static.ShipClassId);
-        public string Rarity => LocalizationHelper.GetEnumString("Rarity", _static.RarityId);
-        public string ObtainBonusAttr => LocalizationHelper.GetEnumString("Attr", _static.ObtainBonusAttrId);
-        public string Level120BonusAttr => LocalizationHelper.GetEnumString("Attr", _static.Level120BonusAttrId);
 
-        public string DebutEvent => _static.DebutEvent.GetLocalized();
-        public string Notes => _static.Notes.GetLocalized();
+        public string AltName => _static.AltName.GetLocalized();
+        public string ClassName => _static.Class.GetLocalized();
+        public string Alias => _static.Alias;
+        public string CV => _static.CV.GetLocalized();
 
-        public string ObtainAffectsDisplay => string.Join(", ", _static.ObtainAffectClassIds.Select(id => LocalizationHelper.GetEnumString("ShipClass", id)));
-        public string Level120AffectsDisplay => string.Join(", ", _static.Level120AffectClassIds.Select(id => LocalizationHelper.GetEnumString("ShipClass", id)));
+        public string ShipType => LocalizationHelper.GetEnumString("ShipType", (int)_static.Type);
+        public string Faction => LocalizationHelper.GetEnumString("Faction", (int)_static.Faction);
+        public string Rarity => LocalizationHelper.GetEnumString("Rarity", (int)_static.Rarity);
+        public string Category => LocalizationHelper.GetEnumString("ShipCategory", (int)_static.Category);
 
-        // ID 属性（用于排序）
-        public int RarityId => _static.RarityId;
-        public int FactionId => _static.FactionId;
-        public int ShipClassId => _static.ShipClassId;
+        // ========== 枚举属性（用于筛选/排序） ==========
+        public ShipCategory CategoryEnum => _static.Category;
+        public ShipType ShipTypeEnum => _static.Type;
+        public Faction FactionEnum => _static.Faction;
+        public Rarity RarityEnum => _static.Rarity;
 
-        // 原始名称（用于头像文件名、布里判断）
-        public string RawName => _static.Name.GetValueOrDefault("zh-Hans");
-        public string RawAltName => _static.AltName.GetValueOrDefault("zh-Hans");
+        // ========== 静态数据对象（用于详情页） ==========
+        public ShipStats Stats => _static.Stats;
+        public PerformanceRating Performance => _static.Performance;
+        public FleetTech FleetTech => _static.FleetTech;
+        public AcquisitionData Acquisition => _static.Acquisition;
+        public SpecialGear SpecialGear => _static.SpecialGear;
+        public List<EquipmentSlot> EquipmentSlots => _static.EquipmentSlots;
+        public List<InitialEquipment> InitialEquipment => _static.InitialEquipment;
+        public List<Skill> Skills => _static.Skills;
+        public RetrofitData Retrofit => _static.Retrofit;
+        public ResearchData Research => _static.Research;
+        public List<Skin> Skins => _static.Skins;
+        public List<VoiceLine> Lines => _static.Lines;
+        public List<GiftPreference> GiftPreferences => _static.GiftPreferences;
 
-        // 其他静态属性
-        public int Id => _static.Id;
-        public int GameOrder => _static.GameOrder;
-        public ShipCategory Category => _static.Category;
-        public int CategoryOrder => _static.CategoryOrder;
-        public List<AcquireEntry> AcquireEntries => _static.AcquireEntries;
+        // ========== 强化/退役 ==========
+        public bool CanBeEnhanceMaterial => _static.CanBeEnhanceMaterial;
+        public int EnhanceValue => _static.EnhanceValue;
+        public bool CanRetire => _static.CanRetire;
+        public string RetirementReward => _static.RetirementReward;
+        public EnhanceExp EnhanceExp => _static.EnhanceExp;
+        public List<int> EnhanceItems => _static.EnhanceItems;
+        public string ExtraEnhance => _static.ExtraEnhance;
 
-        // 兼容旧数据的 Legacy 字段（LocalizedString 类型）
-        public LocalizedString? AcquireMainLegacy => _static.AcquireMainLegacy;
-        public LocalizedString? AcquireDetailLegacy => _static.AcquireDetailLegacy;
-        public string AcquireMain => _static.AcquireMainLegacy?.GetValueOrDefault("zh-Hans") ?? "";
-        public string AcquireDetail => _static.AcquireDetailLegacy?.GetValueOrDefault("zh-Hans") ?? "";
-        public string BuildTime => _static.BuildTime;
-        public List<string> DropLocations => _static.DropLocations;
-        public string ShopExchange => _static.ShopExchange;
-        public bool IsPermanent => _static.IsPermanent;
+        // ========== 其他静态属性 ==========
         public string ReleaseDate => _static.ReleaseDate;
-        public bool CanRemodel => _static.CanRemodel;
-        public string RemodelDate => _static.RemodelDate;
-        public bool CanSpecialGear => _static.CanSpecialGear;
-        public LocalizedString SpecialGearName => _static.SpecialGearName;
-        public List<SpecialGearEntry> SpecialGearEntries => _static.SpecialGearEntries;
-        public string SpecialGearDate => _static.SpecialGearDate;
-        public string SpecialGearAcquireText => _static.SpecialGearAcquire?.GetLocalized() ?? "";        // public string SpecialGearAcquire => _static.SpecialGearAcquire;
-        public int ObtainBonusValue => _static.ObtainBonusValue;
-        public int Level120BonusValue => _static.Level120BonusValue;
-        public int TechPointsObtain => _static.TechPointsObtain;
-        public int TechPointsMax => _static.TechPointsMax;
-        public int TechPoints120 => _static.TechPoints120;
+        public bool IsPermanent => _static.IsPermanent;
+        public bool CanSpecialGear => SpecialGear != null;
+        public string Artist => _static.Artist;
+        public string Remarks => _static.Remarks;
+        public string Notes => _static.Notes;
+        public string RelatedEvent => _static.RelatedEvent;
+        public string ReferenceMarkdown => _static.ReferenceMarkdown;
 
-        // 动态状态
-        private static readonly string[] RarityOrder = { "普通", "稀有", "精锐", "超稀有", "海上传奇" };
+        // ========== 活动相关（用于搜索） ==========
+        public string DebutEvent => _static.RelatedEvent;
 
+        // ========== 属性加成（用于筛选） ==========
+        public TechBonusDetail ObtainBonus => _static.FleetTechBonus?.Obtain ?? new TechBonusDetail();
+        public TechBonusDetail Level120Bonus => _static.FleetTechBonus?.Level120 ?? new TechBonusDetail();
+        public AttributeType ObtainBonusAttrEnum
+        {
+            get
+            {
+                var obtain = _static.FleetTechBonus?.Obtain;
+                if (obtain == null) return AttributeType.None;
+                if (obtain.Hp != 0) return AttributeType.HP;
+                if (obtain.Fp != 0) return AttributeType.FP;
+                if (obtain.Trp != 0) return AttributeType.TRP;
+                if (obtain.Avi != 0) return AttributeType.AVI;
+                if (obtain.Aa != 0) return AttributeType.AA;
+                if (obtain.Hit != 0) return AttributeType.ACC;
+                if (obtain.Eva != 0) return AttributeType.EVA;
+                if (obtain.Asw != 0) return AttributeType.ASW;
+                return AttributeType.None;
+            }
+        }
+
+        public AttributeType Level120BonusAttrEnum
+        {
+            get
+            {
+                var level120 = _static.FleetTechBonus?.Level120;
+                if (level120 == null) return AttributeType.None;
+                if (level120.Hp != 0) return AttributeType.HP;
+                if (level120.Fp != 0) return AttributeType.FP;
+                if (level120.Trp != 0) return AttributeType.TRP;
+                if (level120.Avi != 0) return AttributeType.AVI;
+                if (level120.Aa != 0) return AttributeType.AA;
+                if (level120.Hit != 0) return AttributeType.ACC;
+                if (level120.Eva != 0) return AttributeType.EVA;
+                if (level120.Asw != 0) return AttributeType.ASW;
+                return AttributeType.None;
+            }
+        }
+
+        // 用于判断是否有加成（方便 UI）
+        public bool HasObtainBonus => ObtainBonus.Hp != 0 || ObtainBonus.Fp != 0 || ObtainBonus.Trp != 0 || ObtainBonus.Avi != 0 || ObtainBonus.Aa != 0 || ObtainBonus.Hit != 0 || ObtainBonus.Eva != 0 || ObtainBonus.Asw != 0;
+        public bool HasLevel120Bonus => Level120Bonus.Hp != 0 || Level120Bonus.Fp != 0 || Level120Bonus.Trp != 0 || Level120Bonus.Avi != 0 || Level120Bonus.Aa != 0 || Level120Bonus.Hit != 0 || Level120Bonus.Eva != 0 || Level120Bonus.Asw != 0;
+
+        // 用于筛选的枚举（从 TargetTypes 判断是否存在）
+        public List<ShipType> ObtainBonusTargetTypes => ObtainBonus.TargetTypes;
+        public List<ShipType> Level120BonusTargetTypes => Level120Bonus.TargetTypes;
+
+        // ========== 头像 ==========
+        public string AvatarUri
+        {
+            get
+            {
+                string baseName = _static.GlobalName;
+                string suffix = Retrofitted ? "_g" : "";
+                return $"ms-appx:///Assets/Ship/{baseName}{suffix}.png";
+            }
+        }
+
+        public string LocalAvatarPath
+        {
+            get
+            {
+                string factionId = ((int)_static.Faction).ToString();
+                string avatarFileName = Retrofitted ? $"{_static.GlobalName}_g.png" : $"{_static.GlobalName}.png";
+                string localPath = Path.Combine(App.DataRoot, "avatars", factionId, avatarFileName);
+                if (File.Exists(localPath))
+                    return localPath;
+                return string.Empty;
+            }
+        }
+
+        // ========== 有效稀有度（改造后提升） ==========
+        public string EffectiveRarity
+        {
+            get
+            {
+                if (Retrofitted && Retrofit.CanRetrofit)
+                {
+                    int idx = (int)_static.Rarity;
+                    if (idx >= 1 && idx <= 5)
+                        return LocalizationHelper.GetEnumString("Rarity", idx + 1);
+                }
+                return Rarity;
+            }
+        }
+
+        // ========== 动态状态（从 ShipState 读取） ==========
         public bool Owned
         {
             get => _state.Owned;
-            set { if (_state.Owned != value) { _state.Owned = value; OnPropertyChanged(); OnPropertyChanged(nameof(BreakthroughDisplay));  } }
+            set { if (_state.Owned != value) { _state.Owned = value; OnPropertyChanged(); OnPropertyChanged(nameof(BreakthroughDisplay)); } }
         }
 
         public int Breakthrough
@@ -104,28 +203,81 @@ namespace AzurLaneDex.ViewModels
             set { if (_state.Breakthrough != value) { _state.Breakthrough = value; OnPropertyChanged(); OnPropertyChanged(nameof(BreakthroughDisplay)); OnPropertyChanged(nameof(IsMaxBreakthrough)); } }
         }
 
-        public bool Remodeled
+        public Dictionary<int, int> SkillLevels => _state.SkillLevels;
+        public EnhanceCompleted EnhanceCompleted => _state.EnhanceCompleted;
+
+        public bool AffectionMax
         {
-            get => _state.Remodeled;
-            set { if (_state.Remodeled != value) { _state.Remodeled = value; OnPropertyChanged(); OnPropertyChanged(nameof(DisplayName)); OnPropertyChanged(nameof(EffectiveRarity)); } }
+            get => _state.AffectionMax;
+            set { _state.AffectionMax = value; OnPropertyChanged(); }
         }
 
         public bool Oath
         {
             get => _state.Oath;
-            set { if (_state.Oath != value) { _state.Oath = value; OnPropertyChanged(); } }
+            set { _state.Oath = value; OnPropertyChanged(); }
         }
 
         public bool Level120
         {
             get => _state.Level120;
-            set { if (_state.Level120 != value) { _state.Level120 = value; OnPropertyChanged(); } }
+            set { _state.Level120 = value; OnPropertyChanged(); }
         }
+
+        public bool Level125
+        {
+            get => _state.Level125;
+            set { _state.Level125 = value; OnPropertyChanged(); }
+        }
+
+        public bool Retrofitted
+        {
+            get => _state.Retrofitted;
+            set
+            {
+                if (_state.Retrofitted != value)
+                {
+                    _state.Retrofitted = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(DisplayName));
+                    OnPropertyChanged(nameof(AvatarUri));
+                    OnPropertyChanged(nameof(EffectiveRarity));
+                }
+            }
+        }
+
+        public Dictionary<string, bool> RetrofitNodes => _state.RetrofitNodes;
 
         public bool SpecialGearObtained
         {
             get => _state.SpecialGearObtained;
-            set { if (_state.SpecialGearObtained != value) { _state.SpecialGearObtained = value; OnPropertyChanged(); } }
+            set { _state.SpecialGearObtained = value; OnPropertyChanged(); }
+        }
+
+        public int ResearchLevel
+        {
+            get => _state.ResearchLevel;
+            set { _state.ResearchLevel = value; OnPropertyChanged(); }
+        }
+
+        public int FateLevel
+        {
+            get => _state.FateLevel;
+            set { _state.FateLevel = value; OnPropertyChanged(); }
+        }
+
+        public List<int> OwnedSkins => _state.OwnedSkins;
+
+        // ========== 计算属性 ==========
+        public bool IsMaxBreakthrough => Owned && Breakthrough >= 3;
+
+        public string BreakthroughDisplay
+        {
+            get
+            {
+                if (!Owned) return "0";
+                return Breakthrough >= 3 ? "⭐" : Breakthrough.ToString();
+            }
         }
 
         public bool IsSelected
@@ -134,117 +286,13 @@ namespace AzurLaneDex.ViewModels
             set { if (_isSelected != value) { _isSelected = value; OnPropertyChanged(); } }
         }
 
-        // 辅助属性
-        public string AcquireMainLegacyText => _static.AcquireMainLegacy?.GetValueOrDefault("zh-Hans") ?? "";
-        public string AcquireDetailLegacyText => _static.AcquireDetailLegacy?.GetValueOrDefault("zh-Hans") ?? "";
-        public bool IsMaxBreakthrough => Owned && Breakthrough >= 3;
-        // public string BreakthroughDisplay => Breakthrough == 3 ? _loader.GetString("MaxBreak") : Breakthrough.ToString();
-        public string BreakthroughDisplay
-        {
-            get
-            {
-                // 未获得时显示 0
-                if (!Owned) return "0";
-                // 满破显示实心星，否则显示数字
-                return Breakthrough >= 3 ? "⭐" : Breakthrough.ToString();
-            }
-        }
-
-        public string DisplayId
-        {
-            get
-            {
-                switch (Category)
-                {
-                    case ShipCategory.META: return $"NO.META{Id - ShipIdRanges.MetaStart + 1:D3}";
-                    case ShipCategory.Collab: return $"NO.Collab{Id - ShipIdRanges.CollabStart + 1:D3}";
-                    case ShipCategory.Research: return $"NO.Plan{Id - ShipIdRanges.ResearchStart + 1:D3}";
-                    default: return $"NO.{Id:D3}";
-                }
-            }
-        }
-
-        public string EffectiveRarity
-        {
-            get
-            {
-                if (Remodeled && CanRemodel)
-                {
-                    int idx = _static.RarityId - 1;
-                    if (idx >= 0 && idx < RarityOrder.Length - 1)
-                        return LocalizationHelper.GetEnumString("Rarity", idx + 2);
-                }
-                return Rarity;
-            }
-        }
-
-        // 获取状态（用于保存）
+        // ========== 方法 ==========
         public ShipState GetState() => _state;
 
-        // 深拷贝（用于编辑）
-        public ShipStatic GetStaticCopy()
-        {
-            System.Diagnostics.Debug.WriteLine($"GetStaticCopy: _static.AcquireEntries count = {_static.AcquireEntries?.Count ?? 0}");
-            return new ShipStatic
-            {
-                Id = _static.Id,
-                Name = new LocalizedString(_static.Name),
-                AltName = new LocalizedString(_static.AltName),
-                FactionId = _static.FactionId,
-                ShipClassId = _static.ShipClassId,
-                RarityId = _static.RarityId,
-                GameOrder = _static.GameOrder,
-                Category = _static.Category,
-                CategoryOrder = _static.CategoryOrder,
-                AcquireEntries = _static.AcquireEntries?.Select(e => new AcquireEntry
-                {
-                    Tag = e.Tag,
-                    Parameters = new List<string>(e.Parameters),
-                    CustomText = new LocalizedString(e.CustomText) // 假设 LocalizedString 支持拷贝构造
-                }).ToList() ?? new List<AcquireEntry>(),
-                AcquireMainLegacy = _static.AcquireMainLegacy != null ? new LocalizedString(_static.AcquireMainLegacy) : null,
-                AcquireDetailLegacy = _static.AcquireDetailLegacy != null ? new LocalizedString(_static.AcquireDetailLegacy) : null,
-                BuildTime = _static.BuildTime,
-                DropLocations = new List<string>(_static.DropLocations),
-                ShopExchange = _static.ShopExchange,
-                IsPermanent = _static.IsPermanent,
-                DebutEvent = new LocalizedString(_static.DebutEvent),
-                ReleaseDate = _static.ReleaseDate,
-                Notes = new LocalizedString(_static.Notes),
-                CanRemodel = _static.CanRemodel,
-                RemodelDate = _static.RemodelDate,
-                CanSpecialGear = _static.CanSpecialGear,
-                SpecialGearName = _static.SpecialGearName,
-                SpecialGearDate = _static.SpecialGearDate,
-                SpecialGearAcquire = _static.SpecialGearAcquire,
-                ObtainBonusAttrId = _static.ObtainBonusAttrId,
-                ObtainBonusValue = _static.ObtainBonusValue,
-                ObtainAffectClassIds = new List<int>(_static.ObtainAffectClassIds),
-                Level120BonusAttrId = _static.Level120BonusAttrId,
-                Level120BonusValue = _static.Level120BonusValue,
-                Level120AffectClassIds = new List<int>(_static.Level120AffectClassIds),
-                TechPointsObtain = _static.TechPointsObtain,
-                TechPointsMax = _static.TechPointsMax,
-                TechPoints120 = _static.TechPoints120
-            };
-        }
+        public ShipStatic GetStaticCopy() => _static;
 
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string? name = null) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-
-        public string LocalAvatarPath
-        {
-            get
-            {
-                string factionId = this.Faction ?? "other";
-                string avatarFileName = this.Remodeled && this.CanRemodel ? $"{this.RawName}改.jpg" : $"{this.RawName}.jpg";
-                string localPath = Path.Combine(App.DataRoot, "avatars", factionId, avatarFileName);
-                if (File.Exists(localPath))
-                    return localPath;
-                // 后备：返回空字符串或默认路径（如 ms-appx 路径）
-                return string.Empty;
-            }
-        }
     }
 }

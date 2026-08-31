@@ -1,4 +1,5 @@
-﻿using AzurLaneDex.ViewModels;
+﻿using AzurLaneDex.Models;
+using AzurLaneDex.ViewModels;
 using System.Collections.Generic;
 
 namespace AzurLaneDex.Services.Interfaces
@@ -9,6 +10,6 @@ namespace AzurLaneDex.Services.Interfaces
         int GetTotalTechPoints(IEnumerable<ShipViewModel> ships);
         int GetOwnedTechPoints(IEnumerable<ShipViewModel> ships);
         StatsData CalculateStats(IEnumerable<ShipViewModel> ships);
-        Dictionary<(string ShipClass, string Attr), int> CalculateGlobalBonuses(IEnumerable<ShipViewModel> ships);
+        Dictionary<(ShipType ShipType, AttributeType Attr), int> CalculateGlobalBonuses(IEnumerable<ShipViewModel> ships);
     }
 }

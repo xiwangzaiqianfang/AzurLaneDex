@@ -1,778 +1,997 @@
 ﻿using AzurLaneDex.Helpers;
 using AzurLaneDex.Models;
-using AzurLaneDex.Views.Controls;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
 using Windows.ApplicationModel.Resources;
-using static AzurLaneDex.Models.ShipStatic;
 
 namespace AzurLaneDex.Views
 {
     public sealed partial class AddShipDialog : ContentDialog
     {
-        private int _editingShipId = 0;
-        private readonly ResourceLoader _loader = ResourceLoader.GetForViewIndependentUse();
-        private bool _isLoadingShipData = false;
+        private ShipStatic _editingShip;
+        private bool _isEditMode;
+        private bool _isLoadedInitialized = false;
+        private int _initRetryCount = 0;
+        private const int MaxInitRetries = 5;
 
-        // 动态数据源（根据舰船类别切换）
-        private List<KeyValuePair<int, string>> _normalFactionList;
-        private List<KeyValuePair<int, string>> _collabFactionList;
-        private List<KeyValuePair<int, string>> _metaFactionList;
-        private List<KeyValuePair<int, string>> _normalRarityList;
-        private List<KeyValuePair<int, string>> _researchRarityList;
+        // 列表绑定集合
+        public ObservableCollection<AcquisitionMethod> AcquisitionMethods { get; set; } = new();
+        public ObservableCollection<EquipmentSlot> EquipmentSlots { get; set; } = new();
+        public ObservableCollection<InitialEquipment> InitialEquipmentItems { get; set; } = new();
+        public ObservableCollection<Skill> Skills { get; set; } = new();
+        public ObservableCollection<Skin> Skins { get; set; } = new();
+        public ObservableCollection<VoiceLine> Lines { get; set; } = new();
+        public ObservableCollection<GiftPreference> GiftPreferences { get; set; } = new();
 
-        // 固定数据源
-        private List<KeyValuePair<int, string>> _shipClassList;
-        private List<KeyValuePair<int, string>> _attributeList;
+        private List<ComboBoxItem> _normalFactionItems;
+        private List<ComboBoxItem> _collabFactionItems;
+        private List<ComboBoxItem> _metaFactionItems;
+        private List<ComboBoxItem> _researchFactionItems;
+        private List<ComboBoxItem> _normalRarityItems;
+        private List<ComboBoxItem> _researchRarityItems;
+        public List<AcquisitionMethodType> TypeOptions { get; } = Enum.GetValues(typeof(AcquisitionMethodType)).Cast<AcquisitionMethodType>().ToList();
+        public List<ConstructionPool> PoolOptions { get; } = Enum.GetValues(typeof(ConstructionPool)).Cast<ConstructionPool>().ToList();
+        public List<ExchangeShop> ShopOptions { get; } = Enum.GetValues(typeof(ExchangeShop)).Cast<ExchangeShop>().ToList();
+        public List<Faction> FactionOptions { get; } = Enum.GetValues(typeof(Faction)).Cast<Faction>().ToList();
 
-        // 阵营顺序自定义
-        private static readonly Dictionary<int, int> FactionDisplayOrder = new()
+        private void SubscribeMethod(AcquisitionMethod method)
         {
-            [(int)Faction.EagleUnion] = 1,
-            [(int)Faction.RoyalNavy] = 2,
-            [(int)Faction.SakuraEmpire] = 3,
-            [(int)Faction.IronBlood] = 4,
-            [(int)Faction.DragonEmpery] = 5,
-            [(int)Faction.Sardegna] = 6,
-            [(int)Faction.NorthernUnion] = 7,
-            [(int)Faction.FreeFrench] = 8,
-            [(int)Faction.Vichya] = 9,
-            [(int)Faction.Tulip] = 10,
-            [(int)Faction.CrystalLeague] = 11,
-            [(int)Faction.Tempesta] = 98,   // 排在最后
-            [(int)Faction.Other] = 99,
-        };
+            method.PropertyChanged += OnMethodPropertyChanged;
+        }
 
-        public ObservableCollection<AcquireEntry> AcquireEntries { get; set; } = new();
+        private void UnsubscribeMethod(AcquisitionMethod method)
+        {
+            method.PropertyChanged -= OnMethodPropertyChanged;
+        }
+
+        private void OnMethodPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(AcquisitionMethod.Type))
+            {
+                var method = sender as AcquisitionMethod;
+                if (method != null && AcquisitionMethods.Contains(method))
+                {
+                    // 重新插入以强制刷新 UI
+                    int index = AcquisitionMethods.IndexOf(method);
+                    AcquisitionMethods.RemoveAt(index);
+                    AcquisitionMethods.Insert(index, method);
+                }
+            }
+        }
+        private LocalizedString StringToLocalizedString(string value)
+        {
+            var result = new LocalizedString();
+            if (!string.IsNullOrEmpty(value))
+            {
+                var parts = value.Split('|');
+                if (parts.Length > 0) result["zh-Hans"] = parts[0].Trim();
+                if (parts.Length > 1) result["zh-Hant"] = parts[1].Trim();
+                if (parts.Length > 2) result["en"] = parts[2].Trim();
+                if (parts.Length > 3) result["ja"] = parts[3].Trim();
+            }
+            return result;
+        }
+
+        private string LocalizedStringToString(LocalizedString loc)
+        {
+            if (loc == null || loc.Count == 0) return "";
+            return string.Join("|", loc.Values);
+        }
 
         public AddShipDialog(ShipStatic editShip = null)
         {
             this.InitializeComponent();
+            _editingShip = editShip;
+            _isEditMode = editShip != null;
 
-            // 先初始化动态数据源（阵营、稀有度分段）
-            InitializeDynamicComboBoxes();
-            // 再初始化固定数据源（舰种、属性）以及默认下拉选项
-            InitializeComboBoxes();
+            this.Title = _isEditMode ? "编辑舰船" : "新建舰船";
 
-            AcquireEntriesItemsControl.ItemsSource = AcquireEntries;
-            AddAcquireEntryButton.Click += AddAcquireEntry_Click;
+            // 绑定列表控件
+            AcquisitionMethodsItemsControl.ItemsSource = AcquisitionMethods;
+            EquipmentSlotsItemsControl.ItemsSource = EquipmentSlots;
+            InitialEquipmentItemsControl.ItemsSource = InitialEquipmentItems;
+            SkillsItemsControl.ItemsSource = Skills;
+            SkinsItemsControl.ItemsSource = Skins;
+            LinesItemsControl.ItemsSource = Lines;
+            GiftPreferencesItemsControl.ItemsSource = GiftPreferences;
 
-            if (editShip != null)
+            CategoryCombo.SelectionChanged += CategoryCombo_SelectionChanged;
+            this.Loaded += OnLoaded1;
+        }
+
+        private void OnLoaded1(object sender, RoutedEventArgs e)
+        {
+            if (FactionCombo == null || RarityCombo == null || ShipTypeCombo == null)
             {
-                _editingShipId = editShip.Id;
-                LoadShipData(editShip);
-                this.Title = _loader.GetString("EditShipDialog_Title");
-
-                foreach (var entry in editShip.AcquireEntries)
+                _initRetryCount++;
+                if (_initRetryCount <= MaxInitRetries)
                 {
-                    var customCopy = new LocalizedString();
-                    foreach (var kv in entry.CustomText)
-                        customCopy[kv.Key] = kv.Value;
-
-                    var copy = new AcquireEntry
-                    {
-                        Tag = entry.Tag,
-                        Parameters = new List<string>(entry.Parameters),
-                        CustomText = customCopy
-                    };
-                    AcquireEntries.Add(copy);
-                }
-            }
-            else
-            {
-                this.Title = _loader.GetString("AddShipDialog_Title");
-                // 默认今天日期
-                ReleaseDatePicker.Date = DateTimeOffset.Now;
-                SpecialGearDatePicker.Date = DateTimeOffset.Now;
-                RemodelDatePicker.Date = DateTimeOffset.Now;
-                // 舰种默认选中第一个
-                if (ShipClassCombo.Items.Count > 0)
-                    ShipClassCombo.SelectedIndex = 0;
-                // 属性加成默认选中“无”
-                if (ObtainBonusAttrCombo.Items.Count > 0)
-                    ObtainBonusAttrCombo.SelectedIndex = 0;
-                if (Level120BonusAttrCombo.Items.Count > 0)
-                    Level120BonusAttrCombo.SelectedIndex = 0;
-            }
-        }
-
-        /// <summary>
-        /// 初始化动态数据源（阵营按数值范围区分，稀有度按普通/科研区分）
-        /// </summary>
-        private void InitializeDynamicComboBoxes()
-        {
-            // 获取所有阵营枚举
-            var allFactions = Enum.GetValues(typeof(Faction))
-                .Cast<Faction>()
-                .Where(f => (int)f != 0)
-                .Select(f => new KeyValuePair<int, string>((int)f, LocalizationHelper.GetEnumString("Faction", (int)f)))
-                .ToList();
-
-            _normalFactionList = allFactions.Where(kv => kv.Key >= 1 && kv.Key < 100).OrderBy(kv => FactionDisplayOrder.ContainsKey(kv.Key) ? FactionDisplayOrder[kv.Key] : 100 + kv.Key).ToList();   // 普通阵营 1-99
-            _collabFactionList = allFactions.Where(kv => kv.Key >= 100 && kv.Key < 200).ToList(); // 联动阵营 100-199
-            _metaFactionList = allFactions.Where(kv => kv.Key >= 200 && kv.Key < 299).ToList();   // META阵营 200-299
-
-            // 获取所有稀有度枚举
-            var allRarities = Enum.GetValues(typeof(Rarity))
-                .Cast<Rarity>()
-                .Where(r => (int)r != 0)
-                .Select(r => new KeyValuePair<int, string>((int)r, LocalizationHelper.GetEnumString("Rarity", (int)r)))
-                .ToList();
-
-            _normalRarityList = allRarities.Where(kv => kv.Key >= 1 && kv.Key <= 5).ToList();     // N,R,SR,SSR,UR
-            _researchRarityList = allRarities.Where(kv => kv.Key == 6 || kv.Key == 7).ToList();   // Decisive,Ultimate
-        }
-
-        /// <summary>
-        /// 初始化固定数据源（舰种、属性），并设置默认的阵营/稀有度数据源（普通类别）
-        /// </summary>
-        private void InitializeComboBoxes()
-        {
-            // 舰种列表
-            _shipClassList = Enum.GetValues(typeof(ShipClass))
-                .Cast<ShipClass>()
-                .Select(sc => new KeyValuePair<int, string>((int)sc, LocalizationHelper.GetEnumString("ShipClass", (int)sc)))
-                .ToList();
-            ShipClassCombo.ItemsSource = _shipClassList;
-            ShipClassCombo.DisplayMemberPath = "Value";
-            ShipClassCombo.SelectedValuePath = "Key";
-
-            // 属性列表（获得时加成和120级加成共用）
-            _attributeList = Enum.GetValues(typeof(AttributeType))
-                .Cast<AttributeType>()
-                .Select(a => new KeyValuePair<int, string>((int)a, LocalizationHelper.GetEnumString("Attr", (int)a)))
-                .ToList();
-            ObtainBonusAttrCombo.ItemsSource = _attributeList;
-            ObtainBonusAttrCombo.DisplayMemberPath = "Value";
-            ObtainBonusAttrCombo.SelectedValuePath = "Key";
-            Level120BonusAttrCombo.ItemsSource = _attributeList;
-            Level120BonusAttrCombo.DisplayMemberPath = "Value";
-            Level120BonusAttrCombo.SelectedValuePath = "Key";
-
-            // 阵营、稀有度默认使用普通类别的数据源（Category默认为Normal）
-            FactionCombo.ItemsSource = _normalFactionList;
-            FactionCombo.DisplayMemberPath = "Value";
-            FactionCombo.SelectedValuePath = "Key";
-            RarityCombo.ItemsSource = _normalRarityList;
-            RarityCombo.DisplayMemberPath = "Value";
-            RarityCombo.SelectedValuePath = "Key";
-
-            // 默认选中第一项
-            if (FactionCombo.Items.Count > 0)
-                FactionCombo.SelectedIndex = 0;
-            if (RarityCombo.Items.Count > 0)
-                RarityCombo.SelectedIndex = 0;
-        }
-
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
-            CanSpecialGearCheckBox.Checked += (s, args) => UpdateSpecialGearControlsEnabled();
-            CanSpecialGearCheckBox.Unchecked += (s, args) => UpdateSpecialGearControlsEnabled();
-            UpdateSpecialGearControlsEnabled();
-        }
-
-        private void UpdateSpecialGearControlsEnabled()
-        {
-            bool enabled = CanSpecialGearCheckBox.IsChecked ?? false;
-            SpecialGearNameZhBox.IsEnabled = enabled;
-            SpecialGearNameZhHantBox.IsEnabled = enabled;
-            SpecialGearNameEnBox.IsEnabled = enabled;
-            SpecialGearNameJaBox.IsEnabled = enabled;
-            SpecialGearDatePicker.IsEnabled = enabled;
-            SpecialGearTypeCombo.IsEnabled = enabled;
-            Param1Box.IsEnabled = enabled;
-            Param2Box.IsEnabled = enabled;
-
-            CustomTextZhBox.IsEnabled = enabled;
-            CustomTextZhHantBox.IsEnabled = enabled;
-            CustomTextEnBox.IsEnabled = enabled;
-            CustomTextJaBox.IsEnabled = enabled;
-
-            if (!enabled)
-            {
-                DynamicParamPanel.Visibility = Visibility.Collapsed;
-                CustomTextPanel.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        private void SpecialGearTypeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (SpecialGearTypeCombo.SelectedItem is ComboBoxItem selected)
-            {
-                string tag = selected.Tag as string;
-                if (tag == "gear_custom")
-                {
-                    DynamicParamPanel.Visibility = Visibility.Collapsed;
-                    CustomTextPanel.Visibility = Visibility.Visible;
-                }
-                else if (tag == "gear_2" || tag == "gear_4")
-                {
-                    DynamicParamPanel.Visibility = Visibility.Visible;
-                    CustomTextPanel.Visibility = Visibility.Collapsed;
-                    if (tag == "gear_2")
-                    {
-                        Param1Box.Header = "活动名称";
-                        Param2Box.Visibility = Visibility.Collapsed;
-                    }
-                    else if (tag == "gear_4")
-                    {
-                        Param1Box.Header = "商店名称";
-                        Param2Box.Header = "PT 数值";
-                        Param2Box.Visibility = Visibility.Visible;
-                    }
+                    var dispatcher = DispatcherQueue.GetForCurrentThread();
+                    dispatcher.TryEnqueue(() => OnLoaded1(sender, e));
+                    return;
                 }
                 else
                 {
-                    DynamicParamPanel.Visibility = Visibility.Collapsed;
-                    CustomTextPanel.Visibility = Visibility.Collapsed;
+                    System.Diagnostics.Debug.WriteLine("警告：关键 ComboBox 未加载，使用默认值。");
+                    CreateFallbackComboBoxItems();
+                    if (_isEditMode)
+                        LoadShipData(_editingShip);
+                    else
+                        SetDefaultValues();
+                    return;
                 }
             }
+
+            _initRetryCount = 0;
+            InitializeComboBoxes();
+
+            if (_isEditMode)
+                LoadShipData(_editingShip);
+            else
+                SetDefaultValues();
         }
+
+        private void CreateFallbackComboBoxItems()
+        {
+            // 用有效枚举值创建默认项
+            var defaultFaction = new ComboBoxItem { Content = "其他", Tag = Faction.Other.ToString() };
+            var defaultRarity = new ComboBoxItem { Content = "普通", Tag = Rarity.N.ToString() };
+            var defaultType = new ComboBoxItem { Content = "未知", Tag = ShipType.UNKNOWN.ToString() };
+
+            _normalFactionItems = new List<ComboBoxItem> { defaultFaction };
+            _collabFactionItems = new List<ComboBoxItem> { defaultFaction };
+            _metaFactionItems = new List<ComboBoxItem> { defaultFaction };
+            _researchFactionItems = new List<ComboBoxItem> { defaultFaction };
+
+            FactionCombo.ItemsSource = _normalFactionItems;
+            FactionCombo.SelectedIndex = 0;
+
+            RarityCombo.ItemsSource = new List<ComboBoxItem> { defaultRarity };
+            RarityCombo.SelectedIndex = 0;
+
+            ShipTypeCombo.ItemsSource = new List<ComboBoxItem> { defaultType };
+            ShipTypeCombo.SelectedIndex = 0;
+
+            // 同样处理 TargetShipTypeCombo
+            TargetShipTypeCombo.ItemsSource = new List<ComboBoxItem> { defaultType };
+            TargetShipTypeCombo.SelectedIndex = 0;
+        }
+        private void InitializeComboBoxes()
+        {
+            if (FactionCombo == null || RarityCombo == null || ShipTypeCombo == null)
+            {
+                System.Diagnostics.Debug.WriteLine("One or more combo boxes are null, skipping initialization.");
+                return;
+            }
+            _normalFactionItems = new List<ComboBoxItem>();
+            _collabFactionItems = new List<ComboBoxItem>();
+            _metaFactionItems = new List<ComboBoxItem>();
+            _researchFactionItems = new List<ComboBoxItem>();
+            try
+            {
+
+                // ====== 动态加载阵营（Faction） ======
+                foreach (Faction faction in Enum.GetValues(typeof(Faction)))
+                {
+                    if (faction == Faction.Universal) continue;
+                    int id = (int)faction;
+
+                    // 跳过非正式范围
+                    if (id >= 400 && id < 1000) continue;
+
+                    var item = new ComboBoxItem();
+                    try
+                    {
+                        item.Content = LocalizationHelper.GetEnumString("Faction", id);
+                    }
+                    catch
+                    {
+                        item.Content = faction.ToString(); // 降级显示
+                    }
+                    item.Tag = faction.ToString();
+
+                    if (id >= 1 && id < 100) // 普通阵营 1-99
+                    {
+                        _normalFactionItems.Add(item);
+                        _researchFactionItems.Add(item); // 科研也使用普通阵营
+                    }
+                    else if (id >= 100 && id < 200) // 联动 100-199
+                    {
+                        _collabFactionItems.Add(item);
+                    }
+                    else if (id >= 200 && id < 300) // META 200-299
+                    {
+                        _metaFactionItems.Add(item);
+                    }
+                }
+
+                FactionCombo.ItemsSource = _normalFactionItems;
+                if (_normalFactionItems.Any())
+                    FactionCombo.SelectedIndex = 0;
+
+                // ====== 动态加载稀有度（Rarity） ======
+                var rarityItems = new List<ComboBoxItem>();
+                foreach (Rarity rarity in Enum.GetValues(typeof(Rarity)))
+                {
+                    if (rarity == Rarity.T1) continue;
+                    if (rarity == Rarity.Unknown) continue;
+
+                    var item = new ComboBoxItem();
+                    item.Content = LocalizationHelper.GetEnumString("Rarity", (int)rarity);
+                    item.Tag = rarity.ToString();
+                    rarityItems.Add(item);
+                }
+                RarityCombo.ItemsSource = rarityItems;
+                if (rarityItems.Any())
+                    RarityCombo.SelectedIndex = 0;
+
+
+                // ====== 动态加载舰种（ShipType） ======
+                var shipTypeItems = new List<ComboBoxItem>();
+                foreach (ShipType shipType in Enum.GetValues(typeof(ShipType)))
+                {
+                    if (shipType == ShipType.UNKNOWN) continue;
+
+                    var item = new ComboBoxItem();
+                    try
+                    {
+                        item.Content = LocalizationHelper.GetEnumString("ShipType", (int)shipType);
+                    }
+                    catch
+                    {
+                        item.Content = shipType.ToString();
+                    }
+                    item.Tag = shipType.ToString();
+                    shipTypeItems.Add(item);
+                }
+                ShipTypeCombo.ItemsSource = shipTypeItems;
+                if (shipTypeItems.Any())
+                    ShipTypeCombo.SelectedIndex = 0;
+
+                var targetShipTypeItems = new List<ComboBoxItem>();
+                foreach (ShipType shipType in Enum.GetValues(typeof(ShipType)))
+                {
+                    if (shipType == ShipType.UNKNOWN) continue;
+                    var item = new ComboBoxItem();
+                    item.Content = LocalizationHelper.GetEnumString("ShipType", (int)shipType);
+                    item.Tag = shipType.ToString();
+                    targetShipTypeItems.Add(item);
+                }
+                TargetShipTypeCombo.ItemsSource = targetShipTypeItems;
+                if (targetShipTypeItems.Any())
+                    TargetShipTypeCombo.SelectedIndex = 0;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"InitializeComboBoxes 异常: {ex.Message}");
+                // 确保列表不为 null 且至少有一个默认项
+                var defaultItem = new ComboBoxItem { Content = "其他", Tag = Faction.Other.ToString() };
+                _normalFactionItems = new List<ComboBoxItem> { defaultItem };
+                _collabFactionItems = new List<ComboBoxItem> { defaultItem };
+                _metaFactionItems = new List<ComboBoxItem> { defaultItem };
+                _researchFactionItems = new List<ComboBoxItem> { defaultItem };
+                FactionCombo.ItemsSource = _normalFactionItems;
+                FactionCombo.SelectedIndex = 0;
+            }
+        }
+
+        private void CategoryCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selected = CategoryCombo.SelectedItem as ComboBoxItem;
+            if (selected?.Tag is string tag && Enum.TryParse<ShipCategory>(tag, out var category))
+            {
+                UpdateCategoryDependentControls(category);
+            }
+        }
+
+        private void UpdateCategoryDependentControls(ShipCategory category)
+        {
+            if (_normalFactionItems == null)
+            {
+                InitializeComboBoxes();
+                // 如果仍然为 null，则直接返回（避免崩溃）
+                if (_normalFactionItems == null) return;
+            }
+
+            if (FactionCombo == null) return;
+
+            switch (category)
+            {
+                case ShipCategory.Normal:
+                    FactionCombo.ItemsSource = _normalFactionItems;
+                    break;
+                case ShipCategory.Collab:
+                    FactionCombo.ItemsSource = _collabFactionItems;
+                    break;
+                case ShipCategory.META:
+                    FactionCombo.ItemsSource = _metaFactionItems;
+                    break;
+                case ShipCategory.Research:
+                    FactionCombo.ItemsSource = _researchFactionItems;
+                    break;
+                default:
+                    FactionCombo.ItemsSource = _normalFactionItems;
+                    break;
+            }
+
+            // 确保选中第一项（如果当前没有有效选中）
+            if (FactionCombo.SelectedIndex < 0 && FactionCombo.ItemsSource is IEnumerable<ComboBoxItem> items && items.Any())
+            {
+                FactionCombo.SelectedIndex = 0;
+            }
+        }
+
+        private void SetDefaultValues()
+        {
+            GlobalNameBox.Text = "";
+            ReleaseDatePicker.Date = DateTimeOffset.Now;
+            RetrofitDatePicker.Date = DateTimeOffset.Now;
+            GearDatePicker.Date = DateTimeOffset.Now;
+            AcquisitionMethods.Clear();
+            var method = new AcquisitionMethod
+            {
+                Type = AcquisitionMethodType.Construction,
+                Pool = ConstructionPool.Light,
+                CostCube = 1,
+                CostGold = 600,
+                BuildTime = "00:30:00",
+                IsPrimary = true
+            };
+            SubscribeMethod(method);
+            AcquisitionMethods.Add(method);
+        }
+
+        private void LoadShipData(ShipStatic ship)
+        {
+            CategoryCombo.SelectionChanged -= CategoryCombo_SelectionChanged;
+
+            CategoryCombo.SelectedItem = CategoryCombo.Items.FirstOrDefault(c => (c as ComboBoxItem)?.Tag?.ToString() == ship.Category.ToString());
+
+            UpdateCategoryDependentControls(ship.Category);
+
+            CategoryCombo.SelectionChanged += CategoryCombo_SelectionChanged;
+
+            var categoryItem = CategoryCombo.Items.FirstOrDefault(c => (c as ComboBoxItem)?.Tag?.ToString() == ship.Category.ToString());
+            if (categoryItem != null)
+                CategoryCombo.SelectedItem = categoryItem;
+            else
+                CategoryCombo.SelectedIndex = 0;
+
+            // 基本信息
+            IdBox.Value = ship.Id;
+            GameOrderBox.Value = ship.GameOrder;
+            GlobalNameBox.Text = ship.GlobalName;
+            NameZhBox.Text = ship.Name.GetValueOrDefault("zh-Hans");
+            NameZhHantBox.Text = ship.Name.GetValueOrDefault("zh-Hant");
+            NameEnBox.Text = ship.Name.GetValueOrDefault("en");
+            NameJaBox.Text = ship.Name.GetValueOrDefault("ja");
+
+            AltNameBox.Text = ship.AltName.GetValueOrDefault("zh-Hans");
+            AliasBox.Text = ship.Alias;
+            ClassZhBox.Text = ship.Class.GetValueOrDefault("zh-Hans");
+            ClassZhHantBox.Text = ship.Class.GetValueOrDefault("zh-Hant");
+            ClassEnBox.Text = ship.Class.GetValueOrDefault("en");
+            ClassJaBox.Text = ship.Class.GetValueOrDefault("ja");
+
+            CategoryCombo.SelectedItem = CategoryCombo.Items.FirstOrDefault(c => (c as ComboBoxItem)?.Tag?.ToString() == ship.Category.ToString());
+            UpdateCategoryDependentControls(ship.Category);
+
+            ShipTypeCombo.SelectedItem = ShipTypeCombo.Items.FirstOrDefault(c => (c as ComboBoxItem)?.Tag?.ToString() == ship.Type.ToString());
+            RarityCombo.SelectedItem = RarityCombo.Items.FirstOrDefault(c => (c as ComboBoxItem)?.Tag?.ToString() == ship.Rarity.ToString());
+            FactionCombo.SelectedItem = FactionCombo.Items.FirstOrDefault(c => (c as ComboBoxItem)?.Tag?.ToString() == ship.Faction.ToString());
+
+            if (!string.IsNullOrEmpty(ship.ReleaseDate) && DateTime.TryParse(ship.ReleaseDate, out var rd))
+                ReleaseDatePicker.Date = rd;
+
+            IsPermanentCheckBox.IsChecked = ship.IsPermanent;
+
+            CvZhBox.Text = ship.CV.GetValueOrDefault("zh-Hans");
+            CvZhHantBox.Text = ship.CV.GetValueOrDefault("zh-Hant");
+            CvEnBox.Text = ship.CV.GetValueOrDefault("en");
+            CvJaBox.Text = ship.CV.GetValueOrDefault("ja");
+            ArtistBox.Text = ship.Artist;
+
+            // 改造日期
+            if (!string.IsNullOrEmpty(ship.Retrofit?.RetrofitReleaseDate) && DateTime.TryParse(ship.Retrofit.RetrofitReleaseDate, out var rrd))
+                RetrofitDatePicker.Date = rrd;
+
+            // 相关活动
+            RelatedEventBox.Text = ship.RelatedEvent;
+
+            // 属性
+            HpBox.Value = ship.Stats.Hp;
+            ArmorCombo.SelectedItem = ArmorCombo.Items.FirstOrDefault(c => (c as ComboBoxItem)?.Tag?.ToString() == ship.Stats.Armor.ToString());
+            FpBox.Value = ship.Stats.Fp;
+            TrpBox.Value = ship.Stats.Trp;
+            AaBox.Value = ship.Stats.Aa;
+            AviBox.Value = ship.Stats.Avi;
+            HitBox.Value = ship.Stats.Hit;
+            EvaBox.Value = ship.Stats.Eva;
+            AswBox.Value = ship.Stats.Asw;
+            LuckBox.Value = ship.Stats.Luck;
+            OilBox.Value = ship.Stats.Oil;
+            SpeedBox.Value = ship.Stats.Speed;
+
+            // 性能评级
+            HpGradeCombo.SelectedItem = HpGradeCombo.Items.FirstOrDefault(c => (c as ComboBoxItem)?.Content?.ToString() == ship.Performance.Hp.ToString());
+            AaGradeCombo.SelectedItem = AaGradeCombo.Items.FirstOrDefault(c => (c as ComboBoxItem)?.Content?.ToString() == ship.Performance.Aa.ToString());
+            EvaGradeCombo.SelectedItem = EvaGradeCombo.Items.FirstOrDefault(c => (c as ComboBoxItem)?.Content?.ToString() == ship.Performance.Eva.ToString());
+            AviGradeCombo.SelectedItem = AviGradeCombo.Items.FirstOrDefault(c => (c as ComboBoxItem)?.Content?.ToString() == ship.Performance.Avi.ToString());
+            TrpGradeCombo.SelectedItem = TrpGradeCombo.Items.FirstOrDefault(c => (c as ComboBoxItem)?.Content?.ToString() == ship.Performance.Trp.ToString());
+            FpGradeCombo.SelectedItem = FpGradeCombo.Items.FirstOrDefault(c => (c as ComboBoxItem)?.Content?.ToString() == ship.Performance.Fp.ToString());
+
+            // 舰队科技
+            CollectPointsBox.Value = ship.FleetTech.CollectPoints;
+            LimitBreakPointsBox.Value = ship.FleetTech.LimitBreakPoints;
+            Level120PointsBox.Value = ship.FleetTech.Level120Points;
+
+            // 获取方式
+            foreach (var method in AcquisitionMethods)
+            {
+                UnsubscribeMethod(method);
+            }
+            AcquisitionMethods.Clear();
+            foreach (var method in ship.Acquisition.Methods)
+            {
+                SubscribeMethod(method);
+                AcquisitionMethods.Add(method);
+            }
+
+            // 装备槽
+            EquipmentSlots.Clear();
+            foreach (var slot in ship.EquipmentSlots)
+                EquipmentSlots.Add(slot);
+
+            // 初始装备
+            InitialEquipmentItems.Clear();
+            foreach (var ie in ship.InitialEquipment)
+                InitialEquipmentItems.Add(ie);
+
+            // 专属兵装
+            if (ship.SpecialGear != null)
+            {
+                HasSpecialGearCheck.IsChecked = true;
+                GearNameZhBox.Text = ship.SpecialGear.Name.GetValueOrDefault("zh-Hans");
+                GearNameZhHantBox.Text = ship.SpecialGear.Name.GetValueOrDefault("zh-Hant");
+                GearNameEnBox.Text = ship.SpecialGear.Name.GetValueOrDefault("en");
+                GearNameJaBox.Text = ship.SpecialGear.Name.GetValueOrDefault("ja");
+                if (!string.IsNullOrEmpty(ship.SpecialGear.ReleaseDate) && DateTime.TryParse(ship.SpecialGear.ReleaseDate, out var gd))
+                    GearDatePicker.Date = gd;
+                GearIdBox.Value = ship.SpecialGear.Id;
+                GearAcquireBox.Text = ship.SpecialGear.AcquisitionMethod;
+            }
+            else
+            {
+                HasSpecialGearCheck.IsChecked = false;
+            }
+
+            // 技能
+            Skills.Clear();
+            foreach (var skill in ship.Skills)
+            {
+                // 确保 Name、Description、LevelValues 不为 null
+                if (skill.Name == null) skill.Name = new LocalizedString();
+                if (skill.Description == null) skill.Description = new LocalizedString();
+                if (skill.LevelValues == null) skill.LevelValues = new List<List<string>>();
+                Skills.Add(skill);
+            }
+
+            // 改造
+            CanRetrofitCheck.IsChecked = ship.Retrofit?.CanRetrofit ?? false;
+            ShipTypeChangedCheck.IsChecked = ship.Retrofit?.ShipTypeChanged ?? false;
+            TargetShipTypeCombo.SelectedItem = TargetShipTypeCombo.Items.FirstOrDefault(c => (c as ComboBoxItem)?.Tag?.ToString() == ship.Retrofit?.TargetShipType.ToString());
+            RetrofitNodesBox.Text = ship.Retrofit != null && ship.Retrofit.Nodes.Any()
+                ? string.Join("\n", ship.Retrofit.Nodes.Select(n =>
+                    $"{n.Name.GetLocalized()}|{string.Join(",", n.AttributeBonus.Select(kv => $"{kv.Key}={kv.Value}"))}|{string.Join(",", n.RequiredItems)}|{n.RequiredCoins}|{n.RequiredLevel}|{n.RequiredStars}"))
+                : "";
+
+            // 科研
+            PreReqFactionsBox.Text = ship.Research.PreRequisiteFactions != null ? string.Join(";", ship.Research.PreRequisiteFactions) : "";
+            TechPointsBox.Value = ship.Research.TechPoints;
+            ResearchTasksBox.Text = ship.Research.Tasks != null ? string.Join("\n", ship.Research.Tasks.Select(t => $"{t.Name}|{t.Description}|{t.Requirement}")) : "";
+            BlueprintRequiredBox.Value = ship.Research.BlueprintRequired;
+            DevelopBonusBox.Text = ship.Research.DevelopBonus != null ? string.Join("\n", ship.Research.DevelopBonus.Select(kv => $"{kv.Key}={kv.Value}")) : "";
+            DevelopBlueprintRequiredBox.Value = ship.Research.DevelopBlueprintRequired;
+            HasFateSimCheck.IsChecked = ship.Research.HasFateSimulation;
+            if (ship.Research.HasFateSimulation && ship.Research.FateSim != null)
+            {
+                FateLevelBox.Value = ship.Research.FateSim.Level;
+                FateDescBox.Text = ship.Research.FateSim.Description;
+                FateBlueprintRequiredBox.Value = ship.Research.FateSim.BlueprintRequired;
+            }
+
+            // 皮肤
+            Skins.Clear();
+            foreach (var skin in ship.Skins)
+            {
+                if (skin.Name == null) skin.Name = new LocalizedString();
+                Skins.Add(skin);
+            }
+
+            // 台词
+            Lines.Clear();
+            foreach (var line in ship.Lines)
+            {
+                if (line.Content == null) line.Content = new LocalizedString();
+                Lines.Add(line);
+            }
+
+            // 礼物偏好
+            GiftPreferences.Clear();
+            foreach (var gp in ship.GiftPreferences)
+                GiftPreferences.Add(gp);
+
+            // 强化/退役
+            CanBeEnhanceMaterialCheck.IsChecked = ship.CanBeEnhanceMaterial;
+            EnhanceValueBox.Value = ship.EnhanceValue;
+            CanRetireCheck.IsChecked = ship.CanRetire;
+            RetirementRewardBox.Text = ship.RetirementReward;
+            EnhanceExpFp.Value = ship.EnhanceExp.Fp;
+            EnhanceExpTrp.Value = ship.EnhanceExp.Trp;
+            EnhanceExpAvi.Value = ship.EnhanceExp.Avi;
+            EnhanceExpRld.Value = ship.EnhanceExp.Rld;
+            EnhanceItemsBox.Text = ship.EnhanceItems != null ? string.Join(";", ship.EnhanceItems) : "";
+            ExtraEnhanceBox.Text = ship.ExtraEnhance;
+
+            // 备注与引用
+            RemarksBox.Text = ship.Remarks;
+            NotesBox.Text = ship.Notes;
+            ReferenceMarkdownBox.Text = ship.ReferenceMarkdown;
+
+            // 重新设置阵营和稀有度的选中项
+            if (!string.IsNullOrEmpty(ship.Faction.ToString()))
+            {
+                var factionItem = FactionCombo.Items.FirstOrDefault(c => (c as ComboBoxItem)?.Tag?.ToString() == ship.Faction.ToString());
+                if (factionItem != null)
+                    FactionCombo.SelectedItem = factionItem;
+            }
+            if (!string.IsNullOrEmpty(ship.Rarity.ToString()))
+            {
+                var rarityItem = RarityCombo.Items.FirstOrDefault(c => (c as ComboBoxItem)?.Tag?.ToString() == ship.Rarity.ToString());
+                if (rarityItem != null)
+                    RarityCombo.SelectedItem = rarityItem;
+            }
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e) { }
 
         private void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             if (string.IsNullOrWhiteSpace(NameZhBox.Text))
             {
                 args.Cancel = true;
-                ShowError(_loader.GetString("ShipNameEmpty_Message"));
-                return;
-            }
-            if (FactionCombo.SelectedValue == null)
-            {
-                args.Cancel = true;
-                ShowError(_loader.GetString("PleaseSelectFaction_Message"));
-                return;
-            }
-            if (ShipClassCombo.SelectedValue == null)
-            {
-                args.Cancel = true;
-                ShowError(_loader.GetString("PleaseSelectShipClass_Message"));
-                return;
-            }
-            if (RarityCombo.SelectedValue == null)
-            {
-                args.Cancel = true;
-                ShowError(_loader.GetString("PleaseSelectRarity_Message"));
-                return;
+                ShowError("简体中文名称不能为空");
             }
         }
 
-        // 根据舰种自动勾选适用舰种（获得时 / 120级）
-        private void ShipClassCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        // ====== 获取方式列表操作 ======
+        private void AddAcquisitionMethod_Click(object sender, RoutedEventArgs e)
         {
-            if (_isLoadingShipData) return;
-
-            var selected = ShipClassCombo.SelectedItem as KeyValuePair<int, string>?;
-            if (selected == null) return;
-            string selectedClassName = GetShipClassChineseName(selected.Value.Key);
-            if (string.IsNullOrEmpty(selectedClassName)) return;
-
-            var obtainMap = new Dictionary<string, List<string>>()
+            var method = new AcquisitionMethod
             {
-                ["驱逐"] = new List<string> { "驱逐" },
-                ["轻巡"] = new List<string> { "轻巡" },
-                ["重巡"] = new List<string> { "重巡", "超巡", "重炮" },
-                ["超巡"] = new List<string> { "重巡", "超巡", "重炮" },
-                ["重炮"] = new List<string> { "重巡", "超巡", "重炮" },
-                ["战巡"] = new List<string> { "战巡", "战列", "航战" },
-                ["战列"] = new List<string> { "战巡", "战列", "航战" },
-                ["航战"] = new List<string> { "战巡", "战列", "航战" },
-                ["航母"] = new List<string> { "航母", "轻航" },
-                ["轻航"] = new List<string> { "轻航" },
-                ["维修"] = new List<string> { "维修" },
-                ["潜艇"] = new List<string> { "潜艇", "潜母" },
-                ["潜母"] = new List<string> { "潜艇", "潜母" },
-                ["运输"] = new List<string> { "运输" },
-                ["风帆"] = new List<string> { "风帆" }
+                Type = AcquisitionMethodType.Construction,
+                Pool = ConstructionPool.Light,
+                CostCube = 1,
+                CostGold = 600,
+                BuildTime = "00:30:00",
+                IsPrimary = !AcquisitionMethods.Any(m => m.IsPrimary)
             };
-            var level120Map = new Dictionary<string, List<string>>()
-            {
-                ["驱逐"] = new List<string> { "驱逐" },
-                ["轻巡"] = new List<string> { "轻巡" },
-                ["重巡"] = new List<string> { "重巡", "超巡", "重炮" },
-                ["超巡"] = new List<string> { "重巡", "超巡", "重炮" },
-                ["重炮"] = new List<string> { "重巡", "超巡", "重炮" },
-                ["战巡"] = new List<string> { "战巡" },
-                ["战列"] = new List<string> { "战巡", "战列", "航战" },
-                ["航战"] = new List<string> { "战巡", "战列", "航战" },
-                ["航母"] = new List<string> { "航母", "轻航" },
-                ["轻航"] = new List<string> { "航母", "轻航" },
-                ["维修"] = new List<string> { "维修" },
-                ["潜艇"] = new List<string> { "潜艇", "潜母" },
-                ["潜母"] = new List<string> { "潜艇", "潜母" },
-                ["运输"] = new List<string> { "运输" },
-                ["风帆"] = new List<string> { "风帆" }
-            };
+            SubscribeMethod(method);
+            AcquisitionMethods.Add(method);
+        }
 
-            ClearAllCheckboxes("ObtainAffect");
-            ClearAllCheckboxes("Level120Affect");
-
-            if (obtainMap.ContainsKey(selectedClassName))
+        private void RemoveMethod_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is AcquisitionMethod method)
             {
-                foreach (var sc in obtainMap[selectedClassName])
-                    CheckCheckboxByName($"ObtainAffect{GetCheckboxSuffix(sc)}", true);
-            }
-            if (level120Map.ContainsKey(selectedClassName))
-            {
-                foreach (var sc in level120Map[selectedClassName])
-                    CheckCheckboxByName($"Level120Affect{GetCheckboxSuffix(sc)}", true);
+                UnsubscribeMethod(method);
+                AcquisitionMethods.Remove(method);
+                // 如果删除的是主方法，则将第一个设为 true
+                if (!AcquisitionMethods.Any(m => m.IsPrimary) && AcquisitionMethods.Count > 0)
+                    AcquisitionMethods[0].IsPrimary = true;
             }
         }
 
-        private string GetShipClassChineseName(int classId)
+        private void OnMethodTypeChanged(object sender, SelectionChangedEventArgs e)
         {
-            return classId switch
+            /*
+            var combo = sender as ComboBox;
+            if (combo?.DataContext is AcquisitionMethod method && combo.SelectedItem is ComboBoxItem item)
             {
-                (int)ShipClass.DD => "驱逐",
-                (int)ShipClass.CL => "轻巡",
-                (int)ShipClass.CA => "重巡",
-                (int)ShipClass.CB => "超巡",
-                (int)ShipClass.BM => "重炮",
-                (int)ShipClass.BC => "战巡",
-                (int)ShipClass.BB => "战列",
-                (int)ShipClass.BBV => "航战",
-                (int)ShipClass.CV => "航母",
-                (int)ShipClass.CVL => "轻航",
-                (int)ShipClass.AR => "维修",
-                (int)ShipClass.SS => "潜艇",
-                (int)ShipClass.SSV => "潜母",
-                (int)ShipClass.AE => "运输",
-                (int)ShipClass.Sail => "风帆",
-                _ => ""
-            };
+                if (Enum.TryParse<AcquisitionMethodType>(item.Tag?.ToString(), out var newType))
+                    method.Type = newType;
+            }
+            */
         }
 
-        private string GetCheckboxSuffix(string shipClass)
+        private void AddDropLocation_Click(object sender, RoutedEventArgs e)
         {
-            return shipClass switch
+            if ((sender as Button)?.DataContext is AcquisitionMethod method)
             {
-                "驱逐" => "DD",
-                "轻巡" => "CL",
-                "重巡" => "CA",
-                "超巡" => "CB",
-                "重炮" => "CA",
-                "战巡" => "BC",
-                "战列" => "BB",
-                "航战" => "BBV",
-                "航母" => "CV",
-                "轻航" => "CVL",
-                "维修" => "AR",
-                "潜艇" => "SS",
-                "潜母" => "SSV",
-                "运输" => "AE",
-                "风帆" => "Sail",
-                _ => ""
-            };
-        }
-
-        private void ClearAllCheckboxes(string prefix)
-        {
-            var names = new[] { "DD", "CL", "CA", "CB", "BC", "BB", "BBV", "CV", "CVL", "AR", "SS", "SSV", "AE", "Sail" };
-            foreach (var suffix in names)
-            {
-                var cb = FindName($"{prefix}{suffix}") as CheckBox;
-                if (cb != null) cb.IsChecked = false;
+                if (method.Locations == null) method.Locations = new List<DropLocation>();
+                method.Locations.Add(new DropLocation { Map = "" });
+                RefreshMethod(method);
             }
         }
 
-        private void CheckCheckboxByName(string name, bool isChecked)
+        private void RemoveDropLocation_Click(object sender, RoutedEventArgs e)
         {
-            var cb = FindName(name) as CheckBox;
-            if (cb != null) cb.IsChecked = isChecked;
-        }
-
-        /// <summary>
-        /// 根据舰船类别切换阵营和稀有度下拉框的数据源
-        /// </summary>
-        private void UpdateCategoryDependentControls(ShipCategory category)
-        {
-            switch (category)
+            if (sender is Button btn && btn.Tag is DropLocation loc)
             {
-                case ShipCategory.Collab:
-                    FactionCombo.ItemsSource = _collabFactionList;
-                    RarityCombo.ItemsSource = _normalRarityList;
-                    break;
-                case ShipCategory.META:
-                    FactionCombo.ItemsSource = _metaFactionList;
-                    RarityCombo.ItemsSource = _normalRarityList;
-                    break;
-                case ShipCategory.Research:
-                    FactionCombo.ItemsSource = _normalFactionList;
-                    RarityCombo.ItemsSource = _researchRarityList;
-                    break;
-                default: // Normal
-                    FactionCombo.ItemsSource = _normalFactionList;
-                    RarityCombo.ItemsSource = _normalRarityList;
-                    break;
-            }
-
-            // 确保当前选中值有效，否则重置为第一项
-            if (FactionCombo.SelectedValue != null &&
-                !(FactionCombo.ItemsSource as IEnumerable<KeyValuePair<int, string>>).Any(kv => kv.Key == (int)FactionCombo.SelectedValue))
-            {
-                FactionCombo.SelectedIndex = 0;
-            }
-            if (RarityCombo.SelectedValue != null &&
-                !(RarityCombo.ItemsSource as IEnumerable<KeyValuePair<int, string>>).Any(kv => kv.Key == (int)RarityCombo.SelectedValue))
-            {
-                RarityCombo.SelectedIndex = 0;
+                var parentMethod = AcquisitionMethods.FirstOrDefault(m => m.Locations?.Contains(loc) == true);
+                if (parentMethod != null)
+                {
+                    parentMethod.Locations.Remove(loc);
+                    RefreshMethod(parentMethod);
+                }
             }
         }
 
-        private void CategoryCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void AddExchangeEntry_Click(object sender, RoutedEventArgs e)
         {
-            int selectedIndex = CategoryCombo.SelectedIndex;
-            bool isNormal = (selectedIndex == 0);
-            GameOrderLabel.Visibility = isNormal ? Visibility.Visible : Visibility.Collapsed;
-            GameOrderBox.Visibility = isNormal ? Visibility.Visible : Visibility.Collapsed;
-            CategoryOrderLabel.Visibility = isNormal ? Visibility.Collapsed : Visibility.Visible;
-            CategoryOrderBox.Visibility = isNormal ? Visibility.Collapsed : Visibility.Visible;
+            try
+            {
+                var button = sender as Button;
+                if (button?.DataContext is AcquisitionMethod method)
+                {
+                    if (method.Shops == null)
+                        method.Shops = new List<ExchangeEntry>();
 
-            if (_isLoadingShipData) return;
+                    method.Shops.Add(new ExchangeEntry());
+                    RefreshMethod(method);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"AddExchangeEntry_Click 异常: {ex.Message}");
+                ShowError("添加兑换项失败，请检查输入格式。");
+            }
+        }
 
-            ShipCategory category = (ShipCategory)selectedIndex;
-            UpdateCategoryDependentControls(category);
+        private void RemoveExchangeEntry_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (sender is Button btn && btn.Tag is ExchangeEntry entry)
+                {
+                    var parentMethod = AcquisitionMethods.FirstOrDefault(m => m.Shops?.Contains(entry) == true);
+                    if (parentMethod != null)
+                    {
+                        parentMethod.Shops.Remove(entry);
+                        RefreshMethod(parentMethod);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"RemoveExchangeEntry_Click 异常: {ex.Message}");
+                ShowError("删除兑换项失败。");
+            }
+        }
+
+        // 辅助刷新（因为 ObservableCollection 不会自动刷新嵌套属性）
+        private void RefreshMethod(AcquisitionMethod method)
+        {
+            try
+            {
+                int index = AcquisitionMethods.IndexOf(method);
+                if (index >= 0)
+                {
+                    AcquisitionMethods.RemoveAt(index);
+                    AcquisitionMethods.Insert(index, method);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"RefreshMethod 异常: {ex.Message}");
+                // 强制刷新整个集合
+                var list = AcquisitionMethods.ToList();
+                AcquisitionMethods.Clear();
+                foreach (var m in list) AcquisitionMethods.Add(m);
+            }
         }
 
         private async void ShowError(string message)
         {
-            var dialog = new ContentDialog
-            {
-                Title = _loader.GetString("IncompleteInput_Title"),
-                Content = message,
-                CloseButtonText = _loader.GetString("Common_Confirm"),
-                XamlRoot = this.XamlRoot,
-                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
-            };
-            await dialog.ShowAsync();
-        }
-
-        private void LoadShipData(ShipStatic ship)
-        {
-            _isLoadingShipData = true;
             try
             {
-                // 基本信息
-                IdBox.Value = ship.Id;
-                GameOrderBox.Value = ship.GameOrder;
-                CanRemodelCheckBox.IsChecked = ship.CanRemodel;
-
-                // 设置类别（触发数据源切换，但此时 _isLoadingShipData 为 true，事件会跳过）
-                CategoryCombo.SelectedIndex = (int)ship.Category;
-                // 手动调用数据源切换（不受 _isLoadingShipData 影响，因为直接调用了更新方法）
-                UpdateCategoryDependentControls(ship.Category);
-
-                // 多语言名称
-                NameZhBox.Text = ship.Name.GetValueOrDefault("zh-Hans");
-                NameZhHantBox.Text = ship.Name.GetValueOrDefault("zh-Hant");
-                NameEnBox.Text = ship.Name.GetValueOrDefault("en");
-                NameJaBox.Text = ship.Name.GetValueOrDefault("ja");
-
-                AltNameZhBox.Text = ship.AltName.GetValueOrDefault("zh-Hans");
-                AltNameZhHantBox.Text = ship.AltName.GetValueOrDefault("zh-Hant");
-                AltNameEnBox.Text = ship.AltName.GetValueOrDefault("en");
-                AltNameJaBox.Text = ship.AltName.GetValueOrDefault("ja");
-
-                // 下拉框选中 ID
-                FactionCombo.SelectedValue = ship.FactionId;
-                ShipClassCombo.SelectedValue = ship.ShipClassId;
-                RarityCombo.SelectedValue = ship.RarityId;
-                ObtainBonusAttrCombo.SelectedValue = ship.ObtainBonusAttrId;
-                Level120BonusAttrCombo.SelectedValue = ship.Level120BonusAttrId;
-
-                ObtainBonusValueBox.Value = ship.ObtainBonusValue;
-                Level120BonusValueBox.Value = ship.Level120BonusValue;
-
-                // 顺序值
-                if (ship.Category == ShipCategory.Normal)
-                    GameOrderBox.Value = ship.GameOrder;
-                else
-                    CategoryOrderBox.Value = ship.CategoryOrder;
-
-                // 改造日期
-                if (!string.IsNullOrEmpty(ship.RemodelDate) &&
-                    DateTime.TryParseExact(ship.RemodelDate, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime remodelDate))
-                    RemodelDatePicker.Date = remodelDate;
-
-                BuildTimeBox.Text = ship.BuildTime;
-                DropLocationsBox.Text = string.Join(";", ship.DropLocations);
-                ShopExchangeBox.Text = ship.ShopExchange;
-                IsPermanentCheckBox.IsChecked = ship.IsPermanent;
-
-                // 实装活动
-                DebutEventZhBox.Text = ship.DebutEvent.GetValueOrDefault("zh-Hans");
-                DebutEventZhHantBox.Text = ship.DebutEvent.GetValueOrDefault("zh-Hant");
-                DebutEventEnBox.Text = ship.DebutEvent.GetValueOrDefault("en");
-                DebutEventJaBox.Text = ship.DebutEvent.GetValueOrDefault("ja");
-
-                if (!string.IsNullOrEmpty(ship.ReleaseDate) &&
-                    DateTime.TryParseExact(ship.ReleaseDate, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime releaseDate))
-                    ReleaseDatePicker.Date = releaseDate;
-
-                NotesZhBox.Text = ship.Notes.GetValueOrDefault("zh-Hans");
-                NotesZhHantBox.Text = ship.Notes.GetValueOrDefault("zh-Hant");
-                NotesEnBox.Text = ship.Notes.GetValueOrDefault("en");
-                NotesJaBox.Text = ship.Notes.GetValueOrDefault("ja");
-
-                // 适用舰种复选框
-                ClearAllCheckboxes("ObtainAffect");
-                foreach (var classId in ship.ObtainAffectClassIds)
+                if (this.XamlRoot == null)
                 {
-                    string className = GetShipClassChineseName(classId);
-                    string suffix = GetCheckboxSuffix(className);
-                    if (!string.IsNullOrEmpty(suffix))
-                        CheckCheckboxByName($"ObtainAffect{suffix}", true);
+                    System.Diagnostics.Debug.WriteLine($"错误（XamlRoot为空）: {message}");
+                    return;
                 }
-                ClearAllCheckboxes("Level120Affect");
-                foreach (var classId in ship.Level120AffectClassIds)
+                var dialog = new ContentDialog
                 {
-                    string className = GetShipClassChineseName(classId);
-                    string suffix = GetCheckboxSuffix(className);
-                    if (!string.IsNullOrEmpty(suffix))
-                        CheckCheckboxByName($"Level120Affect{suffix}", true);
-                }
-
-                // 舰队科技
-                TechPointsObtainBox.Value = ship.TechPointsObtain;
-                TechPointsMaxBox.Value = ship.TechPointsMax;
-                TechPoints120Box.Value = ship.TechPoints120;
-
-                // 特殊兵装
-                CanSpecialGearCheckBox.IsChecked = ship.CanSpecialGear;
-                SpecialGearNameZhBox.Text = ship.SpecialGearName.GetValueOrDefault("zh-Hans");
-                SpecialGearNameZhHantBox.Text = ship.SpecialGearName.GetValueOrDefault("zh-Hant");
-                SpecialGearNameEnBox.Text = ship.SpecialGearName.GetValueOrDefault("en");
-                SpecialGearNameJaBox.Text = ship.SpecialGearName.GetValueOrDefault("ja");
-
-                if (!string.IsNullOrEmpty(ship.SpecialGearDate) &&
-                    DateTime.TryParseExact(ship.SpecialGearDate, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime spDate))
-                    SpecialGearDatePicker.Date = spDate;
-
-                // 加载特殊兵装获取方式
-                if (ship.SpecialGearEntries != null && ship.SpecialGearEntries.Any())
-                {
-                    var entry = ship.SpecialGearEntries.First();
-                    foreach (ComboBoxItem item in SpecialGearTypeCombo.Items)
-                    {
-                        if (item.Tag as string == entry.Tag)
-                        {
-                            SpecialGearTypeCombo.SelectedItem = item;
-                            break;
-                        }
-                    }
-                    if (entry.Tag == "gear_2" && entry.Parameters.Count > 0)
-                        Param1Box.Text = entry.Parameters[0];
-                    else if (entry.Tag == "gear_4" && entry.Parameters.Count >= 2)
-                    {
-                        Param1Box.Text = entry.Parameters[0];
-                        Param2Box.Text = entry.Parameters[1];
-                    }
-                    else if (entry.Tag == "gear_custom" && entry.CustomText != null)
-                    {
-                        CustomTextZhBox.Text = entry.CustomText.GetValueOrDefault("zh-Hans");
-                        CustomTextZhHantBox.Text = entry.CustomText.GetValueOrDefault("zh-Hant");
-                        CustomTextEnBox.Text = entry.CustomText.GetValueOrDefault("en");
-                        CustomTextJaBox.Text = entry.CustomText.GetValueOrDefault("ja");
-                    }
-                }
-                else if (ship.SpecialGearAcquire != null && !string.IsNullOrEmpty(ship.SpecialGearAcquire.GetLocalized()))
-                {
-                    SpecialGearTypeCombo.SelectedItem = SpecialGearTypeCombo.Items.FirstOrDefault(i => (i as ComboBoxItem)?.Tag as string == "gear_custom");
-                    CustomTextZhBox.Text = ship.SpecialGearAcquire.GetValueOrDefault("zh-Hans");
-                    CustomTextZhHantBox.Text = ship.SpecialGearAcquire.GetValueOrDefault("zh-Hant");
-                    CustomTextEnBox.Text = ship.SpecialGearAcquire.GetValueOrDefault("en");
-                    CustomTextJaBox.Text = ship.SpecialGearAcquire.GetValueOrDefault("ja");
-                }
-                else
-                {
-                    SpecialGearTypeCombo.SelectedIndex = 0;
-                }
-                SpecialGearTypeCombo_SelectionChanged(SpecialGearTypeCombo, null);
+                    Title = "输入错误",
+                    Content = message,
+                    CloseButtonText = "确定",
+                    XamlRoot = this.XamlRoot
+                };
+                await dialog.ShowAsync();
             }
-            finally
+            catch (Exception ex)
             {
-                _isLoadingShipData = false;
-                UpdateSpecialGearControlsEnabled();
+                System.Diagnostics.Debug.WriteLine($"显示错误对话框失败: {ex.Message}");
             }
         }
 
+        // ========== 列表操作 ==========
+        private void AddEquipmentSlot_Click(object sender, RoutedEventArgs e) =>
+            EquipmentSlots.Add(new EquipmentSlot());
+
+        private void RemoveEquipmentSlot_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is EquipmentSlot slot)
+                EquipmentSlots.Remove(slot);
+        }
+
+        private void AddInitialEquipment_Click(object sender, RoutedEventArgs e) =>
+            InitialEquipmentItems.Add(new InitialEquipment());
+
+        private void RemoveInitialEquipment_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is InitialEquipment ie)
+                InitialEquipmentItems.Remove(ie);
+        }
+
+        private void AddSkill_Click(object sender, RoutedEventArgs e)
+        {
+            Skills.Add(new Skill
+            {
+                Id = Skills.Any() ? Skills.Max(s => s.Id) + 1 : 1,
+                Name = new LocalizedString(),
+                Description = new LocalizedString(),
+                LevelValues = new List<List<string>>()
+            });
+        }
+
+        private void RemoveSkill_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is Skill skill)
+                Skills.Remove(skill);
+        }
+
+        private void AddSkin_Click(object sender, RoutedEventArgs e)
+        {
+            Skins.Add(new Skin
+            {
+                Name = new LocalizedString(),
+                Id = Skins.Any() ? Skins.Max(s => s.Id) + 1 : 1,
+                Type = SkinType.Static,
+                IsOathEnabled = false
+            });
+        }
+
+        private void RemoveSkin_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is Skin skin)
+                Skins.Remove(skin);
+        }
+
+        private void AddLine_Click(object sender, RoutedEventArgs e)
+        {
+            Lines.Add(new VoiceLine
+            {
+                Name = "登录",
+                Content = new LocalizedString(),
+                TriggerCondition = ""
+            });
+        }
+
+        private void RemoveLine_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is VoiceLine line)
+                Lines.Remove(line);
+        }
+
+        private void AddGiftPreference_Click(object sender, RoutedEventArgs e) =>
+            GiftPreferences.Add(new GiftPreference());
+
+        private void RemoveGiftPreference_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is GiftPreference gp)
+                GiftPreferences.Remove(gp);
+        }
+
+        private void OnPrimaryCheckChanged(object sender, RoutedEventArgs e)
+        {
+            var checkBox = sender as CheckBox;
+            if (checkBox?.DataContext is AcquisitionMethod method && method.IsPrimary)
+            {
+                // 取消其他方法的 IsPrimary
+                foreach (var other in AcquisitionMethods.Where(m => m != method))
+                    other.IsPrimary = false;
+            }
+        }
+
+        // ========== 获取 ShipStatic ==========
         public ShipStatic GetShip()
         {
-            int id = (int)IdBox.Value;
-            ShipCategory category = (ShipCategory)CategoryCombo.SelectedIndex;
-
-            int gameOrder = 0, categoryOrder = 0;
-            if (category == ShipCategory.Normal)
+            var ship = new ShipStatic
             {
-                gameOrder = (int)GameOrderBox.Value;
-                categoryOrder = gameOrder;
-            }
-            else
-            {
-                categoryOrder = (int)CategoryOrderBox.Value;
-                gameOrder = 0;
-            }
-
-            bool canRemodel = CanRemodelCheckBox.IsChecked == true;
-            string remodelDate = canRemodel ? RemodelDatePicker.Date.ToString("yyyy-MM-dd") : "";
-
-            var nameLoc = new LocalizedString
-            {
-                ["zh-Hans"] = NameZhBox.Text.Trim(),
-                ["zh-Hant"] = NameZhHantBox.Text.Trim(),
-                ["en"] = NameEnBox.Text.Trim(),
-                ["ja"] = NameJaBox.Text.Trim()
-            };
-            var altNameLoc = new LocalizedString
-            {
-                ["zh-Hans"] = AltNameZhBox.Text.Trim(),
-                ["zh-Hant"] = AltNameZhHantBox.Text.Trim(),
-                ["en"] = AltNameEnBox.Text.Trim(),
-                ["ja"] = AltNameJaBox.Text.Trim()
-            };
-
-            var debutEventLoc = new LocalizedString
-            {
-                ["zh-Hans"] = DebutEventZhBox.Text.Trim(),
-                ["zh-Hant"] = DebutEventZhHantBox.Text.Trim(),
-                ["en"] = DebutEventEnBox.Text.Trim(),
-                ["ja"] = DebutEventJaBox.Text.Trim()
-            };
-            var notesLoc = new LocalizedString
-            {
-                ["zh-Hans"] = NotesZhBox.Text.Trim(),
-                ["zh-Hant"] = NotesZhHantBox.Text.Trim(),
-                ["en"] = NotesEnBox.Text.Trim(),
-                ["ja"] = NotesJaBox.Text.Trim()
-            };
-
-            var gearNameLoc = new LocalizedString();
-            gearNameLoc["zh-Hans"] = SpecialGearNameZhBox.Text.Trim();
-            gearNameLoc["zh-Hant"] = SpecialGearNameZhHantBox.Text.Trim();
-            gearNameLoc["en"] = SpecialGearNameEnBox.Text.Trim();
-            gearNameLoc["ja"] = SpecialGearNameJaBox.Text.Trim();
-
-            List<int> obtainAffectIds = GetSelectedClassIds("ObtainAffect");
-            List<int> level120AffectIds = GetSelectedClassIds("Level120Affect");
-
-            bool canSpecialGear = CanSpecialGearCheckBox.IsChecked == true;
-            string specialGearDate = canSpecialGear ? SpecialGearDatePicker.Date.ToString("yyyy-MM-dd") : "";
-            List<SpecialGearEntry> gearEntries = new List<SpecialGearEntry>();
-            if (canSpecialGear)
-            {
-                var selectedItem = SpecialGearTypeCombo.SelectedItem as ComboBoxItem;
-                string tag = selectedItem?.Tag as string ?? "gear_1";
-                var entry = new SpecialGearEntry { Tag = tag };
-                if (tag == "gear_custom")
+                Id = (int)IdBox.Value,
+                GameOrder = (int)GameOrderBox.Value,
+                GlobalName = GlobalNameBox.Text.Trim(),
+                Name = new LocalizedString
                 {
-                    var custom = new LocalizedString();
-                    custom["zh-Hans"] = CustomTextZhBox.Text.Trim();
-                    custom["zh-Hant"] = CustomTextZhHantBox.Text.Trim();
-                    custom["en"] = CustomTextEnBox.Text.Trim();
-                    custom["ja"] = CustomTextJaBox.Text.Trim();
-                    entry.CustomText = custom;
-                }
-                else if (tag == "gear_2")
+                    ["zh-Hans"] = NameZhBox.Text,
+                    ["zh-Hant"] = NameZhHantBox.Text,
+                    ["en"] = NameEnBox.Text,
+                    ["ja"] = NameJaBox.Text
+                },
+                AltName = new LocalizedString { ["zh-Hans"] = AltNameBox.Text },
+                Alias = AliasBox.Text,
+                Class = new LocalizedString
                 {
-                    entry.Parameters.Add(Param1Box.Text.Trim());
-                }
-                else if (tag == "gear_4")
+                    ["zh-Hans"] = ClassZhBox.Text,
+                    ["zh-Hant"] = ClassZhHantBox.Text,
+                    ["en"] = ClassEnBox.Text,
+                    ["ja"] = ClassJaBox.Text
+                },
+                Category = (ShipCategory)Enum.Parse(typeof(ShipCategory), (CategoryCombo.SelectedItem as ComboBoxItem)?.Tag?.ToString() ?? "Normal"),
+                Type = (ShipType)Enum.Parse(typeof(ShipType), (ShipTypeCombo.SelectedItem as ComboBoxItem)?.Tag?.ToString() ?? "UNKNOWN"),
+                Rarity = (Rarity)Enum.Parse(typeof(Rarity), (RarityCombo.SelectedItem as ComboBoxItem)?.Tag?.ToString() ?? "N"),
+                Faction = (Faction)Enum.Parse(typeof(Faction), (FactionCombo.SelectedItem as ComboBoxItem)?.Tag?.ToString() ?? "Other"),
+                ReleaseDate = ReleaseDatePicker.Date.ToString("yyyy-MM-dd"),
+                IsPermanent = IsPermanentCheckBox.IsChecked ?? false,
+                CV = new LocalizedString
                 {
-                    entry.Parameters.Add(Param1Box.Text.Trim());
-                    entry.Parameters.Add(Param2Box.Text.Trim());
-                }
-                gearEntries.Add(entry);
-            }
+                    ["zh-Hans"] = CvZhBox.Text,
+                    ["zh-Hant"] = CvZhHantBox.Text,
+                    ["en"] = CvEnBox.Text,
+                    ["ja"] = CvJaBox.Text
+                },
+                Artist = ArtistBox.Text,
+                RelatedEvent = RelatedEventBox.Text,
 
-            string buildTime = BuildTimeBox.Text.Trim();
-            List<string> dropLocations = DropLocationsBox.Text.Split(new[] { ';', '，' }, StringSplitOptions.RemoveEmptyEntries)
-                                        .Select(s => s.Trim()).ToList();
-            string shopExchange = ShopExchangeBox.Text.Trim();
-            bool isPermanent = IsPermanentCheckBox.IsChecked == true;
-            string releaseDate = ReleaseDatePicker.Date.ToString("yyyy-MM-dd");
+                Stats = new ShipStats
+                {
+                    Hp = (int)HpBox.Value,
+                    Armor = (ArmorType)Enum.Parse(typeof(ArmorType), (ArmorCombo.SelectedItem as ComboBoxItem)?.Tag?.ToString() ?? "Light"),
+                    Fp = (int)FpBox.Value,
+                    Trp = (int)TrpBox.Value,
+                    Aa = (int)AaBox.Value,
+                    Avi = (int)AviBox.Value,
+                    Hit = (int)HitBox.Value,
+                    Eva = (int)EvaBox.Value,
+                    Asw = (int)AswBox.Value,
+                    Luck = (int)LuckBox.Value,
+                    Oil = (int)OilBox.Value,
+                    Speed = (double)SpeedBox.Value
+                },
 
-            return new ShipStatic
-            {
-                Id = id,
-                Name = nameLoc,
-                AltName = altNameLoc,
-                FactionId = (int)FactionCombo.SelectedValue,
-                ShipClassId = (int)ShipClassCombo.SelectedValue,
-                RarityId = (int)RarityCombo.SelectedValue,
-                GameOrder = gameOrder,
-                Category = category,
-                CategoryOrder = categoryOrder,
-                AcquireEntries = AcquireEntries.ToList(),
-                BuildTime = buildTime,
-                DropLocations = dropLocations,
-                ShopExchange = shopExchange,
-                IsPermanent = isPermanent,
-                DebutEvent = debutEventLoc,
-                ReleaseDate = releaseDate,
-                Notes = notesLoc,
-                CanRemodel = canRemodel,
-                RemodelDate = remodelDate,
-                CanSpecialGear = canSpecialGear,
-                SpecialGearEntries = gearEntries,
-                SpecialGearName = gearNameLoc,
-                SpecialGearDate = specialGearDate,
-                ObtainBonusAttrId = (int)ObtainBonusAttrCombo.SelectedValue,
-                ObtainBonusValue = (int)ObtainBonusValueBox.Value,
-                ObtainAffectClassIds = obtainAffectIds,
-                Level120BonusAttrId = (int)Level120BonusAttrCombo.SelectedValue,
-                Level120BonusValue = (int)Level120BonusValueBox.Value,
-                Level120AffectClassIds = level120AffectIds,
-                TechPointsObtain = (int)TechPointsObtainBox.Value,
-                TechPointsMax = (int)TechPointsMaxBox.Value,
-                TechPoints120 = (int)TechPoints120Box.Value
+                Performance = new PerformanceRating
+                {
+                    Hp = (PerformanceGrade)Enum.Parse(typeof(PerformanceGrade), (HpGradeCombo.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "D"),
+                    Aa = (PerformanceGrade)Enum.Parse(typeof(PerformanceGrade), (AaGradeCombo.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "D"),
+                    Eva = (PerformanceGrade)Enum.Parse(typeof(PerformanceGrade), (EvaGradeCombo.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "D"),
+                    Avi = (PerformanceGrade)Enum.Parse(typeof(PerformanceGrade), (AviGradeCombo.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "D"),
+                    Trp = (PerformanceGrade)Enum.Parse(typeof(PerformanceGrade), (TrpGradeCombo.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "D"),
+                    Fp = (PerformanceGrade)Enum.Parse(typeof(PerformanceGrade), (FpGradeCombo.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "D")
+                },
+
+                FleetTech = new FleetTech
+                {
+                    CollectPoints = (int)CollectPointsBox.Value,
+                    LimitBreakPoints = (int)LimitBreakPointsBox.Value,
+                    Level120Points = (int)Level120PointsBox.Value
+                },
+
+                // ===== 新获取方式 =====
+                Acquisition = new AcquisitionData { Methods = AcquisitionMethods.ToList() },
+
+                EquipmentSlots = EquipmentSlots.ToList(),
+                InitialEquipment = InitialEquipmentItems.ToList(),
+
+                SpecialGear = (HasSpecialGearCheck.IsChecked == true) ? new SpecialGear
+                {
+                    Name = new LocalizedString
+                    {
+                        ["zh-Hans"] = GearNameZhBox.Text,
+                        ["zh-Hant"] = GearNameZhHantBox.Text,
+                        ["en"] = GearNameEnBox.Text,
+                        ["ja"] = GearNameJaBox.Text
+                    },
+                    ReleaseDate = GearDatePicker.Date.ToString("yyyy-MM-dd"),
+                    Id = (int)GearIdBox.Value,
+                    AcquisitionMethod = GearAcquireBox.Text
+                } : null,
+
+                Skills = Skills.ToList(),
+
+                Retrofit = new RetrofitData
+                {
+                    CanRetrofit = CanRetrofitCheck.IsChecked ?? false,
+                    RetrofitReleaseDate = (CanRetrofitCheck.IsChecked == true) ? RetrofitDatePicker.Date.ToString("yyyy-MM-dd") : "",
+                    ShipTypeChanged = ShipTypeChangedCheck.IsChecked ?? false,
+                    TargetShipType = (ShipType)Enum.Parse(typeof(ShipType), (TargetShipTypeCombo.SelectedItem as ComboBoxItem)?.Tag?.ToString() ?? "UNKNOWN"),
+                    Nodes = RetrofitNodesBox.Text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(line => line.Split('|'))
+                        .Where(a => a.Length >= 1)
+                        .Select(a => {
+                            try
+                            {
+                                return new RetrofitNode
+                                {
+                                    Name = new LocalizedString { ["zh-Hans"] = a[0] },
+                                    AttributeBonus = a.Length > 1 ? a[1].Split(',').Select(kv => kv.Split('=')).Where(k => k.Length == 2).ToDictionary(k => k[0], k => int.Parse(k[1])) : new Dictionary<string, int>(),
+                                    RequiredItems = a.Length > 2 ? a[2].Split(',').Select(int.Parse).ToList() : new List<int>(),
+                                    RequiredCoins = a.Length > 3 ? int.Parse(a[3]) : 0,
+                                    RequiredLevel = a.Length > 4 ? int.Parse(a[4]) : 0,
+                                    RequiredStars = a.Length > 5 ? int.Parse(a[5]) : 0
+                                };
+                            }
+                            catch { return null; }
+                        })
+                        .Where(n => n != null)
+                        .ToList()
+                },
+
+                Research = new ResearchData
+                {
+                    PreRequisiteFactions = PreReqFactionsBox.Text.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(s => (Faction)Enum.Parse(typeof(Faction), s)).ToList(),
+                    TechPoints = (int)TechPointsBox.Value,
+                    Tasks = ResearchTasksBox.Text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(line => line.Split('|'))
+                        .Where(a => a.Length >= 3)
+                        .Select(a => new ResearchTask
+                        {
+                            Name = a[0],
+                            Description = a[1],
+                            Requirement = a[2]
+                        }).ToList(),
+                    BlueprintRequired = (int)BlueprintRequiredBox.Value,
+                    DevelopBonus = DevelopBonusBox.Text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(line => line.Split('='))
+                        .Where(a => a.Length == 2)
+                        .ToDictionary(a => int.Parse(a[0]), a => a[1]),
+                    DevelopBlueprintRequired = (int)DevelopBlueprintRequiredBox.Value,
+                    HasFateSimulation = HasFateSimCheck.IsChecked ?? false,
+                    FateSim = (HasFateSimCheck.IsChecked == true) ? new FateSimulation
+                    {
+                        Level = (int)FateLevelBox.Value,
+                        Description = FateDescBox.Text,
+                        BlueprintRequired = (int)FateBlueprintRequiredBox.Value
+                    } : null
+                },
+
+                Skins = Skins.ToList(),
+                Lines = Lines.ToList(),
+                GiftPreferences = GiftPreferences.ToList(),
+
+                CanBeEnhanceMaterial = CanBeEnhanceMaterialCheck.IsChecked ?? false,
+                EnhanceValue = (int)EnhanceValueBox.Value,
+                CanRetire = CanRetireCheck.IsChecked ?? false,
+                RetirementReward = RetirementRewardBox.Text,
+                EnhanceExp = new EnhanceExp
+                {
+                    Fp = (int)EnhanceExpFp.Value,
+                    Trp = (int)EnhanceExpTrp.Value,
+                    Avi = (int)EnhanceExpAvi.Value,
+                    Rld = (int)EnhanceExpRld.Value
+                },
+                EnhanceItems = EnhanceItemsBox.Text.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(s => int.TryParse(s, out var id) ? id : (int?)null)
+                    .Where(id => id.HasValue)
+                    .Select(id => id.Value)
+                    .ToList(),
+                ExtraEnhance = ExtraEnhanceBox.Text,
+
+                Remarks = RemarksBox.Text,
+                Notes = NotesBox.Text,
+                ReferenceMarkdown = ReferenceMarkdownBox.Text
             };
-        }
 
-        private void AddAcquireEntry_Click(object sender, RoutedEventArgs e)
-        {
-            AcquireEntries.Add(new AcquireEntry());
-        }
-
-        private void OnEntryDeleteRequested(object sender, RoutedEventArgs e)
-        {
-            if (sender is AcquireEntryControl control && control.DataContext is AcquireEntry entry)
-            {
-                AcquireEntries.Remove(entry);
-            }
-        }
-
-        private List<int> GetSelectedClassIds(string prefix)
-        {
-            var ids = new List<int>();
-            var mapping = new Dictionary<string, int>
-            {
-                ["DD"] = (int)ShipClass.DD,
-                ["CL"] = (int)ShipClass.CL,
-                ["CA"] = (int)ShipClass.CA,
-                ["CB"] = (int)ShipClass.CB,
-                ["BC"] = (int)ShipClass.BC,
-                ["BB"] = (int)ShipClass.BB,
-                ["BBV"] = (int)ShipClass.BBV,
-                ["CV"] = (int)ShipClass.CV,
-                ["CVL"] = (int)ShipClass.CVL,
-                ["AR"] = (int)ShipClass.AR,
-                ["SS"] = (int)ShipClass.SS,
-                ["SSV"] = (int)ShipClass.SSV,
-                ["AE"] = (int)ShipClass.AE,
-                ["Sail"] = (int)ShipClass.Sail
-            };
-            foreach (var kv in mapping)
-            {
-                var cb = FindName($"{prefix}{kv.Key}") as CheckBox;
-                if (cb != null && cb.IsChecked == true)
-                    ids.Add(kv.Value);
-            }
-            return ids;
+            return ship;
         }
     }
 }

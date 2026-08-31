@@ -53,7 +53,7 @@
         Unknown = 999
     }
 
-    public enum ShipClass
+    public enum ShipType
     {
         UNKNOWN = 0,
         DD = 1,
@@ -160,8 +160,47 @@
     { 
         Attack = 1,
         Defense,
-        Support
+        Support,
+        special
     }
+
+    public enum PerformanceGrade
+    {
+        D,
+        C,
+        B,
+        A,
+        S
+    }
+    public enum AcquisitionMethodType
+    {
+        Construction,
+        Drop,
+        Exchange,
+        Research,
+        Other
+    }
+    public enum ConstructionPool
+    { 
+        Light, 
+        Heavy, 
+        Special, 
+        Limited, 
+        Wish, 
+        None 
+    }
+    public enum ExchangeShop
+    {
+        Guild,      // 军需商店
+        Merit,      // 演习商店
+        Event,      // 活动商店
+        Medal,      // 勋章兑换
+        Core,       // 核心数据
+        Other,
+        Custom = 999
+    }
+    public enum SkinType { Static, Dynamic, MultiDynamic, Live2D, Live2DPlus }
+    public enum GiftPreferenceType { Like, Normal, Dislike }
 
     public enum UpdateChannel
     {

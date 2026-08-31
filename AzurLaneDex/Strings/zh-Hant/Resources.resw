@@ -366,7 +366,7 @@
   <data name="ShipClass_DD1" xml:space="preserve">
     <value>驅逐</value>
   </data>
-  <data name="ShipClass_1" xml:space="preserve">
+  <data name="ShipType_1" xml:space="preserve">
     <value>驅逐</value>
   </data>
   <data name="Class_CL.Content" xml:space="preserve">
@@ -378,7 +378,7 @@
   <data name="ShipClass_CL1" xml:space="preserve">
     <value>輕巡</value>
   </data>
-  <data name="ShipClass_2" xml:space="preserve">
+  <data name="ShipType_2" xml:space="preserve">
     <value>輕巡</value>
   </data>
   <data name="Class_CA.Content" xml:space="preserve">
@@ -396,7 +396,7 @@
   <data name="ShipClass_BB1" xml:space="preserve">
     <value>戰列</value>
   </data>
-  <data name="ShipClass_7" xml:space="preserve">
+  <data name="ShipType_7" xml:space="preserve">
     <value>戰列</value>
   </data>
   <data name="Class_BBV.Content" xml:space="preserve">
@@ -408,7 +408,7 @@
   <data name="ShipClass_BBV1" xml:space="preserve">
     <value>航戰</value>
   </data>
-  <data name="ShipClass_8" xml:space="preserve">
+  <data name="ShipType_8" xml:space="preserve">
     <value>航戰</value>
   </data>
   <data name="Class_CV.Content" xml:space="preserve">
@@ -420,7 +420,7 @@
   <data name="ShipClass_CV1" xml:space="preserve">
     <value>航母</value>
   </data>
-  <data name="ShipClass_9" xml:space="preserve">
+  <data name="ShipType_9" xml:space="preserve">
     <value>航母</value>
   </data>
   <data name="Class_CVL.Content" xml:space="preserve">
@@ -432,7 +432,7 @@
   <data name="ShipClass_CVL1" xml:space="preserve">
     <value>輕航</value>
   </data>
-  <data name="ShipClass_10" xml:space="preserve">
+  <data name="ShipType_10" xml:space="preserve">
     <value>輕航</value>
   </data>
   <data name="Class_AR.Content" xml:space="preserve">
@@ -441,7 +441,7 @@
   <data name="ShipClass_AR1" xml:space="preserve">
     <value>維修</value>
   </data>
-  <data name="ShipClass_11" xml:space="preserve">
+  <data name="ShipType_11" xml:space="preserve">
     <value>維修</value>
   </data>
   <data name="Class_SS.Content" xml:space="preserve">
@@ -453,7 +453,7 @@
   <data name="ShipClass_SS1" xml:space="preserve">
     <value>潛艇</value>
   </data>
-  <data name="ShipClass_12" xml:space="preserve">
+  <data name="ShipType_12" xml:space="preserve">
     <value>潛艇</value>
   </data>
   <data name="Class_SSV.Content" xml:space="preserve">
@@ -465,7 +465,7 @@
   <data name="ShipClass_SSV1" xml:space="preserve">
     <value>潛母</value>
   </data>
-  <data name="ShipClass_13" xml:space="preserve">
+  <data name="ShipType_13" xml:space="preserve">
     <value>潛母</value>
   </data>
   <data name="Class_AE.Content" xml:space="preserve">
@@ -483,28 +483,28 @@
   <data name="ShipClass_Sail1" xml:space="preserve">
     <value>風帆</value>
   </data>
-  <data name="ShipClass_15" xml:space="preserve">
+  <data name="ShipType_15" xml:space="preserve">
     <value>風帆</value>
   </data>
-  <data name="ShipClass_16" xml:space="preserve">
+  <data name="ShipType_16" xml:space="preserve">
     <value>航空巡洋艦</value>
   </data>
-  <data name="ShipClass_17" xml:space="preserve">
+  <data name="ShipType_17" xml:space="preserve">
     <value>魚雷巡洋艦</value>
   </data>
-  <data name="ShipClass_18" xml:space="preserve">
+  <data name="ShipType_18" xml:space="preserve">
     <value>魚雷艇</value>
   </data>
-  <data name="ShipClass_20" xml:space="preserve">
+  <data name="ShipType_20" xml:space="preserve">
     <value>轟炸艦</value>
   </data>
-  <data name="ShipClass_21" xml:space="preserve">
+  <data name="ShipType_21" xml:space="preserve">
     <value>導彈驅逐艦</value>
   </data>
-  <data name="ShipClass_22" xml:space="preserve">
+  <data name="ShipType_22" xml:space="preserve">
     <value>護衛艇</value>
   </data>
-  <data name="ShipClass_23" xml:space="preserve">
+  <data name="ShipType_23" xml:space="preserve">
     <value>特殊（未使用）</value>
   </data>
   <data name="BasicInfo_Rarity.Text" xml:space="preserve">
@@ -780,6 +780,9 @@
   <data name="Faction_Vichya" xml:space="preserve">
     <value>維希教廷</value>
   </data>
+  <data name="Faction_Universal" xml:space="preserve">
+    <value>111</value>
+  </data>
   <data name="Faction_9" xml:space="preserve">
     <value>維希教廷</value>
   </data>
@@ -807,7 +810,7 @@
   <data name="Faction_Other" xml:space="preserve">
     <value>其他</value>
   </data>
-  <data name="Faction_12" xml:space="preserve">
+  <data name="Faction_99" xml:space="preserve">
     <value>其他</value>
   </data>
   <data name="Faction_11" xml:space="preserve">
@@ -816,7 +819,7 @@
   <data name="Faction_97" xml:space="preserve">
     <value>French?</value>
   </data>
-  <data name="Faction_99" xml:space="preserve">
+  <data name="Faction_9999" xml:space="preserve">
     <value>布里（请勿使用）</value>
   </data>
   <data name="Faction_115" xml:space="preserve">
@@ -1062,13 +1065,13 @@
   <data name="ShipClass_BC1" xml:space="preserve">
     <value>戰巡</value>
   </data>
-  <data name="ShipClass_6" xml:space="preserve">
+  <data name="ShipType_6" xml:space="preserve">
     <value>戰巡</value>
   </data>
   <data name="ShipClass_BM1" xml:space="preserve">
     <value>重炮</value>
   </data>
-  <data name="ShipClass_5" xml:space="preserve">
+  <data name="ShipType_5" xml:space="preserve">
     <value>重炮</value>
   </data>
   <data name="ShipClass_CB.Content" xml:space="preserve">
@@ -1077,13 +1080,13 @@
   <data name="ShipClass_CB1" xml:space="preserve">
     <value>超巡</value>
   </data>
-  <data name="ShipClass_4" xml:space="preserve">
+  <data name="ShipType_4" xml:space="preserve">
     <value>超巡</value>
   </data>
   <data name="ShipClass_CA1" xml:space="preserve">
     <value>重巡</value>
   </data>
-  <data name="ShipClass_3" xml:space="preserve">
+  <data name="ShipType_3" xml:space="preserve">
     <value>重巡</value>
   </data>
   <data name="BatchOperationButton.Label" xml:space="preserve">
@@ -1763,10 +1766,10 @@
   <data name="ShipClass_AE1" xml:space="preserve">
     <value>運輸</value>
   </data>
-  <data name="ShipClass_14" xml:space="preserve">
+  <data name="ShipType_14" xml:space="preserve">
     <value>運輸</value>
   </data>
-  <data name="ShipClass_19" xml:space="preserve">
+  <data name="ShipType_19" xml:space="preserve">
     <value>運輸艦（敵方）</value>
   </data>
   <data name="ShipClass_CA.Content" xml:space="preserve">
