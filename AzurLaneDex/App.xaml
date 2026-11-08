@@ -3,14 +3,36 @@
     x:Class="AzurLaneDex.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:AzurLaneDex">
+    xmlns:local="using:AzurLaneDex"
+    xmlns:conv="using:AzurLaneDex.Converters">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+                <!-- 全局卡片样式（CardStyle / CardStyleStretch / CardStyleFlush / CardButtonStyle） -->
+                <ResourceDictionary Source="Themes/AppStyles.xaml" />
                 <!-- Other merged dictionaries here -->
             </ResourceDictionary.MergedDictionaries>
-            <!-- Other app resources here -->
+
+            <!--
+                转换器在应用级统一注册。
+                原因：此前各页面各自声明（MainPage / ShipDetailControl / EquipPickerDialog / …），
+                一旦某个页面引用却没声明，就会在 XAML 解析期抛
+                「Cannot find a Resource with the Name/Key BoolToVisibility」并导致整页/整窗加载失败。
+                页面内的同名声明仍可覆盖这里的定义，行为不变。
+            -->
+            <conv:BoolToCheckMarkConverter x:Key="BoolToCheckMark" />
+            <conv:BoolToHeartConverter x:Key="BoolToHeart" />
+            <conv:BoolToRoleTextConverter x:Key="BoolToRoleText" />
+            <conv:BoolToStarConverter x:Key="BoolToStar" />
+            <conv:BoolToTextConverter x:Key="BoolToText" />
+            <conv:BoolToVisibilityConverter x:Key="BoolToVisibility" />
+            <conv:BreakthroughToDisplayConverter x:Key="BreakthroughToDisplay" />
+            <conv:DoublePercentageConverter x:Key="DoublePercentage" />
+            <conv:EnumToDisplayStringConverter x:Key="EnumToDisplayString" />
+            <conv:ImagePathToBitmapConverter x:Key="ImagePathToBitmap" />
+            <conv:StringToImageSourceConverter x:Key="StringToImageSource" />
+            <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

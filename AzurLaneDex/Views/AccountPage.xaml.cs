@@ -1,4 +1,4 @@
-﻿using AzurLaneDex.Services;
+using AzurLaneDex.Services;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -84,8 +84,8 @@ namespace AzurLaneDex.Views
 
         private void SetDefaultAvatar()
         {
-            // 默认头像（可替换为项目中的资源图片）
-            AvatarImage.Source = new BitmapImage(new Uri("ms-appx:///Assets/default_avatar.png"));
+            // 默认头像（账户）：Assets/icon/Default_Avatar.png
+            AvatarImage.Source = new BitmapImage(new Uri("ms-appx:///Assets/icon/Default_Avatar.png"));
         }
 
         // 修改头像

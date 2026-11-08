@@ -3,16 +3,6 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:controls="using:Microsoft.UI.Xaml.Controls"
       NavigationCacheMode="Disabled">
-    <Page.Resources>
-        <Style x:Key="SettingsCardStyle" TargetType="Border">
-            <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefault}"/>
-            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="Padding" Value="16"/>
-            <Setter Property="Margin" Value="0,0,0,0"/>
-        </Style>
-    </Page.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -30,7 +20,7 @@
         <ScrollViewer Grid.Row="1">
             <StackPanel Margin="20" Spacing="16">
                 <!-- 启用日志开关 -->
-                <Border Style="{StaticResource SettingsCardStyle}">
+                <Border Style="{StaticResource CardStyle}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -45,7 +35,7 @@
                 </Border>
 
                 <!-- 日志保留天数 -->
-                <Border Style="{StaticResource SettingsCardStyle}">
+                <Border Style="{StaticResource CardStyle}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -63,7 +53,7 @@
                 </Border>
 
                 <!-- 导出日志 -->
-                <Border Style="{StaticResource SettingsCardStyle}">
+                <Border Style="{StaticResource CardStyle}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -77,6 +67,28 @@
                     </Grid>
                 </Border>
 
+                <!-- 日志位置 -->
+                <!--
+                <Border Style="{StaticResource CardStyle}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Spacing="2">
+                            <TextBlock x:Uid="LogPage_Path_Title" Text="日志位置" FontSize="14"/>
+                            <TextBlock x:Uid="LogPage_Path_Description" Text="日志按天写在数据目录的 log 子目录里（与安装版共用同一位置）"
+                                       FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock x:Name="LogPathText" FontSize="12" TextWrapping="Wrap" IsTextSelectionEnabled="True"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}" Margin="0,4,0,0"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                            <Button x:Uid="LogPage_Path_OpenButton" x:Name="OpenLogFolderButton" Click="OpenLogFolderButton_Click" Content="打开目录"/>
+                            <Button x:Uid="LogPage_Path_CopyButton" x:Name="CopyLogPathButton" Click="CopyLogPathButton_Click" Content="复制路径"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+                -->
                 <!-- 状态信息 -->
                 <TextBlock x:Uid="LogPage_StatusText" x:Name="StatusText" Text="就绪" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
             </StackPanel>

@@ -1,4 +1,4 @@
-﻿using AzurLaneDex.Models;
+using AzurLaneDex.Models;
 using AzurLaneDex.Services;
 using AzurLaneDex.Services.Interfaces;
 using Microsoft.UI.Xaml;
@@ -18,16 +18,17 @@ namespace AzurLaneDex.Views
     {
         private IUpdateService _updateService;
         private ShipManager _shipManager;
+        private App? _app;
         private string _currentAppVersion;
         private string? _latestAppVersion;
         private string? _latestAppDownloadUrl;
         private string? _latestDataUrl;
         private string? _remoteDataVersion;
 
-        // 数据更新硬编码地址（不变）
-        private const string DataGitHubRawUrl = "https://raw.githubusercontent.com/xiwangzaiqianfang/AzurLaneDex/main/AzurLaneDex/Assets/ships_static.json";
-        private const string DataGitHubCdnUrl = "https://cdn.jsdelivr.net/gh/xiwangzaiqianfang/AzurLaneDex@main/AzurLaneDex/Assets/ships_static.json";
-        private const string DataGiteeRawUrl = "https://gitee.com/fmlg/AzurLaneDex/raw/main/AzurLaneDex/Assets/ships_static.json";
+        // 数据更新硬编码地址（数据库 ships_static.db）
+        private const string DataGitHubRawUrl = "https://raw.githubusercontent.com/xiwangzaiqianfang/AzurLaneDex/main/AzurLaneDex/Assets/ships_static.db";
+        private const string DataGitHubCdnUrl = "https://cdn.jsdelivr.net/gh/xiwangzaiqianfang/AzurLaneDex@main/AzurLaneDex/Assets/ships_static.db";
+        private const string DataGiteeRawUrl = "https://gitee.com/fmlg/AzurLaneDex/raw/main/AzurLaneDex/Assets/ships_static.db";
 
         public UpdatePage()
         {
@@ -38,6 +39,7 @@ namespace AzurLaneDex.Views
         {
             base.OnNavigatedTo(e);
             var app = (App)Application.Current;
+            _app = app;
             var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             if (app.ShipManager == null)
             {
@@ -75,6 +77,14 @@ namespace AzurLaneDex.Views
             DownloadDataButton.IsEnabled = true;
             DownloadAppButton.Visibility = Visibility.Collapsed;
         }
+
+        /// <summary>进入头像管理子页。</summary>
+        private void NavigateToAvatarPage(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(AvatarPage));
+        }
+
+        // ================= 头像管理已拆分为子页 AvatarPage =================
 
         private void LoadChannelSetting()
         {
@@ -317,16 +327,17 @@ namespace AzurLaneDex.Views
                     return;
                 }
 
-                _remoteDataVersion = await _updateService.GetRemoteDataVersionAsync(url, ProxyBox.Text.Trim());
                 _latestDataUrl = url;
-
-                if (string.IsNullOrEmpty(_remoteDataVersion))
+                var remote = await _updateService.GetRemoteDataInfoAsync(url, ProxyBox.Text.Trim());
+                if (remote == null)
                 {
                     StatusText.Text = loader.GetString("CannotGetRemoteDataVersion");
                     return;
                 }
 
-                if (CompareVersion(_remoteDataVersion, _shipManager.DataVersion) > 0)
+                _remoteDataVersion = remote.Display;
+
+                if (IsRemoteDataNewer(remote))
                 {
                     StatusText.Text = string.Format(loader.GetString("NewDataVersionAvailable"), _remoteDataVersion);
                     DownloadDataButton.Visibility = Visibility.Visible;
@@ -340,6 +351,29 @@ namespace AzurLaneDex.Views
             catch (Exception ex)
             {
                 StatusText.Text = string.Format(loader.GetString("DataUpdateFailed1"), ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// 判断远端数据库是否比本地新：先比文件大小（不同即需要更新），大小相同时再比最后修改时间。
+        /// 本地库不存在时视为需要更新。
+        /// </summary>
+        private bool IsRemoteDataNewer(AzurLaneDex.Services.Interfaces.RemoteDataInfo remote)
+        {
+            string localPath = Path.Combine(App.DataRoot, "ships_static.db");
+            if (!File.Exists(localPath)) return true;
+
+            try
+            {
+                var info = new FileInfo(localPath);
+                if (remote.Size > 0 && info.Length != remote.Size) return true;
+                if (remote.LastModified.HasValue)
+                    return remote.LastModified.Value.UtcDateTime > info.LastWriteTimeUtc.AddMinutes(1);
+                return false;
+            }
+            catch
+            {
+                return true;
             }
         }
 
@@ -379,12 +413,6 @@ namespace AzurLaneDex.Views
             };
         }
 
-        private int CompareVersion(string versionA, string versionB)
-        {
-            if (Version.TryParse(versionA, out var vA) && Version.TryParse(versionB, out var vB))
-                return vA.CompareTo(vB);
-            return string.Compare(versionA, versionB, StringComparison.OrdinalIgnoreCase);
-        }
 
         private HttpClient CreateHttpClient(string proxy)
         {

@@ -1,4 +1,4 @@
-﻿using AzurLaneDex.Helpers;
+using AzurLaneDex.Helpers;
 using AzurLaneDex.Models;
 using AzurLaneDex.Views;
 using System;
@@ -24,21 +24,43 @@ namespace AzurLaneDex.Services
 
         public AccountManager()
         {
-            // 使用 App.DataRoot，确保已初始化
-            string dataRoot = App.DataRoot;
+            // 使用 App.DataRoot（由 App 在启动时确定：打包=包内 LocalState，非打包=用户目录）
             if (string.IsNullOrEmpty(App.DataRoot))
                 throw new InvalidOperationException("App.DataRoot not initialized");
-            string accountsFile = Path.Combine(App.DataRoot, "users", "accounts.json");
-            if (string.IsNullOrEmpty(dataRoot))
+
+            // 数据目录不可写时不尝试任何目录操作（避免逐个候选抛 0x80070005）：
+            // 账户数据仅保存在内存，本会话可用，退出后不落盘。
+            string usersDir = Path.Combine(App.DataRoot, "users");
+            if (!App.DataRootWritable)
             {
-                // 后备：使用 LocalApplicationData
-                dataRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AzurLaneDex", "data");
-                Directory.CreateDirectory(dataRoot);
+                LogService.Warning("数据目录不可写：账户数据仅保存在内存，退出后不落盘", nameof(AccountManager));
+                _accountsFile = Path.Combine(usersDir, "accounts.json");
+                Load();
+                return;
             }
-            var usersDir = Path.Combine(dataRoot, "users");
-            Directory.CreateDirectory(usersDir);
+
+            if (!TryEnsureDirectory(usersDir))
+            {
+                LogService.Warning($"账户目录不可写：{usersDir}（账户数据仅保存在内存）", nameof(AccountManager));
+            }
+
             _accountsFile = Path.Combine(usersDir, "accounts.json");
             Load();
+        }
+
+        /// <summary>尝试创建目录（被 ACL 拒绝时返回 false，不抛异常）。</summary>
+        private static bool TryEnsureDirectory(string dir)
+        {
+            try
+            {
+                Directory.CreateDirectory(dir);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                LogService.Warning($"创建目录失败：{dir}（{ex.GetType().Name}: {ex.Message}）", nameof(AccountManager));
+                return false;
+            }
         }
 
         private void Load()
@@ -76,8 +98,19 @@ namespace AzurLaneDex.Services
 
         public void Save()
         {
-            var data = new AccountsData { Accounts = Accounts, CurrentAccount = CurrentAccount, DefaultAccount = _defaultAccount }; var json = JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(_accountsFile, json);
+            if (!App.DataRootWritable)
+                return;   // 只读运行：账户数据仅保存在内存
+
+            try
+            {
+                var data = new AccountsData { Accounts = Accounts, CurrentAccount = CurrentAccount, DefaultAccount = _defaultAccount };
+                var json = JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
+                File.WriteAllText(_accountsFile, json);
+            }
+            catch (Exception ex)
+            {
+                LogService.Warning($"账户数据保存失败：{ex.Message}", nameof(AccountManager));
+            }
         }
 
         public bool VerifyPassword(string name, string password)

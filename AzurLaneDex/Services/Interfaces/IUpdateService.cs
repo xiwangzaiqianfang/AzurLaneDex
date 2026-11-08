@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using AzurLaneDex.Models;
 
@@ -11,7 +11,7 @@ namespace AzurLaneDex.Services.Interfaces
         string CurrentAppVersion { get; }
         Task<UpdateInfo> CheckForUpdateAsync();
         Task<bool> DownloadAndInstallUpdateAsync(UpdateInfo update, IProgress<double> progress);
-        Task<string> GetRemoteDataVersionAsync(string url, string proxy = "");
+        Task<RemoteDataInfo?> GetRemoteDataInfoAsync(string url, string proxy = "");
         Task<bool> UpdateDataFromUrlAsync(string url, string proxy = "");
     }
 

@@ -8,69 +8,6 @@
 
 	<Page.Resources>
 		<converters:BoolToTextConverter x:Key="BoolToText"/>
-		<SolidColorBrush x:Key="CardBackgroundFillColorPointerOver" Color="{ThemeResource SystemBaseLowColor}" Opacity="0.1"/>
-		<SolidColorBrush x:Key="CardBackgroundFillColorPressed" Color="{ThemeResource SystemBaseLowColor}" Opacity="0.2"/>
-		<Style x:Key="SettingsCardStyle" TargetType="Border">
-			<Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefault}"/>
-			<Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}"/>
-			<Setter Property="BorderThickness" Value="1"/>
-			<Setter Property="CornerRadius" Value="8"/>
-			<Setter Property="Padding" Value="16"/>
-			<Setter Property="Margin" Value="0,0,0,0"/>
-			<Setter Property="HorizontalAlignment" Value="Stretch"/>
-			<Setter Property="VerticalAlignment" Value="Stretch"/>
-		</Style>
-		<Style x:Key="CardButtonStyle" TargetType="Button">
-			<Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefault}"/>
-			<Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}"/>
-			<Setter Property="BorderThickness" Value="1"/>
-			<Setter Property="CornerRadius" Value="8"/>
-			<Setter Property="Padding" Value="16"/>
-			<Setter Property="Margin" Value="0,0,0,0"/>
-			<Setter Property="HorizontalAlignment" Value="Stretch"/>
-			<Setter Property="VerticalAlignment" Value="Stretch"/>
-			<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-			<Setter Property="VerticalContentAlignment" Value="Stretch"/>
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="Button">
-						<Grid>
-							<VisualStateManager.VisualStateGroups>
-								<VisualStateGroup x:Name="CommonStates">
-									<VisualState x:Name="Normal"/>
-									<VisualState x:Name="PointerOver">
-										<Storyboard>
-											<ObjectAnimationUsingKeyFrames Storyboard.TargetName="Border" Storyboard.TargetProperty="Background">
-												<DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CardBackgroundFillColorPointerOver}"/>
-											</ObjectAnimationUsingKeyFrames>
-										</Storyboard>
-									</VisualState>
-									<VisualState x:Name="Pressed">
-										<Storyboard>
-											<ObjectAnimationUsingKeyFrames Storyboard.TargetName="Border" Storyboard.TargetProperty="Background">
-												<DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CardBackgroundFillColorPressed}"/>
-											</ObjectAnimationUsingKeyFrames>
-										</Storyboard>
-									</VisualState>
-								</VisualStateGroup>
-							</VisualStateManager.VisualStateGroups>
-							<Border x:Name="Border"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{TemplateBinding CornerRadius}">
-								<ContentPresenter x:Name="ContentPresenter"
-                                          Content="{TemplateBinding Content}"
-                                          ContentTemplate="{TemplateBinding ContentTemplate}"
-                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                          Margin="{TemplateBinding Padding}"/>
-							</Border>
-						</Grid>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
 	</Page.Resources>
 
 	<Grid>
@@ -89,7 +26,7 @@
 		<ScrollViewer Grid.Row="1">
 			<StackPanel Margin="20" Spacing="16">
 				<!-- 导出卡片 -->
-				<Border Style="{StaticResource SettingsCardStyle}">
+				<Border Style="{StaticResource CardStyleStretch}">
 					<Grid>
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto"/>
@@ -106,7 +43,7 @@
 				</Border>
 
 				<!-- 导入卡片 -->
-				<Border Style="{StaticResource SettingsCardStyle}">
+				<Border Style="{StaticResource CardStyleStretch}">
 					<Grid>
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto"/>
@@ -123,7 +60,7 @@
 				</Border>
 
 				<!-- 创建备份点卡片 -->
-				<Border Style="{StaticResource SettingsCardStyle}">
+				<Border Style="{StaticResource CardStyleStretch}">
 					<Grid>
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto"/>
@@ -139,6 +76,7 @@
 					</Grid>
 				</Border>
 
+                <!--
                 <TextBlock x:Uid="RelatedLinksTitle" Text="相关链接" FontSize="16" FontWeight="SemiBold"/>
 				<Button Style="{StaticResource CardButtonStyle}" Click="NavigateToSettingsPage">
 					<Grid>
@@ -155,6 +93,7 @@
 						<FontIcon x:Name="AccountManageArrowIcon" Grid.Column="2" Glyph="&#xE974;" FontFamily="Segoe Fluent Icons" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
 					</Grid>
 				</Button>
+                -->
 			</StackPanel>
 		</ScrollViewer>
 	</Grid>

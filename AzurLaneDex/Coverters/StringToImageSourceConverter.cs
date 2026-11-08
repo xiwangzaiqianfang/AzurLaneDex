@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 
@@ -19,8 +19,8 @@ namespace AzurLaneDex.Converters
                     // 加载失败返回默认占位
                 }
             }
-            // 默认头像（项目中的占位图）
-            return new BitmapImage(new Uri("ms-appx:///Assets/Ship/default.png"));
+            // 默认头像（占位图：Assets/icon/square/unknown.png）
+            return new BitmapImage(new Uri("ms-appx:///Assets/icon/square/unknown.png"));
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

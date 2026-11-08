@@ -15,24 +15,25 @@
                   Title="碧蓝航线图鉴"
                   Subtitle="Preview"
                   IsBackButtonVisible="True"
-                  IsBackButtonEnabled="{x:Bind ContentFrame.CanGoBack, Mode=OneWay}"
-                  BackRequested="TitleBar_BackRequested"
+                                                                                    
+ BackRequested="TitleBar_BackRequested"
                   IsPaneToggleButtonVisible="True"
-                  PaneToggleRequested="TitleBar_PaneToggleRequested">
+                  PaneToggleRequested="TitleBar_PaneToggleRequested"
+                                                                    >
             <TitleBar.IconSource>
                 <ImageIconSource ImageSource="/Assets/Titles/App_Icon.ico" />
             </TitleBar.IconSource>
         </TitleBar>
 
         <!-- 导航视图：使用 LeftCompact 模式，窗口较窄时自动折叠为图标栏 -->
-        <NavigationView x:Name="MainNavView" Grid.Row="1"
+        <NavigationView x:Name="MainNavView" Grid.Row="1" SelectionChanged="MainNavView_SelectionChanged"
                         IsBackButtonVisible="Collapsed"
                         IsPaneToggleButtonVisible="False"
                         PaneDisplayMode="Left"
                         CompactPaneLength="48"
                         OpenPaneLength="320"
                         CompactModeThresholdWidth="800"
-                        ItemInvoked="MainNavView_ItemInvoked"
+ ItemInvoked="MainNavView_ItemInvoked"
                         IsTabStop="True">
             <NavigationView.MenuItems>
                 <NavigationViewItem Icon="Library" x:Uid="NavMain" Content="舰船图鉴" Tag="MainPage" />
@@ -44,6 +45,11 @@
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Tag>StatsPage</NavigationViewItem.Tag>
                 </NavigationViewItem>
+                <NavigationViewItem x:Uid="NavTeam" Content="配队" Tag="TeamPage">
+                    <NavigationViewItem.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE716;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
             </NavigationView.MenuItems>
             <NavigationView.FooterMenuItems>
                 <NavigationViewItem x:Uid="NavAccount" Tag="AccountPage" Content="帐户" Icon="Contact"/>
@@ -51,5 +57,23 @@
             </NavigationView.FooterMenuItems>
             <Frame x:Name="ContentFrame"/>
         </NavigationView>
+
+        <!-- 头像更新通知（新增悬浮通知条，不改变既有导航布局） -->
+        <InfoBar x:Name="AvatarUpdateInfoBar" Grid.Row="1" VerticalAlignment="Top"
+                 Margin="24,8,24,0" IsOpen="False" Severity="Informational" IsClosable="True">
+            <InfoBar.ActionButton>
+                <Button x:Name="AvatarDownloadButton" x:Uid="MainWindow_AvatarDownloadButton" Content="下载" Click="AvatarDownloadButton_Click"                                   
+                        Visibility="Collapsed" Style="{StaticResource AccentButtonStyle}" />
+            </InfoBar.ActionButton>
+        </InfoBar>
+
+        <!-- 启动画面覆盖层：窗口化启动观感（整窗主题底色 + 居中徽标）。
+             与主窗口同尺寸同位置——窗口按记忆位置出现时内容区就是启动画面，
+             初始化完成后由 RevealContent() 淡出，让真实内容淡入。 -->
+        <Grid x:Name="SplashOverlay" Grid.RowSpan="2">
+            <Image x:Name="SplashLogo" Stretch="Uniform" MaxWidth="620" MaxHeight="300"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+        </Grid>
     </Grid>
 </Window>
+

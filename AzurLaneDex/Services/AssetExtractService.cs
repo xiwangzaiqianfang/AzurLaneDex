@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.IO.Compression;
 using System.Threading.Tasks;
@@ -13,8 +13,22 @@ public class AssetExtractService
     {
         // 将头像存放在 App.DataRoot 下的 "avatars" 文件夹中
         _assetsRootPath = Path.Combine(App.DataRoot, "avatars");
-        if (!Directory.Exists(_assetsRootPath))
+
+        // 只读运行（数据目录不可写）时不创建目录：读取头像仍可用，不抛 0x80070005
+        if (!App.DataRootWritable)
+        {
+            LogService.Warning($"数据目录不可写：头像目录仅读取，不创建 {_assetsRootPath}", nameof(AssetExtractService));
+            return;
+        }
+
+        try
+        {
             Directory.CreateDirectory(_assetsRootPath);
+        }
+        catch (Exception ex)
+        {
+            LogService.Warning($"创建头像目录失败：{_assetsRootPath}（{ex.GetType().Name}）", nameof(AssetExtractService));
+        }
     }
 
     /// <summary>

@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
@@ -8,9 +8,65 @@ namespace AzurLaneDex.Views
 {
     public sealed partial class FilterPanel : UserControl
     {
+        private bool _syncingClass;
+        private readonly CheckBox[] _frontChildren;
+        private readonly CheckBox[] _backChildren;
+
         public FilterPanel()
         {
             this.InitializeComponent();
+            _frontChildren = new[] { ShipTypeDD, ShipTypeCL, ShipTypeCA, ShipTypeCB };
+            _backChildren = new[] { ShipTypeCV, ShipTypeCVL, ShipTypeBM, ShipTypeBB, ShipTypeBC, ShipTypeBBV, ShipTypeAR };
+            foreach (var c in _frontChildren) WireChild(c);
+            foreach (var c in _backChildren) WireChild(c);
+        }
+
+        private void WireChild(CheckBox box)
+        {
+            box.Checked += OnShipTypeChildToggled;
+            box.Unchecked += OnShipTypeChildToggled;
+        }
+
+        /// <summary>父级（前排先锋/后排主力）勾选/取消 → 联动全部子项。</summary>
+        private void OnQuickClass_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (_syncingClass || !(sender is CheckBox parent)) return;
+            CheckBox[] children = ReferenceEquals(parent, ClassFrontlineCheck) ? _frontChildren : _backChildren;
+            bool? value = parent.IsChecked;
+            _syncingClass = true;
+            try
+            {
+                foreach (var c in children) c.IsChecked = value;
+            }
+            finally { _syncingClass = false; }
+        }
+
+        /// <summary>任意子项手动切换 → 同步父级状态（全选=勾选、全不选=不勾、部分=不确定）。</summary>
+        private void OnShipTypeChildToggled(object sender, RoutedEventArgs e)
+        {
+            if (_syncingClass) return;
+            SyncParentStates();
+        }
+
+        private void SyncParentStates()
+        {
+            _syncingClass = true;
+            try
+            {
+                ClassFrontlineCheck.IsChecked = Aggregate(_frontChildren);
+                ClassBacklineCheck.IsChecked = Aggregate(_backChildren);
+            }
+            finally { _syncingClass = false; }
+        }
+
+        private static bool? Aggregate(CheckBox[] children)
+        {
+            int on = 0;
+            foreach (var c in children)
+                if (c.IsChecked == true) on++;
+            if (on == children.Length) return true;
+            if (on == 0) return false;
+            return null; // 部分选中（不确定态）
         }
 
         /// <summary>
@@ -251,6 +307,9 @@ namespace AzurLaneDex.Views
             AttrReload.IsChecked = criteria.AttributeBonuses.Contains(AttributeType.RLD);
             AttrDurability.IsChecked = criteria.AttributeBonuses.Contains(AttributeType.HP);
             AttrAntiSub.IsChecked = criteria.AttributeBonuses.Contains(AttributeType.ASW);
+
+            // 恢复后同步前排/后排父级勾选状态
+            SyncParentStates();
         }
     }
 

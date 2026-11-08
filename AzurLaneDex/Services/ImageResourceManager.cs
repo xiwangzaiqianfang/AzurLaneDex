@@ -1,4 +1,4 @@
-﻿using AzurLaneDex.Models;
+using AzurLaneDex.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,7 +19,16 @@ namespace AzurLaneDex.Services
         {
             _imageBasePath = Path.Combine(dataRoot, "images", "ship");
             _manifestPath = Path.Combine(_imageBasePath, "manifest.json");
-            Directory.CreateDirectory(_imageBasePath);
+
+            // 数据目录不可写时跳过目录创建（读取既有清单仍可用），不抛权限异常
+            try
+            {
+                Directory.CreateDirectory(_imageBasePath);
+            }
+            catch (Exception ex)
+            {
+                LogService.Warning($"创建图片目录失败：{_imageBasePath}（{ex.GetType().Name}）", nameof(ImageResourceManager));
+            }
             LoadLocalManifest();
         }
 

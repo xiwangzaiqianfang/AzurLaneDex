@@ -1,4 +1,4 @@
-﻿using AzurLaneDex.Models;
+using AzurLaneDex.Models;
 using AzurLaneDex.Services.Interfaces;
 using AzurLaneDex.ViewModels;
 using System.Collections.Generic;
@@ -6,8 +6,13 @@ using System.Linq;
 
 namespace AzurLaneDex.Services
 {
+    /// <summary>
+    /// 统计计算器：舰队科技点、图鉴统计与全局属性加成计算。
+    /// 纯展示计算（无副作用），UI 层只做展示，不参与计算。
+    /// </summary>
     public class ShipStatsCalculator : IShipStatsCalculator
     {
+        /// <summary>按阵营汇总科技点（收集/满破/120 级），键为本地化阵营名。</summary>
         public Dictionary<string, CampTechData> CalculateCampTech(IEnumerable<ShipViewModel> ships)
         {
             var result = new Dictionary<string, CampTechData>();
@@ -19,28 +24,38 @@ namespace AzurLaneDex.Services
 
                 var ft = ship.FleetTech;
                 var data = result[faction];
-                data.Obtain += ft.CollectPoints;
+                data.Obtain += ft?.Collect?.Pts ?? 0;
                 if (ship.IsMaxBreakthrough)
-                    data.Max += ft.LimitBreakPoints;
+                    data.Max += ft?.LimitBreak?.Pts ?? 0;
                 if (ship.Level120)
-                    data.Level120 += ft.Level120Points;
+                    data.Level120 += ft?.Level120?.Pts ?? 0;
             }
             return result;
         }
 
+        /// <summary>全部舰船科技点理论总值。</summary>
         public int GetTotalTechPoints(IEnumerable<ShipViewModel> ships)
         {
-            return ships.Sum(s => s.FleetTech.CollectPoints + s.FleetTech.LimitBreakPoints + s.FleetTech.Level120Points);
+            return ships.Sum(s =>
+            {
+                var ft = s.FleetTech;
+                return (ft?.Collect?.Pts ?? 0) + (ft?.LimitBreak?.Pts ?? 0) + (ft?.Level120?.Pts ?? 0);
+            });
         }
 
+        /// <summary>已获得舰船可取得的科技点。</summary>
         public int GetOwnedTechPoints(IEnumerable<ShipViewModel> ships)
         {
             return ships.Where(s => s.Owned).Sum(s =>
-                s.FleetTech.CollectPoints +
-                (s.IsMaxBreakthrough ? s.FleetTech.LimitBreakPoints : 0) +
-                (s.Level120 ? s.FleetTech.Level120Points : 0));
+            {
+                var ft = s.FleetTech;
+                return (ft?.Collect?.Pts ?? 0) +
+                       (s.IsMaxBreakthrough ? ft?.LimitBreak?.Pts ?? 0 : 0) +
+                       (s.Level120 ? ft?.Level120?.Pts ?? 0 : 0);
+            });
         }
 
+        /// <summary>图鉴统计（排除联动）。</summary>
         public StatsData CalculateStats(IEnumerable<ShipViewModel> ships)
         {
             var list = ships.Where(s => s.CategoryEnum != ShipCategory.Collab).ToList();
@@ -53,67 +68,55 @@ namespace AzurLaneDex.Services
                 NotMaxBreakthrough = list.Count(s => s.Owned && !s.IsMaxBreakthrough),
                 Oath = list.Count(s => s.Oath),
                 Remodeled = list.Count(s => s.Retrofitted),
-                CanRemodelNot = list.Count(s => s.Retrofit.CanRetrofit && !s.Retrofitted),
+                CanRemodelNot = list.Count(s => s.Retrofit?.CanRetrofit == true && !s.Retrofitted),
                 Level120 = list.Count(s => s.Level120),
                 SpecialGearObtained = list.Count(s => s.SpecialGearObtained),
                 SpecialGearNotObtained = list.Count(s => s.CanSpecialGear && !s.SpecialGearObtained),
-                CanRemodelTotal = list.Count(s => s.Retrofit.CanRetrofit)
+                CanRemodelTotal = list.Count(s => s.Retrofit?.CanRetrofit == true)
             };
         }
 
+        /// <summary>
+        /// 全局属性加成：遍历已拥有舰船，把"获得时/120 级"科技任务加成按目标舰种 × 属性累加。
+        /// 返回键为 (舰种, 属性)，值为累计值。
+        /// </summary>
         public Dictionary<(ShipType ShipType, AttributeType Attr), int> CalculateGlobalBonuses(IEnumerable<ShipViewModel> ships)
         {
             var bonuses = new Dictionary<(ShipType, AttributeType), int>();
 
             foreach (var ship in ships.Where(s => s.Owned))
             {
-                // 获得时加成
-                var obtain = ship.ObtainBonus;
-                if (obtain.TargetTypes.Any())
-                {
-                    AddBonus(bonuses, obtain.TargetTypes, obtain);
-                }
-
-                // 120级加成
-                var level120 = ship.Level120Bonus;
-                if (level120.TargetTypes.Any())
-                {
-                    AddBonus(bonuses, level120.TargetTypes, level120);
-                }
+                var ft = ship.FleetTech;
+                if (ft == null) continue;
+                AddTaskBonus(bonuses, ft.Collect);   // 获得时加成
+                AddTaskBonus(bonuses, ft.Level120);  // 120 级加成
             }
 
             return bonuses;
         }
-        private void AddBonus(
-            Dictionary<(ShipType ShipType, AttributeType Attr), int> bonuses,
-            List<ShipType> targetTypes,
-            TechBonusDetail bonus)
-        {
-            var attrValues = new Dictionary<AttributeType, int>
-            {
-                [AttributeType.HP] = bonus.Hp,
-                [AttributeType.FP] = bonus.Fp,
-                [AttributeType.TRP] = bonus.Trp,
-                [AttributeType.AVI] = bonus.Avi,
-                [AttributeType.AA] = bonus.Aa,
-                [AttributeType.ACC] = bonus.Hit,
-                [AttributeType.EVA] = bonus.Eva,
-                [AttributeType.ASW] = bonus.Asw
-            };
 
-            foreach (var shipType in targetTypes)
+        /// <summary>把单条科技任务加成（stat/value/hulls）累加到结果字典。</summary>
+        private static void AddTaskBonus(
+            Dictionary<(ShipType ShipType, AttributeType Attr), int> bonuses,
+            TechTaskBonus? task)
+        {
+            if (task == null || task.Value == 0 || string.IsNullOrEmpty(task.Stat) || task.Hulls.Count == 0)
+                return;
+
+            var attr = DataCodeMaps.StatKeyToAttribute(task.Stat);
+            if (attr == AttributeType.None) return;
+
+            foreach (int hull in task.Hulls)
             {
-                foreach (var kv in attrValues)
-                {
-                    if (kv.Value == 0) continue;
-                    var key = (shipType, kv.Key);
-                    bonuses[key] = bonuses.GetValueOrDefault(key) + kv.Value;
-                }
+                var shipType = DataCodeMaps.HullToShipType(hull);
+                if (shipType == null) continue;
+                var key = (shipType.Value, attr);
+                bonuses[key] = bonuses.GetValueOrDefault(key) + task.Value;
             }
         }
     }
 
-    // 数据容器类（已在旧代码中定义，但为确保完整，保留）
+    /// <summary>单阵营科技点统计（收集/满破/120 级）。</summary>
     public class CampTechData
     {
         public int Obtain { get; set; }
@@ -121,6 +124,7 @@ namespace AzurLaneDex.Services
         public int Level120 { get; set; }
     }
 
+    /// <summary>图鉴统计结果容器。</summary>
     public class StatsData
     {
         public int Total { get; set; }

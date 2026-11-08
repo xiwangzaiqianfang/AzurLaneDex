@@ -1,0 +1,106 @@
+<Page x:Class="AzurLaneDex.Views.TeamPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Page.Resources>
+        <Style x:Key="TeamCardStyle" TargetType="Border">
+            <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}"/>
+            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="16"/>
+        </Style>
+    </Page.Resources>
+
+    <Grid Margin="20,12,20,20" RowSpacing="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" x:Uid="TeamPage_Title" Text="配队" FontSize="28" FontWeight="SemiBold" Margin="10,0,0,4"/>
+
+        <Grid Grid.Row="1" ColumnSpacing="16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="300"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 队伍列表 -->
+            <Border Grid.Column="0" Style="{StaticResource TeamCardStyle}">
+                <Grid RowSpacing="8">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock x:Uid="TeamPage_ListTitle" Text="队伍列表" FontSize="16" FontWeight="SemiBold"/>
+                    <Button Grid.Row="1" x:Uid="TeamPage_NewButton" Content="＋ 新建配队" HorizontalAlignment="Left" Click="NewTeamButton_Click"/>
+                    <ListView Grid.Row="2" x:Name="TeamListView" SelectionMode="Single"
+                              SelectionChanged="TeamListView_SelectionChanged">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Padding="4,6" Spacing="2">
+                                    <TextBlock Text="{Binding Name}" FontSize="15" FontWeight="SemiBold"
+                                               TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Text="{Binding Description}" FontSize="12"
+                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                               TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+            </Border>
+
+            <!-- 编辑器：多舰队 -->
+            <Border Grid.Column="1" Style="{StaticResource TeamCardStyle}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Spacing="10">
+                        <TextBlock x:Uid="TeamPage_EditorTitle" Text="队伍编辑" FontSize="16" FontWeight="SemiBold"/>
+                        <TextBox x:Name="TeamNameBox" x:Uid="TeamPage_NameBox" Header="队伍名称" PlaceholderText="必填" Width="320"
+                                 HorizontalAlignment="Left"/>
+                        <TextBox x:Name="TeamDescBox" x:Uid="TeamPage_DescBox" Header="描述（可选）" AcceptsReturn="True" Height="56"
+                                 TextWrapping="Wrap" Width="560" HorizontalAlignment="Left"/>
+
+                        <!-- 水面舰队（1~3 支，动态） -->
+                        <TextBlock Text="水面舰队" FontSize="14" FontWeight="SemiBold"/>
+                        <StackPanel x:Name="SurfaceFleetHost" Spacing="0"/>
+                        <Button x:Name="AddSurfaceFleetButton" Content="＋ 添加水面舰队" HorizontalAlignment="Left"
+                                Click="AddSurfaceFleet_Click"/>
+
+                        <!-- 水下舰队 -->
+                        <TextBlock Text="水下舰队" FontSize="14" FontWeight="SemiBold" Margin="0,6,0,0"/>
+                        <StackPanel x:Name="SubmarineHost" Spacing="6"/>
+
+                        <!-- 支援舰队 -->
+                        <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,6,0,0">
+                            <TextBlock Text="支援舰队" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            <ComboBox x:Name="SupportKindCombo" Width="150" SelectionChanged="SupportKind_Changed"/>
+                        </StackPanel>
+                        <StackPanel x:Name="SupportHost" Spacing="6"/>
+
+                        <TextBlock x:Name="TeamStatusText" Foreground="{ThemeResource SystemFillColorCautionBrush}"
+                                   FontSize="12" TextWrapping="Wrap"/>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Button x:Name="SaveTeamButton" x:Uid="TeamPage_SaveButton" Content="保存配队" Click="SaveTeamButton_Click"
+                                    Style="{StaticResource AccentButtonStyle}"/>
+                            <Button x:Uid="TeamPage_NewSmallButton" Content="新建" Click="NewTeamButton_Click"/>
+                            <Button x:Name="DeleteTeamButton" x:Uid="TeamPage_DeleteButton" Content="删除当前配队" Click="DeleteTeamButton_Click"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Button x:Uid="TeamPage_ShareImageButton" Content="导出图片" Click="ShareImageButton_Click"/>
+                            <Button x:Uid="TeamPage_ShareCodeButton" Content="生成分享码" Click="ShareCodeButton_Click"/>
+                            <Button x:Uid="TeamPage_ImportCodeButton" Content="导入分享码" Click="ImportCodeButton_Click"/>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+
+        <!-- 分享图片的离屏渲染宿主（1×1 容器内的 Canvas，内容定位在可视区域外） -->
+        <Grid Width="1" Height="1" HorizontalAlignment="Left" VerticalAlignment="Top" IsHitTestVisible="False">
+            <Canvas x:Name="ShareRenderHost" Width="760" Height="1600" Canvas.Left="-20000" Canvas.Top="-20000"/>
+        </Grid>
+    </Grid>
+</Page>

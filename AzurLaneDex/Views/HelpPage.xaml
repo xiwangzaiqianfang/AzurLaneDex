@@ -4,20 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:Microsoft.UI.Xaml.Controls">
 
-    <Page.Resources>
-        <!-- 统一卡片背景和悬停效果，与 SettingsPage 等一致 -->
-        <SolidColorBrush x:Key="CardBackgroundFillColorPointerOver" Color="{ThemeResource SystemBaseLowColor}" Opacity="0.1"/>
-        <SolidColorBrush x:Key="CardBackgroundFillColorPressed" Color="{ThemeResource SystemBaseLowColor}" Opacity="0.2"/>
-
-        <Style x:Key="SettingsCardStyle" TargetType="Border">
-            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}"/>
-            <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="Padding" Value="0"/>
-            <Setter Property="Margin" Value="0,0,0,0"/>
-            <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="VerticalAlignment" Value="Stretch"/>
-        </Style>
-    </Page.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -35,14 +21,19 @@
             <StackPanel Margin="20" Spacing="16">
 
                 <!-- 数据存储位置卡片 -->
-                <Border Style="{StaticResource SettingsCardStyle}">
+                <Border Style="{StaticResource CardStyleFlush}">
                     <Expander x:Uid="HelpPage_DataLocation_Header" Header="用户数据存储位置" IsExpanded="False" 
                               HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="0,0,0,12">
                         <StackPanel>
                             <TextBlock x:Uid="HelpPage_DataLocation_Text1" Text="你所有的收集进度、账户信息、设置等数据均保存在本地，路径为：" 
                                        FontSize="14" TextWrapping="Wrap" Padding="20,10,20,0"/>
-                            <TextBox IsReadOnly="True" Text="%LOCALAPPDATA%\Packages\fmlg.AzurLaneDex_n8a9v6zgjkkmw\LocalCache\Local\AzurLaneDex" 
-                                     Margin="20,8,20,0" FontFamily="Consolas" FontSize="14" BorderThickness="0" Background="Transparent"/>
+                            <!-- 运行时由 HelpPage.xaml.cs 填入 App.DataRoot，避免写死路径（打包/非打包、重定向后都会变） -->
+                            <TextBox x:Name="DataPathBox" IsReadOnly="True" Text=""
+                                     Margin="20,8,20,0" FontFamily="Consolas" FontSize="14" BorderThickness="0" Background="Transparent"
+                                     TextWrapping="Wrap"/>
+                            <Button x:Uid="HelpPage_OpenDataFolder" Content="打开文件夹"
+                                    Click="OnOpenDataFolderClick"
+                                    Margin="20,4,20,0" HorizontalAlignment="Left"/>
                             <TextBlock x:Uid="HelpPage_DataLocation_Text2" Text="你可以备份该文件夹下的所有内容，以便迁移或恢复数据。" 
                                        FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" 
                                        TextWrapping="Wrap" Padding="20,10,20,10"/>
@@ -51,7 +42,7 @@
                 </Border>
 
                 <!-- 应用安装位置卡片（Expander 样式） -->
-                <Border Style="{StaticResource SettingsCardStyle}">
+                <Border Style="{StaticResource CardStyleFlush}">
                     <Expander x:Uid="HelpPage_InstallLocation_Header" Header="应用安装位置" IsExpanded="False" 
                               HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="0,0,0,12">
                         <StackPanel>
@@ -68,35 +59,35 @@
 
                 <TextBlock x:Uid="HelpPage_FAQ" Text="常见问题" FontSize="14" FontWeight="SemiBold" Margin="0,8,0,4"/>
                 <!-- 常见问题区域：每个问题一个独立卡片 -->
-                <Border Style="{StaticResource SettingsCardStyle}">
+                <Border Style="{StaticResource CardStyleFlush}">
                     <Expander x:Uid="HelpPage_Question1" Header="如何备份我的数据？" IsExpanded="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="0,0,0,12">
                         <TextBlock x:Uid="HelpPage_Answer1" Text="将上述「用户数据存储位置」中的整个“AzurLaneDex”文件夹复制到安全位置即可。恢复时只需覆盖原位置。" 
                                    Padding="20,10,20,10" TextWrapping="Wrap" Margin="0,0,0,0" FontSize="14"/>
                     </Expander>
                 </Border>
 
-                <Border Style="{StaticResource SettingsCardStyle}">
+                <Border Style="{StaticResource CardStyleFlush}">
                     <Expander x:Uid="HelpPage_Question2" Header="多台电脑如何同步数据？" IsExpanded="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="0,0,0,12">
                         <TextBlock x:Uid="HelpPage_Answer2" Text="不支持云同步。你可以手动备份数据文件夹，在新电脑上安装应用后将数据覆盖到相同位置。" 
                                    Padding="20,10,20,10" TextWrapping="Wrap" Margin="0,0,0,0" FontSize="14"/>
                     </Expander>
                 </Border>
 
-                <Border Style="{StaticResource SettingsCardStyle}">
+                <Border Style="{StaticResource CardStyleFlush}">
                     <Expander x:Uid="HelpPage_Question3" Header="忘记账户密码怎么办？" IsExpanded="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="0,0,0,12">
                         <TextBlock x:Uid="HelpPage_Answer3" Text="若设置了密保问题，可在登录界面点击「忘记密码？」通过密保重置密码。若未设置，请联系开发者或重新创建账户（数据会丢失）。"
                                    Padding="20,10,20,10" TextWrapping="Wrap" Margin="0,0,0,0" FontSize="14"/>
                     </Expander>
                 </Border>
 
-                <Border Style="{StaticResource SettingsCardStyle}">
+                <Border Style="{StaticResource CardStyleFlush}">
                     <Expander x:Uid="HelpPage_Question4" Header="如何获得管理员权限？" IsExpanded="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="0,0,0,12">
                         <TextBlock x:Uid="HelpPage_Answer4" Text="进入「帐户」→「你的账户」→「申请权限」，输入系统管理员密码（默认 developer 的密码）即可将当前账户提升为管理员，解锁新建/编辑舰船功能。"
                                    Padding="20,10,20,10" TextWrapping="Wrap" Margin="0,0,0,0" FontSize="14"/>
                     </Expander>
                 </Border>
 
-                <Border Style="{StaticResource SettingsCardStyle}">
+                <Border Style="{StaticResource CardStyleFlush}">
                     <Expander x:Uid="HelpPage_Question5" Header="如何报告Bug或提建议？" IsExpanded="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="0,0,0,12">
                         <StackPanel Padding="20,10,20,10">
                             <TextBlock x:Uid="HelpPage_Answer5" Text="欢迎访问项目主页提交 Issue。" TextWrapping="Wrap" Margin="0,0,0,0" FontSize="14"/>

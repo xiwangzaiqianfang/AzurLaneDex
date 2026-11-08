@@ -1,0 +1,73 @@
+<Page x:Class="AzurLaneDex.Views.AvatarPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:controls="using:Microsoft.UI.Xaml.Controls"
+      NavigationCacheMode="Disabled">
+
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- 顶部导航栏：更新 › 头像管理 -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="20,20,20,12" Spacing="12">
+            <Button x:Name="BackButton" Click="BackButton_Click" Content="更新" FontSize="28" FontWeight="SemiBold"
+                    Margin="0,2,0,0" Background="Transparent" BorderThickness="0"
+                    ToolTipService.ToolTip="返回" VerticalAlignment="Center"/>
+            <FontIcon Glyph="&#xE974;" FontFamily="Segoe Fluent Icons" FontSize="22" Margin="-20,3,-10,0" VerticalAlignment="Center"/>
+            <TextBlock x:Uid="Settings_Avatar_Title" Text="头像管理" FontSize="28" FontWeight="SemiBold" VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="1">
+            <StackPanel Margin="20" Spacing="16">
+
+                <!-- 头像包卡片 -->
+                <Border Style="{StaticResource CardStyle}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <FontIcon Grid.Column="0" Glyph="&#xEB9F;" FontFamily="Segoe Fluent Icons" FontSize="22" Margin="0,0,14,0"/>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock x:Uid="AvatarPage_Package_Title" Text="头像包" FontSize="14" FontWeight="SemiBold"/>
+                            <TextBlock x:Name="AvatarCountText" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <StackPanel Orientation="Horizontal" Spacing="16" Margin="0,6,0,0">
+                                <TextBlock x:Uid="Settings_Avatar_LocalVersion" Text="本地版本：" VerticalAlignment="Center" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                <TextBlock x:Name="AvatarLocalVersionText" VerticalAlignment="Center" FontSize="12"/>
+                                <TextBlock x:Uid="Settings_Avatar_RemoteVersion" Text="最新版本：" VerticalAlignment="Center" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                <TextBlock x:Name="AvatarRemoteVersionText" VerticalAlignment="Center" FontSize="12"/>
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                            <Button x:Name="CheckAvatarButton" x:Uid="Settings_Avatar_CheckButton" Content="检查更新" Click="CheckAvatarUpdate_Click"/>
+                            <Button x:Name="DownloadAvatarNowButton" x:Uid="Settings_Avatar_DownloadButton" Content="立即下载" Click="DownloadAvatarNow_Click" IsEnabled="False"/>
+                            <Button x:Name="ClearAvatarCacheButton" x:Uid="Settings_Avatar_ClearButton" Content="清理缓存" Click="ClearAvatarCache_Click"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- 自动检查卡片（x:Uid 对应 resw 的 .Header，只能挂在 ToggleSwitch 上） -->
+                <Border Style="{StaticResource CardStyle}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <FontIcon Grid.Column="0" Glyph="&#xE895;" FontFamily="Segoe Fluent Icons" FontSize="22" Margin="0,0,14,0"/>
+                        <ToggleSwitch Grid.Column="1" x:Name="AvatarAutoCheckSwitch" x:Uid="Settings_Avatar_AutoHeader"
+                                      Header="启动时自动检查更新（有新版本时在窗口顶部提示）"
+                                      OnContent="开" OffContent="关"
+                                      Toggled="AvatarAutoCheck_Toggled" VerticalAlignment="Center"/>
+                    </Grid>
+                </Border>
+
+                <!-- 状态信息 -->
+                <TextBlock x:Name="StatusText" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

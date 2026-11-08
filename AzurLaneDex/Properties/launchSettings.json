@@ -1,7 +1,9 @@
 {
   "profiles": {
     "AzurLaneDex (Package)": {
-      "commandName": "MsixPackage"
+      "commandName": "MsixPackage",
+      "allowLocalNetworkLoopbackProperty": true,
+      "hotReloadEnabled": false
     },
     "AzurLaneDex (Unpackaged)": {
       "commandName": "Project"

@@ -1,4 +1,4 @@
-﻿using AzurLaneDex.Helpers;
+using AzurLaneDex.Helpers;
 using AzurLaneDex.Models;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
@@ -101,8 +101,8 @@ namespace AzurLaneDex.Converters
                 }
                 catch { }
             }
-            // 默认头像
-            return new BitmapImage(new Uri("ms-appx:///Assets/default_avatar.png"));
+            // 默认头像（账户）：Assets/Avatar/Default_Avatar.png
+            return new BitmapImage(new Uri("ms-appx:///Assets/Avatar/Default_Avatar.png"));
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
@@ -158,35 +158,6 @@ namespace AzurLaneDex.Converters
             throw new NotImplementedException();
         }
     }
-    public class AcquisitionMethodTypeToTemplateConverter : IValueConverter
-    {
-        public DataTemplate ConstructionTemplate { get; set; }
-        public DataTemplate DropTemplate { get; set; }
-        public DataTemplate ExchangeTemplate { get; set; }
-        public DataTemplate ResearchTemplate { get; set; }
-        public DataTemplate OtherTemplate { get; set; }
-
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            if (value is AcquisitionMethodType type)
-            {
-                return type switch
-                {
-                    AcquisitionMethodType.Construction => ConstructionTemplate,
-                    AcquisitionMethodType.Drop => DropTemplate,
-                    AcquisitionMethodType.Exchange => ExchangeTemplate,
-                    AcquisitionMethodType.Research => ResearchTemplate,
-                    AcquisitionMethodType.Other => OtherTemplate,
-                    _ => ConstructionTemplate
-                };
-            }
-            return ConstructionTemplate;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-            => throw new NotImplementedException();
-    }
-
     public class EnumToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)

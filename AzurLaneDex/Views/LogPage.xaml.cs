@@ -1,8 +1,10 @@
-﻿using AzurLaneDex.Services;
+using AzurLaneDex.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
+using System.IO;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
 
@@ -63,6 +65,54 @@ namespace AzurLaneDex.Views
             // 触发一次清理
             LogService.CleanOldLogs();
             StatusText.Text = string.Format(loader.GetString("LogRetentionSet_Message"), days); ;
+        }
+
+        private void OpenLogFolderButton_Click(object sender, RoutedEventArgs e)
+        {
+            TryOpenLogFolder();
+        }
+
+        private void CopyLogPathButton_Click(object sender, RoutedEventArgs e)
+        {
+            CopyLogPathToClipboard();
+        }
+
+        /// <summary>在资源管理器中打开日志目录（不存在则先创建）。</summary>
+        private void TryOpenLogFolder()
+        {
+            try
+            {
+                string dir = LogService.LogDirectoryPath;
+                Directory.CreateDirectory(dir);
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = "explorer.exe",
+                    Arguments = "\"" + dir + "\"",
+                    UseShellExecute = true
+                });
+                StatusText.Text = dir;
+            }
+            catch (Exception ex)
+            {
+                StatusText.Text = ex.Message;
+            }
+        }
+
+        /// <summary>复制日志目录路径到剪贴板。</summary>
+        private void CopyLogPathToClipboard()
+        {
+            try
+            {
+                string dir = LogService.LogDirectoryPath;
+                var package = new DataPackage();
+                package.SetText(dir);
+                Clipboard.SetContent(package);
+                StatusText.Text = dir;
+            }
+            catch (Exception ex)
+            {
+                StatusText.Text = ex.Message;
+            }
         }
 
         private async void ExportLogButton_Click(object sender, RoutedEventArgs e)

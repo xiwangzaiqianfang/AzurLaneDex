@@ -1,4 +1,4 @@
-﻿using AzurLaneDex.Models;
+using AzurLaneDex.Models;
 using AzurLaneDex.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -15,7 +15,6 @@ using Windows.ApplicationModel.Core;
 using Windows.Globalization;
 using WinRT.Interop;
 using WinUIEx;
-
 namespace AzurLaneDex.Views
 {
     public sealed partial class SettingsPage : Page
@@ -47,8 +46,11 @@ namespace AzurLaneDex.Views
                 WindowSizeLabel.Text = string.Format(format, bounds.Width, bounds.Height);
             }
         }
-        /*
-        private async void MigrateOldData_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// 从文件导入数据库：选 ships_static.db → 校验 SQLite 文件头 → 备份现有库 →
+        /// 替换数据目录中的 ships_static.db → 立即重新装载（只换文件，不写静态数据）。
+        /// </summary>
+        private async void ImportDatabaseButton_Click(object sender, RoutedEventArgs e)
         {
             var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
             var picker = new FileOpenPicker();
@@ -57,84 +59,61 @@ namespace AzurLaneDex.Views
             InitializeWithWindow.Initialize(picker, WindowNative.GetWindowHandle(window));
             picker.ViewMode = PickerViewMode.List;
             picker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
-            picker.FileTypeFilter.Add(".json");
+            picker.FileTypeFilter.Add(".db");
+
             var file = await picker.PickSingleFileAsync();
             if (file == null) return;
 
-            string oldJson = await FileIO.ReadTextAsync(file);
+            string target = Path.Combine(App.DataRoot, "ships_static.db");
+            string temp = target + ".import";
+            string backup = target + ".bak";
+
             try
             {
-                var newStatic = MigrateOldStaticJson(oldJson);
-                if (newStatic == null)
+                // 1) 校验 SQLite 文件头（16 字节 "SQLite format 3\0"）
+                var header = new byte[16];
+                using (var read = await file.OpenStreamForReadAsync())
                 {
-                    await ShowDialog(loader.GetString("Dialog_Error_Title"), loader.GetString("InvalidFileFormat_Message"));
-                    LogService.Operation("数据迁移操作", "文件格式错误");
-                    return;
+                    int n = await read.ReadAsync(header, 0, header.Length);
+                    if (n < header.Length || System.Text.Encoding.ASCII.GetString(header) != "SQLite format 3\0")
+                    {
+                        await ShowDialog(loader.GetString("Dialog_Error_Title"), loader.GetString("InvalidFileFormat_Message"));
+                        LogService.Operation("数据库导入", "文件格式错误（不是 SQLite 数据库）");
+                        return;
+                    }
                 }
-                string targetPath = Path.Combine(App.DataRoot, "static", "ships_static.json");
+
+                // 2) 复制到临时文件 → 备份旧库 → 原子替换
                 using (var src = await file.OpenStreamForReadAsync())
-                using (var dest = File.OpenWrite(targetPath))
-                {
+                using (var dest = File.Create(temp))
                     await src.CopyToAsync(dest);
+
+                if (File.Exists(target))
+                {
+                    try { File.Copy(target, backup, overwrite: true); } catch { /* 备份失败不阻断 */ }
                 }
-                _app.ShipManager?.LoadAsync();
+                File.Move(temp, target, overwrite: true);
+
+                // 3) 重新装载
+                if (_app.ShipManager != null)
+                {
+                    await _app.ShipManager.LoadAsync();
+                    _app.ShipManager.NotifyDataChanged();
+                }
                 await ShowDialog(loader.GetString("Dialog_Success_Title"), loader.GetString("MigrationSuccess_Message"));
-                LogService.Operation("数据迁移操作", "迁移成功");
+                LogService.Operation("数据库导入", $"已导入 {file.Name}（{new FileInfo(target).Length / 1024 / 1024} MB）");
             }
             catch (Exception ex)
             {
                 await ShowDialog(loader.GetString("Dialog_Error_Title"), ex.Message);
-                LogService.Operation("数据迁移操作", $"迁移失败：{ex.Message}");
+                LogService.Operation("数据库导入", $"导入失败：{ex.Message}");
+            }
+            finally
+            {
+                try { if (File.Exists(temp)) File.Delete(temp); } catch { /* 忽略 */ }
             }
         }
 
-        private async Task PerformDataMigration()
-        {
-            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
-            var picker = new FileOpenPicker();
-            var window = _app.GetMainWindow();
-            if (window == null) return;
-            InitializeWithWindow.Initialize(picker, WindowNative.GetWindowHandle(window));
-            picker.FileTypeFilter.Add(".json");
-
-            var file = await picker.PickSingleFileAsync();
-            if (file == null) return;
-
-            string oldJson;
-            try
-            {
-                oldJson = await FileIO.ReadTextAsync(file);
-            }
-            catch (Exception ex)
-            {
-                await ShowDialog(loader.GetString("ReadFailed_Title"), ex.Message);
-                LogService.Operation("数据迁移操作", $"迁移失败：{ex.Message}");
-                return;
-            }
-
-            // 迁移逻辑
-            try
-            {
-                // 调用迁移函数（直接使用 ShipManager 的迁移逻辑）
-                var newStatic = MigrateOldStaticJson(oldJson);
-                if (newStatic == null) throw new InvalidOperationException("文件格式不正确");
-
-                string targetPath = Path.Combine(App.DataRoot, "static", "ships_static.json");
-                var newJson = JsonSerializer.Serialize(newStatic, new JsonSerializerOptions { WriteIndented = true });
-                File.WriteAllText(targetPath, newJson);
-
-                // 重新加载 ShipManager
-                await _app.ShipManager?.LoadAsync();
-                await ShowDialog(loader.GetString("Dialog_Success_Title"), loader.GetString("MigrationAndOverwrite_Message"));
-                LogService.Operation("数据迁移操作", "数据已成功迁移并覆盖");
-            }
-            catch (Exception ex)
-            {
-                await ShowDialog(loader.GetString("Dialog_Error_Title"), ex.Message);
-                LogService.Operation("数据迁移操作", $"迁移失败：{ex.Message}");
-            }
-        }
-        */
 
         // 添加私有方法：加载已保存的语言设置
         private void LoadLanguageSetting()
@@ -171,14 +150,33 @@ namespace AzurLaneDex.Views
                 _app.ShipManager.Config["app_language"] = newLang;
                 _app.ShipManager.SaveConfig();
 
-                // 设置系统首选语言（下次启动生效）
-                ApplicationLanguages.PrimaryLanguageOverride = newLang;
+                // 即时生效：先切应用内语言（数据文本），系统语言覆盖失败也不影响这一步
+                AzurLaneDex.Helpers.LocalizationHelper.CurrentLanguage = newLang;
+                bool systemOverrideOk = AzurLaneDex.Helpers.LocalizationHelper.TrySetSystemLanguageOverride(newLang);
 
-                // 询问用户是否立即重启
+                try
+                {
+                    RefreshLocalizedData();
+                }
+                catch (Exception ex)
+                {
+                    LogService.Warning($"语言切换后刷新数据文本失败：{ex.Message}", "SettingsPage");
+                }
+
+                // 界面框架文本（XAML 资源）仍需重启后才用新语言——询问是否重启
+                string content = loader.GetString("Settings_LanguageDataRefreshed");
+                if (string.IsNullOrEmpty(content))
+                    content = "舰船数据文本已即时切换语言；界面框架文本将在重启后完全生效。是否现在重启应用？";
+                if (!systemOverrideOk)
+                {
+                    content += "\n\n（提示：当前运行方式不支持设置系统语言覆盖，界面框架文案无法随语言切换；"
+                             + "打包安装后运行即可正常切换。舰船/装备等数据文本已按新语言显示。）";
+                }
+
                 var dialog = new ContentDialog
                 {
                     Title = loader.GetString("RestartApp_Title"),
-                    Content = loader.GetString("RestartApp_Message"),
+                    Content = content,
                     PrimaryButtonText = loader.GetString("RestartApp_Message_PrimaryButtonText"),
                     CloseButtonText = loader.GetString("RestartApp_Message_CloseButtonText"),
                     XamlRoot = this.XamlRoot,
@@ -187,10 +185,26 @@ namespace AzurLaneDex.Views
                 var result = await dialog.ShowAsync();
                 if (result == ContentDialogResult.Primary)
                 {
-                    // 请求重启应用
-                    CoreApplication.RequestRestartAsync(string.Empty);
+                    // 请求重启应用（非打包运行时该 API 可能不可用，兜底提示）
+                    try
+                    {
+                        CoreApplication.RequestRestartAsync(string.Empty);
+                    }
+                    catch (Exception ex)
+                    {
+                        LogService.Warning($"请求重启失败：{ex.Message}", "SettingsPage");
+                    }
                 }
             }
+        }
+
+        /// <summary>语言切换后通知全部舰船 VM 刷新本地化显示属性。</summary>
+        private void RefreshLocalizedData()
+        {
+            var ships = _app?.ShipManager?.Ships;
+            if (ships == null) return;
+            foreach (var vm in ships)
+                vm.NotifyLocalizationChanged();
         }
 
         /*
@@ -234,6 +248,8 @@ namespace AzurLaneDex.Views
             var window = _app.GetMainWindow();
             if (window == null) return;
             var manager = WinUIEx.WindowManager.Get(window);
+            if (!App.IsPackaged)
+                WinUIEx.WindowManager.PersistenceStorage = App.WindowState;
             manager.PersistenceId = "MainWindow";
             manager.Width = 1310;
             manager.Height = 750;

@@ -4,16 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:Microsoft.UI.Xaml.Controls">
 
-	<Page.Resources>
-		<Style x:Key="SettingsCardStyle" TargetType="Border">
-			<Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefault}"/>
-			<Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}"/>
-			<Setter Property="BorderThickness" Value="1"/>
-			<Setter Property="CornerRadius" Value="8"/>
-			<Setter Property="Padding" Value="16"/>
-			<Setter Property="Margin" Value="0,0,0,0"/>
-		</Style>
-	</Page.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -30,7 +20,7 @@
 
         <ScrollViewer Grid.Row="1">
             <StackPanel Margin="20" Spacing="16">
-                <Border Style="{StaticResource SettingsCardStyle}">
+                <Border Style="{StaticResource CardStyle}">
 					<Grid>
 						<Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -47,7 +37,7 @@
 					</Grid>
                 </Border>
 
-                <Border Style="{StaticResource SettingsCardStyle}">
+                <Border Style="{StaticResource CardStyle}">
 					<Grid>
 						<Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>

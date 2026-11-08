@@ -1,4 +1,4 @@
-﻿using AzurLaneDex.Helpers;
+using AzurLaneDex.Helpers;
 using AzurLaneDex.Models;
 using AzurLaneDex.Services;
 using AzurLaneDex.ViewModels;
@@ -26,9 +26,6 @@ public sealed partial class MainPage : Page
     private ShipManager _shipManager;
     private ObservableCollection<ShipViewModel> _currentShips = new();
     private FilterCriteria _currentFilterCriteria;
-    private int _lastSelectedShipId = -1;
-    private double _lastScrollOffset = 0;
-    private bool _isRefreshing = false;
     private List<SuggestionItem> _allSuggestions = new();
     private List<SuggestionItem> _currentSuggestions = new();
     private ShipCategory? _currentCategoryFilter = null;
@@ -52,6 +49,17 @@ public sealed partial class MainPage : Page
         _minimalTemplate = (DataTemplate)Resources["MinimalTemplate"];
     }
 
+    /// <summary>
+    /// 启动入场动画（启动体验阶段 3：内容渐进式显示）。
+    /// 列表区 → 详情区依次「淡入 + 上滑」；导航栏由 MainWindow 在揭幕时同步播放（延迟 0），
+    /// 因此这里是 60ms / 120ms 错峰。仅在启动揭幕时调用一次。
+    /// </summary>
+    public void PlayStartupReveal()
+    {
+        StartupAnimations.PlayReveal(ShipListPane, 60);
+        StartupAnimations.PlayReveal(ShipDetailControl, 120);
+    }
+
     private async void MainPage_Loaded(object sender, RoutedEventArgs e)
     {
         var app = (App)Application.Current;
@@ -71,9 +79,6 @@ public sealed partial class MainPage : Page
         ShipListView.ItemsSource = _currentShips;
         if (_shipManager != null)
         {
-            AddShipButton.Visibility = app.AccountManager.IsDeveloper()
-                ? Visibility.Visible
-                : Visibility.Collapsed;
             _shipManager.DataStructureChanged += () => DispatcherQueue.TryEnqueue(() => OnDataChanged());
             _shipManager.StateChanged += () => DispatcherQueue.TryEnqueue(() => ApplyCurrentSort());
         }
@@ -214,6 +219,11 @@ public sealed partial class MainPage : Page
             };
             _currentFilterCriteria = null;
             RefreshShipList();
+
+            // 切换分类后：若没有任何选中（原选中船不在该分类），自动选中第一艘，
+            // 保证详情面板始终有内容（修复切换选项卡后详情文字空白）
+            if (ShipListView.SelectedItem == null && _currentShips.Count > 0)
+                ShipListView.SelectedItem = _currentShips[0];
         }
     }
 
@@ -231,13 +241,17 @@ public sealed partial class MainPage : Page
         }
         foreach (var ship in _shipManager.Ships)
         {
-            string rawAlt = ship.AltName;
-            if (IsValidText(rawAlt))
-                _allSuggestions.Add(new SuggestionItem { DisplayText = $"[和谐名称] {rawAlt}", SearchText = rawAlt });
+            if (ship.Aliases == null) continue;
+            foreach (var alias in ship.Aliases)
+            {
+                if (IsValidText(alias))
+                    _allSuggestions.Add(new SuggestionItem { DisplayText = $"[别名] {alias}", SearchText = alias });
+            }
         }
         foreach (var ship in _shipManager.Ships)
         {
-            string gear = ship.SpecialGear.Name.GetValueOrDefault("zh-Hans");
+            var aug = ship.UniqueAugment;
+            string gear = aug?.Name.GetValueOrDefault("zh-Hans") ?? "";
             if (IsValidText(gear))
                 _allSuggestions.Add(new SuggestionItem { DisplayText = $"[专属兵装] {gear}", SearchText = gear });
         }
@@ -284,6 +298,8 @@ public sealed partial class MainPage : Page
     private void RefreshShipList()
     {
         if (_shipManager == null) return;
+        // 记录当前选中项，重建列表后恢复（防止清空集合导致详情面板被置空）
+        int? previousSelectedId = (ShipListView.SelectedItem as ShipViewModel)?.Id;
         var source = _shipManager.Ships.AsEnumerable();
 
         string keyword = SearchBox.Text?.Trim();
@@ -291,8 +307,8 @@ public sealed partial class MainPage : Page
         {
             source = source.Where(s =>
                 s.RawName.Contains(keyword, StringComparison.OrdinalIgnoreCase) ||
-                (s.AltName?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                (s.SpecialGear.Name.GetValueOrDefault("zh-Hans")?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                s.AliasesText.Contains(keyword, StringComparison.OrdinalIgnoreCase) ||
+                (s.UniqueAugment?.Name.GetValueOrDefault("zh-Hans")?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false) ||
                 (s.RelatedEvent?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false)
             );
         }
@@ -350,6 +366,18 @@ public sealed partial class MainPage : Page
         MinimalSelectAllCheckBox.IsChecked = false;
         foreach (var ship in _currentShips)
             ship.IsSelected = false;
+
+        // 恢复选中项（详情面板经 SelectionChanged 自动刷新）
+        ShipViewModel? restore = null;
+        if (previousSelectedId.HasValue)
+            restore = _currentShips.FirstOrDefault(s => s.Id == previousSelectedId.Value);
+        ShipListView.SelectedItem = restore;
+        if (restore == null)
+        {
+            // 原选中不在当前结果集（如切换分类/筛选后）→ 显式清空详情，避免残留旧内容
+            if (ShipDetailControl != null)
+                ShipDetailControl.SetShip(null);
+        }
     }
 
     private void ApplyCurrentSort()
@@ -427,7 +455,6 @@ public sealed partial class MainPage : Page
         var selected = ShipListView.SelectedItem as ShipViewModel;
         if (selected != null)
         {
-            _lastSelectedShipId = selected.Id;
             ShipDetailControl.SetShip(selected);
         }
         else
@@ -457,11 +484,6 @@ public sealed partial class MainPage : Page
         }
     }
 
-    private void SearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
-    {
-        RefreshShipList();
-    }
-
     private void SearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
     {
         if (args.SelectedItem is SuggestionItem item)
@@ -470,8 +492,6 @@ public sealed partial class MainPage : Page
             RefreshShipList();
         }
     }
-
-    private int GetRaritySortValue(ShipViewModel ship) => (int)ship.RarityEnum;
 
     private void SortCombo_SelectionChanged(object sender, SelectionChangedEventArgs e) => RefreshShipList();
 
@@ -650,7 +670,7 @@ public sealed partial class MainPage : Page
         remodelItem.Click += async (s, args) => await BatchOperationWithFilterAsync(
             selectedShips,
             ship => ship.Retrofitted = true,
-            ship => ship.Owned && ship.Retrofit.CanRetrofit,
+            ship => ship.Owned && ship.Retrofit?.CanRetrofit == true,
             "标记为改造",
             "已成功标记 {0} 艘舰船为改造（跳过未获得或不支持改造的舰船 {1} 艘）。");
 
@@ -662,7 +682,7 @@ public sealed partial class MainPage : Page
         unremodelItem.Click += async (s, args) => await BatchOperationWithFilterAsync(
             selectedShips,
             ship => ship.Retrofitted = false,
-            ship => ship.Owned && ship.Retrofit.CanRetrofit,
+            ship => ship.Owned && ship.Retrofit?.CanRetrofit == true,
             "取消改造",
             "已成功取消 {0} 艘舰船的改造标记（跳过未获得或不支持改造的舰船 {1} 艘）。");
 
@@ -823,7 +843,7 @@ public sealed partial class MainPage : Page
         if (criteria.Rarities.Any())
             source = source.Where(s => criteria.Rarities.Contains(s.RarityEnum));
         if (criteria.CanRemodel)
-            source = source.Where(s => s.Retrofit.CanRetrofit);
+            source = source.Where(s => s.Retrofit?.CanRetrofit == true);
         if (criteria.Remodeled)
             source = source.Where(s => s.Retrofitted);
         if (criteria.MaxBreakthrough)
@@ -856,39 +876,6 @@ public sealed partial class MainPage : Page
         SortCombo.SelectedIndex = 0;
         _currentFilterCriteria = null;
         RefreshShipList();
-    }
-
-    private async void AddShipButton_Click(object sender, RoutedEventArgs e)
-    {
-        var app = Application.Current as App;
-        if (app?.AccountManager?.IsDeveloper() != true)
-        {
-            var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
-            var dialog = new ContentDialog
-            {
-                Title = loader.GetString("InsufficientPrivilege_Title"),
-                Content = loader.GetString("EditShipNeedDeveloper_Message"),
-                CloseButtonText = loader.GetString("Common_Confirm"),
-                XamlRoot = this.XamlRoot,
-                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
-            };
-            await dialog.ShowAsync();
-            return;
-        }
-
-        var addDialog = new AddShipDialog(); // 无参数，新建空船
-        addDialog.XamlRoot = this.XamlRoot;
-        addDialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-        if (await addDialog.ShowAsync() == ContentDialogResult.Primary)
-        {
-            var newShip = addDialog.GetShip();
-            if (newShip != null)
-            {
-                await _shipManager.AddShip(newShip);
-                LogService.Operation("添加舰船", $"用户通过界面新增舰船: {newShip.Name.GetLocalized()}", app.AccountManager.CurrentAccount);
-                RefreshShipList();
-            }
-        }
     }
 
     private ShipViewModel _contextShip;
@@ -1028,27 +1015,6 @@ public sealed partial class MainPage : Page
         }
     }
 
-    private async void CtxMenu_Delete_Click(object sender, RoutedEventArgs e)
-    {
-        var loader = Windows.ApplicationModel.Resources.ResourceLoader.GetForViewIndependentUse();
-        var dialog = new ContentDialog
-        {
-            Title = loader.GetString("ConfirmDelete_Title") ?? "确认删除",
-            Content = string.Format(loader.GetString("ConfirmDeleteShip_Message") ?? "确定要删除舰船 {0} 吗？", _contextShip.DisplayName),
-            PrimaryButtonText = loader.GetString("Common_Delete") ?? "删除",
-            CloseButtonText = loader.GetString("Common_Cancel") ?? "取消",
-            XamlRoot = this.XamlRoot,
-            Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
-        };
-        if (await dialog.ShowAsync() == ContentDialogResult.Primary)
-        {
-            int deletedId = _contextShip.Id;
-            await _shipManager.DeleteShip(deletedId);
-            RefreshShipList();
-            ShipDetailControl.SetShip(null);
-        }
-    }
-
     // 通用方法
     private async Task UpdateShipStateAndRefreshAsync(Action<ShipViewModel> updateAction, bool requireConfirm = false, string confirmTitle = null, string confirmContent = null)
     {
@@ -1100,11 +1066,6 @@ public sealed partial class MainPage : Page
 
     private bool IsBulinShip(ShipViewModel ship)
     {
-        return ship.DisplayName.Contains("布里") || ship.RawName.Contains("布里");
+        return ship.IsBulin; // 数据位掩码 Flags.Bulin（替代旧中文名硬编码）
     }
-
-    // 以下方法与改造/兵装相关，但菜单已移除，保留空方法或删除均可，这里保留以防止事件处理器缺失。
-    // 注意：这两个方法在菜单中已没有引用，可以安全删除，但为了代码整洁，保留空实现。
-    private void CtxMenu_ToggleRemodel_Click(object sender, RoutedEventArgs e) { }
-    private void CtxMenu_ToggleSpecialGear_Click(object sender, RoutedEventArgs e) { }
 }

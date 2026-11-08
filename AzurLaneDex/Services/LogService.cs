@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,20 +15,44 @@ namespace AzurLaneDex.Services
         private static int _maxRetentionDays = 30;
         private static bool _enabled = true;
         private static bool _initialized = false;
+        /// <summary>文件日志是否仍可用（目录被拒写/文件被占用时自动降级为仅调试输出）。</summary>
+        private static bool _fileLoggingAvailable = true;
 
-        // 确保日志目录存在并返回路径
+        /// <summary>探测目录可写（Win32 权限探测，不抛异常）。</summary>
+        private static bool IsDirectoryWritable(string dir) => FileAccessProbe.CanCreateIn(dir);
+
+        /// <summary>
+        /// 确保日志目录存在并返回路径：**只使用数据目录下的 log**。
+        /// 数据目录不可写（App.DataRootWritable=false）时直接关闭文件日志，
+        /// 不再回退到程序目录/%TEMP%——那些位置在受限运行环境下同样不可写，
+        /// 每次尝试都会抛 0x80070005 / DirectoryNotFoundException。
+        /// </summary>
         private static string EnsureLogDirectory()
         {
-            string dataRoot = App.DataRoot;
-            if (string.IsNullOrEmpty(dataRoot))
+            // 旧版逻辑：直接建目录、直接写；失败才降级，不预先判断可写性
+            var candidates = new List<string>();
+            if (!string.IsNullOrEmpty(App.LogDirectory)) candidates.Add(App.LogDirectory);
+            if (!string.IsNullOrEmpty(App.DataRoot)) candidates.Add(Path.Combine(App.DataRoot, "log"));
+            try
             {
-                // 后备：使用 LocalApplicationData
-                dataRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AzurLaneDex", "data");
-                Directory.CreateDirectory(dataRoot);
+                candidates.Add(Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "AzurLaneDex", "data", "log"));
             }
-            string logDir = Path.Combine(dataRoot, "log");
-            Directory.CreateDirectory(logDir);
-            return logDir;
+            catch { }
+
+            foreach (string dir in candidates)
+            {
+                try
+                {
+                    Directory.CreateDirectory(dir);
+                    return dir;
+                }
+                catch { /* 换下一个 */ }
+            }
+
+            _fileLoggingAvailable = false;
+            return "";
         }
 
         // 自动初始化（首次调用日志方法时执行）
@@ -43,6 +68,66 @@ namespace AzurLaneDex.Services
                 CleanOldLogs();
                 _initialized = true;
             }
+        }
+
+        /// <summary>当前日志目录（供日志页显示 / 导出定位；未初始化时先初始化）。</summary>
+        public static string LogDirectoryPath
+        {
+            get
+            {
+                Initialize();
+                if (!string.IsNullOrEmpty(_logDirectory)) return _logDirectory;
+
+                // 只读运行（数据目录不可写）时，仍给出预期路径供界面显示
+                string root = App.DataRoot;
+                return string.IsNullOrEmpty(root) ? "" : Path.Combine(root, "log");
+            }
+        }
+
+        /// <summary>
+        /// 数据目录确定后重新绑定日志目录（首次初始化可能发生在 App.DataRoot 赋值之前，
+        /// 那时会落到 程序目录\App_Data\logs）。切换到新目录时把旧目录里的日志文件补过来。
+        /// </summary>
+        internal static void RebindLogDirectory()
+        {
+            lock (_lock)
+            {
+                string dir = EnsureLogDirectory();
+                if (string.IsNullOrEmpty(dir)) return;
+
+                _fileLoggingAvailable = true;   // 数据目录就绪 → 重新开启文件日志（首次初始化时可能因 DataRoot 未设置而关闭）
+
+                if (string.Equals(dir, _logDirectory, StringComparison.OrdinalIgnoreCase))
+                {
+                    _initialized = true;
+                    return;
+                }
+
+                string oldDir = _logDirectory ?? "";
+                _logDirectory = dir;
+                _logFilePath = Path.Combine(_logDirectory, $"log_{DateTime.Now:yyyy-MM-dd}.txt");
+                _initialized = true;
+                MoveExistingLogs(oldDir, dir);
+                System.Diagnostics.Debug.WriteLine($"[LogService] 日志目录：{dir}");
+            }
+        }
+
+        /// <summary>把旧日志目录里的 log_*.txt 复制到新目录（目标已存在则跳过）。</summary>
+        private static void MoveExistingLogs(string fromDir, string toDir)
+        {
+            if (string.IsNullOrEmpty(fromDir) || string.IsNullOrEmpty(toDir)) return;
+            if (string.Equals(fromDir, toDir, StringComparison.OrdinalIgnoreCase)) return;
+            try
+            {
+                if (!Directory.Exists(fromDir)) return;
+                Directory.CreateDirectory(toDir);
+                foreach (string src in Directory.GetFiles(fromDir, "log_*.txt"))
+                {
+                    string dest = Path.Combine(toDir, Path.GetFileName(src));
+                    if (!File.Exists(dest)) File.Copy(src, dest);
+                }
+            }
+            catch { /* 迁移旧日志失败不影响写日志 */ }
         }
 
         private static void LoadSettings()
@@ -111,29 +196,58 @@ namespace AzurLaneDex.Services
         {
             if (!_enabled) return;
 
-            // 每日文件切换（线程安全）
-            string today = DateTime.Now.ToString("yyyy-MM-dd");
-            string expectedPath = Path.Combine(_logDirectory, $"log_{today}.txt");
-            lock (_lock)
-            {
-                if (expectedPath != _logFilePath)
-                {
-                    _logFilePath = expectedPath;
-                }
-            }
-
             string line = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff} [{level}] {content}";
+            // 始终写调试输出：文件日志不可用时也不丢日志
+            System.Diagnostics.Debug.WriteLine(line);
+            if (!_fileLoggingAvailable) return;
+
             Task.Run(() =>
             {
-                try
+                lock (_lock)
                 {
-                    lock (_lock)
+                    if (!_fileLoggingAvailable) return;
+                    string today = DateTime.Now.ToString("yyyy-MM-dd");
+                    string path = Path.Combine(_logDirectory, $"log_{today}.txt");
+                    if (TryAppendLine(path, line))
                     {
-                        File.AppendAllText(_logFilePath, line + Environment.NewLine, Encoding.UTF8);
+                        _logFilePath = path;
+                        return;
                     }
+
+                    // 权限被拒（历史文件属主为管理员/只读属性）：清属性后重试一次
+                    try
+                    {
+                        if (File.Exists(path)) File.SetAttributes(path, FileAttributes.Normal);
+                    }
+                    catch { }
+                    if (TryAppendLine(path, line))
+                    {
+                        _logFilePath = path;
+                        return;
+                    }
+
+                    // 仍失败：停止文件日志（不再尝试 App_Data / %TEMP% 等备用目录，
+                    // 受限运行环境下它们同样不可写，重试只会不断抛权限异常）
+                    _fileLoggingAvailable = false;
+                    System.Diagnostics.Debug.WriteLine($"[LogService] 日志文件不可写，已停止文件日志：{path}");
                 }
-                catch { }
             });
+        }
+
+        /// <summary>追加一行（共享读写打开，避免与其他进程/句柄互斥）。失败返回 false，不抛异常。</summary>
+        private static bool TryAppendLine(string path, string line)
+        {
+            try
+            {
+                using var fs = new FileStream(path, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+                byte[] bytes = Encoding.UTF8.GetBytes(line + Environment.NewLine);
+                fs.Write(bytes, 0, bytes.Length);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public static void CleanOldLogs()

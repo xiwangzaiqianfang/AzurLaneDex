@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -11,14 +11,12 @@ namespace AzurLaneDex.Services
     {
         private readonly ShipManager _shipManager;
         private readonly IShipDataUpdater _dataUpdater;
-        private readonly IShipDataStore _dataStore;
         private readonly HttpClient _httpClient;
 
-        public UpdateService(ShipManager shipManager, IShipDataUpdater dataUpdater, IShipDataStore dataStore)
+        public UpdateService(ShipManager shipManager, IShipDataUpdater dataUpdater)
         {
             _shipManager = shipManager ?? throw new ArgumentNullException(nameof(shipManager));
             _dataUpdater = dataUpdater ?? throw new ArgumentNullException(nameof(dataUpdater));
-            _dataStore = dataStore ?? throw new ArgumentNullException(nameof(dataStore));
             _httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(30) };
         }
 
@@ -171,22 +169,20 @@ namespace AzurLaneDex.Services
                 return false;
             }
         }
-        // ========== 数据更新方法 ==========
-        public async Task<string> GetRemoteDataVersionAsync(string url, string proxy = "")
-        {
-            return await _dataUpdater.GetRemoteVersionAsync(url, proxy);
-        }
+        // ========== 数据更新方法（数据库 ships_static.db） ==========
+        /// <summary>读取远端数据库信息（大小 / 最后修改时间），用于判断是否需要下载。</summary>
+        public Task<RemoteDataInfo?> GetRemoteDataInfoAsync(string url, string proxy = "")
+            => _dataUpdater.GetRemoteDataInfoAsync(url, proxy);
 
+        /// <summary>下载远端数据库并替换数据目录中的 ships_static.db，成功后重新装载数据。</summary>
         public async Task<bool> UpdateDataFromUrlAsync(string url, string proxy = "")
         {
-            bool result = await _dataUpdater.DownloadAndApplyUpdateAsync(url, proxy, async (newData) =>
+            return await _dataUpdater.DownloadAndApplyDatabaseAsync(url, proxy, async () =>
             {
-                await _dataStore.SaveStaticAsync(newData);
-                await _shipManager.LoadAsync(); // 重新加载
-                _shipManager.NotifyDataChanged(); // 触发刷新
+                await _shipManager.LoadAsync();      // 重新装载新库
+                _shipManager.NotifyDataChanged();    // 触发界面刷新
                 LogService.Operation("数据更新", "完成");
             });
-            return result;
         }
 
         private string GetVersionUrl(UpdateChannel channel, UpdateSource source)

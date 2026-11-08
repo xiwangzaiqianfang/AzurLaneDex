@@ -1,0 +1,105 @@
+<ContentDialog x:Class="AzurLaneDex.Views.TeamShipPickerDialog"
+               x:Name="DialogRoot"
+               xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+               xmlns:converters="using:AzurLaneDex.Converters"
+               Title="选择舰船"
+               PrimaryButtonText="选择"
+               CloseButtonText="取消"
+               DefaultButton="Primary"
+               Width="900" MaxHeight="10000">
+
+    <ContentDialog.Resources>
+        <converters:StringToImageSourceConverter x:Key="StringToImageSource"/>
+    </ContentDialog.Resources>
+
+    <Grid RowSpacing="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- 筛选栏：两行三列，避免横向溢出 -->
+        <Grid Grid.Row="0" RowSpacing="6" ColumnSpacing="12">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Spacing="6">
+                <TextBlock x:Uid="TeamPicker_LabelCategory" Text="类型：" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                <ComboBox x:Name="CategoryFilter" HorizontalAlignment="Stretch" MinWidth="0" SelectionChanged="Filter_Changed"/>
+            </StackPanel>
+            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="6">
+                <TextBlock x:Uid="TeamPicker_LabelFaction" Text="阵营：" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                <ComboBox x:Name="FactionFilter" HorizontalAlignment="Stretch" MinWidth="0" SelectionChanged="Filter_Changed"/>
+            </StackPanel>
+            <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" Spacing="6">
+                <TextBlock x:Uid="TeamPicker_LabelShipType" Text="舰种：" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                <ComboBox x:Name="ShipTypeFilter" HorizontalAlignment="Stretch" MinWidth="0" SelectionChanged="Filter_Changed"/>
+            </StackPanel>
+
+            <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Spacing="6">
+                <TextBlock x:Uid="TeamPicker_LabelRarity" Text="稀有度：" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                <ComboBox x:Name="RarityFilter" HorizontalAlignment="Stretch" MinWidth="0" SelectionChanged="Filter_Changed"/>
+            </StackPanel>
+            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="6">
+                <TextBlock x:Uid="TeamPicker_LabelSort" Text="排序：" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                <ComboBox x:Name="SortCombo" HorizontalAlignment="Stretch" MinWidth="0" SelectionChanged="Filter_Changed"/>
+                <ToggleButton x:Name="SortOrderToggle" Content="升序" MinWidth="64" Checked="SortOrderToggle_Checked" Unchecked="SortOrderToggle_Unchecked"/>
+            </StackPanel>
+        </Grid>
+
+        <TextBox x:Name="SearchBox" Grid.Row="1" PlaceholderText="搜索舰船名称/编号" TextChanged="SearchBox_TextChanged"/>
+
+        <!-- 舰船网格：左侧头像，右侧名称/稀有度/舰种/装甲 -->
+        <GridView x:Name="PickerGrid" Grid.Row="3" ItemClick="PickerGrid_ItemClick" SelectionMode="Single" IsItemClickEnabled="True">
+            <GridView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsWrapGrid Orientation="Horizontal" ItemWidth="248"/>
+                </ItemsPanelTemplate>
+            </GridView.ItemsPanel>
+            <GridView.ItemContainerStyle>
+                <Style TargetType="GridViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                </Style>
+            </GridView.ItemContainerStyle>
+            <GridView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Width="240" Margin="4" ColumnSpacing="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="48"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid Grid.Column="0" Width="48" Height="48">
+                            <Border CornerRadius="4" Background="Transparent">
+                                <Grid>
+                                    <Image Source="{Binding BgUri, Converter={StaticResource StringToImageSource}}" Stretch="UniformToFill"/>
+                                    <Image Source="{Binding AvatarUri, Converter={StaticResource StringToImageSource}}" Stretch="UniformToFill"/>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
+                            <TextBlock Text="{Binding Display}" FontSize="13" FontWeight="SemiBold"
+                                       TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis"/>
+                            <TextBlock Text="{Binding InfoLine}" FontSize="11" TextWrapping="Wrap"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </GridView.ItemTemplate>
+        </GridView>
+
+        <TextBlock x:Name="EmptyText" Grid.Row="3" Text="没有符合条件的舰船" Visibility="Collapsed"
+                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+    </Grid>
+</ContentDialog>

@@ -4,9 +4,9 @@
     <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <RootNamespace>AzurLaneDex</RootNamespace>
-    <Platforms>x86;x64;ARM64</Platforms>
-    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
-    <PublishProfile>win-$(Platform).pubxml</PublishProfile>
+	<Platforms>x86;x64;ARM64</Platforms>
+	<RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+	<PublishProfile>win-$(Platform).pubxml</PublishProfile>
     <UseWinUI>true</UseWinUI>
     <WinUISDKReferences>false</WinUISDKReferences>
     <EnableMsixTooling>true</EnableMsixTooling>
@@ -30,19 +30,31 @@
     <None Remove="Views\AccountLoginDialog.xaml" />
     <None Remove="Views\AccountPage.xaml" />
     <None Remove="Views\AcquireEntryControl.xaml" />
-    <None Remove="Views\AddShipDialog.xaml" />
     <None Remove="Views\FirstRunDialog.xaml" />
     <None Remove="Views\HelpPage.xaml" />
     <None Remove="Views\LoginOptionsPage.xaml" />
     <None Remove="Views\LogPage.xaml" />
     <None Remove="Views\ManageAccountsPage.xaml" />
     <None Remove="Views\UpdatePage.xaml" />
+    <None Remove="Views\AvatarPage.xaml" />
     <Content Include="AzurLaneDex.pfx" />
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
 
   <!-- 关联后台代码文件 -->
   <ItemGroup>
+    <Compile Update="Views\AvatarPage.xaml.cs">
+      <DependentUpon>AvatarPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\TeamShipPickerDialog.xaml.cs">
+      <DependentUpon>TeamShipPickerDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\TeamPage.xaml.cs">
+      <DependentUpon>TeamPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\EquipPickerDialog.xaml.cs">
+      <DependentUpon>EquipPickerDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -72,14 +84,20 @@
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.11" />
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.2526" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.4.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.14" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.2957" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.6.5" />
     <PackageReference Include="WinUIEx" Version="2.9.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <Page Update="Views\AddShipDialog.xaml">
+    <Page Update="Views\TeamPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\TeamShipPickerDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\EquipPickerDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Views\AccountLoginDialog.xaml">
@@ -113,6 +131,9 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Views\UpdatePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\AvatarPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Views\LoginOptionsPage.xaml">
