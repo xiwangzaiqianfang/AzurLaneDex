@@ -125,7 +125,7 @@
                         <StackPanel Padding="20,0,0,0">
                             <TextBlock x:Name="VersionTextBlock" TextWrapping="Wrap"/>
                             <TextBlock x:Uid="Setting_About_1" Text="开发者：菲梦林光" Margin="0,0,0,0"/>
-                            <TextBlock x:Uid="Setting_About_2" Text="开源协议：CC BY-NC-SA 4.0" Margin="0,0,0,0"/>
+                            <TextBlock x:Uid="Setting_About_2" Text="开源协议：GPL-3.0、CC BY-NC-SA 4.0" Margin="0,0,0,0"/>
                             <HyperlinkButton x:Uid="Setting_About_3" Margin="0,5,0,0" Content="项目主页" NavigateUri="https://github.com/xiwangzaiqianfang/AzurLaneDex"/>
                             <HyperlinkButton x:Uid="Setting_About_4" Margin="0,5,0,0" Content="Wiki主页" NavigateUri="https://wiki.biligame.com/blhx/首页"/>
                         </StackPanel>
